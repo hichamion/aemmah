@@ -1,5 +1,5 @@
 
-name: Deploy Mihrab to GitHub Pages
+name: Deploy Aemmah to GitHub Pages
 
 on:
   push:
