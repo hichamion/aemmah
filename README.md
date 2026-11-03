@@ -1,6 +1,6 @@
 <div dir="rtl">
 
-# مِحراب | Mihrab
+# منصة أئمة | Aemmah
 
 منصة للربط بين **الأئمة والقرّاء** و**المساجد والجمعيات الإسلامية** في أوروبا.
 الإمام ينشئ ملفاً (السيرة، الرواية، التلاوة، حالة التأشيرة)، والمسجد ينشر إعلاناً، وتراجع الإدارة كل ملف وإعلان قبل نشره.
@@ -70,9 +70,9 @@ npm run deploy:rules
 
 ## النشر على الإنترنت
 
-**النشر الحالي: GitHub Pages** على `https://hichamion.github.io/mihrab/`.
+**النشر الحالي: GitHub Pages** على `https://hichamion.github.io/mihrab/` (وبعد إعادة تسمية المستودع إلى `aemmah`: `https://hichamion.github.io/aemmah/`).
 كل دفعة (push) إلى `main` تشغّل `.github/workflows/deploy.yml`: فحص الأنواع ثم البناء ثم النشر.
-التطبيق يستخدم روابط `#/...`، و`base: '/mihrab/'` مضبوط في `vite.config.ts`.
+التطبيق يستخدم روابط `#/...`، و`base: './'` (مسار نسبي) في `vite.config.ts`، فيعمل تحت أي اسم للمستودع.
 
 > ملاحظة: ترويسات الأمان في `firebase.json` (مثل `X-Frame-Options`) تُطبَّق على Firebase Hosting فقط، لا على GitHub Pages.
 > إذا نقلت الموقع إلى نطاق آخر، عدّل `og:url` و`og:image` و`canonical` في `index.html` و`start_url` في `public/site.webmanifest`.

@@ -130,7 +130,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="space-y-2 max-w-2xl">
           <div className="inline-flex items-center gap-2 bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-black px-3.5 py-1 rounded-full">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            <span>إحصائيات محراب (بيانات حقيقية ومحدّثة)</span>
+            <span>إحصائيات منصة أئمة (بيانات حقيقية ومحدّثة)</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black font-amiri tracking-tight">
             المؤشرات العامة للتوظيف الشرعي والربط بين الأئمة والمساجد

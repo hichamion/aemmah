@@ -32,12 +32,16 @@ import { LogoMark } from './Logo';
 
 /*
  * CV-style imam profile: a dark side column (photo in a gold ring, personal info, Qur'an qualifications,
- * languages) and a main column (name, bio in quotes, ribbon-titled sections), with the Mihrab logo and
+ * languages) and a main column (name, bio in quotes, ribbon-titled sections), with the platform logo and
  * site link at the bottom as discreet promotion.
  * layout="screen" adapts to the window; layout="print" is a fixed A4 page used to export PNG / PDF.
  */
 
-export const SITE_URL = 'hichamion.github.io/mihrab';
+/** The site's address as shown on CVs and cards (taken from the current URL, so it follows a rename). */
+export const SITE_URL =
+  typeof window !== 'undefined'
+    ? `${window.location.host}${window.location.pathname}`.replace(/\/(index\.html)?$/, '')
+    : 'hichamion.github.io/aemmah';
 
 const AVAILABILITY: Record<ImamProfile['availabilityState'], string> = {
   available_now: 'متاح فوراً لصلاة التراويح أو للتعاقد الدائم',
@@ -93,9 +97,9 @@ export const Ribbon: React.FC<{ icon: React.ReactNode; children: React.ReactNode
   </div>
 );
 
-/** Gold and coloured wave at the bottom of the sheet, with the Mihrab logo and link (discreet promotion). */
+/** Gold and coloured wave at the bottom of the sheet, with the platform logo and link (discreet promotion). */
 export const CvFooter: React.FC<{ tone?: string }> = ({ tone = '#0b3a4f' }) => (
-  <footer className="absolute bottom-0 inset-x-0 h-28" aria-label="منصة محراب">
+  <footer className="absolute bottom-0 inset-x-0 h-28" aria-label="منصة أئمة">
     <svg viewBox="0 0 500 110" preserveAspectRatio="none" className="absolute inset-0 w-full h-full" aria-hidden>
       <path d="M0 40 C 150 95, 330 0, 500 55 L500 110 L0 110 Z" fill="#f2a12c" />
       <path d="M0 58 C 160 110, 330 15, 500 72 L500 110 L0 110 Z" fill={tone} />
@@ -104,7 +108,7 @@ export const CvFooter: React.FC<{ tone?: string }> = ({ tone = '#0b3a4f' }) => (
       <div className="flex items-center gap-2">
         <LogoMark className="w-9 h-9" />
         <div className="leading-tight">
-          <p className="font-black text-sm">منصة محراب</p>
+          <p className="font-black text-sm">منصة أئمة</p>
           <p className="text-[11px] text-white/80">تربط الأئمة والقرّاء بالمساجد في أوروبا</p>
         </div>
       </div>
@@ -275,8 +279,8 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
 
           {qr && (
             <section className="pt-2 flex flex-col items-center gap-2 text-center">
-              <img data-qr src={qr} alt="رمز QR لملف الإمام على منصة محراب" className="w-28 h-28 rounded-xl bg-white p-1.5" />
-              <p className="text-xs text-white/80 leading-relaxed">امسح الرمز لعرض الملف كاملاً على منصة محراب</p>
+              <img data-qr src={qr} alt="رمز QR لملف الإمام على منصة أئمة" className="w-28 h-28 rounded-xl bg-white p-1.5" />
+              <p className="text-xs text-white/80 leading-relaxed">امسح الرمز لعرض الملف كاملاً على منصة أئمة</p>
             </section>
           )}
         </aside>
@@ -392,7 +396,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
             <LogoMark className="w-11 h-11" />
             <p className="text-sm text-slate-700 leading-relaxed">
               <strong className="text-[#0b3a4f]">تبحث عن إمام أو قارئ لمسجدك؟</strong> تصفّح ملفات الأئمة المعتمدين وانشر
-              إعلانك مجاناً على منصة محراب:{' '}
+              إعلانك مجاناً على منصة أئمة:{' '}
               <span dir="ltr" className="font-bold text-[#0e4d64]">
                 {SITE_URL}
               </span>

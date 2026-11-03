@@ -145,7 +145,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
     if (!newSubject.trim() || !newContent.trim()) return;
 
     let receiverUid = ADMIN_INBOX;
-    let receiverName = 'إدارة محراب';
+    let receiverName = 'إدارة منصة أئمة';
     let relatedMosqueId: string | undefined;
     let relatedImamId: string | undefined;
 
@@ -223,9 +223,9 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
   // Which recipient types this role may write to.
   const recipientOptions: { type: RecipientType; label: string }[] =
     currentRole === 'imam'
-      ? [{ type: 'mosque', label: '🕌 إلى مسجد' }, { type: 'admin', label: '🛡️ إدارة محراب' }]
+      ? [{ type: 'mosque', label: '🕌 إلى مسجد' }, { type: 'admin', label: '🛡️ إدارة منصة أئمة' }]
       : currentRole === 'mosque'
-      ? [{ type: 'imam', label: '🎙️ إلى إمام' }, { type: 'admin', label: '🛡️ إدارة محراب' }]
+      ? [{ type: 'imam', label: '🎙️ إلى إمام' }, { type: 'admin', label: '🛡️ إدارة منصة أئمة' }]
       : [{ type: 'imam', label: '🎙️ إلى إمام' }, { type: 'mosque', label: '🕌 إلى مسجد' }];
 
   return (
@@ -249,7 +249,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
               )}
             </div>
             <p className="text-xs text-slate-500">
-              التواصل المباشر بين الأئمة وإدارات المساجد، وإشعارات التوثيق من إدارة منصة محراب
+              التواصل المباشر بين الأئمة وإدارات المساجد، وإشعارات التوثيق من إدارة منصة أئمة
             </p>
           </div>
         </div>
@@ -304,7 +304,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
           }`}
         >
           <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-          <span>رسائل إدارة محراب</span>
+          <span>رسائل إدارة منصة أئمة</span>
         </button>
 
         <button
@@ -359,7 +359,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                         {isAdmin ? (
                           <span className="bg-emerald-900 text-amber-300 text-xs px-2 py-0.5 rounded font-black flex items-center gap-1">
                             <ShieldCheck className="w-3 h-3 text-amber-400" />
-                            إدارة محراب
+                            إدارة منصة أئمة
                           </span>
                         ) : sentByMe ? (
                           <span className="bg-blue-100 text-blue-900 text-xs px-2 py-0.5 rounded font-bold">
@@ -411,7 +411,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                         : 'bg-amber-100 text-amber-900'
                     }`}>
                       {selectedMessage.senderType === 'admin'
-                        ? '🛡️ رسالة رسمية من إدارة منصة محراب'
+                        ? '🛡️ رسالة رسمية من إدارة منصة أئمة'
                         : selectedMessage.category === 'interview'
                         ? '🗓️ دعوة لمقابلة رسمية'
                         : '💬 استفسار ومراسلة مباشرة'}

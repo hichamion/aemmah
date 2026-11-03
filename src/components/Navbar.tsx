@@ -108,7 +108,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           >
             <LogoMark className="w-10 h-10 shadow-xs rounded-xl" />
             <span className="text-xl sm:text-2xl font-black tracking-tight text-white font-amiri">
-              مِحراب
+              منصة أئمة
             </span>
           </button>
 

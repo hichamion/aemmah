@@ -38,7 +38,7 @@ export const Footer: React.FC<FooterProps> = ({
             <div className="flex items-center gap-2.5">
               <LogoMark className="w-10 h-10" />
               <span className="text-white text-lg font-black font-amiri tracking-wide">
-                مِحراب <span className="text-amber-400 font-sans text-sm font-bold">Mihrab</span>
+                منصة أئمة <span className="text-amber-400 font-sans text-sm font-bold">Aemmah</span>
               </span>
             </div>
             <p className="leading-relaxed">
@@ -99,7 +99,7 @@ export const Footer: React.FC<FooterProps> = ({
         </div>
 
         <div className="pt-6 border-t border-slate-900 text-xs text-slate-500">
-          <p>© {new Date().getFullYear()} مِحراب (Mihrab). جميع الحقوق محفوظة.</p>
+          <p>© {new Date().getFullYear()} منصة أئمة (Aemmah). جميع الحقوق محفوظة.</p>
         </div>
       </div>
     </footer>

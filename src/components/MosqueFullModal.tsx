@@ -49,7 +49,7 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
 
   const isApproved = mosque.approvalStatus === 'approved';
   const shareUrl = isApproved ? `${window.location.origin}${window.location.pathname}#/mosques/${mosque.id}` : undefined;
-  const fileName = `Mihrab-Mosque-${mosque.id.replace(/[^\w-]/g, '').slice(0, 10)}`;
+  const fileName = `Aemmah-Mosque-${mosque.id.replace(/[^\w-]/g, '').slice(0, 10)}`;
 
   const handleCopyLink = async () => {
     if (!shareUrl) return;
@@ -75,7 +75,7 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
         await shareImage(
           png,
           fileName,
-          `${mosque.mosqueName} (${mosque.city}) — ${mosque.lookingType}.\nللتقديم عبر منصة محراب التي تربط الأئمة بالمساجد في أوروبا:`,
+          `${mosque.mosqueName} (${mosque.city}) — ${mosque.lookingType}.\nللتقديم عبر منصة أئمة التي تربط الأئمة بالمساجد في أوروبا:`,
           shareUrl || `https://${SITE_URL}/`
         );
     } catch (err) {

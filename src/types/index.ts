@@ -1,5 +1,5 @@
 /**
- * Data model for Mihrab.
+ * Data model for Aemmah (منصة أئمة).
  *
  * Public documents (imams, mosques) contain no phone numbers or e-mails.
  * Contact details live in separate collections (imamContacts, mosqueContacts)

@@ -34,7 +34,7 @@ export const PrivacyPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <section className="space-y-2">
           <h2 className="font-black text-slate-900">1. الجهة المسؤولة</h2>
           <p>
-            المسؤول عن معالجة البيانات في منصة «محراب» هو: {OPERATOR.name}، {OPERATOR.address}. للتواصل بخصوص بياناتك:{' '}
+            المسؤول عن معالجة البيانات في منصة «أئمة» هو: {OPERATOR.name}، {OPERATOR.address}. للتواصل بخصوص بياناتك:{' '}
             <span dir="ltr">{OPERATOR.email}</span>.
           </p>
         </section>
