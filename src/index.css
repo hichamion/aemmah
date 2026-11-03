@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
- * Mihrab palette, inspired by night / Islamic app designs:
+ * Aemmah palette, inspired by night / Islamic app designs:
  * deep teal-green (emerald), teal-cyan and night navy (sky / blue), warm gold (amber).
  * Overriding the Tailwind scales recolours every component at once.
  */
@@ -59,16 +59,12 @@
 /*
  * Andalusi / Maghribi titles. First choice: an Andalusi font — the "Andalus" font installed on the
  * visitor's computer (Windows), or a font file placed at public/fonts/andalusi.woff2 (see public/fonts/README.txt).
+ * The @font-face is declared in index.html so its relative URL works under any base path.
  * Otherwise the bundled Maghribi-style Ruwudu font is used.
  */
-@font-face {
-  font-family: 'MihrabAndalusi';
-  src: local('Andalus'), local('Andalus Regular'), url('/mihrab/fonts/andalusi.woff2') format('woff2');
-  font-display: swap;
-}
 
 .font-maghribi {
-  font-family: 'MihrabAndalusi', 'Ruwudu', 'Amiri', serif;
+  font-family: 'AemmahAndalusi', 'Ruwudu', 'Amiri', serif;
   font-weight: 700;
   line-height: 1.5;
 }
@@ -149,4 +145,55 @@
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.06) 28%, transparent 45%);
   pointer-events: none;
   z-index: 1;
+}
+
+/* Bold Kufic titles (intro). */
+.font-kufi {
+  font-family: 'Reem Kufi', 'Cairo', sans-serif;
+  font-weight: 700;
+}
+
+/* ---------------- Intro screen ---------------- */
+@keyframes intro-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes intro-fade-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes intro-title {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); filter: blur(12px); letter-spacing: 0.25em; }
+  to { opacity: 1; transform: none; filter: blur(0); letter-spacing: 0; }
+}
+@keyframes intro-shine { from { background-position: 200% 50%; } to { background-position: -200% 50%; } }
+@keyframes intro-swing { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes intro-drop { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: none; } }
+@keyframes intro-flicker { 0%, 100% { opacity: 1; } 45% { opacity: 0.75; } 60% { opacity: 0.95; } }
+@keyframes intro-twinkle { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.15); } }
+@keyframes intro-grow { from { opacity: 0; transform: scaleX(0); } to { opacity: 1; transform: none; } }
+@keyframes intro-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(248, 187, 71, 0.45); } 50% { box-shadow: 0 0 0 14px rgba(248, 187, 71, 0); } }
+@keyframes intro-leave { to { opacity: 0; transform: scale(1.06); filter: blur(6px); } }
+
+.intro-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: intro-draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.2s forwards; }
+.intro-draw-2 { animation-delay: 0.6s; }
+.intro-draw-3 { animation-duration: 1s; animation-delay: 1.2s; }
+.intro-glow { opacity: 0; animation: intro-fade-up 1.2s ease 1.4s forwards; }
+.intro-lantern { opacity: 0; transform-origin: 120px 60px; animation: intro-drop 0.8s ease-out 1.5s forwards, intro-swing 3.2s ease-in-out 2.3s infinite; }
+.intro-flame { animation: intro-flicker 1.4s ease-in-out 2s infinite; }
+.intro-title {
+  opacity: 0;
+  background: linear-gradient(100deg, #f8bb47 20%, #fff6dc 40%, #f8bb47 60%) 0 0 / 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: intro-title 1s cubic-bezier(0.2, 0.8, 0.2, 1) 1.9s forwards, intro-shine 4s linear 3s infinite;
+}
+.intro-sub { opacity: 0; animation: intro-fade-up 0.8s ease 2.6s forwards; }
+.intro-line { opacity: 0; animation: intro-grow 0.7s ease 3s forwards; }
+.intro-ayah { opacity: 0; animation: intro-fade-up 1s ease 3.3s forwards; }
+.intro-ayah-ref { opacity: 0; animation: intro-fade-up 0.8s ease 3.7s forwards; }
+.intro-enter { opacity: 0; animation: intro-fade-up 0.7s ease 4.1s forwards, intro-pulse 2.2s ease 4.8s infinite; }
+.intro-star { opacity: 0.4; animation: intro-twinkle 3s ease-in-out infinite; }
+.intro-leave { animation: intro-leave 0.7s ease forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .intro *, .intro { animation: none !important; }
+  .intro .intro-draw { stroke-dashoffset: 0; }
+  .intro [class*='intro-'] { opacity: 1; }
+  .intro-leave { opacity: 0; }
 }

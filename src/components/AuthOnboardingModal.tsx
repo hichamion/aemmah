@@ -11,7 +11,7 @@ import { AUTH_METHODS } from '../config';
 
 interface AuthOnboardingModalProps {
   isOpen: boolean;
-  /** Signed in with Google/Facebook but no Mihrab profile yet. */
+  /** Signed in with Google/Facebook but no Aemmah profile yet. */
   needsOnboarding: boolean;
   firebaseUser: User | null;
   onClose: () => void;
@@ -121,7 +121,7 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
               <h3 className="text-lg sm:text-xl font-black font-amiri">
                 {step === 'login' ? 'تسجيل الدخول إلى حسابك' : 'إكمال إنشاء حسابك'}
               </h3>
-              <p className="text-xs text-slate-300">منصة مِحراب للأئمة والمساجد</p>
+              <p className="text-xs text-slate-300">منصة أئمة للأئمة والمساجد</p>
             </div>
           </div>
           <button

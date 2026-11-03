@@ -58,7 +58,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ defaultName, defaultEm
             راسل الإدارة أو أرسل اقتراحاً
           </h1>
           <p className="text-sm text-slate-600">
-            رسالتك تصل إلى إدارة محراب فقط. اترك بريدك إن أردت أن نرد عليك.
+            رسالتك تصل إلى إدارة منصة أئمة فقط. اترك بريدك إن أردت أن نرد عليك.
           </p>
         </header>
 

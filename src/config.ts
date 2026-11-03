@@ -28,8 +28,8 @@ export const SUPPORT = {
     iban: '',
     bic: '',
     bankName: '',
-    /** Suggested transfer reference, e.g. 'Spende Mihrab' */
-    reference: 'دعم منصة محراب',
+    /** Suggested transfer reference, e.g. 'Spende Aemmah' */
+    reference: 'دعم منصة أئمة',
   },
 };
 

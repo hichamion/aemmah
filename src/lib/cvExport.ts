@@ -72,4 +72,4 @@ export async function shareImage(png: Blob, baseName: string, text: string, link
 }
 
 /** ASCII file name: browsers replace non-Latin download names with a generic "download". */
-export const cvFileName = (id: string) => `Mihrab-CV-${id.replace(/[^\w-]/g, '').slice(0, 10)}`;
+export const cvFileName = (id: string) => `Aemmah-CV-${id.replace(/[^\w-]/g, '').slice(0, 10)}`;

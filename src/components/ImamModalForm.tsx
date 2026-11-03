@@ -480,17 +480,18 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
             )}
           </div>
 
-          {/* SECTION: experience and preferred countries */}
-          <div className="bg-amber-50/60 p-4 md:p-5 rounded-2xl border border-amber-200 space-y-4">
-            <h4 className="font-extrabold text-amber-950 text-sm">الخبرات العملية والدول المفضلة</h4>
-            <fieldset className="space-y-2">
-              <legend className="block font-bold text-amber-950 mb-1">الوظائف والمهام التي زاولتها (أضف ما شئت)</legend>
-              <ExperienceEditor value={fields.experiences || []} onChange={(v) => set('experiences', v)} />
-            </fieldset>
-            <fieldset className="space-y-2">
-              <legend className="block font-bold text-amber-950 mb-1">الدول التي تفضّل الإمامة فيها (اختر واحدة أو أكثر)</legend>
-              <PreferredLocationsEditor value={fields.preferredLocations || []} onChange={(v) => set('preferredLocations', v)} />
-            </fieldset>
+          {/* SECTION: positions held */}
+          <div className="bg-amber-50/60 p-4 md:p-5 rounded-2xl border border-amber-200 space-y-3">
+            <h4 className="font-extrabold text-amber-950 text-sm">الخبرات والوظائف السابقة</h4>
+            <p className="text-xs text-slate-600">أضف كل وظيفة أو مهمة زاولتها، مع سنة البداية وسنة النهاية (أو «حتى الآن»). اختياري.</p>
+            <ExperienceEditor value={fields.experiences || []} onChange={(v) => set('experiences', v)} />
+          </div>
+
+          {/* SECTION: preferred countries and places */}
+          <div className="bg-sky-50/60 p-4 md:p-5 rounded-2xl border border-sky-200 space-y-3">
+            <h4 className="font-extrabold text-sky-950 text-sm">الدول والأماكن المفضلة للإمامة</h4>
+            <p className="text-xs text-slate-600">اختر دولة أو أكثر، واكتب بجانب كل دولة المدينة أو المنطقة إن أردت، أو اتركها فارغة. اختياري.</p>
+            <PreferredLocationsEditor value={fields.preferredLocations || []} onChange={(v) => set('preferredLocations', v)} />
           </div>
 
           {/* SECTION 4 */}

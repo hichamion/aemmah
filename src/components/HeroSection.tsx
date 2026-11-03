@@ -58,7 +58,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </p>
 
           <h1 className="text-4xl sm:text-6xl text-white font-maghribi drop-shadow-lg">
-            منصة <span className="text-amber-400">محراب</span> للأئمة والمساجد
+            منصة <span className="text-amber-400">أئمة</span>
           </h1>
 
           <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
@@ -78,7 +78,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <div className="space-y-5 text-center sm:text-right">
               <div className="flex items-center justify-end">
                 <span className="glass rounded-full px-3 py-1 text-white text-sm font-bold tabular-nums">
-                  {imamsCount > 0 ? `${imamsCount} إمام متاح حالياً` : 'كن أول إمام يسجّل في محراب'}
+                  {imamsCount > 0 ? `${imamsCount} إمام متاح حالياً` : 'كن أول إمام يسجّل في منصة أئمة'}
                 </span>
               </div>
 
@@ -120,7 +120,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             <div className="space-y-5 text-center sm:text-right">
               <div className="flex items-center justify-end">
                 <span className="glass rounded-full px-3 py-1 text-white text-sm font-bold tabular-nums">
-                  {mosquesCount > 0 ? `${mosquesCount} مسجد يبحث عن إمام` : 'انشر أول إعلان على محراب'}
+                  {mosquesCount > 0 ? `${mosquesCount} مسجد يبحث عن إمام` : 'انشر أول إعلان على منصة أئمة'}
                 </span>
               </div>
 

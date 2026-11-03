@@ -36,7 +36,7 @@ export const SupportPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <header className="space-y-2">
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 font-amiri flex items-center gap-2">
             <HeartHandshake className="w-7 h-7 text-emerald-700" />
-            ادعم منصة محراب
+            ادعم منصة أئمة
           </h1>
           <p className="text-sm text-slate-600 leading-relaxed">
             المنصة مجانية للأئمة والمساجد. الدعم اختياري تماماً، ويساعد على تغطية تكاليف التشغيل والتطوير. جزاكم الله

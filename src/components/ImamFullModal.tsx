@@ -80,7 +80,7 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
         await shareImage(
           png,
           name,
-          `السيرة الذاتية للشيخ ${imam.name} — إمام وقارئ (${imam.riwaya}).\nمنصة محراب تربط الأئمة والقرّاء بالمساجد في أوروبا:`,
+          `السيرة الذاتية للشيخ ${imam.name} — إمام وقارئ (${imam.riwaya}).\nمنصة أئمة تربط الأئمة والقرّاء بالمساجد في أوروبا:`,
           profileUrl || `https://${SITE_URL}/`
         );
     } catch (err) {
@@ -98,7 +98,7 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
         id={imam.id}
         canView
         lockedText="تعذر تحميل بيانات التواصل"
-        emailSubject={`تواصل من إدارة مسجد عبر منصة محراب - ${imam.name}`}
+        emailSubject={`تواصل من إدارة مسجد عبر منصة أئمة - ${imam.name}`}
       />
     </div>
   ) : (

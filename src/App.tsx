@@ -52,6 +52,7 @@ import { ReportModal } from './components/ReportModal';
 import { PrivacyPage } from './components/PrivacyPage';
 import { Footer } from './components/Footer';
 import { MobileNav } from './components/MobileNav';
+import { Intro, shouldShowIntro } from './components/Intro';
 import { MIN_ITEMS_FOR_STATS, SUPPORT_ENABLED } from './config';
 import { ContactPage } from './components/ContactPage';
 import { SupportPage } from './components/SupportPage';
@@ -78,14 +79,14 @@ const VIEW_TO_HASH: Record<View, string> = {
 };
 
 const VIEW_TITLES: Record<View, string> = {
-  home: 'محراب | منصة للربط بين الأئمة والمساجد في أوروبا',
-  dashboard: 'إحصائيات المنصة | محراب',
-  imam: 'إعلانات المساجد | محراب',
-  mosque: 'الأئمة المتاحون | محراب',
-  admin: 'لوحة الإدارة | محراب',
-  privacy: 'سياسة الخصوصية | محراب',
-  contact: 'راسل الإدارة | محراب',
-  support: 'ادعم المنصة | محراب',
+  home: 'منصة أئمة | جسر تواصل بين الأئمة والمساجد',
+  dashboard: 'إحصائيات المنصة | منصة أئمة',
+  imam: 'إعلانات المساجد | منصة أئمة',
+  mosque: 'الأئمة المتاحون | منصة أئمة',
+  admin: 'لوحة الإدارة | منصة أئمة',
+  privacy: 'سياسة الخصوصية | منصة أئمة',
+  contact: 'راسل الإدارة | منصة أئمة',
+  support: 'ادعم المنصة | منصة أئمة',
 };
 
 function parseHash(hash: string): { view: View; imamId?: string; mosqueId?: string } {
@@ -156,6 +157,9 @@ export default function App() {
   // ------------------------------------------------------------------
   // Toasts
   // ------------------------------------------------------------------
+  // Opening screen, once per session, when landing on the home page.
+  const [showIntro, setShowIntro] = useState(shouldShowIntro);
+
   const [toast, setToast] = useState<Toast>(null);
   const showToast = useCallback((msg: string, kind: 'success' | 'error' = 'success') => {
     setToast({ msg, kind });
@@ -203,7 +207,7 @@ export default function App() {
   const totalUnreadMessages = messages.filter((m) => !m.isRead && isIncoming(m)).length;
 
   const displayName =
-    role === 'imam' && myImam ? myImam.name : profile?.displayName || firebaseUser?.displayName || 'مستخدم محراب';
+    role === 'imam' && myImam ? myImam.name : profile?.displayName || firebaseUser?.displayName || 'مستخدم منصة أئمة';
   const canSeeImamContacts = role === 'admin' || (role === 'mosque' && profile?.verified === true);
   // Same rule as mosqueContacts in firestore.rules: admins and imams whose profile is approved.
   const canSeeMosqueContacts = role === 'admin' || (role === 'imam' && myImam?.approvalStatus === 'approved');
@@ -838,7 +842,7 @@ export default function App() {
                 onDeleteFeedback={handleDeleteFeedback}
                 onOpenImamAdd={handleOpenImamAdd}
                 onOpenMosqueAdd={handleOpenMosqueAdd}
-                inbox={{ ...inboxProps, currentName: 'إدارة محراب', onBroadcast: handleBroadcast }}
+                inbox={{ ...inboxProps, currentName: 'إدارة منصة أئمة', onBroadcast: handleBroadcast }}
               />
             )}
 
@@ -869,6 +873,8 @@ export default function App() {
         onOpenContact={() => setCurrentView('contact')}
         onOpenSupport={SUPPORT_ENABLED ? () => setCurrentView('support') : undefined}
       />
+
+      {showIntro && <Intro onDone={() => setShowIntro(false)} />}
 
       <MobileNav
         currentView={currentView}

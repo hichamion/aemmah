@@ -81,7 +81,7 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
                 <ContactLine icon={<Mail className="w-4 h-4" />} value={contact?.email ?? ''} ltr />
                 {!contact && (
                   <p className="text-xs text-white/75 leading-relaxed">
-                    بيانات التواصل متاحة للأئمة المعتمدين على منصة محراب.
+                    بيانات التواصل متاحة للأئمة المعتمدين على منصة أئمة.
                   </p>
                 )}
               </>
@@ -104,8 +104,8 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
 
           {qr && (
             <section className="pt-2 flex flex-col items-center gap-2 text-center">
-              <img data-qr src={qr} alt="رمز QR لإعلان المسجد على منصة محراب" className="w-28 h-28 rounded-xl bg-white p-1.5" />
-              <p className="text-xs text-white/80 leading-relaxed">امسح الرمز للتقديم على الإعلان عبر منصة محراب</p>
+              <img data-qr src={qr} alt="رمز QR لإعلان المسجد على منصة أئمة" className="w-28 h-28 rounded-xl bg-white p-1.5" />
+              <p className="text-xs text-white/80 leading-relaxed">امسح الرمز للتقديم على الإعلان عبر منصة أئمة</p>
             </section>
           )}
         </aside>
@@ -183,7 +183,7 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
           <aside className="mt-auto rounded-2xl border border-[#0b5e37]/15 bg-gradient-to-l from-[#e8f6ee] to-white p-4 flex items-center gap-3">
             <LogoMark className="w-11 h-11" />
             <p className="text-sm text-slate-700 leading-relaxed">
-              <strong style={{ color: TONE }}>أنت إمام أو قارئ؟</strong> أنشئ ملفك مجاناً على منصة محراب وتقدّم لهذا الإعلان
+              <strong style={{ color: TONE }}>أنت إمام أو قارئ؟</strong> أنشئ ملفك مجاناً على منصة أئمة وتقدّم لهذا الإعلان
               ولإعلانات مساجد أوروبا:{' '}
               <span dir="ltr" className="font-bold" style={{ color: TONE }}>
                 {SITE_URL}
