@@ -170,3 +170,49 @@ export function imamTitle(titles?: string[]): string {
   const t = (titles || []).map((x) => x.trim()).filter(Boolean);
   return t.length ? t.join(' • ') : 'إمام وقارئ';
 }
+
+/** European countries offered as "preferred countries" (the imam can also type another one). */
+export const EUROPEAN_COUNTRIES = [
+  'ألمانيا', 'فرنسا', 'بلجيكا', 'هولندا', 'إسبانيا', 'إيطاليا', 'المملكة المتحدة', 'سويسرا', 'النمسا',
+  'السويد', 'النرويج', 'الدنمارك', 'فنلندا', 'أيرلندا', 'البرتغال', 'لوكسمبورغ', 'بولندا', 'اليونان',
+];
+
+export const LANGUAGE_LEVELS: { value: import('../types').LanguageLevel; label: string; dots: number }[] = [
+  { value: 'native', label: 'اللغة الأم', dots: 5 },
+  { value: 'excellent', label: 'ممتاز', dots: 5 },
+  { value: 'very_good', label: 'جيد جداً', dots: 4 },
+  { value: 'good', label: 'جيد', dots: 3 },
+  { value: 'basic', label: 'مبتدئ', dots: 2 },
+];
+
+export const MARITAL_LABELS: Record<string, string> = {
+  single: 'أعزب',
+  married: 'متزوج',
+  married_children: 'متزوج وله أطفال',
+};
+
+/** Visa / immigration line shown on cards and the CV. */
+export function visaStatusText(imam: { hasVisa: 'yes' | 'no'; livesInEurope?: boolean }): string {
+  if (imam.livesInEurope) return 'مقيم في أوروبا (لا يحتاج إجراءات استقدام)';
+  if (imam.hasVisa === 'yes') return 'لديه تأشيرة شنغن / إقامة أوروبية';
+  return 'يحتاج إجراءات استقدام إلى أوروبا';
+}
+
+/** Languages with levels; older profiles only have the free-text list (and maybe a German level). */
+export function imamLanguages(imam: {
+  languageList?: import('../types').ImamLanguage[];
+  languages: string;
+  germanLevel?: string;
+}): { name: string; level?: import('../types').LanguageLevel }[] {
+  if (imam.languageList?.length) return imam.languageList.filter((l) => l.name.trim());
+  const list: { name: string; level?: import('../types').LanguageLevel }[] = splitList(imam.languages).map((name) => ({ name }));
+  const de = imam.germanLevel;
+  if (de && de !== 'none' && !list.some((l) => l.name.includes('الألمانية'))) {
+    list.push({ name: `الألمانية (${de})`, level: de.startsWith('C') || de === 'B2+' ? 'very_good' : de.startsWith('B') ? 'good' : 'basic' });
+  }
+  return list;
+}
+
+/** "ألمانيا (كولونيا)، فرنسا" */
+export const formatPreferredLocations = (locs?: import('../types').PreferredLocation[]) =>
+  (locs || []).map((l) => (l.area.trim() ? `${l.country} (${l.area.trim()})` : l.country)).join('، ');

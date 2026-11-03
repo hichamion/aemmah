@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import {
   BookOpen,
   Flag,
+  Briefcase,
+  Heart,
+  Award,
+  Globe2,
   CalendarClock,
   GraduationCap,
   Languages,
@@ -14,7 +18,16 @@ import {
   Video,
 } from 'lucide-react';
 import { ImamContact, ImamProfile } from '../types';
-import { getSafeImamAvatar, imamTitle, safeHttpUrl } from '../utils/helpers';
+import {
+  formatPreferredLocations,
+  getSafeImamAvatar,
+  imamLanguages,
+  imamTitle,
+  LANGUAGE_LEVELS,
+  MARITAL_LABELS,
+  safeHttpUrl,
+  visaStatusText,
+} from '../utils/helpers';
 import { LogoMark } from './Logo';
 
 /*
@@ -32,7 +45,6 @@ const AVAILABILITY: Record<ImamProfile['availabilityState'], string> = {
   paused: 'غير متاح حالياً',
 };
 
-const GERMAN_DOTS: Record<string, number> = { A1: 1, A2: 2, B1: 3, B2: 4, 'B2+': 4, C1: 5, C2: 5 };
 
 const splitList = (v: string) =>
   v
@@ -146,8 +158,9 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
     const qrTarget = profileUrl || `https://${SITE_URL}/`;
     const qr = useQrCode(qrTarget);
 
-    const languages = splitList(imam.languages);
-    const germanDots = GERMAN_DOTS[imam.germanLevel] ?? 0;
+    const langs = imamLanguages(imam);
+    const dotsFor = (level?: string) => LANGUAGE_LEVELS.find((l) => l.value === level)?.dots ?? 0;
+    const yearRange = (from: string, to: string) => (from || to ? `${from || '…'} – ${to || 'حتى الآن'}` : '');
     const youtube = safeHttpUrl(imam.youtubeUrl);
 
     const qualifications = [
@@ -192,6 +205,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
             <ContactLine icon={<User className="w-4 h-4" />} value={imam.age ? `${imam.age} سنة` : ''} />
             <ContactLine icon={<Flag className="w-4 h-4" />} value={imam.nationality ? `الجنسية: ${imam.nationality}` : ''} />
             <ContactLine icon={<MapPin className="w-4 h-4" />} value={imam.country ? `مقيم في: ${imam.country}` : ''} />
+            <ContactLine icon={<Heart className="w-4 h-4" />} value={imam.maritalStatus ? MARITAL_LABELS[imam.maritalStatus] ?? '' : ''} />
             {contactSlot ?? (
               <>
                 <ContactLine icon={<Phone className="w-4 h-4" />} value={contact?.phone ?? ''} ltr />
@@ -213,26 +227,48 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
             </ul>
           </section>
 
-          {(languages.length > 0 || germanDots > 0) && (
+          {langs.length > 0 && (
             <section className="space-y-3">
               <SideTitle icon={<Languages className="w-5 h-5" />}>اللغات</SideTitle>
               <ul className="space-y-2.5 text-sm">
-                {languages.map((l) => (
-                  <li key={l} className="flex gap-2.5">
+                {langs.map((l) => {
+                  const dots = dotsFor(l.level);
+                  return (
+                    <li key={l.name} className="flex items-center justify-between gap-3">
+                      <span className="flex gap-2.5 items-center">
+                        <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+                        <span>
+                          {l.name}
+                          {l.level === 'native' && <span className="text-white/70 text-xs"> (اللغة الأم)</span>}
+                        </span>
+                      </span>
+                      {dots > 0 && (
+                        <span className="flex gap-1.5 shrink-0" aria-label={`المستوى ${dots} من 5`}>
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <span key={i} className={`w-2.5 h-2.5 rounded-full ${i <= dots ? 'bg-amber-400' : 'bg-white/20'}`} />
+                          ))}
+                        </span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          )}
+
+          {(imam.preferredLocations?.length ?? 0) > 0 && (
+            <section className="space-y-3">
+              <SideTitle icon={<Globe2 className="w-5 h-5" />}>يفضّل الإمامة في</SideTitle>
+              <ul className="space-y-2 text-sm">
+                {imam.preferredLocations!.map((l) => (
+                  <li key={l.country} className="flex gap-2.5 leading-relaxed">
                     <span className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0" />
-                    <span>{l}</span>
-                  </li>
-                ))}
-                {germanDots > 0 && (
-                  <li className="flex items-center justify-between gap-3">
-                    <span>الألمانية ({imam.germanLevel})</span>
-                    <span className="flex gap-1.5" aria-label={`المستوى ${germanDots} من 5`}>
-                      {[1, 2, 3, 4, 5].map((i) => (
-                        <span key={i} className={`w-3 h-3 rounded-full ${i <= germanDots ? 'bg-amber-400' : 'bg-white/20'}`} />
-                      ))}
+                    <span>
+                      {l.country}
+                      {l.area.trim() && <span className="text-white/75"> — {l.area}</span>}
                     </span>
                   </li>
-                )}
+                ))}
               </ul>
             </section>
           )}
@@ -269,23 +305,65 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
             </blockquote>
           )}
 
+          {(imam.currentJob?.trim() || (imam.experiences?.length ?? 0) > 0) && (
+            <section className="space-y-3">
+              <Ribbon icon={<Briefcase className="w-5 h-5" />}>الخبرات العملية</Ribbon>
+              <div className="space-y-2 pr-2">
+                <Row label="الوظيفة الحالية" value={imam.currentJob || ''} />
+              </div>
+              {(imam.experiences?.length ?? 0) > 0 && (
+                <ol className="relative border-r-2 border-amber-300 mr-3 pr-5 space-y-3">
+                  {imam.experiences!.map((e, i) => (
+                    <li key={i} className="relative text-sm leading-relaxed">
+                      <span className="absolute -right-[27px] top-1.5 w-3 h-3 rounded-full bg-amber-400 ring-4 ring-[#f7f9fa]" />
+                      <p className="font-black text-slate-800">
+                        {e.title}
+                        {e.place && <span className="font-normal text-slate-600"> — {e.place}</span>}
+                      </p>
+                      {yearRange(e.from, e.to) && <p className="text-xs font-bold text-[#0e4d64]">{yearRange(e.from, e.to)}</p>}
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </section>
+          )}
+
           <section className="space-y-3">
             <Ribbon icon={<GraduationCap className="w-5 h-5" />}>المؤهل العلمي</Ribbon>
             <div className="space-y-2 pr-2">
               <Row label="المؤهل" value={imam.degree} />
               <Row label="الرواية" value={imam.riwaya} />
-              <Row label="الشواهد والإجازات" value={imam.hasCerts === 'yes' ? 'نعم' : 'لا'} />
+              {!(imam.certificates?.length) && <Row label="الشواهد والإجازات" value={imam.hasCerts === 'yes' ? 'نعم' : 'لا'} />}
             </div>
           </section>
+
+          {(imam.certificates?.length ?? 0) > 0 && (
+            <section className="space-y-3">
+              <Ribbon icon={<Award className="w-5 h-5" />}>الشهادات والإجازات</Ribbon>
+              <ul className="space-y-2 pr-2 text-sm">
+                {imam.certificates!.map((c, i) => (
+                  <li key={i} className="flex gap-3 leading-relaxed">
+                    <span className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0" />
+                    <span>
+                      <span className="font-black text-slate-800">{c.name}</span>
+                      {c.issuer && <span className="text-slate-600"> — {c.issuer}</span>}
+                      {c.year && <span className="text-xs font-bold text-[#0e4d64]"> ({c.year})</span>}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
 
           <section className="space-y-3">
             <Ribbon icon={<Plane className="w-5 h-5" />}>الإقامة والتأشيرة</Ribbon>
             <div className="space-y-2 pr-2">
               <Row
                 label="الوضع"
-                value={imam.hasVisa === 'yes' ? 'لديه تأشيرة / إقامة أوروبية' : 'يحتاج إجراءات استقدام من المسجد'}
+                value={visaStatusText(imam)}
               />
-              <Row label="التفاصيل" value={imam.hasVisa === 'yes' ? imam.visaDetails : ''} />
+              <Row label="التفاصيل" value={imam.hasVisa === 'yes' || imam.livesInEurope ? imam.visaDetails : ''} />
+              <Row label="الدول المفضلة" value={formatPreferredLocations(imam.preferredLocations)} />
             </div>
           </section>
 

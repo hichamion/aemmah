@@ -64,20 +64,29 @@ service cloud.firestore {
 
     // ---------- imams ----------
     function validImam(d) {
-      return d.keys().hasOnly(['ownerUid', 'name', 'age', 'country', 'nationality', 'titles', 'hasVisa', 'visaDetails', 'hasCerts', 'degree',
+      return d.keys().hasOnly(['ownerUid', 'name', 'age', 'country', 'nationality', 'titles', 'currentJob', 'experiences',
+                               'certificates', 'preferredLocations', 'languageList', 'maritalStatus', 'livesInEurope', 'hasVisa', 'visaDetails', 'hasCerts', 'degree',
                                'riwaya', 'languages', 'germanLevel', 'youtubeUrl', 'cvText', 'availabilityState',
                                'ramadanNote', 'availableAfterDate', 'photo', 'visaFilePath', 'visaFileName',
                                'certsFilePath', 'certsFileName', 'approvalStatus', 'isVerified', 'createdAt', 'updatedAt'])
         && nonEmpty(d.name, 120)
-        && d.age is int && d.age >= 18 && d.age <= 90
-        && nonEmpty(d.country, 120)
+        // Only the name (and the protected phone / e-mail) are required; age 0 = not given.
+        && d.age is int && (d.age == 0 || (d.age >= 18 && d.age <= 90))
+        && str(d.country, 120)
         && str(d.get('nationality', ''), 80)
         && d.get('titles', []) is list && d.get('titles', []).size() <= 8
+        && str(d.get('currentJob', ''), 150)
+        && d.get('experiences', []) is list && d.get('experiences', []).size() <= 30
+        && d.get('certificates', []) is list && d.get('certificates', []).size() <= 30
+        && d.get('preferredLocations', []) is list && d.get('preferredLocations', []).size() <= 30
+        && d.get('languageList', []) is list && d.get('languageList', []).size() <= 20
+        && d.get('maritalStatus', '') in ['', 'single', 'married', 'married_children']
+        && d.get('livesInEurope', false) is bool
         && d.hasVisa in ['yes', 'no']
         && d.hasCerts in ['yes', 'no']
         && str(d.visaDetails, 500)
         && str(d.degree, 300)
-        && nonEmpty(d.riwaya, 60)
+        && str(d.riwaya, 60)
         && str(d.languages, 300)
         && str(d.germanLevel, 10)
         && str(d.youtubeUrl, 300)

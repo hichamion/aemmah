@@ -1,7 +1,7 @@
 import React from 'react';
-import { BookOpen, Flag, FileText, Globe2, Home, Languages, MapPin, Send, Check, Users } from 'lucide-react';
+import { BookOpen, Briefcase, Flag, FileText, Globe2, Home, Languages, MapPin, Plane, Send, Check, Star, Users } from 'lucide-react';
 import { ImamProfile, MosqueJob } from '../types';
-import { getSafeImamAvatar, getSafeMosquePhoto, imamTitle, splitList } from '../utils/helpers';
+import { formatPreferredLocations, getSafeImamAvatar, getSafeMosquePhoto, imamLanguages, imamTitle, visaStatusText } from '../utils/helpers';
 
 /*
  * Short, CV-looking cards for the imam and mosque lists. Clicking the card opens the full CV / ad
@@ -47,7 +47,7 @@ interface ImamMiniCardProps {
 
 export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, onOpen, onReport }) => {
   const busy = imam.availabilityState === 'busy_ramadan';
-  const languages = splitList(imam.languages).join('، ');
+  const languages = imamLanguages(imam).map((l) => l.name).join('، ');
 
   return (
     <article {...openOnCard(onOpen)} aria-label={`السيرة الذاتية: ${imam.name}`} className={cardCls}>
@@ -62,8 +62,8 @@ export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, 
           />
         </div>
         <div className="min-w-0 text-white">
-          <h3 className="font-black text-lg font-amiri leading-snug truncate">{imam.name}</h3>
-          <p className="text-amber-300 text-xs font-black">{imamTitle(imam.titles)}</p>
+          <h3 className="font-black text-2xl sm:text-[1.7rem] font-amiri leading-snug line-clamp-2">{imam.name}</h3>
+          <p className="text-amber-300 text-sm font-black">{imamTitle(imam.titles)}</p>
           {imam.isVerified && <span className="inline-block mt-1 text-[11px] font-black bg-emerald-500/90 px-2 py-0.5 rounded-full">✓ موثق</span>}
         </div>
       </div>
@@ -74,6 +74,9 @@ export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, 
           <Info icon={<MapPin className="w-3.5 h-3.5" />} label="الإقامة" value={imam.country} />
           <Info icon={<BookOpen className="w-3.5 h-3.5" />} label="الرواية" value={imam.riwaya} />
           <Info icon={<Languages className="w-3.5 h-3.5" />} label="اللغات" value={languages} />
+          <Info icon={<Briefcase className="w-3.5 h-3.5" />} label="الوظيفة الحالية" value={imam.currentJob} />
+          <Info icon={<Star className="w-3.5 h-3.5" />} label="يفضّل" value={formatPreferredLocations(imam.preferredLocations)} />
+          <Info icon={<Plane className="w-3.5 h-3.5" />} label="الإقامة في أوروبا" value={visaStatusText(imam)} />
         </div>
 
         <p
@@ -135,7 +138,7 @@ export const MosqueMiniCard: React.FC<MosqueMiniCardProps> = ({ mosque, contactB
         />
       </div>
       <div className="min-w-0 text-white">
-        <h3 className="font-black text-lg font-amiri leading-snug truncate">{mosque.mosqueName}</h3>
+        <h3 className="font-black text-2xl sm:text-[1.7rem] font-amiri leading-snug line-clamp-2">{mosque.mosqueName}</h3>
         <p className="text-amber-300 text-xs font-black line-clamp-1">{mosque.lookingType}</p>
         <p className="text-white/80 text-xs mt-0.5 flex items-center gap-1">
           <MapPin className="w-3 h-3" />

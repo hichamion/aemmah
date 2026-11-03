@@ -11,9 +11,11 @@ import {
   isValidPhone,
   safeHttpUrl,
   IMAM_TITLE_OPTIONS,
-  LANGUAGE_OPTIONS,
+  imamLanguages,
+  MARITAL_LABELS,
   splitList,
 } from '../utils/helpers';
+import { CertificateEditor, ExperienceEditor, LanguagesEditor, PreferredLocationsEditor } from './ImamCvEditor';
 import { X, Upload, Video, CheckCircle2, RotateCcw, Loader2 } from 'lucide-react';
 import { useDialog } from '../lib/useDialog';
 
@@ -34,6 +36,13 @@ const EMPTY_FIELDS: ImamEditableFields = {
   country: '',
   nationality: '',
   titles: ['إمام'],
+  currentJob: '',
+  experiences: [],
+  certificates: [],
+  preferredLocations: [],
+  languageList: [],
+  maritalStatus: '',
+  livesInEurope: false,
   hasVisa: 'no',
   visaDetails: '',
   hasCerts: 'no',
@@ -54,15 +63,12 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
   const [fields, setFields] = useState<ImamEditableFields>(EMPTY_FIELDS);
   const [contact, setContact] = useState(EMPTY_CONTACT);
   const [customTitles, setCustomTitles] = useState('');
-  const [otherLangs, setOtherLangs] = useState('');
   const allTitles = () =>
     Array.from(new Set([...(fields.titles || []).filter((t) => IMAM_TITLE_OPTIONS.includes(t)), ...splitList(customTitles)]))
       .map((t) => t.slice(0, 40))
       .slice(0, 8);
-  const allLanguages = () =>
-    Array.from(new Set([...splitList(fields.languages).filter((l) => LANGUAGE_OPTIONS.includes(l)), ...splitList(otherLangs)]))
-      .join('، ')
-      .slice(0, 300);
+  // Empty rows are dropped when saving.
+  const cleanLanguages = () => (fields.languageList || []).filter((l) => l.name.trim()).map((l) => ({ ...l, name: l.name.trim().slice(0, 40) }));
   const [photoPreview, setPhotoPreview] = useState<string>('');
   const [photoChanged, setPhotoChanged] = useState(false);
   const [visaFile, setVisaFile] = useState<File | null>(null);
@@ -82,10 +88,19 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
     setContact(EMPTY_CONTACT);
     if (initialData) {
       const { name, age, country, nationality, titles, hasVisa, visaDetails, hasCerts, degree, riwaya, languages, germanLevel, youtubeUrl, cvText, availabilityState, ramadanNote, availableAfterDate } = initialData;
+      const d = initialData;
       setFields({
         name, age, country, hasVisa, visaDetails, hasCerts, degree, riwaya,
         nationality: nationality || '',
         titles: titles?.length ? titles : ['إمام'],
+        currentJob: d.currentJob || '',
+        experiences: d.experiences || [],
+        certificates: d.certificates || [],
+        preferredLocations: d.preferredLocations || [],
+        // Older profiles only had a free-text list (and a German level): turn it into rows.
+        languageList: imamLanguages(d).map((l) => ({ name: l.name, level: l.level || 'good' })),
+        maritalStatus: d.maritalStatus || '',
+        livesInEurope: !!d.livesInEurope,
         languages: languages || '',
         germanLevel: germanLevel || 'none',
         youtubeUrl: youtubeUrl || '',
@@ -96,11 +111,9 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
       });
       setPhotoPreview(initialData.photo || '');
       setCustomTitles((titles || []).filter((t) => !IMAM_TITLE_OPTIONS.includes(t)).join('، '));
-      setOtherLangs(splitList(languages || '').filter((l) => !LANGUAGE_OPTIONS.includes(l)).join('، '));
     } else {
       setFields(EMPTY_FIELDS);
       setCustomTitles('');
-      setOtherLangs('');
       setContact(EMPTY_CONTACT);
       setPhotoPreview('');
     }
@@ -151,11 +164,9 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
 
   const validate = (): string | null => {
     if (!fields.name.trim()) return 'الاسم مطلوب.';
-    const age = Number(fields.age);
-    if (!Number.isFinite(age) || age < 18 || age > 90) return 'العمر يجب أن يكون بين 18 و 90 سنة.';
-    if (!fields.country.trim()) return 'مكان الإقامة الحالي مطلوب.';
-    if (!fields.nationality?.trim()) return 'الجنسية مطلوبة.';
-    if (allTitles().length === 0) return 'اختر صفة واحدة على الأقل (إمام، خطيب، محفظ…).';
+    // Everything else is optional; the age is checked only when given.
+    const age = Number(fields.age || 0);
+    if (age !== 0 && (!Number.isFinite(age) || age < 18 || age > 90)) return 'العمر يجب أن يكون بين 18 و 90 سنة (أو اتركه فارغاً).';
     if (!isValidPhone(contact.phone)) return 'رقم الهاتف غير صحيح. اكتبه بالصيغة الدولية مثل +212600000000';
     if (contact.whatsapp && !isValidPhone(contact.whatsapp)) return 'رقم الواتساب غير صحيح.';
     if (!isValidEmail(contact.email)) return 'البريد الإلكتروني غير صحيح.';
@@ -180,11 +191,21 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
           country: fields.country.trim(),
           nationality: (fields.nationality || '').trim().slice(0, 80),
           titles: allTitles(),
-          age: Math.round(Number(fields.age)),
+          age: Math.round(Number(fields.age || 0)) || 0,
+          currentJob: (fields.currentJob || '').trim().slice(0, 150),
+          experiences: (fields.experiences || [])
+            .filter((x) => x.title.trim() || x.place.trim())
+            .map((x) => ({ title: x.title.trim(), place: x.place.trim(), from: x.from, to: x.to })),
+          certificates: (fields.certificates || [])
+            .filter((x) => x.name.trim())
+            .map((x) => ({ name: x.name.trim(), issuer: x.issuer.trim(), year: x.year })),
+          preferredLocations: (fields.preferredLocations || []).map((x) => ({ country: x.country, area: x.area.trim() })),
+          languageList: cleanLanguages(),
           youtubeUrl: fields.youtubeUrl.trim(),
           visaDetails: fields.visaDetails.trim(),
           degree: fields.degree.trim(),
-          languages: allLanguages(),
+          // Kept in sync for search and for older screens.
+          languages: cleanLanguages().map((l) => l.name).join('، ').slice(0, 300),
           cvText: fields.cvText.trim(),
         },
         {
@@ -211,9 +232,6 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
   const knownTitles = (fields.titles || []).filter((t) => IMAM_TITLE_OPTIONS.includes(t));
   const toggleTitle = (t: string) =>
     set('titles', knownTitles.includes(t) ? knownTitles.filter((x) => x !== t) : [...knownTitles, t]);
-  const knownLangs = splitList(fields.languages).filter((l) => LANGUAGE_OPTIONS.includes(l));
-  const toggleLang = (l: string) =>
-    set('languages', (knownLangs.includes(l) ? knownLangs.filter((x) => x !== l) : [...knownLangs, l]).join('، '));
 
   const inputCls = 'w-full border border-slate-300 rounded-xl px-3 py-2 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500';
 
@@ -253,28 +271,28 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
                   className={`${inputCls} font-semibold`} />
               </div>
               <div>
-                <label htmlFor="im-age" className="block font-bold text-slate-700 mb-1">العمر (بالسنوات) *</label>
-                <input id="im-age" type="number" required min={18} max={90} inputMode="numeric"
+                <label htmlFor="im-age" className="block font-bold text-slate-700 mb-1">العمر (بالسنوات)</label>
+                <input id="im-age" type="number" min={18} max={90} inputMode="numeric"
                   value={fields.age || ''} onChange={(e) => set('age', Number(e.target.value))}
                   className={inputCls} />
               </div>
               <div>
-                <label htmlFor="im-nationality" className="block font-bold text-slate-700 mb-1">الجنسية *</label>
-                <input id="im-nationality" type="text" required maxLength={80} value={fields.nationality || ''}
+                <label htmlFor="im-nationality" className="block font-bold text-slate-700 mb-1">الجنسية</label>
+                <input id="im-nationality" type="text" maxLength={80} value={fields.nationality || ''}
                   onChange={(e) => set('nationality', e.target.value)} placeholder="مثال: مغربي"
                   className={`${inputCls} font-semibold`} />
               </div>
             </div>
 
             <div>
-              <label htmlFor="im-country" className="block font-bold text-slate-700 mb-1">مكان الإقامة الحالي (المدينة والبلد) *</label>
-              <input id="im-country" type="text" required maxLength={120} value={fields.country}
+              <label htmlFor="im-country" className="block font-bold text-slate-700 mb-1">مكان الإقامة الحالي (المدينة والبلد)</label>
+              <input id="im-country" type="text" maxLength={120} value={fields.country}
                 onChange={(e) => set('country', e.target.value)} placeholder="مثال: فاس، المغرب — أو: كولونيا، ألمانيا"
                 className={`${inputCls} font-semibold`} />
             </div>
 
             <fieldset className="space-y-2">
-              <legend className="block font-bold text-slate-700 mb-1">الصفة (يمكن اختيار أكثر من واحدة) *</legend>
+              <legend className="block font-bold text-slate-700 mb-1">الصفة (يمكن اختيار أكثر من واحدة)</legend>
               <div className="flex flex-wrap gap-2">
                 {IMAM_TITLE_OPTIONS.map((t) => {
                   const on = knownTitles.includes(t);
@@ -290,6 +308,23 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
                 placeholder="صفة أخرى (اختياري)، مثل: مؤذن، واعظ، مدرّس تجويد — افصل بينها بفاصلة"
                 aria-label="صفات أخرى" className={inputCls} />
             </fieldset>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="im-job" className="block font-bold text-slate-700 mb-1">الوظيفة / المهنة الحالية</label>
+                <input id="im-job" type="text" maxLength={150} value={fields.currentJob || ''}
+                  onChange={(e) => set('currentJob', e.target.value)} placeholder="مثال: إمام وخطيب بمسجد الرحمة، طنجة"
+                  className={inputCls} />
+              </div>
+              <div>
+                <label htmlFor="im-marital" className="block font-bold text-slate-700 mb-1">الحالة العائلية</label>
+                <select id="im-marital" value={fields.maritalStatus || ''} className={inputCls}
+                  onChange={(e) => set('maritalStatus', e.target.value as ImamEditableFields['maritalStatus'])}>
+                  <option value="">— لا أرغب في ذكرها —</option>
+                  {Object.entries(MARITAL_LABELS).map(([v, label]) => <option key={v} value={v}>{label}</option>)}
+                </select>
+              </div>
+            </div>
 
             <div className="pt-3 border-t border-slate-200/80">
               <p className="block font-bold text-slate-700 mb-2">الصورة الشخصية (اختيارية):</p>
@@ -348,9 +383,14 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
           {/* SECTION 2 */}
           <div className="bg-sky-50/70 p-4 md:p-5 rounded-2xl border border-sky-200 space-y-4">
             <h4 className="font-extrabold text-sky-950 text-sm">02. التأشيرة (الفيزا) والقدوم إلى أوروبا</h4>
+            <label className="flex items-center gap-2.5 bg-white border border-sky-200 rounded-xl p-3 cursor-pointer">
+              <input type="checkbox" checked={!!fields.livesInEurope} onChange={(e) => set('livesInEurope', e.target.checked)}
+                className="w-4 h-4 accent-sky-700" />
+              <span className="font-bold text-sky-950">أنا مقيم حالياً في دولة أوروبية (لا أحتاج إجراءات استقدام)</span>
+            </label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="im-visa" className="block font-bold text-sky-900 mb-1">هل لديك فيزا شنغن أو إقامة أوروبية حالياً؟ *</label>
+                <label htmlFor="im-visa" className="block font-bold text-sky-900 mb-1">هل لديك فيزا شنغن أو إقامة أوروبية حالياً؟</label>
                 <select id="im-visa" value={fields.hasVisa} onChange={(e) => set('hasVisa', e.target.value as 'yes' | 'no')}
                   className="w-full border border-sky-300 rounded-xl px-3 py-2 bg-white font-bold text-sky-950">
                   <option value="no">لا — ليس لدي فيزا حالياً</option>
@@ -388,7 +428,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
             <h4 className="font-extrabold text-emerald-950 text-sm">03. الشواهد العلمية، الرواية، واللغات</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <label htmlFor="im-certs" className="block font-bold text-emerald-900 mb-1">توفر الشواهد والإجازات *</label>
+                <label htmlFor="im-certs" className="block font-bold text-emerald-900 mb-1">توفر الشواهد والإجازات</label>
                 <select id="im-certs" value={fields.hasCerts} onChange={(e) => set('hasCerts', e.target.value as 'yes' | 'no')}
                   className="w-full border border-emerald-300 rounded-xl px-3 py-2 bg-white font-bold">
                   <option value="no">حافظ لكتاب الله (بدون شهادة)</option>
@@ -396,13 +436,13 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
                 </select>
               </div>
               <div>
-                <label htmlFor="im-degree" className="block font-bold text-emerald-900 mb-1">المؤهل والجهة المانحة</label>
+                <label htmlFor="im-degree" className="block font-bold text-emerald-900 mb-1">المؤهل العلمي الرئيسي</label>
                 <input id="im-degree" type="text" maxLength={300} value={fields.degree}
                   onChange={(e) => set('degree', e.target.value)} placeholder="مثال: إجازة في الدراسات الإسلامية"
                   className="w-full border border-emerald-300 rounded-xl px-3 py-2 bg-white font-semibold" />
               </div>
               <div>
-                <label htmlFor="im-riwaya" className="block font-bold text-emerald-900 mb-1">الرواية القرآنية المتقنة *</label>
+                <label htmlFor="im-riwaya" className="block font-bold text-emerald-900 mb-1">الرواية القرآنية المتقنة</label>
                 <select id="im-riwaya" value={fields.riwaya} onChange={(e) => set('riwaya', e.target.value)}
                   className="w-full border border-emerald-300 rounded-xl px-3 py-2 bg-white font-bold text-emerald-900">
                   <option value="ورش عن نافع">رواية ورش عن نافع</option>
@@ -413,36 +453,15 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <fieldset className="md:col-span-2 space-y-2">
-                <legend className="block font-bold text-emerald-900 mb-1">اللغات التي يتقنها</legend>
-                <div className="flex flex-wrap gap-2">
-                  {LANGUAGE_OPTIONS.map((l) => {
-                    const on = knownLangs.includes(l);
-                    return (
-                      <button key={l} type="button" aria-pressed={on} onClick={() => toggleLang(l)}
-                        className={`px-3.5 py-2 rounded-full border-2 font-bold text-xs transition cursor-pointer ${on ? 'border-emerald-600 bg-emerald-50 text-emerald-900' : 'border-slate-200 bg-white text-slate-600 hover:border-emerald-400'}`}>
-                        {on ? '✓ ' : ''}{l}
-                      </button>
-                    );
-                  })}
-                </div>
-                <input id="im-lang" type="text" maxLength={200} value={otherLangs} onChange={(e) => setOtherLangs(e.target.value)}
-                  placeholder="لغات أخرى (اختياري)، افصل بينها بفاصلة"
-                  className="w-full border border-emerald-300 rounded-xl px-3 py-2 bg-white" />
-              </fieldset>
-              <div>
-                <label htmlFor="im-de" className="block font-bold text-emerald-900 mb-1">شهادة اللغة الألمانية</label>
-                <select id="im-de" value={fields.germanLevel} onChange={(e) => set('germanLevel', e.target.value)}
-                  className="w-full border border-emerald-300 rounded-xl px-3 py-2 bg-white font-bold">
-                  <option value="none">لا توجد شهادة لغة ألمانية</option>
-                  <option value="A1">A1</option>
-                  <option value="A2">A2</option>
-                  <option value="B1">B1</option>
-                  <option value="B2+">B2 / C1</option>
-                </select>
-              </div>
-            </div>
+            <fieldset className="space-y-2">
+              <legend className="block font-bold text-emerald-900 mb-1">الشهادات والإجازات (أضف ما شئت)</legend>
+              <CertificateEditor value={fields.certificates || []} onChange={(v) => set('certificates', v)} />
+            </fieldset>
+
+            <fieldset className="space-y-2">
+              <legend className="block font-bold text-emerald-900 mb-1">اللغات ومستواك في كل لغة (أضف ما شئت)</legend>
+              <LanguagesEditor value={fields.languageList || []} onChange={(v) => set('languageList', v)} />
+            </fieldset>
 
             {fields.hasCerts === 'yes' && (
               <div className="bg-white p-3.5 rounded-xl border border-emerald-200 space-y-2">
@@ -459,6 +478,19 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
                 )}
               </div>
             )}
+          </div>
+
+          {/* SECTION: experience and preferred countries */}
+          <div className="bg-amber-50/60 p-4 md:p-5 rounded-2xl border border-amber-200 space-y-4">
+            <h4 className="font-extrabold text-amber-950 text-sm">الخبرات العملية والدول المفضلة</h4>
+            <fieldset className="space-y-2">
+              <legend className="block font-bold text-amber-950 mb-1">الوظائف والمهام التي زاولتها (أضف ما شئت)</legend>
+              <ExperienceEditor value={fields.experiences || []} onChange={(v) => set('experiences', v)} />
+            </fieldset>
+            <fieldset className="space-y-2">
+              <legend className="block font-bold text-amber-950 mb-1">الدول التي تفضّل الإمامة فيها (اختر واحدة أو أكثر)</legend>
+              <PreferredLocationsEditor value={fields.preferredLocations || []} onChange={(v) => set('preferredLocations', v)} />
+            </fieldset>
           </div>
 
           {/* SECTION 4 */}
