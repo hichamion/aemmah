@@ -391,17 +391,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
             </section>
           )}
 
-          {/* Indirect promotion for whoever receives the CV (e.g. on WhatsApp) */}
-          <aside className="mt-auto rounded-2xl border border-[#0b3a4f]/15 bg-gradient-to-l from-[#e6f6f9] to-white p-4 flex items-center gap-3">
-            <LogoMark className="w-11 h-11" />
-            <p className="text-sm text-slate-700 leading-relaxed">
-              <strong className="text-[#0b3a4f]">تبحث عن إمام أو قارئ لمسجدك؟</strong> تصفّح ملفات الأئمة المعتمدين وانشر
-              إعلانك مجاناً على منصة أئمة:{' '}
-              <span dir="ltr" className="font-bold text-[#0e4d64]">
-                {SITE_URL}
-              </span>
-            </p>
-          </aside>
+          <div className="mt-auto" aria-hidden />
 
           <CvFooter />
         </main>
