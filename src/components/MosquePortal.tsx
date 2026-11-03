@@ -88,10 +88,13 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
       imam.country.toLowerCase().includes(q) ||
       (imam.nationality || '').toLowerCase().includes(q) ||
       (imam.titles || []).some((t) => t.toLowerCase().includes(q)) ||
+      (imam.preferredLocations || []).some((l) => `${l.country} ${l.area}`.toLowerCase().includes(q)) ||
       imam.degree.toLowerCase().includes(q) ||
       imam.languages.toLowerCase().includes(q);
     const matchesAvail = availFilter === 'all' || imam.availabilityState === availFilter;
-    const matchesVisa = visaFilter === 'all' || imam.hasVisa === visaFilter;
+    // Living in Europe counts as "no immigration procedure needed", like having a visa.
+    const inEurope = imam.hasVisa === 'yes' || imam.livesInEurope ? 'yes' : 'no';
+    const matchesVisa = visaFilter === 'all' || inEurope === visaFilter;
     const matchesRiwaya = riwayaFilter === 'all' || imam.riwaya.includes(riwayaFilter);
     return matchesSearch && matchesAvail && matchesVisa && matchesRiwaya;
   });
@@ -207,8 +210,8 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
               className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold bg-white"
             >
               <option value="all">جميع حالات التأشيرة</option>
-              <option value="yes">لديه فيزا شنغن أو إقامة أوروبية</option>
-              <option value="no">يحتاج استقدام وتأشيرة عمل</option>
+              <option value="yes">مقيم في أوروبا أو لديه فيزا / إقامة</option>
+              <option value="no">يحتاج إجراءات استقدام إلى أوروبا</option>
             </select>
 
             <select

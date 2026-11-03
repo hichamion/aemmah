@@ -29,6 +29,30 @@ export interface UserProfile {
   privacyAcceptedAt: string;
 }
 
+export interface ImamExperience {
+  title: string;
+  place: string;
+  /** Years as text, e.g. '2015'. */
+  from: string;
+  to: string;
+}
+export interface ImamCertificate {
+  name: string;
+  issuer: string;
+  year: string;
+}
+export interface PreferredLocation {
+  country: string;
+  /** City or region; empty = anywhere in the country. */
+  area: string;
+}
+export type LanguageLevel = 'native' | 'excellent' | 'very_good' | 'good' | 'basic';
+export interface ImamLanguage {
+  name: string;
+  level: LanguageLevel;
+}
+export type MaritalStatus = '' | 'single' | 'married' | 'married_children';
+
 /** Firestore: imams/{id}. For self-registered imams the id equals the owner's uid (one profile per account). */
 export interface ImamProfile {
   id: string;
@@ -41,6 +65,19 @@ export interface ImamProfile {
   nationality?: string;
   /** What the imam does: «إمام», «خطيب», «محفظ» and/or titles they typed. */
   titles?: string[];
+  /** Current job or occupation (free text). */
+  currentJob?: string;
+  /** Past and present positions, as many as the imam wants. `to` empty = still in this position. */
+  experiences?: ImamExperience[];
+  /** Certificates, ijazas and diplomas, as many as the imam wants. */
+  certificates?: ImamCertificate[];
+  /** European countries (optionally a city / region in each) where the imam would like to serve. */
+  preferredLocations?: PreferredLocation[];
+  /** Languages with a level. The older free-text `languages` field is kept in sync for search. */
+  languageList?: ImamLanguage[];
+  maritalStatus?: MaritalStatus;
+  /** Already lives in a European country (so no immigration procedure is needed). */
+  livesInEurope?: boolean;
   hasVisa: 'yes' | 'no';
   visaDetails: string;
   hasCerts: 'yes' | 'no';

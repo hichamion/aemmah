@@ -56,9 +56,19 @@
   font-family: 'Amiri', serif;
 }
 
-/* Maghribi-style calligraphic titles (home page). */
+/*
+ * Andalusi / Maghribi titles. First choice: an Andalusi font — the "Andalus" font installed on the
+ * visitor's computer (Windows), or a font file placed at public/fonts/andalusi.woff2 (see public/fonts/README.txt).
+ * Otherwise the bundled Maghribi-style Ruwudu font is used.
+ */
+@font-face {
+  font-family: 'MihrabAndalusi';
+  src: local('Andalus'), local('Andalus Regular'), url('/mihrab/fonts/andalusi.woff2') format('woff2');
+  font-display: swap;
+}
+
 .font-maghribi {
-  font-family: 'Ruwudu', 'Amiri', serif;
+  font-family: 'MihrabAndalusi', 'Ruwudu', 'Amiri', serif;
   font-weight: 700;
   line-height: 1.5;
 }
