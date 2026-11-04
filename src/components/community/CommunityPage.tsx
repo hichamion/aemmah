@@ -236,14 +236,18 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
         <CommunitySidebar
           tabs={tabs}
           active={activeTab}
-          onTab={(k) => go(k === 'feed' ? '' : `/${k}`)}
+          onTab={(k) => {
+            go(k === 'feed' ? '' : `/${k}`);
+            // Phones: the tiles sit above the content — bring the chosen section into view.
+            if (window.innerWidth < 1024) window.setTimeout(() => document.getElementById('cm-main')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+          }}
           categories={settings.categories.map((c) => ({ name: c, count: published.filter((p) => p.category === c).length }))}
           category={category}
           onCategory={(c) => { setCategory(c); if (c) setAdvanced(true); go(''); }}
         />
 
         {/* Main column */}
-        <main key={route.postId || route.tab} className="cm-enter space-y-4 min-w-0">
+        <main id="cm-main" key={route.postId || route.tab} className="cm-enter space-y-4 min-w-0 scroll-mt-20">
           {error && <p className="bg-red-50 text-red-800 border border-red-200 rounded-2xl p-3 text-sm">تعذر تحميل الملتقى ({error}). إن كان الخطأ permission-denied فانشر قواعد الأمان الجديدة.</p>}
 
           {route.postId ? (
