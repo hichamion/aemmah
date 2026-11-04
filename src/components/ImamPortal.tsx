@@ -4,6 +4,8 @@ import { formatDate, getSafeImamAvatar } from '../utils/helpers';
 import { InboxCenter, InboxProps } from './InboxCenter';
 import { ContactBlock } from './ContactBlock';
 import { MosqueMiniCard } from './MiniCards';
+import { RecitationManager } from './Recitation';
+import { useRecitationAudio } from '../lib/db';
 import { Edit3, Eye, Trash2, Plus, Clock, XCircle } from 'lucide-react';
 
 type Tab = 'manage' | 'mosque_ads' | 'applications' | 'inbox';
@@ -26,6 +28,8 @@ interface ImamPortalProps {
   onViewMosque: (mosque: MosqueJob) => void;
   /** Admin or imam with an approved profile (same rule as firestore.rules). */
   canSeeMosqueContacts: boolean;
+  /** Toasts from the recitation sample manager. */
+  onToast: (msg: string, kind?: 'success' | 'error') => void;
   inbox: InboxProps;
   initialTab?: Tab;
   /** Changes on every tab request from the parent (see App). */
@@ -55,12 +59,15 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
   onReportMosque,
   onViewMosque,
   canSeeMosqueContacts,
+  onToast,
   inbox,
   initialTab = 'mosque_ads',
   tabRequest = 0,
 }) => {
   const isImam = currentRole === 'imam';
   const isLoggedIn = currentRole !== 'visitor';
+  // Own recitation sample, to listen to it before replacing it.
+  const { audio: myRecitation } = useRecitationAudio(myImam?.id, isImam && !!myImam?.recitationMeta, myImam?.recitationMeta?.createdAt);
 
   const [activeTab, setActiveTab] = useState<Tab>(isImam ? initialTab : 'mosque_ads');
   const [countryFilter, setCountryFilter] = useState('all');
@@ -270,6 +277,15 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
             </div>
           )}
         </div>
+      )}
+
+      {activeTab === 'manage' && isImam && myImam && (
+        <RecitationManager
+          imam={myImam}
+          currentAudio={myRecitation}
+          onSaved={(m) => onToast(m)}
+          onError={(m) => onToast(m, 'error')}
+        />
       )}
 
       {/* TAB: AVAILABLE MOSQUES */}

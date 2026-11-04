@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   BookOpen,
+  Mic,
   Flag,
   Briefcase,
   Heart,
@@ -67,6 +68,8 @@ interface Props {
   contactSlot?: React.ReactNode;
   /** Screen layout: replaces the recitation link (e.g. an embedded video). */
   recitationSlot?: React.ReactNode;
+  /** Screen layout: the audio recitation sample (player or a privacy notice). */
+  audioSlot?: React.ReactNode;
 }
 
 export const SideTitle: React.FC<{ icon: React.ReactNode; children: React.ReactNode }> = ({ icon, children }) => (
@@ -157,7 +160,7 @@ export const ContactLine: React.FC<{ icon: React.ReactNode; value: string; ltr?:
   ) : null;
 
 export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
-  ({ imam, contact, layout, profileUrl, contactSlot, recitationSlot }, ref) => {
+  ({ imam, contact, layout, profileUrl, contactSlot, recitationSlot, audioSlot }, ref) => {
     const print = layout === 'print';
     const qrTarget = profileUrl || `https://${SITE_URL}/`;
     const qr = useQrCode(qrTarget);
@@ -379,6 +382,13 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
               <Row label="متاح للتعاقد ابتداءً من" value={imam.availableAfterDate} />
             </div>
           </section>
+
+          {audioSlot && (
+            <section className="space-y-3">
+              <Ribbon icon={<Mic className="w-5 h-5" />}>عيّنة التلاوة</Ribbon>
+              {audioSlot}
+            </section>
+          )}
 
           {(recitationSlot || youtube) && (
             <section className="space-y-3">

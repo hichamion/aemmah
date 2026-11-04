@@ -51,6 +51,23 @@ export interface ImamLanguage {
   name: string;
   level: LanguageLevel;
 }
+export type RecitationKind = 'fatiha' | 'short_surah' | 'passage';
+/** Who may listen: everyone, signed-in members, or verified mosques only (owner and admins always can). */
+export type RecitationVisibility = 'public' | 'members' | 'mosques';
+export interface RecitationMeta {
+  kind: RecitationKind;
+  /** Surah name or passage, e.g. «سورة الفاتحة», «سورة الملك»… */
+  title: string;
+  durationSec: number;
+  visibility: RecitationVisibility;
+  createdAt: string;
+}
+/** Firestore: recitations/{imamId} — the audio sample (MP3 data URL, at most 60 s). */
+export interface Recitation extends RecitationMeta {
+  ownerUid: string;
+  audio: string;
+}
+
 export type MaritalStatus = '' | 'single' | 'married' | 'married_children';
 
 /** Firestore: imams/{id}. For self-registered imams the id equals the owner's uid (one profile per account). */
@@ -78,6 +95,8 @@ export interface ImamProfile {
   maritalStatus?: MaritalStatus;
   /** Already lives in a European country (so no immigration procedure is needed). */
   livesInEurope?: boolean;
+  /** Public summary of the recitation sample; the audio itself is in recitations/{imamId}. */
+  recitationMeta?: RecitationMeta | null;
   hasVisa: 'yes' | 'no';
   visaDetails: string;
   hasCerts: 'yes' | 'no';
@@ -187,7 +206,8 @@ export interface PlatformMessage {
 /** Firestore: reports/{id} — only admins can read them. */
 export interface ReportItem {
   id: string;
-  targetType: 'imam' | 'mosque';
+  /** For a comment, targetId is "{postId}/{commentId}". */
+  targetType: 'imam' | 'mosque' | 'post' | 'comment';
   targetId: string;
   targetName: string;
   reason: string;

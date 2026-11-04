@@ -1,5 +1,5 @@
 import React from 'react';
-import { Building2, Home, LogIn, User, Users } from 'lucide-react';
+import { Building2, Home, LogIn, MessagesSquare, User, Users } from 'lucide-react';
 import { UserRole } from '../types';
 import type { View } from '../App';
 
@@ -10,6 +10,7 @@ interface MobileNavProps {
   onHome: () => void;
   onImams: () => void;
   onMosques: () => void;
+  onCommunity: () => void;
   onAccount: () => void;
   onSignIn: () => void;
 }
@@ -22,6 +23,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   onHome,
   onImams,
   onMosques,
+  onCommunity,
   onAccount,
   onSignIn,
 }) => {
@@ -31,6 +33,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({
     { key: 'home', label: 'الرئيسية', icon: Home, active: currentView === 'home', onClick: onHome },
     { key: 'imams', label: 'الأئمة', icon: Users, active: currentView === 'mosque', onClick: onImams },
     { key: 'mosques', label: 'المساجد', icon: Building2, active: currentView === 'imam', onClick: onMosques },
+    { key: 'community', label: 'المجتمع', icon: MessagesSquare, active: currentView === 'community', onClick: onCommunity },
     isVisitor
       ? { key: 'signin', label: 'دخول', icon: LogIn, active: false, onClick: onSignIn }
       : { key: 'account', label: 'حسابي', icon: User, active: accountActive, onClick: onAccount },

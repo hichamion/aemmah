@@ -5,7 +5,8 @@ import { ContactBlock } from './ContactBlock';
 import { ImamCvSheet, SITE_URL } from './ImamCvSheet';
 import { X, ExternalLink, Phone, Edit3, Share2, Flag, Lock, ImageDown, FileDown, Loader2, Link2 } from 'lucide-react';
 import { useDialog } from '../lib/useDialog';
-import { useContact } from '../lib/db';
+import { useContact, useRecitationAudio } from '../lib/db';
+import { RecitationPlayer, recitationLabel, VISIBILITY_OPTIONS } from './Recitation';
 import { cvFileName, downloadPdf, downloadPng, renderNodeToPng, shareImage } from '../lib/cvExport';
 
 interface ImamFullModalProps {
@@ -43,6 +44,8 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
   const dialogRef = useDialog(!!imam, onClose);
   // Contact details go into the exported CV only for viewers allowed to see them (cached, shared with ContactBlock).
   const { contact } = useContact<ImamContact>('imam', imam?.id, !!imam && canViewContact);
+  // The audio is fetched only when the profile is opened, and never autoplayed.
+  const recitation = useRecitationAudio(imam?.id, !!imam?.recitationMeta, imam?.recitationMeta?.createdAt);
   const printRef = useRef<HTMLDivElement>(null);
   const [exporting, setExporting] = useState<ExportKind | null>(null);
 
@@ -156,6 +159,21 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
     )
   ) : undefined;
 
+  const meta = imam.recitationMeta;
+  const audioSlot = meta ? (
+    recitation.audio ? (
+      <RecitationPlayer src={recitation.audio} title={recitationLabel(meta)} durationSec={meta.durationSec} date={meta.createdAt} />
+    ) : recitation.loading ? (
+      <p className="text-sm text-slate-500">جاري تحميل التسجيل…</p>
+    ) : (
+      <p className="text-sm text-slate-600 bg-slate-100 rounded-xl px-3 py-2.5 flex items-center gap-2">
+        <Lock className="w-4 h-4" />
+        {recitationLabel(meta)} — التسجيل متاح لـ «{VISIBILITY_OPTIONS.find((v) => v.value === meta.visibility)?.label}» حسب اختيار الإمام.
+        {currentRole === 'visitor' && ' سجّل دخولك للاستماع.'}
+      </p>
+    )
+  ) : undefined;
+
   const btn =
     'inline-flex items-center gap-1.5 font-black text-xs px-3.5 py-2.5 rounded-full transition cursor-pointer disabled:opacity-60 disabled:cursor-wait';
 
@@ -218,6 +236,7 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
               profileUrl={profileUrl}
               contactSlot={contactSlot}
               recitationSlot={recitationSlot}
+              audioSlot={audioSlot}
             />
           </div>
           {canEdit && (imam.visaFileName || imam.certsFileName) && (

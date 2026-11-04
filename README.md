@@ -32,6 +32,13 @@ npm run build    # بناء نسخة الإنتاج في dist/
 npm run lint     # فحص الأنواع (TypeScript)
 ```
 
+## التجربة المحلية على المحاكي
+
+```bash
+VITE_FIREBASE_EMULATOR=1 npm run dev
+```
+يتصل التطبيق بمحاكيات Firebase (Auth على 9099، وFirestore على 8085) بدل المشروع الحقيقي. شغّل المحاكيات قبلها بـ `firebase emulators:start --only firestore,auth`.
+
 ## إعداد Firebase (مرة واحدة)
 
 إعدادات المشروع موجودة في `src/firebase-applet-config.json`.

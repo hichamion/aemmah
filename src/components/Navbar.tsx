@@ -5,6 +5,7 @@ import { DEFAULT_IMAM_SILHOUETTE_AVATAR, getSafeImamAvatar } from '../utils/help
 import { LogoMark } from './Logo';
 import {
   Building2,
+  MessagesSquare,
   Menu,
   X,
   ShieldCheck,
@@ -145,6 +146,18 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               إعلانات المساجد
+            </button>
+
+            <button
+              onClick={() => setCurrentView('community')}
+              className={`py-1 transition-colors cursor-pointer whitespace-nowrap shrink-0 border-b-2 inline-flex items-center gap-1.5 ${
+                currentView === 'community'
+                  ? 'border-amber-400 text-white font-black'
+                  : 'border-transparent hover:text-white'
+              }`}
+            >
+              <MessagesSquare className="w-4 h-4 text-amber-300" />
+              المجتمع
             </button>
 
             {showStats && (
@@ -407,6 +420,16 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <span>قائمة المساجد والجمعيات المتوفرة</span>
               {mosquesCount > 0 && <span className="text-xs text-sky-700 font-bold">{mosquesCount}</span>}
+            </button>
+
+            <button
+              onClick={() => { setCurrentView('community'); setMobileMenuOpen(false); }}
+              className={`w-full text-right px-4 py-3 rounded-xl flex items-center gap-2 ${
+                currentView === 'community' ? 'bg-emerald-50 text-emerald-900 font-black' : 'text-slate-700'
+              }`}
+            >
+              <MessagesSquare className="w-4 h-4" />
+              <span>المجتمع — ملتقى الأئمة</span>
             </button>
 
             {showStats && (
