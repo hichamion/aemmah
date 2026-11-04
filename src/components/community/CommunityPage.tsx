@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Bell, BookMarked, FilePenLine, Library, Loader2, MessagesSquare, Pin, Search, Settings2, SlidersHorizontal, Users } from 'lucide-react';
+import { Bell, BookMarked, FilePenLine, Loader2, MessagesSquare, Pin, ScrollText, Search, Settings2, SlidersHorizontal, Users } from 'lucide-react';
 import { CommunityPost, PostComment, PostType } from '../../types/community';
 import { ImamProfile } from '../../types';
 import {
@@ -7,7 +7,6 @@ import {
   markNotificationsRead,
   clearNotifications,
   moderatePost,
-  POST_TYPES,
   postTypeIcon,
   postTypeLabel,
   toggleSaved,
@@ -18,18 +17,21 @@ import {
 } from '../../lib/community';
 import { excerpt } from '../../lib/richtext';
 import { createReport } from '../../lib/db';
-import { AuthorAvatar, CommunityViewer, ImageGrid, PollBox, ReactionBar, timeAgo } from './PostParts';
+import { AuthorAvatar, CommunityViewer, ImageGrid, PollBox, PostTypeGrid, ReactionBar, timeAgo } from './PostParts';
+import { CommunityBackdrop, CommunitySidebar, SidebarTab, TopicsPanel } from './CommunitySidebar';
+import { HadithCheck } from './HadithCheck';
 import { PostActions, PostDetail } from './PostDetail';
 import { PostComposer } from './PostComposer';
 import { CommunityAdmin } from './CommunityAdmin';
 
-type Tab = 'feed' | 'library' | 'saved' | 'drafts' | 'admin';
+type Tab = 'feed' | 'hadith' | 'saved' | 'drafts' | 'admin';
 type Route = { tab: Tab; postId?: string };
 
 const parseRoute = (hash: string): Route => {
   const m = hash.match(/^#\/community\/post\/([\w-]+)/);
   if (m) return { tab: 'feed', postId: m[1] };
-  const t = hash.match(/^#\/community\/(library|saved|drafts|admin)/)?.[1] as Tab | undefined;
+  // «مكتبة الأئمة» was removed: old links (#/community/library) open the wall.
+  const t = hash.match(/^#\/community\/(hadith|saved|drafts|admin)/)?.[1] as Tab | undefined;
   return { tab: t || 'feed' };
 };
 const go = (path: string) => {
@@ -127,22 +129,6 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
         onToast('تعذر تنفيذ الإجراء.', 'error');
       }
     },
-    onLibrary: async (p) => {
-      try {
-        if (p.inLibrary) await moderatePost(p, { inLibrary: false, libraryCategory: '' });
-        else {
-          const cats = settings.libraryCategories;
-          const choice = window.prompt(`في أي قسم من المكتبة؟\n${cats.map((c, i) => `${i + 1}. ${c}`).join('\n')}`, '1');
-          if (!choice) return;
-          const idx = Number(choice) - 1;
-          const libraryCategory = cats[idx] ?? (choice.trim() || cats[0]);
-          await moderatePost(p, { inLibrary: true, libraryCategory: libraryCategory.slice(0, 60) });
-        }
-        onToast(p.inLibrary ? 'أُزيل من المكتبة.' : 'أُضيف إلى مكتبة الأئمة.');
-      } catch {
-        onToast('تعذر تنفيذ الإجراء.', 'error');
-      }
-    },
     onReport: async (p: CommunityPost, c?: PostComment) => {
       const reason = window.prompt(c ? 'سبب الإبلاغ عن التعليق:' : 'سبب الإبلاغ عن المنشور:');
       if (!reason?.trim()) return;
@@ -193,18 +179,22 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
       return (b.publishedAt || b.createdAt).localeCompare(a.publishedAt || a.createdAt);
     });
 
-  const tabs: { key: Tab; label: string; icon: React.ReactNode; count?: number }[] = [
-    { key: 'feed', label: 'الحائط', icon: <MessagesSquare className="w-4 h-4" /> },
-    { key: 'library', label: 'مكتبة الأئمة', icon: <Library className="w-4 h-4" /> },
-    { key: 'saved', label: 'محفوظاتي', icon: <BookMarked className="w-4 h-4" />, count: saved.size },
-    { key: 'drafts', label: 'مسوداتي', icon: <FilePenLine className="w-4 h-4" />, count: drafts.length },
-    ...(isAdmin ? [{ key: 'admin' as Tab, label: 'الإشراف', icon: <Settings2 className="w-4 h-4" /> }] : []),
+  const tabs: SidebarTab[] = [
+    { key: 'feed', label: 'الحائط', hint: 'أحدث الخطب والمقالات والنقاشات', icon: <MessagesSquare className="w-4 h-4" /> },
+    { key: 'hadith', label: 'التحقق من صحة حديث', hint: 'البحث في الموسوعة الحديثية', icon: <ScrollText className="w-4 h-4" /> },
+    { key: 'saved', label: 'محفوظاتي', hint: 'ما حفظته للرجوع إليه', icon: <BookMarked className="w-4 h-4" />, count: saved.size },
+    { key: 'drafts', label: 'مسوداتي', hint: 'منشورات لم تُنشر بعد', icon: <FilePenLine className="w-4 h-4" />, count: drafts.length },
+    ...(isAdmin ? [{ key: 'admin', label: 'الإشراف', hint: 'إعدادات الملتقى والنماذج', icon: <Settings2 className="w-4 h-4" /> }] : []),
   ];
+  const activeTab = route.postId ? null : route.tab;
+  const latest = [...published].sort((a, b) => (b.publishedAt || b.createdAt).localeCompare(a.publishedAt || a.createdAt)).slice(0, 6);
 
   const card = (p: CommunityPost) => <PostCard key={p.id} post={p} viewer={viewer} imams={imamsById} saved={saved.has(p.id)} actions={actions} />;
 
   return (
-    <section className="flex-1 w-full max-w-6xl mx-auto px-3 sm:px-6 py-5 sm:py-8 space-y-5">
+    <div className="community-bg relative flex-1 w-full">
+    <CommunityBackdrop />
+    <section className="relative flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-5 sm:py-8 space-y-5">
       {/* Banner */}
       <header className="glass-card overflow-hidden bg-gradient-to-l from-[#2fbf7a] via-[#12804c] to-[#05472b] text-white rounded-[2rem] px-6 py-6 flex flex-wrap items-center justify-between gap-4">
         <div className="relative z-10">
@@ -241,22 +231,19 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
         </div>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)_240px] gap-5 items-start">
-        {/* Navigation (sidebar on desktop, scrolling tabs on phones) */}
-        <nav aria-label="أقسام الملتقى" className="lg:sticky lg:top-24 flex lg:flex-col gap-1.5 overflow-x-auto pb-1 -mx-1 px-1">
-          {tabs.map((t) => (
-            <button key={t.key} onClick={() => go(t.key === 'feed' ? '' : `/${t.key}`)} aria-current={route.tab === t.key && !route.postId ? 'page' : undefined}
-              className={`shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-sm font-bold cursor-pointer transition ${
-                route.tab === t.key && !route.postId ? 'bg-emerald-800 text-white shadow' : 'bg-white border border-slate-200 text-slate-700 hover:bg-emerald-50'
-              }`}>
-              {t.icon} {t.label}
-              {!!t.count && <span className={`text-xs px-1.5 rounded-full ${route.tab === t.key ? 'bg-white/20' : 'bg-slate-100'}`}>{t.count}</span>}
-            </button>
-          ))}
-        </nav>
+      <div className="grid grid-cols-1 lg:grid-cols-[250px_minmax(0,1fr)] xl:grid-cols-[250px_minmax(0,1fr)_260px] gap-5 items-start">
+        {/* Right sidebar (RTL): sections + categories */}
+        <CommunitySidebar
+          tabs={tabs}
+          active={activeTab}
+          onTab={(k) => go(k === 'feed' ? '' : `/${k}`)}
+          categories={settings.categories.map((c) => ({ name: c, count: published.filter((p) => p.category === c).length }))}
+          category={category}
+          onCategory={(c) => { setCategory(c); if (c) setAdvanced(true); go(''); }}
+        />
 
         {/* Main column */}
-        <main className="space-y-4 min-w-0">
+        <main key={route.postId || route.tab} className="cm-enter space-y-4 min-w-0">
           {error && <p className="bg-red-50 text-red-800 border border-red-200 rounded-2xl p-3 text-sm">تعذر تحميل الملتقى ({error}). إن كان الخطأ permission-denied فانشر قواعد الأمان الجديدة.</p>}
 
           {route.postId ? (
@@ -267,9 +254,8 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
             )
           ) : route.tab === 'admin' && isAdmin ? (
             <CommunityAdmin settings={settings} onDone={(m) => onToast(m)} onError={(m) => onToast(m, 'error')} />
-          ) : route.tab === 'library' ? (
-            <LibraryView title="مكتبة الأئمة" note="مواد مختارة من الملتقى ينظّمها المشرفون." sections={settings.libraryCategories}
-              posts={published.filter((p) => p.inLibrary)} groupBy={(p) => p.libraryCategory} render={card} />
+          ) : route.tab === 'hadith' ? (
+            <HadithCheck embedUrl={settings.hadithEmbedUrl} />
           ) : route.tab === 'saved' ? (
             <LibraryView title="محفوظاتي" note="المنشورات التي حفظتها، مرتبة حسب تصنيفها." sections={settings.categories}
               posts={published.filter((p) => saved.has(p.id))} groupBy={(p) => p.category} render={card} />
@@ -300,14 +286,7 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
                       <AuthorAvatar imamId={viewer.imamId} imams={imamsById} />
                       <span className="flex-1 bg-slate-100 hover:bg-slate-200 rounded-full px-4 py-3 text-slate-500 text-sm">شاركنا خطبةً أو درساً، أو اطرح سؤالاً…</span>
                     </button>
-                    <div className="flex gap-1.5 overflow-x-auto pb-1">
-                      {POST_TYPES.map((t) => (
-                        <button key={t.value} onClick={() => setComposer({ open: true, type: t.value, existing: null })}
-                          className="shrink-0 text-xs font-bold px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-900 hover:bg-emerald-100 cursor-pointer">
-                          {t.icon} {t.label}
-                        </button>
-                      ))}
-                    </div>
+                    <PostTypeGrid compact onPick={(t) => setComposer({ open: true, type: t, existing: null })} />
                   </div>
                 ) : (
                   <p className="bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl p-3 text-sm font-bold">النشر موقوف مؤقتاً من الإدارة. يمكنك الاطلاع والقراءة.</p>
@@ -332,7 +311,7 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
                     <SlidersHorizontal className="w-4 h-4" /> بحث متقدم
                   </button>
                 </div>
-                <div className="flex gap-1.5 overflow-x-auto">
+                <div className="flex flex-wrap gap-1.5">
                   {FILTERS.map((f) => (
                     <button key={f.key} onClick={() => setFilter(f.key)} aria-pressed={filter === f.key}
                       className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold cursor-pointer ${filter === f.key ? 'bg-amber-400 text-slate-950' : 'bg-slate-100 text-slate-700'}`}>
@@ -362,24 +341,14 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
           )}
         </main>
 
-        {/* Side column: categories and members */}
-        <aside className="hidden lg:block space-y-4 lg:sticky lg:top-24">
-          <div className="bg-white rounded-3xl border border-slate-200 p-4">
-            <p className="font-black text-sm mb-2">التصنيفات</p>
-            <ul className="space-y-1">
-              {settings.categories.map((c) => (
-                <li key={c}>
-                  <button onClick={() => { setCategory(c === category ? '' : c); setAdvanced(true); go(''); }}
-                    className={`w-full text-right text-sm px-3 py-1.5 rounded-xl cursor-pointer ${c === category ? 'bg-emerald-50 text-emerald-900 font-bold' : 'hover:bg-slate-50 text-slate-700'}`}>
-                    # {c} <span className="text-xs text-slate-400">({published.filter((p) => p.category === c).length})</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="bg-white rounded-3xl border border-slate-200 p-4 text-sm text-slate-600 flex items-center gap-2">
-            <Users className="w-4 h-4 text-emerald-700" /> {imams.length} إماماً على المنصة
-          </div>
+        {/* Left column: latest topics */}
+        <aside className="hidden xl:block space-y-4 xl:sticky xl:top-24">
+          <TopicsPanel
+            title="أحدث المواضيع"
+            posts={latest}
+            onOpen={(id) => go(`/post/${id}`)}
+            footer={<span className="flex items-center gap-2"><Users className="w-4 h-4 text-emerald-700" /> {imams.length} إماماً على المنصة</span>}
+          />
         </aside>
       </div>
 
@@ -394,6 +363,7 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
         onError={(m) => onToast(m, 'error')}
       />
     </section>
+    </div>
   );
 };
 
@@ -442,7 +412,6 @@ const PostCard: React.FC<{ post: CommunityPost; viewer: CommunityViewer; imams: 
           onEdit={() => actions.onEdit(post)}
           onDelete={() => actions.onDelete(post)}
           onPin={() => actions.onPin(post)}
-          onLibrary={() => actions.onLibrary(post)}
           onError={actions.onError}
           onCopied={() => actions.onInfo('تم نسخ رابط المنشور.')}
         />
@@ -468,7 +437,7 @@ const LibraryView: React.FC<{
         <h2 className="font-black text-lg text-slate-900">{title}</h2>
         <p className="text-sm text-slate-500">{note}</p>
       </div>
-      <div className="flex gap-1.5 overflow-x-auto">
+      <div className="flex flex-wrap gap-1.5">
         <button onClick={() => setSection('')} className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold cursor-pointer ${!section ? 'bg-amber-400 text-slate-950' : 'bg-white border border-slate-200'}`}>
           الكل ({posts.length})
         </button>

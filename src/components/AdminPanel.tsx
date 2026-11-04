@@ -3,6 +3,7 @@ import { FeedbackItem, ImamProfile, MosqueJob, ReportItem } from '../types';
 import { formatDate, getSafeImamAvatar } from '../utils/helpers';
 import { ContactBlock } from './ContactBlock';
 import { InboxCenter, InboxProps } from './InboxCenter';
+import { VisitStatsPanel } from './VisitStatsPanel';
 import {
   CheckCircle2,
   XCircle,
@@ -16,6 +17,7 @@ import {
   Mail,
   Plus,
   MessageSquare,
+  BarChart3,
 } from 'lucide-react';
 
 interface AdminPanelProps {
@@ -65,7 +67,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     setComposeRequest((prev) => ({ type, id, seq: (prev?.seq ?? 0) + 1 }));
     setActiveTab('inbox');
   };
-  const [activeTab, setActiveTab] = useState<'pending' | 'all_imams' | 'all_mosques' | 'reports' | 'feedback' | 'inbox'>('pending');
+  const [activeTab, setActiveTab] = useState<'pending' | 'all_imams' | 'all_mosques' | 'reports' | 'feedback' | 'inbox' | 'visits'>('pending');
   const unreadAdmin = inbox.messages.filter(
     (m) => !m.isRead && (m.receiverUid === 'admin' || m.receiverUid === inbox.currentUid)
   ).length;
@@ -239,6 +241,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           {unreadAdmin > 0 && (
             <span className="bg-red-500 text-white text-xs px-1.5 rounded-full font-black">{unreadAdmin}</span>
           )}
+        </button>
+
+        <button
+          onClick={() => setActiveTab('visits')}
+          className={`px-4 py-2.5 rounded-xl font-black transition cursor-pointer flex items-center gap-2 ${
+            activeTab === 'visits'
+              ? 'bg-emerald-800 text-white shadow-md'
+              : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+          }`}
+        >
+          <BarChart3 className="w-4 h-4" />
+          <span>إحصاءات الزيارات</span>
         </button>
       </div>
 
@@ -720,6 +734,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       )}
 
       {/* TAB 5: ADMIN INBOX */}
+      {/* TAB 6: VISIT STATISTICS (admins only) */}
+      {activeTab === 'visits' && <VisitStatsPanel />}
+
       {activeTab === 'inbox' && <InboxCenter currentRole="admin" {...inbox} composeRequest={composeRequest} onComposeOpened={() => setComposeRequest(null)} />}
     </section>
   );

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Bookmark, BookmarkCheck, Flag, Link2, MessageCircle, MoreHorizontal, Pin, ThumbsDown, ThumbsUp, Trash2, Edit3, Library } from 'lucide-react';
-import { CommunityPost } from '../../types/community';
+import { Bookmark, BookmarkCheck, Flag, Link2, MessageCircle, MoreHorizontal, Pin, ThumbsDown, ThumbsUp, Trash2, Edit3 } from 'lucide-react';
+import { CommunityPost, PostType } from '../../types/community';
 import { ImamProfile } from '../../types';
 import { getSafeImamAvatar } from '../../utils/helpers';
 import { LogoMark } from '../Logo';
-import { useMediaImage, useMyPollVote, useMyVote, vote, votePoll } from '../../lib/community';
+import { POST_TYPES, useMediaImage, useMyPollVote, useMyVote, vote, votePoll } from '../../lib/community';
 
 export interface CommunityViewer {
   uid: string;
@@ -129,10 +129,9 @@ export const ReactionBar: React.FC<{
   onEdit: () => void;
   onDelete: () => void;
   onPin: () => void;
-  onLibrary: () => void;
   onError: (m: string) => void;
   onCopied: () => void;
-}> = ({ post, viewer, saved, onToggleSave, onComment, onReport, onEdit, onDelete, onPin, onLibrary, onError, onCopied }) => {
+}> = ({ post, viewer, saved, onToggleSave, onComment, onReport, onEdit, onDelete, onPin, onError, onCopied }) => {
   const mine = useMyVote(post.id, viewer.uid);
   const [busy, setBusy] = useState(false);
   const [menu, setMenu] = useState(false);
@@ -201,14 +200,9 @@ export const ReactionBar: React.FC<{
                 </button>
               )}
               {viewer.isAdmin && (
-                <>
                   <button className="w-full text-right flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-50 cursor-pointer" onClick={() => { setMenu(false); onPin(); }}>
                     <Pin className="w-4 h-4" /> {post.pinned ? 'إلغاء التثبيت' : 'تثبيت في الأعلى'}
                   </button>
-                  <button className="w-full text-right flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-50 cursor-pointer" onClick={() => { setMenu(false); onLibrary(); }}>
-                    <Library className="w-4 h-4" /> {post.inLibrary ? 'إزالة من المكتبة' : 'إضافة إلى مكتبة الأئمة'}
-                  </button>
-                </>
               )}
               {!isAuthor && (
                 <button className="w-full text-right flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-50 cursor-pointer" onClick={() => { setMenu(false); onReport(); }}>
@@ -227,3 +221,28 @@ export const ReactionBar: React.FC<{
     </div>
   );
 };
+
+/** The six post types as equal cards (3×2 on phones, 6 in a row on wide screens) — no horizontal scrolling. */
+export const PostTypeGrid: React.FC<{ value?: PostType; onPick: (t: PostType) => void; compact?: boolean }> = ({ value, onPick, compact }) => (
+  <div role="group" aria-label="نوع المنشور" className={`grid grid-cols-2 min-[420px]:grid-cols-3 ${compact ? 'md:grid-cols-6' : 'sm:grid-cols-3'} gap-2`}>
+    {POST_TYPES.map((t) => {
+      const on = value === t.value;
+      return (
+        <button
+          key={t.value}
+          type="button"
+          onClick={() => onPick(t.value)}
+          aria-pressed={value ? on : undefined}
+          className={`group flex flex-col items-center justify-center gap-1.5 text-center rounded-2xl border-2 px-2 ${compact ? 'py-2.5' : 'py-3.5'} min-h-[4.75rem] cursor-pointer transition duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 ${
+            on
+              ? 'border-emerald-700 bg-emerald-50 text-emerald-950 shadow-[0_6px_18px_-8px_rgba(4,120,87,0.55)]'
+              : 'border-slate-200 bg-white text-slate-700 hover:border-emerald-400 hover:bg-emerald-50/50 hover:shadow-md'
+          }`}
+        >
+          <span className={`text-2xl leading-none transition-transform duration-200 group-hover:scale-110 ${on ? 'scale-110' : ''}`} aria-hidden>{t.icon}</span>
+          <span className="text-[11.5px] sm:text-xs font-black leading-snug">{t.label}</span>
+        </button>
+      );
+    })}
+  </div>
+);
