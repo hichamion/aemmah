@@ -118,8 +118,9 @@ const HadithEmbedEditor: React.FC<{ value: string; onSave: (url: string) => void
       <div>
         <h2 className="font-black text-slate-900">نافذة «التحقق من صحة حديث»</h2>
         <p className="text-xs text-slate-500 leading-relaxed">
-          افتح <a href="https://hdith.com/embed/configure" target="_blank" rel="noopener noreferrer" className="text-emerald-800 underline font-bold">hdith.com/embed/configure</a>،
-          اختر المظهر الفاتح، ثم انسخ كود التضمين (iframe) أو رابطه والصقه هنا. يُقبل فقط رابط من موقع hdith.com.
+          خانة البحث الرسمية مضافة تلقائياً (نسخة للهاتف وأخرى للحاسوب). لتغييرها: أنشئ كوداً جديداً من
+          <a href="https://hdith.com/embed/configure" target="_blank" rel="noopener noreferrer" className="text-emerald-800 underline font-bold mx-1">hdith.com/embed/configure</a>
+          والصقه هنا (يُقبل فقط رابط من موقع hdith.com). اترك الخانة فارغة لاستعمال الخانة الافتراضية.
         </p>
       </div>
       <textarea value={text} onChange={(e) => setText(e.target.value)} rows={3} dir="ltr" placeholder={HADITH_EMBED_DEFAULT}
