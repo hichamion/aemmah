@@ -60,8 +60,9 @@ import { SupportPage } from './components/SupportPage';
 // Loaded on demand: the statistics page pulls in the charts library, and the admin panel is for admins only.
 const Dashboard = lazy(() => import('./components/Dashboard').then((m) => ({ default: m.Dashboard })));
 const AdminPanel = lazy(() => import('./components/AdminPanel').then((m) => ({ default: m.AdminPanel })));
+const CommunityPage = lazy(() => import('./components/community/CommunityPage').then((m) => ({ default: m.CommunityPage })));
 
-export type View = 'home' | 'dashboard' | 'imam' | 'mosque' | 'admin' | 'privacy' | 'contact' | 'support';
+export type View = 'home' | 'dashboard' | 'imam' | 'mosque' | 'admin' | 'privacy' | 'contact' | 'support' | 'community';
 type ImamTab = 'manage' | 'mosque_ads' | 'applications' | 'inbox';
 type MosqueTab = 'browse' | 'manage_mosques' | 'applications' | 'inbox';
 
@@ -76,6 +77,7 @@ const VIEW_TO_HASH: Record<View, string> = {
   privacy: '#/privacy',
   contact: '#/contact',
   support: '#/support',
+  community: '#/community',
 };
 
 const VIEW_TITLES: Record<View, string> = {
@@ -87,12 +89,15 @@ const VIEW_TITLES: Record<View, string> = {
   privacy: 'سياسة الخصوصية | منصة أئمة',
   contact: 'راسل الإدارة | منصة أئمة',
   support: 'ادعم المنصة | منصة أئمة',
+  community: 'ملتقى الأئمة | منصة أئمة',
 };
 
 function parseHash(hash: string): { view: View; imamId?: string; mosqueId?: string } {
   const h = hash || '#/';
   const imamMatch = h.match(/^#\/imams\/([\w-]+)$/);
   if (imamMatch) return { view: 'mosque', imamId: imamMatch[1] };
+  // The community page handles its own sub-pages (#/community/post/<id>, /library…).
+  if (h.startsWith('#/community')) return { view: 'community' };
   const mosqueMatch = h.match(/^#\/mosques\/([\w-]+)$/);
   if (mosqueMatch) return { view: 'imam', mosqueId: mosqueMatch[1] };
   const entry = (Object.entries(VIEW_TO_HASH) as [View, string][]).find(([, v]) => v === h);
@@ -740,7 +745,7 @@ export default function App() {
             </div>
           }
         >
-        {data.loading && !['home', 'privacy', 'contact', 'support'].includes(currentView) ? (
+        {data.loading && !['home', 'privacy', 'contact', 'support', 'community'].includes(currentView) ? (
           <div className="flex-1 flex items-center justify-center py-24 text-slate-500 text-sm gap-2">
             <Loader2 className="w-5 h-5 animate-spin" />
             <span>جاري تحميل البيانات…</span>
@@ -791,6 +796,7 @@ export default function App() {
                 onReportMosque={handleOpenReportMosque}
                 onViewMosque={setViewingMosque}
                 canSeeMosqueContacts={canSeeMosqueContacts}
+                onToast={showToast}
                 inbox={{ ...inboxProps, currentName: myImam?.name || displayName }}
                 initialTab={imamPortalTab.tab}
                 tabRequest={imamPortalTab.seq}
@@ -848,6 +854,18 @@ export default function App() {
 
             {currentView === 'privacy' && <PrivacyPage onBack={() => setCurrentView('home')} />}
 
+            {currentView === 'community' && (
+              <CommunityPage
+                uid={uid}
+                role={role}
+                viewerName={displayName}
+                myImam={myImam}
+                imams={role === 'admin' ? imams : approvedImams}
+                onOpenAuthModal={() => setIsAuthModalOpen(true)}
+                onToast={showToast}
+              />
+            )}
+
             {currentView === 'contact' && (
               <ContactPage
                 defaultName={role === 'visitor' ? '' : displayName}
@@ -883,6 +901,7 @@ export default function App() {
         onHome={() => setCurrentView('home')}
         onImams={goImamsList}
         onMosques={goMosquesList}
+        onCommunity={() => setCurrentView('community')}
         onAccount={handleOpenMyProfile}
         onSignIn={() => setIsAuthModalOpen(true)}
       />

@@ -30,6 +30,8 @@ import {
   MosqueContact,
   MosqueJob,
   PlatformMessage,
+  Recitation,
+  RecitationMeta,
   ReportItem,
   UserProfile,
   UserRole,
@@ -403,10 +405,77 @@ export async function deleteImam(imam: ImamProfile) {
   const batch = writeBatch(db);
   batch.delete(doc(db, 'imams', imam.id));
   batch.delete(doc(db, 'imamContacts', imam.id));
+  batch.delete(doc(db, 'recitations', imam.id));
   await batch.commit();
   contactCache.delete(`imam:${imam.id}`);
   await deleteStorageFile(imam.visaFilePath);
   await deleteStorageFile(imam.certsFilePath);
+}
+
+// ---------------------------------------------------------------------------
+// Recitation sample (audio in recitations/{imamId}, public summary in imams/{imamId}.recitationMeta)
+// ---------------------------------------------------------------------------
+
+/** Saves (or replaces) the imam's recitation sample. */
+export async function saveRecitation(imam: Pick<ImamProfile, 'id' | 'ownerUid'>, meta: Omit<RecitationMeta, 'createdAt'>, audio: string) {
+  const createdAt = nowIso();
+  const summary: RecitationMeta = { ...meta, title: meta.title.trim().slice(0, 120), createdAt };
+  const batch = writeBatch(db);
+  batch.set(doc(db, 'recitations', imam.id), { ...summary, ownerUid: imam.ownerUid, audio } satisfies Recitation);
+  batch.update(doc(db, 'imams', imam.id), { recitationMeta: summary, updatedAt: nowIso() });
+  await batch.commit();
+  recitationCache.delete(imam.id);
+}
+
+/** Changes who may listen, without re-uploading the audio. */
+export async function setRecitationVisibility(imam: Pick<ImamProfile, 'id' | 'recitationMeta'>, visibility: RecitationMeta['visibility']) {
+  if (!imam.recitationMeta) return;
+  const batch = writeBatch(db);
+  batch.update(doc(db, 'recitations', imam.id), { visibility });
+  batch.update(doc(db, 'imams', imam.id), { recitationMeta: { ...imam.recitationMeta, visibility }, updatedAt: nowIso() });
+  await batch.commit();
+  recitationCache.delete(imam.id);
+}
+
+export async function deleteRecitation(imamId: string) {
+  const batch = writeBatch(db);
+  batch.delete(doc(db, 'recitations', imamId));
+  batch.update(doc(db, 'imams', imamId), { recitationMeta: null, updatedAt: nowIso() });
+  await batch.commit();
+  recitationCache.delete(imamId);
+}
+
+const recitationCache = new Map<string, string | null>();
+
+/**
+ * Loads the audio of a recitation sample when the viewer opens the profile (never autoplayed).
+ * `denied` = the imam's privacy setting does not allow this viewer.
+ */
+export function useRecitationAudio(imamId: string | undefined, enabled: boolean, version?: string) {
+  const [state, setState] = useState<{ audio: string | null; loading: boolean; denied: boolean }>({ audio: null, loading: false, denied: false });
+  useEffect(() => {
+    if (!imamId || !enabled) {
+      setState({ audio: null, loading: false, denied: false });
+      return;
+    }
+    if (recitationCache.has(imamId)) {
+      setState({ audio: recitationCache.get(imamId) ?? null, loading: false, denied: false });
+      return;
+    }
+    let cancelled = false;
+    setState({ audio: null, loading: true, denied: false });
+    getDoc(doc(db, 'recitations', imamId))
+      .then((snap) => {
+        const audio = snap.exists() ? (snap.data() as Recitation).audio : null;
+        recitationCache.set(imamId, audio);
+        if (!cancelled) setState({ audio, loading: false, denied: false });
+      })
+      .catch(() => !cancelled && setState({ audio: null, loading: false, denied: true }));
+    return () => {
+      cancelled = true;
+    };
+  }, [imamId, enabled, version]);
+  return state;
 }
 
 // ---------------------------------------------------------------------------
@@ -621,6 +690,14 @@ export async function deleteMyData(uid: string) {
   // Messages sent or received
   const myMsgs = await getDocs(query(collection(db, 'messages'), where('participants', 'array-contains', uid)));
   for (const m of myMsgs.docs) await deleteDoc(m.ref);
+
+  // Community: own posts, saved posts and notifications (comments on others' posts stay, under the author's name).
+  const myPosts = await getDocs(query(collection(db, 'posts'), where('authorUid', '==', uid))).catch(() => null);
+  for (const p of myPosts?.docs ?? []) await deleteDoc(p.ref).catch(() => {});
+  for (const sub of ['saved', 'notifications']) {
+    const snap = await getDocs(collection(db, 'users', uid, sub)).catch(() => null);
+    for (const d of snap?.docs ?? []) await deleteDoc(d.ref).catch(() => {});
+  }
 
   await deleteDoc(doc(db, 'users', uid));
 

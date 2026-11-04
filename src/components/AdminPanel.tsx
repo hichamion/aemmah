@@ -629,9 +629,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <span className="bg-red-600 text-white text-xs font-black px-2 py-0.5 rounded-full">
-                        {rep.targetType === 'imam' ? 'بلاغ عن إمام' : 'بلاغ عن مسجد'}
+                        {rep.targetType === 'imam' ? 'بلاغ عن إمام' : rep.targetType === 'mosque' ? 'بلاغ عن مسجد' : rep.targetType === 'post' ? 'بلاغ عن منشور' : 'بلاغ عن تعليق'}
                       </span>
-                      <h4 className="font-black text-slate-900">{rep.targetName}</h4>
+                      {rep.targetType === 'post' || rep.targetType === 'comment' ? (
+                        <a href={`#/community/post/${rep.targetId.split('/')[0]}`} className="font-black text-emerald-800 underline">{rep.targetName}</a>
+                      ) : (
+                        <h4 className="font-black text-slate-900">{rep.targetName}</h4>
+                      )}
                       <span className="text-xs text-slate-400">{formatDate(rep.reportedAt, true)}</span>
                     </div>
                     <p className="font-bold text-red-900">السبب: {rep.reason}</p>

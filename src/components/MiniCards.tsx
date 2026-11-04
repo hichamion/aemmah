@@ -65,6 +65,7 @@ export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, 
           <h3 className="font-black text-2xl sm:text-[1.7rem] font-amiri leading-snug line-clamp-2">{imam.name}</h3>
           <p className="text-amber-300 text-sm font-black">{imamTitle(imam.titles)}</p>
           {imam.isVerified && <span className="inline-block mt-1 text-[11px] font-black bg-emerald-500/90 px-2 py-0.5 rounded-full">✓ موثق</span>}
+          {imam.recitationMeta && <span className="inline-block mt-1 mr-1 text-[11px] font-black bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full">🎧 عيّنة تلاوة</span>}
         </div>
       </div>
 

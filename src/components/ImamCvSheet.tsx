@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
   BookOpen,
+  Mic,
   Flag,
   Briefcase,
   Heart,
@@ -67,6 +68,8 @@ interface Props {
   contactSlot?: React.ReactNode;
   /** Screen layout: replaces the recitation link (e.g. an embedded video). */
   recitationSlot?: React.ReactNode;
+  /** Screen layout: the audio recitation sample (player or a privacy notice). */
+  audioSlot?: React.ReactNode;
 }
 
 export const SideTitle: React.FC<{ icon: React.ReactNode; children: React.ReactNode }> = ({ icon, children }) => (
@@ -157,7 +160,7 @@ export const ContactLine: React.FC<{ icon: React.ReactNode; value: string; ltr?:
   ) : null;
 
 export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
-  ({ imam, contact, layout, profileUrl, contactSlot, recitationSlot }, ref) => {
+  ({ imam, contact, layout, profileUrl, contactSlot, recitationSlot, audioSlot }, ref) => {
     const print = layout === 'print';
     const qrTarget = profileUrl || `https://${SITE_URL}/`;
     const qr = useQrCode(qrTarget);
@@ -380,6 +383,13 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
             </div>
           </section>
 
+          {audioSlot && (
+            <section className="space-y-3">
+              <Ribbon icon={<Mic className="w-5 h-5" />}>عيّنة التلاوة</Ribbon>
+              {audioSlot}
+            </section>
+          )}
+
           {(recitationSlot || youtube) && (
             <section className="space-y-3">
               <Ribbon icon={<Video className="w-5 h-5" />}>نموذج من التلاوة</Ribbon>
@@ -391,17 +401,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
             </section>
           )}
 
-          {/* Indirect promotion for whoever receives the CV (e.g. on WhatsApp) */}
-          <aside className="mt-auto rounded-2xl border border-[#0b3a4f]/15 bg-gradient-to-l from-[#e6f6f9] to-white p-4 flex items-center gap-3">
-            <LogoMark className="w-11 h-11" />
-            <p className="text-sm text-slate-700 leading-relaxed">
-              <strong className="text-[#0b3a4f]">تبحث عن إمام أو قارئ لمسجدك؟</strong> تصفّح ملفات الأئمة المعتمدين وانشر
-              إعلانك مجاناً على منصة أئمة:{' '}
-              <span dir="ltr" className="font-bold text-[#0e4d64]">
-                {SITE_URL}
-              </span>
-            </p>
-          </aside>
+          <div className="mt-auto" aria-hidden />
 
           <CvFooter />
         </main>

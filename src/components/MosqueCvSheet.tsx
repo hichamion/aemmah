@@ -2,7 +2,6 @@ import React from 'react';
 import { Building2, ClipboardList, HandCoins, Home, Mail, MapPin, MessageCircle, Phone, User } from 'lucide-react';
 import { MosqueContact, MosqueJob } from '../types';
 import { getSafeMosquePhoto } from '../utils/helpers';
-import { LogoMark } from './Logo';
 import { ContactLine, CvFooter, Ribbon, Row, SideTitle, SITE_URL, useQrCode } from './ImamCvSheet';
 
 /*
@@ -179,17 +178,7 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
             </section>
           )}
 
-          {/* Indirect promotion for whoever receives the ad */}
-          <aside className="mt-auto rounded-2xl border border-[#0b5e37]/15 bg-gradient-to-l from-[#e8f6ee] to-white p-4 flex items-center gap-3">
-            <LogoMark className="w-11 h-11" />
-            <p className="text-sm text-slate-700 leading-relaxed">
-              <strong style={{ color: TONE }}>أنت إمام أو قارئ؟</strong> أنشئ ملفك مجاناً على منصة أئمة وتقدّم لهذا الإعلان
-              ولإعلانات مساجد أوروبا:{' '}
-              <span dir="ltr" className="font-bold" style={{ color: TONE }}>
-                {SITE_URL}
-              </span>
-            </p>
-          </aside>
+          <div className="mt-auto" aria-hidden />
 
           <CvFooter tone={TONE} />
         </main>
