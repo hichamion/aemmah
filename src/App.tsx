@@ -43,6 +43,8 @@ import { ImamPortal } from './components/ImamPortal';
 import { MosquePortal } from './components/MosquePortal';
 import { AuthOnboardingModal } from './components/AuthOnboardingModal';
 import { ImamModalForm } from './components/ImamModalForm';
+import { StatsConsent } from './components/StatsConsent';
+import { trackVisit } from './lib/visits';
 import { MosqueModalForm } from './components/MosqueModalForm';
 import { ImamFullModal } from './components/ImamFullModal';
 import { MosqueFullModal } from './components/MosqueFullModal';
@@ -148,6 +150,11 @@ export default function App() {
   useEffect(() => {
     document.title = VIEW_TITLES[currentView];
   }, [currentView]);
+
+  // Anonymous visit counter (see src/lib/visits.ts) — once per opening of the site.
+  useEffect(() => {
+    void trackVisit();
+  }, []);
 
   // The support page exists only once a payment method is configured (src/config.ts).
   useEffect(() => {
@@ -894,6 +901,8 @@ export default function App() {
 
       {showIntro && <Intro onDone={() => setShowIntro(false)} />}
 
+      <StatsConsent onPrivacy={() => setCurrentView('privacy')} />
+
       <MobileNav
         currentView={currentView}
         role={role}
@@ -923,7 +932,9 @@ export default function App() {
         onClose={() => setIsImamModalOpen(false)}
         onSave={handleSaveImam}
         initialData={editingImam}
+        liveImam={editingImam ? imams.find((i) => i.id === editingImam.id) ?? null : null}
         onError={(msg) => showToast(msg, 'error')}
+        onInfo={(msg) => showToast(msg)}
       />
 
       <MosqueModalForm

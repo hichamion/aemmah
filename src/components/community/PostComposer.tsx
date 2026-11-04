@@ -5,7 +5,6 @@ import {
   checkPdf,
   MAX_POST_FILES,
   MAX_POST_IMAGES,
-  POST_TYPES,
   PostDraft,
   prepareImages,
   savePost,
@@ -13,6 +12,7 @@ import {
   useMediaImage,
 } from '../../lib/community';
 import { applyFormat, RichText } from '../../lib/richtext';
+import { PostTypeGrid } from './PostParts';
 import { useDialog } from '../../lib/useDialog';
 
 interface Props {
@@ -161,16 +161,7 @@ export const PostComposer: React.FC<Props> = ({ open, initialType, existing, set
         </div>
 
         <div className="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
-          <div className="flex flex-wrap gap-2">
-            {POST_TYPES.map((t) => (
-              <button key={t.value} type="button" onClick={() => setType(t.value)} aria-pressed={type === t.value}
-                className={`px-3 py-2 rounded-full text-xs font-bold border-2 cursor-pointer transition ${
-                  type === t.value ? 'border-emerald-700 bg-emerald-50 text-emerald-900' : 'border-slate-200 text-slate-600 hover:border-emerald-400'
-                }`}>
-                {t.icon} {t.label}
-              </button>
-            ))}
-          </div>
+          <PostTypeGrid value={type} onPick={setType} />
 
           {tpl && (
             <button type="button" onClick={useTemplate} className="inline-flex items-center gap-1.5 text-xs font-black text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full cursor-pointer">

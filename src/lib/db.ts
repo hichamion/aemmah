@@ -16,8 +16,8 @@ import {
   writeBatch,
   addDoc,
 } from 'firebase/firestore';
-import { deleteObject, ref, uploadBytes } from 'firebase/storage';
-import { auth, db, storage } from '../firebase';
+import { auth, db } from '../firebase';
+import { compressImage } from './image';
 import {
   ADMIN_INBOX,
   Application,
@@ -273,29 +273,100 @@ export async function createUserProfile(profile: UserProfile) {
 // File helpers
 // ---------------------------------------------------------------------------
 
-const MAX_DOC_SIZE = 5 * 1024 * 1024; // 5 MB
+// Private documents (visa, certificates) are stored in Firestore as base64 chunks:
+// Cloud Storage is not enabled for this project (uploads there never finished).
+// privateDocs/{imamId}_{kind} holds the details, privateDocs/{id}/chunks/{n} the data — owner and admins only.
+const MAX_DOC_SIZE = 2 * 1024 * 1024; // 2 MB
+const DOC_CHUNK = 700_000;
 const ALLOWED_DOC_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+export const PRIVATE_DOC_PREFIX = 'privateDocs/';
 
 export function validateDocumentFile(file: File): string | null {
   if (!ALLOWED_DOC_TYPES.includes(file.type)) return 'نوع الملف غير مدعوم. المسموح: PDF أو JPG أو PNG أو WEBP.';
-  if (file.size > MAX_DOC_SIZE) return 'حجم الملف أكبر من 5 ميغابايت.';
+  // Photos are shrunk before upload, so only PDFs are limited by their raw size.
+  if (file.type === 'application/pdf' && file.size > MAX_DOC_SIZE) return 'حجم ملف PDF أكبر من 2 ميغابايت. اضغطه أو صوّر الوثيقة بدلاً منه.';
+  if (file.size > 15 * 1024 * 1024) return 'حجم الصورة أكبر من 15 ميغابايت.';
   return null;
 }
 
-async function uploadPrivateDocument(ownerUid: string, imamId: string, kind: 'visa' | 'certs', file: File) {
-  const safeName = file.name.replace(/[^\w.\-]+/g, '_').slice(-80);
-  const path = `private/${ownerUid}/${imamId}/${kind}-${Date.now()}-${safeName}`;
-  await uploadBytes(ref(storage, path), file, { contentType: file.type });
-  return { path, name: file.name };
+async function readAsBase64(file: Blob): Promise<string> {
+  const url = await new Promise<string>((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result));
+    r.onerror = () => reject(new Error('تعذر قراءة الملف.'));
+    r.readAsDataURL(file);
+  });
+  return url.slice(url.indexOf(',') + 1);
 }
 
-async function deleteStorageFile(path?: string) {
-  if (!path) return;
+async function uploadPrivateDocument(ownerUid: string, imamId: string, kind: 'visa' | 'certs', file: File) {
+  let mime = file.type;
+  let b64: string;
+  if (mime.startsWith('image/')) {
+    const dataUrl = await compressImage(file, 1600, 1_200_000);
+    mime = 'image/jpeg';
+    b64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
+  } else {
+    b64 = await readAsBase64(file);
+  }
+  const chunks = Array.from({ length: Math.ceil(b64.length / DOC_CHUNK) }, (_, i) => b64.slice(i * DOC_CHUNK, (i + 1) * DOC_CHUNK));
+  if (chunks.length > 4) throw new Error('الملف كبير جداً بعد المعالجة (الحد 2 ميغابايت).');
+  const id = `${imamId}_${kind}`;
+  const old = await getDoc(doc(db, 'privateDocs', id)).catch(() => null);
+  const oldCount = old?.exists() ? Number(old.data().chunkCount) || 0 : 0;
+  const batch = writeBatch(db);
+  batch.set(doc(db, 'privateDocs', id), {
+    ownerUid,
+    imamId,
+    kind,
+    name: file.name.slice(0, 150),
+    mime,
+    size: Math.round((b64.length * 3) / 4),
+    chunkCount: chunks.length,
+    createdAt: nowIso(),
+  });
+  chunks.forEach((data, i) => batch.set(doc(db, 'privateDocs', id, 'chunks', String(i)), { data }));
+  for (let i = chunks.length; i < oldCount; i++) batch.delete(doc(db, 'privateDocs', id, 'chunks', String(i)));
+  await batch.commit();
+  return { path: `${PRIVATE_DOC_PREFIX}${id}`, name: file.name.slice(0, 150) };
+}
+
+async function deletePrivateDocument(path?: string) {
+  if (!path?.startsWith(PRIVATE_DOC_PREFIX)) return; // old Cloud Storage paths: nothing stored there
+  const id = path.slice(PRIVATE_DOC_PREFIX.length);
   try {
-    await deleteObject(ref(storage, path));
+    const meta = await getDoc(doc(db, 'privateDocs', id));
+    const n = meta.exists() ? Number(meta.data().chunkCount) || 0 : 0;
+    const batch = writeBatch(db);
+    for (let i = 0; i < n; i++) batch.delete(doc(db, 'privateDocs', id, 'chunks', String(i)));
+    batch.delete(doc(db, 'privateDocs', id));
+    await batch.commit();
   } catch {
     // Already gone or no permission — not critical.
   }
+}
+
+/** Opens a private document (owner or admin) in a new tab / download. */
+export async function openPrivateDocument(path: string) {
+  if (!path.startsWith(PRIVATE_DOC_PREFIX)) throw new Error('هذا الملف رُفع بنسخة قديمة ولم يُحفظ. ارفعه من جديد.');
+  const id = path.slice(PRIVATE_DOC_PREFIX.length);
+  const meta = await getDoc(doc(db, 'privateDocs', id));
+  if (!meta.exists()) throw new Error('الملف غير موجود.');
+  const { chunkCount, mime, name } = meta.data() as { chunkCount: number; mime: string; name: string };
+  const parts = await Promise.all(Array.from({ length: chunkCount }, (_, i) => getDoc(doc(db, 'privateDocs', id, 'chunks', String(i)))));
+  const bin = atob(parts.map((p) => (p.data()?.data as string) || '').join(''));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const url = URL.createObjectURL(new Blob([bytes], { type: mime }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.download = `${id}.${mime === 'application/pdf' ? 'pdf' : 'jpg'}`;
+  void name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 // ---------------------------------------------------------------------------
@@ -352,18 +423,18 @@ export async function saveImam(params: {
   };
   if (files.photo !== undefined) data.photo = files.photo;
 
-  // Private documents go to Cloud Storage (owner-only access).
+  // Private documents go to Firestore (owner and admins only).
   if (files.visaFile) {
     const up = await uploadPrivateDocument(ownerUid, id, 'visa', files.visaFile);
     data.visaFilePath = up.path;
     data.visaFileName = up.name;
-    await deleteStorageFile(existing?.visaFilePath);
+    if (existing?.visaFilePath !== up.path) await deletePrivateDocument(existing?.visaFilePath);
   }
   if (files.certsFile) {
     const up = await uploadPrivateDocument(ownerUid, id, 'certs', files.certsFile);
     data.certsFilePath = up.path;
     data.certsFileName = up.name;
-    await deleteStorageFile(existing?.certsFilePath);
+    if (existing?.certsFilePath !== up.path) await deletePrivateDocument(existing?.certsFilePath);
   }
 
   const batch = writeBatch(db);
@@ -408,8 +479,8 @@ export async function deleteImam(imam: ImamProfile) {
   batch.delete(doc(db, 'recitations', imam.id));
   await batch.commit();
   contactCache.delete(`imam:${imam.id}`);
-  await deleteStorageFile(imam.visaFilePath);
-  await deleteStorageFile(imam.certsFilePath);
+  await deletePrivateDocument(imam.visaFilePath);
+  await deletePrivateDocument(imam.certsFilePath);
 }
 
 // ---------------------------------------------------------------------------
@@ -723,7 +794,7 @@ export function describeError(err: unknown): string {
     return 'هذا البريد مسجل مسبقاً بطريقة دخول أخرى. جرّب الدخول بجوجل.';
   if (code.includes('unauthorized-domain')) return 'هذا النطاق غير مصرح به في إعدادات Firebase Authentication.';
   if (code.includes('operation-not-allowed')) return 'طريقة تسجيل الدخول هذه غير مفعلة في إعدادات Firebase.';
-  if (code.includes('storage/')) return 'تعذر رفع الملف. تأكد من تفعيل Firebase Storage ومن حجم الملف.';
+  if (code.includes('storage/')) return 'تعذر رفع الملف. تحقق من حجمه ونوعه ثم أعد المحاولة.';
   if (code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found'))
     return 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
   if (code.includes('email-already-in-use')) return 'هذا البريد مسجّل مسبقاً. سجّل الدخول، أو استعمل «نسيت كلمة المرور».';

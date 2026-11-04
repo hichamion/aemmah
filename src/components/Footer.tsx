@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, Building2, Mic, Info } from 'lucide-react';
+import { ShieldCheck, Building2, Mic, Info, Scale } from 'lucide-react';
 import { LogoMark } from './Logo';
 import { CONTACT_EMAIL } from '../config';
 
@@ -31,7 +31,7 @@ export const Footer: React.FC<FooterProps> = ({
 }) => {
   return (
     <footer className="bg-night text-slate-400 border-t border-emerald-900/60 pt-12 pb-28 lg:pb-8 px-4 sm:px-6 lg:px-8 text-sm">
-      <div className="max-w-7xl mx-auto space-y-10">
+      <div className="max-w-7xl mx-auto space-y-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="space-y-3">
@@ -97,6 +97,22 @@ export const Footer: React.FC<FooterProps> = ({
             </ul>
           </nav>
         </div>
+
+        {/* Disclaimer: compact, readable, on every page. */}
+        <section aria-labelledby="disclaimer-title" className="rounded-2xl border border-amber-400/15 bg-white/[0.03] px-4 py-3.5 sm:px-5 text-xs leading-relaxed text-slate-400">
+          <h2 id="disclaimer-title" className="text-amber-300/90 font-black mb-1.5 flex items-center gap-1.5">
+            <Scale className="w-3.5 h-3.5 shrink-0" />
+            <span>تنبيه وإخلاء مسؤولية</span>
+          </h2>
+          <p>
+            منصة أئمة ليست وكالة توظيف أو جهة للهجرة، ولا تتولى إصدار التأشيرات أو تقديم طلباتها أو متابعة إجراءاتها، كما أنها لا تبحث
+            نيابةً عن المستخدمين عن مسجد أو وظيفة، ولا تضمن الحصول على فرصة عمل أو عقد أو تأشيرة.
+          </p>
+          <p className="mt-1">
+            يقتصر دور المنصة على أن تكون بوابة للتواصل وجسرًا للتعارف والربط بين الأئمة والمساجد، وتيسير تبادل المعلومات والخبرات بينهم.
+            وتبقى مسؤولية التحقق من المعلومات والبيانات والاتفاقات والإجراءات الرسمية على الأطراف المعنية.
+          </p>
+        </section>
 
         <div className="pt-6 border-t border-slate-900 text-xs text-slate-500">
           <p>© {new Date().getFullYear()} منصة أئمة (Aemmah). جميع الحقوق محفوظة.</p>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { ImamContact, ImamFormFiles, ImamProfile } from '../types';
 import type { ImamEditableFields } from '../lib/db';
-import { useContact, validateDocumentFile } from '../lib/db';
+import { describeError, openPrivateDocument, useContact, useRecitationAudio, validateDocumentFile } from '../lib/db';
+import { RecitationManager } from './Recitation';
 import { compressImage } from '../lib/image';
 import {
   getYoutubeEmbedUrl,
@@ -25,7 +26,11 @@ interface ImamModalFormProps {
   /** Should throw on failure so the form stays open. */
   onSave: (fields: ImamEditableFields, contact: Omit<ImamContact, 'ownerUid'>, files: ImamFormFiles) => Promise<void>;
   initialData: ImamProfile | null;
+  /** Live version of the edited profile (recitation sample changes are saved on their own). */
+  liveImam?: ImamProfile | null;
   onError: (message: string) => void;
+  /** Success messages from the recitation section. */
+  onInfo?: (message: string) => void;
 }
 
 // New profiles start EMPTY: nothing is pre-filled on the user's behalf
@@ -59,8 +64,10 @@ const EMPTY_FIELDS: ImamEditableFields = {
 
 const EMPTY_CONTACT = { phone: '', whatsapp: '', email: '' };
 
-export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, onSave, initialData, onError }) => {
+export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, onSave, initialData, liveImam, onError, onInfo }) => {
   const [fields, setFields] = useState<ImamEditableFields>(EMPTY_FIELDS);
+  const recImam = isOpen && initialData ? liveImam ?? initialData : null;
+  const { audio: currentRecitation } = useRecitationAudio(recImam?.id, !!recImam?.recitationMeta, recImam?.recitationMeta?.createdAt);
   const [contact, setContact] = useState(EMPTY_CONTACT);
   const [customTitles, setCustomTitles] = useState('');
   const allTitles = () =>
@@ -90,7 +97,15 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
       const { name, age, country, nationality, titles, hasVisa, visaDetails, hasCerts, degree, riwaya, languages, germanLevel, youtubeUrl, cvText, availabilityState, ramadanNote, availableAfterDate } = initialData;
       const d = initialData;
       setFields({
-        name, age, country, hasVisa, visaDetails, hasCerts, degree, riwaya,
+        // Older profiles may lack some fields: always start from defined values.
+        name: name || '',
+        age: Number(age) || 0,
+        country: country || '',
+        hasVisa: hasVisa === 'yes' ? 'yes' : 'no',
+        visaDetails: visaDetails || '',
+        hasCerts: hasCerts === 'yes' ? 'yes' : 'no',
+        degree: degree || '',
+        riwaya: riwaya || '',
         nationality: nationality || '',
         titles: titles?.length ? titles : ['إمام'],
         currentJob: d.currentJob || '',
@@ -105,7 +120,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
         germanLevel: germanLevel || 'none',
         youtubeUrl: youtubeUrl || '',
         cvText: cvText || '',
-        availabilityState,
+        availabilityState: availabilityState || 'available_now',
         ramadanNote: ramadanNote || '',
         availableAfterDate: availableAfterDate || '',
       });
@@ -219,8 +234,9 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
           certsFile: fields.hasCerts === 'yes' ? certsFile : null,
         }
       );
-    } catch {
-      // Error toast is shown by the parent; keep the form open.
+    } catch (err) {
+      // The parent shows a toast as well; keep the form open and say why here too.
+      setFormError(`لم يتم حفظ الملف: ${describeError(err)}`);
     } finally {
       setSaving(false);
     }
@@ -417,6 +433,12 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
                   <p className="text-xs text-sky-700 font-bold flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5 text-sky-600" />
                     <span>{visaFile ? `سيتم رفع: ${visaFile.name}` : `الملف الحالي: ${initialData?.visaFileName}`}</span>
+                    {!visaFile && initialData?.visaFilePath?.startsWith('privateDocs/') && (
+                      <button type="button" className="underline text-sky-800 mr-1 cursor-pointer"
+                        onClick={() => openPrivateDocument(initialData.visaFilePath!).catch((e) => onError(e instanceof Error ? e.message : 'تعذر فتح الملف.'))}>
+                        عرض
+                      </button>
+                    )}
                   </p>
                 )}
               </div>
@@ -474,6 +496,12 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
                   <p className="text-xs text-emerald-700 font-bold flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>{certsFile ? `سيتم رفع: ${certsFile.name}` : `الملف الحالي: ${initialData?.certsFileName}`}</span>
+                    {!certsFile && initialData?.certsFilePath?.startsWith('privateDocs/') && (
+                      <button type="button" className="underline text-sky-800 mr-1 cursor-pointer"
+                        onClick={() => openPrivateDocument(initialData.certsFilePath!).catch((e) => onError(e instanceof Error ? e.message : 'تعذر فتح الملف.'))}>
+                        عرض
+                      </button>
+                    )}
                   </p>
                 )}
               </div>
@@ -536,6 +564,20 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
               <p className="text-xs text-slate-400 text-left" dir="ltr">{fields.cvText.length}/5000</p>
             </div>
           </div>
+
+          {recImam && (
+            <div className="space-y-2">
+              <p className="text-xs text-slate-500 font-bold">
+                عيّنة التلاوة تُحفظ وحدها فور الضغط على زر حفظها داخل هذا القسم، مستقلةً عن زر «حفظ الملف».
+              </p>
+              <RecitationManager
+                imam={recImam}
+                currentAudio={currentRecitation}
+                onSaved={(m) => (onInfo ? onInfo(m) : undefined)}
+                onError={onError}
+              />
+            </div>
+          )}
 
           {formError && (
             <p role="alert" className="bg-red-50 border border-red-200 text-red-800 font-bold rounded-xl p-3">

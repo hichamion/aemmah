@@ -10,7 +10,6 @@ export interface PostActions {
   onEdit: (p: CommunityPost) => void;
   onDelete: (p: CommunityPost) => void;
   onPin: (p: CommunityPost) => void;
-  onLibrary: (p: CommunityPost) => void;
   onReport: (p: CommunityPost, comment?: PostComment) => void;
   onToggleSave: (p: CommunityPost) => void;
   onError: (m: string) => void;
@@ -139,7 +138,6 @@ export const PostDetail: React.FC<{
             onEdit={() => actions.onEdit(post)}
             onDelete={() => actions.onDelete(post)}
             onPin={() => actions.onPin(post)}
-            onLibrary={() => actions.onLibrary(post)}
             onError={actions.onError}
             onCopied={() => actions.onInfo('تم نسخ رابط المنشور.')}
           />

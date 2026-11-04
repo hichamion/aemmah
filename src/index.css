@@ -197,3 +197,49 @@
   .intro [class*='intro-'] { opacity: 1; }
   .intro-leave { opacity: 0; }
 }
+
+/* ---------- ملتقى الأئمة ---------- */
+/* Calm backdrop of the community page (the calligraphy watermark is rendered by CommunityBackdrop). */
+.community-bg {
+  background:
+    radial-gradient(60rem 40rem at 100% 0%, rgba(47, 191, 122, 0.09), transparent 60%),
+    radial-gradient(50rem 36rem at 0% 100%, rgba(26, 163, 191, 0.07), transparent 60%),
+    linear-gradient(180deg, #f3f8f5 0%, #f7f5ee 100%);
+}
+.community-watermark {
+  color: #0b5e37;
+  opacity: 0.045;
+  line-height: 1;
+  user-select: none;
+}
+
+/* Sidebar tiles: soft gradient with faint geometric lines (inspired by classic Arabic portals). */
+.cm-tile {
+  background-color: #eaf6f0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='64' viewBox='0 0 160 64'%3E%3Cg fill='none' stroke='%2312804c' stroke-opacity='0.13' stroke-width='0.8'%3E%3Cpath d='M40 6 L100 58 M40 6 L150 30 M40 6 L70 64 M40 6 L10 64 M40 6 L130 0 M100 58 L150 30 M70 64 L150 30'/%3E%3Ccircle cx='40' cy='6' r='1.6' fill='%2312804c' fill-opacity='0.25'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(100deg, #f7fcf9 0%, #e3f3eb 55%, #d3ece0 100%);
+  background-repeat: no-repeat;
+  background-position: left center, 0 0;
+  background-size: auto 100%, 100% 100%;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease, color 0.25s ease;
+}
+.cm-tile:hover { box-shadow: 0 8px 22px -14px rgba(5, 71, 43, 0.55); transform: translateX(-2px); }
+.cm-tile[aria-current='page'] {
+  color: #fff;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='64' viewBox='0 0 160 64'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.16' stroke-width='0.8'%3E%3Cpath d='M40 6 L100 58 M40 6 L150 30 M40 6 L70 64 M40 6 L10 64 M40 6 L130 0 M100 58 L150 30 M70 64 L150 30'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(100deg, #2fbf7a 0%, #12804c 55%, #05472b 100%);
+  box-shadow: 0 10px 24px -14px rgba(5, 71, 43, 0.8);
+}
+/* Accordion panel: animates its height without measuring. */
+.cm-collapse { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease, opacity 0.3s ease; opacity: 0; }
+.cm-collapse[data-open='true'] { grid-template-rows: 1fr; opacity: 1; }
+.cm-collapse > * { overflow: hidden; }
+@keyframes cm-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.cm-enter { animation: cm-in 0.35s ease both; }
+@media (prefers-reduced-motion: reduce) {
+  .cm-tile, .cm-collapse { transition: none; }
+  .cm-tile:hover { transform: none; }
+  .cm-enter { animation: none; }
+}

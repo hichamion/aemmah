@@ -69,10 +69,11 @@ service cloud.firestore {
                                'riwaya', 'languages', 'germanLevel', 'youtubeUrl', 'cvText', 'availabilityState',
                                'ramadanNote', 'availableAfterDate', 'photo', 'visaFilePath', 'visaFileName',
                                'certsFilePath', 'certsFileName', 'approvalStatus', 'isVerified', 'createdAt', 'updatedAt'])
+        // Fields added in later versions are read with defaults, so older profiles stay editable.
         && nonEmpty(d.name, 120)
         // Only the name (and the protected phone / e-mail) are required; age 0 = not given.
-        && d.age is int && (d.age == 0 || (d.age >= 18 && d.age <= 90))
-        && str(d.country, 120)
+        && d.get('age', 0) is number && (d.get('age', 0) == 0 || (d.get('age', 0) >= 18 && d.get('age', 0) <= 90))
+        && str(d.get('country', ''), 120)
         && str(d.get('nationality', ''), 80)
         && d.get('titles', []) is list && d.get('titles', []).size() <= 8
         && str(d.get('currentJob', ''), 150)
@@ -83,19 +84,20 @@ service cloud.firestore {
         && d.get('maritalStatus', '') in ['', 'single', 'married', 'married_children']
         && d.get('livesInEurope', false) is bool
         && (d.get('recitationMeta', null) == null || d.recitationMeta is map)
-        && d.hasVisa in ['yes', 'no']
-        && d.hasCerts in ['yes', 'no']
-        && str(d.visaDetails, 500)
-        && str(d.degree, 300)
-        && str(d.riwaya, 60)
-        && str(d.languages, 300)
-        && str(d.germanLevel, 10)
-        && str(d.youtubeUrl, 300)
-        && str(d.cvText, 5000)
-        && d.availabilityState in ['available_now', 'busy_ramadan', 'paused']
-        && str(d.ramadanNote, 300)
-        && str(d.availableAfterDate, 100)
-        && str(d.photo, 200000)
+        && d.get('hasVisa', 'no') in ['yes', 'no']
+        && d.get('hasCerts', 'no') in ['yes', 'no']
+        && str(d.get('visaDetails', ''), 500)
+        && str(d.get('degree', ''), 300)
+        && str(d.get('riwaya', ''), 60)
+        && str(d.get('languages', ''), 300)
+        && str(d.get('germanLevel', ''), 10)
+        && str(d.get('youtubeUrl', ''), 300)
+        && str(d.get('cvText', ''), 5000)
+        && d.get('availabilityState', 'available_now') in ['available_now', 'busy_ramadan', 'paused']
+        && str(d.get('ramadanNote', ''), 300)
+        && str(d.get('availableAfterDate', ''), 100)
+        && str(d.get('photo', ''), 200000)
+        && str(d.get('visaFilePath', ''), 200) && str(d.get('certsFilePath', ''), 200)
         && d.approvalStatus in ['pending', 'approved', 'rejected']
         && d.isVerified is bool;
     }
@@ -138,6 +140,39 @@ service cloud.firestore {
             || (incoming().ownerUid == me()
                 && getAfter(/databases/$(database)/documents/imams/$(imamId)).data.ownerUid == me()));
       allow delete: if isAdmin() || (signedIn() && resource.data.ownerUid == me());
+    }
+
+    // ---------- private documents of an imam (visa, certificates) ----------
+    // privateDocs/{imamId}_{kind} + chunks/{n}: base64 data, readable by the owner and admins only.
+    match /privateDocs/{docId} {
+      allow get: if signedIn() && (resource == null || resource.data.ownerUid == me() || isAdmin());
+      allow list: if false;
+      allow create, update: if signedIn()
+        && incoming().keys().hasOnly(['ownerUid', 'imamId', 'kind', 'name', 'mime', 'size', 'chunkCount', 'createdAt'])
+        && incoming().kind in ['visa', 'certs']
+        && docId == incoming().imamId + '_' + incoming().kind
+        && nonEmpty(incoming().name, 150) && str(incoming().createdAt, 40)
+        && incoming().mime in ['application/pdf', 'image/jpeg']
+        && incoming().size is int && incoming().size > 0 && incoming().size <= 2200000
+        && incoming().chunkCount is int && incoming().chunkCount >= 1 && incoming().chunkCount <= 4
+        && (isAdmin()
+            || (incoming().ownerUid == me()
+                && (resource == null || resource.data.ownerUid == me())
+                && (incoming().imamId == me()
+                    || get(/databases/$(database)/documents/imams/$(incoming().imamId)).data.ownerUid == me())));
+      allow delete: if signedIn() && (resource.data.ownerUid == me() || isAdmin());
+
+      match /chunks/{n} {
+        allow get: if signedIn() && (get(/databases/$(database)/documents/privateDocs/$(docId)).data.ownerUid == me() || isAdmin());
+        allow list: if false;
+        allow create, update: if signedIn()
+          && n in ['0', '1', '2', '3']
+          && incoming().keys().hasOnly(['data'])
+          && incoming().data is string && incoming().data.size() <= 700000
+          && (isAdmin() || getAfter(/databases/$(database)/documents/privateDocs/$(docId)).data.ownerUid == me());
+        allow delete: if signedIn()
+          && (isAdmin() || get(/databases/$(database)/documents/privateDocs/$(docId)).data.ownerUid == me());
+      }
     }
 
     // ---------- recitation sample (audio) ----------
@@ -514,7 +549,24 @@ service cloud.firestore {
 
     match /communitySettings/{docId} {
       allow read: if isCommunityMember();
-      allow write: if isAdmin();
+      // The hadith search window may only point to the official site (https://hdith.com/...).
+      allow write: if isAdmin()
+        && (request.resource == null
+            || request.resource.data.get('hadithEmbedUrl', '').matches('(https://([a-z0-9-]+[.])?hdith[.]com/.*)?'));
+    }
+
+    // ---------- anonymous visit statistics ----------
+    // visits/{id}: one per opening of the site; visitors/{id}: first visit of a browser whose user agreed.
+    // Only a server timestamp is stored (no IP, no user data). Create-only; admins read the counts.
+    match /visits/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['at']) && request.resource.data.at == request.time;
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+    match /visitors/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['at']) && request.resource.data.at == request.time;
+      allow read: if isAdmin();
+      allow update, delete: if false;
     }
 
     // Everything else is closed.
