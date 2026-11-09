@@ -768,6 +768,11 @@ export default function App() {
                 onOpenDashboard={() => setCurrentView('dashboard')}
                 onOpenAuthModal={() => setIsAuthModalOpen(true)}
                 onOpenAdminPanel={() => setCurrentView('admin')}
+                onOpenMyProfile={handleOpenMyProfile}
+                onOpenCommunity={() => setCurrentView('community')}
+                onOpenHadith={() => { window.location.hash = '#/community/hadith'; window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                onOpenSupport={SUPPORT_ENABLED ? () => setCurrentView('support') : undefined}
+                userName={role === 'visitor' ? undefined : displayName}
                 currentRole={role}
                 imamsCount={activeImamsCount}
                 mosquesCount={activeMosquesCount}

@@ -12,7 +12,7 @@ export const StatsConsent: React.FC<{ onPrivacy: () => void }> = ({ onPrivacy })
   };
   return (
     <div role="region" aria-label="إحصاء الزوار"
-      className="fixed z-40 bottom-20 lg:bottom-4 inset-x-3 sm:inset-x-auto sm:left-4 sm:max-w-sm bg-white/95 backdrop-blur border border-slate-200 shadow-xl rounded-2xl p-3.5 text-xs text-slate-600 space-y-2.5">
+      className="fixed z-40 bottom-24 lg:bottom-4 inset-x-3 sm:inset-x-auto sm:left-4 sm:max-w-sm bg-white/95 backdrop-blur border border-slate-200 shadow-xl rounded-2xl p-3.5 text-xs text-slate-600 space-y-2.5">
       <p className="leading-relaxed flex gap-2">
         <BarChart3 className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
         <span>

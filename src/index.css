@@ -35,15 +35,39 @@
   --color-blue-800: #0c2539;
   --color-blue-900: #0a1c2c;
 
-  --color-amber-300: #fcd27f;
-  --color-amber-400: #f8bb47;
-  --color-amber-500: #f2a12c;
-  --color-amber-600: #d9831a;
+  /* Gold = brass of the «سَمْت» identity (warmer and calmer than the old yellow). */
+  --color-amber-300: #e4c67f;
+  --color-amber-400: #d6ae5c;
+  --color-amber-500: #c9a24e;
+  --color-amber-600: #a9843a;
 
   --color-slate-50: #f2f6f6;
 
   /* Night background used by the header and the home hero. */
-  --color-night: #0a1824;
+  --color-night: #0c1d22;
+
+  /* «سَمْت» identity: night ink, cedar green, lagoon teal, brass gold, parchment. */
+  --color-ink: #0c1d22;
+  --color-ink-soft: #14303a;
+  --color-cedar-500: #2f7a63;
+  --color-cedar-600: #256853;
+  --color-cedar-700: #1e5a48;
+  --color-cedar-800: #164536;
+  --color-cedar-900: #0f3127;
+  --color-lagoon-400: #3c98a6;
+  --color-lagoon-500: #2a8090;
+  --color-lagoon-600: #1d6b78;
+  --color-lagoon-700: #155664;
+  --color-lagoon-800: #0f414c;
+  --color-brass-100: #f7edd3;
+  --color-brass-200: #efdcab;
+  --color-brass-300: #e4c67f;
+  --color-brass-400: #d6ae5c;
+  --color-brass-500: #c9a24e;
+  --color-brass-600: #a9843a;
+  --color-brass-700: #84662c;
+  --color-parchment: #f7f2e7;
+  --color-sand: #ece3cf;
 }
 
 @layer base {
@@ -150,6 +174,7 @@
 /* Bold Kufic titles (intro). */
 .font-kufi {
   font-family: 'Reem Kufi', 'Cairo', sans-serif;
+  word-spacing: 0.14em;
   font-weight: 700;
 }
 
@@ -242,4 +267,41 @@
   .cm-tile, .cm-collapse { transition: none; }
   .cm-tile:hover { transform: none; }
   .cm-enter { animation: none; }
+}
+
+/* ---------- Home («سَمْت» identity) ---------- */
+/* Faint eight-pointed-star lattice for dark surfaces. */
+.khatam-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23e4c67f' stroke-opacity='0.09' stroke-width='1'%3E%3Crect x='22' y='22' width='28' height='28'/%3E%3Crect x='22' y='22' width='28' height='28' transform='rotate(45 36 36)'/%3E%3Cpath d='M0 36h16M56 36h16M36 0v16M36 56v16'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 72px 72px;
+}
+/* Same lattice for light surfaces. */
+.khatam-pattern-light {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%231e5a48' stroke-opacity='0.06' stroke-width='1'%3E%3Crect x='22' y='22' width='28' height='28'/%3E%3Crect x='22' y='22' width='28' height='28' transform='rotate(45 36 36)'/%3E%3Cpath d='M0 36h16M56 36h16M36 0v16M36 56v16'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 72px 72px;
+}
+.home-hero {
+  background:
+    radial-gradient(40rem 26rem at 85% 10%, rgba(201, 162, 78, 0.16), transparent 65%),
+    radial-gradient(46rem 30rem at 10% 90%, rgba(29, 107, 120, 0.35), transparent 65%),
+    linear-gradient(160deg, #0c1d22 0%, #10282d 55%, #0d2a24 100%);
+}
+.brass-text {
+  background: linear-gradient(100deg, #f3dfa8 0%, #d6ae5c 45%, #f0d595 70%, #c09543 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.lift { transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s ease; }
+.lift:hover { transform: translateY(-4px); }
+@keyframes slide-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.slide-copy > * { animation: slide-in 0.6s ease both; }
+.slide-copy > *:nth-child(2) { animation-delay: 0.08s; }
+.slide-copy > *:nth-child(3) { animation-delay: 0.16s; }
+.slide-copy > *:nth-child(4) { animation-delay: 0.24s; }
+@keyframes kenburns { from { transform: scale(1.04); } to { transform: scale(1.12); } }
+.kenburns { animation: kenburns 9s ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .lift, .lift:hover { transition: none; transform: none; }
+  .slide-copy > *, .kenburns { animation: none; }
 }
