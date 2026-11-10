@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import { Plus, RotateCcw, Save, Trash2 } from 'lucide-react';
 import { CommunitySettings, PostType } from '../../types/community';
 import { DEFAULT_TEMPLATES, POST_TYPES, saveCommunitySettings, templateFor } from '../../lib/community';
-import { HADITH_EMBED_DEFAULT, parseHadithEmbed } from './HadithCheck';
 
-/** Admin tools of «ملتقى الأئمة»: pause posting, categories, the hadith search window and post templates. */
+/** Admin tools of «ملتقى الأئمة»: pause posting, categories and post templates. */
 export const CommunityAdmin: React.FC<{ settings: CommunitySettings; onDone: (m: string) => void; onError: (m: string) => void }> = ({
   settings,
   onDone,
@@ -32,7 +31,6 @@ export const CommunityAdmin: React.FC<{ settings: CommunitySettings; onDone: (m:
       </section>
 
       <ListEditor title="تصنيفات المنشورات" items={settings.categories} onSave={(categories) => save({ categories }, 'تم حفظ التصنيفات.')} />
-      <HadithEmbedEditor value={settings.hadithEmbedUrl || ''} onSave={(hadithEmbedUrl) => save({ hadithEmbedUrl }, hadithEmbedUrl ? 'تم حفظ رابط نافذة البحث.' : 'تمت استعادة الرابط الافتراضي.')} onError={onError} />
 
       <section className="bg-white border border-slate-200 rounded-3xl p-5 space-y-4">
         <div>
@@ -110,28 +108,3 @@ const TemplateEditor: React.FC<{
   );
 };
 
-/** The official search window is configured on hdith.com/embed/configure; the admin pastes its code or link here. */
-const HadithEmbedEditor: React.FC<{ value: string; onSave: (url: string) => void; onError: (m: string) => void }> = ({ value, onSave, onError }) => {
-  const [text, setText] = useState(value);
-  return (
-    <section className="bg-white border border-slate-200 rounded-3xl p-5 space-y-3">
-      <div>
-        <h2 className="font-black text-slate-900">نافذة «التحقق من صحة حديث»</h2>
-        <p className="text-xs text-slate-500 leading-relaxed">
-          خانة البحث الرسمية مضافة تلقائياً (نسخة للهاتف وأخرى للحاسوب). لتغييرها: أنشئ كوداً جديداً من
-          <a href="https://hdith.com/embed/configure" target="_blank" rel="noopener noreferrer" className="text-emerald-800 underline font-bold mx-1">hdith.com/embed/configure</a>
-          والصقه هنا (يُقبل فقط رابط من موقع hdith.com). اترك الخانة فارغة لاستعمال الخانة الافتراضية.
-        </p>
-      </div>
-      <textarea value={text} onChange={(e) => setText(e.target.value)} rows={3} dir="ltr" placeholder={HADITH_EMBED_DEFAULT}
-        aria-label="كود أو رابط نافذة البحث" className="w-full border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono" />
-      <div className="flex flex-wrap gap-2">
-        <button onClick={() => { const url = text.trim() ? parseHadithEmbed(text) : ''; if (url === null) return onError('الرابط غير مقبول: يجب أن يكون رابط https من موقع hdith.com.'); setText(url); onSave(url); }}
-          className="inline-flex items-center gap-1.5 bg-emerald-800 text-white font-black px-4 py-2 rounded-full text-sm cursor-pointer"><Save className="w-4 h-4" /> حفظ</button>
-        {value && (
-          <button onClick={() => { setText(''); onSave(''); }} className="inline-flex items-center gap-1.5 bg-slate-100 font-bold px-4 py-2 rounded-full text-sm cursor-pointer"><RotateCcw className="w-4 h-4" /> الرابط الافتراضي</button>
-        )}
-      </div>
-    </section>
-  );
-};

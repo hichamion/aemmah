@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { getSettings } from '../lib/settings';
 
 /*
  * Opening screen shown once per browser session on the home page: a golden mihrab arch draws itself
@@ -12,6 +13,7 @@ const EXIT_MS = 700;
 
 /** Show the intro only on a first visit of the session, and only when landing on the home page. */
 export function shouldShowIntro(): boolean {
+  if (!getSettings().showIntro) return false;
   try {
     if (sessionStorage.getItem(SEEN_KEY)) return false;
   } catch {

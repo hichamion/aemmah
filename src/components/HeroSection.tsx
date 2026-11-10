@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { UserRole } from '../types';
-import { DuaArt, MihrabArt } from './HeroArt';
+import { ImamIllustration, MosqueIllustration } from './HomeIllustrations';
 import { HERO_PHOTOS } from '../config';
+import { prefersStill, useSettings } from '../lib/settings';
 import {
   ArrowLeft,
   AudioLines,
@@ -16,7 +17,7 @@ import {
   Mic,
   PieChart,
   Plus,
-  ScrollText,
+  HelpCircle,
   ShieldCheck,
   Sparkles,
   UserRound,
@@ -34,7 +35,6 @@ interface HeroSectionProps {
   /** Own profile / ads (imam or mosque account). */
   onOpenMyProfile: () => void;
   onOpenCommunity: () => void;
-  onOpenHadith: () => void;
   /** Undefined while no support method is configured. */
   onOpenSupport?: () => void;
   currentRole: UserRole;
@@ -61,7 +61,6 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
     onOpenAdminPanel,
     onOpenMyProfile,
     onOpenCommunity,
-    onOpenHadith,
     onOpenSupport,
     currentRole,
     userName,
@@ -125,17 +124,17 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
       photo: HERO_PHOTOS.imams,
     },
     {
-      key: 'hadith',
-      chip: 'الموسوعة الحديثية',
+      key: 'mosques',
+      chip: 'للمساجد والجمعيات',
       title: (
         <>
-          تحقّق من <span className="brass-text">صحة الحديث</span> قبل نشره
+          ابحث عن <span className="brass-text">إمامك لرمضان</span>
         </>
       ),
-      text: 'ابحث عن الحديث النبوي واعرف درجته ومصدره، داخل الملتقى.',
-      cta: 'ابحث الآن',
-      onClick: onOpenHadith,
-      icon: <ScrollText className="w-16 h-16 sm:w-20 sm:h-20" strokeWidth={1.2} />,
+      text: 'انشر إعلان مسجدك بالشروط والمدينة، واستقبل طلبات الأئمة المعتمدين.',
+      cta: currentRole === 'imam' ? 'تصفح المساجد' : 'انشر إعلانك',
+      onClick: currentRole === 'imam' ? onOpenMosqueList : onOpenMosqueAddModal,
+      icon: <Building2 className="w-16 h-16 sm:w-20 sm:h-20" strokeWidth={1.2} />,
     },
     {
       key: 'recitation',
@@ -154,13 +153,13 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
 
   const services: Service[] = [
     { key: 'khutab', label: 'خطب ودروس', icon: <Mic />, onClick: onOpenCommunity },
-    { key: 'hadith', label: 'التحقق من حديث', icon: <ScrollText />, onClick: onOpenHadith },
     { key: 'recitations', label: currentRole === 'imam' ? 'تلاوتي' : 'تلاوات الأئمة', icon: <AudioLines />, onClick: currentRole === 'imam' ? onOpenMyProfile : onOpenImamList },
     currentRole === 'imam'
       ? { key: 'apply', label: 'التقدّم لإمامة', icon: <FileSignature />, onClick: onOpenMosqueList }
       : { key: 'request', label: 'طلب إمام', icon: <FileSignature />, onClick: onOpenMosqueAddModal },
     { key: 'community', label: 'ملتقى الأئمة', icon: <MessagesSquare />, onClick: onOpenCommunity },
     ...(showStats ? [{ key: 'stats', label: 'الإحصائيات', icon: <PieChart />, onClick: onOpenDashboard }] : []),
+    { key: 'how', label: 'كيف تعمل المنصة؟', icon: <HelpCircle />, onClick: scrollToHow },
     { key: 'contact', label: 'راسل الإدارة', icon: <Mail />, onClick: onOpenContact },
     ...(onOpenSupport ? [{ key: 'support', label: 'ادعم المنصة', icon: <HandHeart />, onClick: onOpenSupport }] : []),
   ];
@@ -171,30 +170,33 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
       <section className="home-hero relative overflow-hidden text-white">
         <div className="khatam-pattern absolute inset-0 pointer-events-none" aria-hidden />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-12 pb-28 sm:pb-32 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-8 lg:gap-12 items-center">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-12 pb-[5.5rem] sm:pb-32 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-3 sm:gap-8 lg:gap-12 items-center">
           {/* Welcome */}
-          <div className="space-y-4 sm:space-y-5 text-center lg:text-right">
+          <div className="space-y-2 sm:space-y-5 text-center lg:text-right">
             <p className="hidden sm:inline-flex items-center gap-2 rounded-full border border-brass-400/30 bg-white/5 px-3.5 py-1.5 text-xs font-bold text-brass-200">
               <Sparkles className="w-3.5 h-3.5" />
               {firstName ? 'السلام عليكم ورحمة الله' : 'جسر تواصل وربط بين الأئمة والمساجد'}
             </p>
             {firstName ? (
-              <h1 className="text-[1.75rem] sm:text-5xl font-black leading-tight">
+              <h1 className="text-lg sm:text-5xl font-black leading-tight">
                 مرحباً بك يا <span className="brass-text">{firstName}</span>
-                <span className="block text-xl sm:text-3xl text-white/85 font-bold mt-1 sm:mt-2">في منصة أئمة</span>
+                <span className="sm:block sm:text-3xl text-white/85 font-bold sm:mt-2"> في منصة أئمة</span>
               </h1>
             ) : (
-              <h1 className="text-5xl sm:text-7xl font-maghribi leading-none drop-shadow-lg">
-                منصة <span className="brass-text">أئمة</span>
-              </h1>
+              <>
+                <h1 className="sm:hidden text-lg font-black">
+                  مرحباً بك في <span className="brass-text">منصة أئمة</span>
+                </h1>
+                <p className="hidden sm:block text-7xl font-maghribi leading-none drop-shadow-lg" aria-hidden>
+                  منصة <span className="brass-text">أئمة</span>
+                </p>
+              </>
             )}
             <p className="hidden sm:block text-slate-300 text-base leading-relaxed max-w-xl mx-auto lg:mx-0">
               إمام أو قارئ يبحث عن مسجد، أو مسجد يبحث عن إمام لرمضان أو لعقد دائم: ابحث عن إمامك أو مسجدك بخطوات بسيطة.
             </p>
 
-            <p className="sm:hidden text-slate-300 text-sm">ابحث عن إمامك أو مسجدك بخطوات بسيطة.</p>
-
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-2.5">
+            <div className="hidden sm:flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-2.5">
               <button
                 onClick={primary.onClick}
                 className="group inline-flex items-center gap-2 bg-gradient-to-l from-brass-300 to-brass-500 text-ink text-sm sm:text-base font-black px-5 sm:px-6 py-2.5 sm:py-3 rounded-full shadow-lg shadow-brass-600/25 hover:shadow-brass-500/40 hover:brightness-105 transition cursor-pointer"
@@ -230,30 +232,30 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
       {/* ---------------- Access cards + services ---------------- */}
       <section className="bg-parchment relative">
         <div className="khatam-pattern-light absolute inset-0 pointer-events-none" aria-hidden />
-        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 sm:-mt-28 space-y-12 pb-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-7">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-[4.5rem] sm:-mt-28 space-y-8 sm:space-y-12 pb-6">
+          <div className="grid grid-cols-2 gap-3 sm:gap-7">
             <AccessCard
               tone="imams"
               badge={imamsCount > 0 ? `${imamsCount} إمام متاح` : 'كن أول إمام يسجّل'}
               title="اختر إماماً لمسجدك"
+              short="الأئمة والقرّاء المتاحون ومؤهلاتهم"
               text="تصفّح ملفات الأئمة والقرّاء المتاحين: الرواية، والخبرات، والشهادات، وعيّنة التلاوة."
               cta="تصفّح الأئمة"
               onOpen={onOpenImamList}
               secondary={currentRole === 'mosque' ? undefined : { label: currentRole === 'imam' ? 'تعديل ملفي' : 'التسجيل كإمام', onClick: currentRole === 'imam' ? onOpenMyProfile : onOpenImamAddModal }}
-              photo={HERO_PHOTOS.imams}
-              art={<DuaArt />}
+              illustration={<ImamIllustration />}
               icon={<Users className="w-6 h-6" />}
             />
             <AccessCard
               tone="mosques"
               badge={mosquesCount > 0 ? `${mosquesCount} مسجد يبحث عن إمام` : 'انشر أول إعلان'}
               title="ابحث عن مسجد مناسب"
+              short="مساجد وجمعيات تبحث عن إمام"
               text="استعرض المساجد والجمعيات التي تبحث عن إمام، وشروطها، ومدنها، ثم تقدّم إليها."
               cta="تصفّح المساجد"
               onOpen={onOpenMosqueList}
               secondary={currentRole === 'imam' ? undefined : { label: 'إضافة إعلان مسجد', onClick: onOpenMosqueAddModal }}
-              photo={HERO_PHOTOS.mosques}
-              art={<MihrabArt />}
+              illustration={<MosqueIllustration />}
               icon={<Building2 className="w-6 h-6" />}
             />
           </div>
@@ -293,6 +295,7 @@ type Slide = {
 
 /** Cross-fading banner: auto-advances, pauses on hover / focus, swipe on touch, dots and arrows. */
 const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
+  const settings = useSettings();
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
   const startX = useRef<number | null>(null);
@@ -300,11 +303,11 @@ const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
   const go = useCallback((d: number) => setI((x) => (x + d + n) % n), [n]);
 
   useEffect(() => {
-    const reduce = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    const reduce = prefersStill();
     if (paused || reduce) return;
     const t = window.setInterval(() => !document.hidden && go(1), 6500);
     return () => window.clearInterval(t);
-  }, [paused, go]);
+  }, [paused, go, settings.reduceMotion]);
 
   return (
     <div
@@ -318,7 +321,7 @@ const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
       onBlur={() => setPaused(false)}
     >
       <div
-        className="relative h-[16.5rem] sm:h-[19rem] lg:h-[21rem] rounded-[2rem] overflow-hidden ring-1 ring-brass-400/25 shadow-2xl shadow-black/40 bg-ink-soft touch-pan-y"
+        className="relative h-[10.5rem] min-[400px]:h-44 sm:h-[19rem] lg:h-[21rem] rounded-[1.6rem] sm:rounded-[2rem] overflow-hidden ring-1 ring-brass-400/25 shadow-2xl shadow-black/40 bg-ink-soft touch-pan-y"
         onPointerDown={(e) => (startX.current = e.clientX)}
         onPointerUp={(e) => {
           if (startX.current === null) return;
@@ -345,20 +348,20 @@ const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
               )}
               <div className="absolute inset-0 bg-gradient-to-l from-ink/95 via-ink/70 to-ink/10" />
               {s.icon && (
-                <div className="absolute left-6 sm:left-10 top-1/2 -translate-y-1/2 w-32 h-32 sm:w-40 sm:h-40 rounded-full border border-brass-400/30 bg-white/5 text-brass-300 flex items-center justify-center" aria-hidden>
+                <div className="absolute left-4 sm:left-10 top-1/2 -translate-y-1/2 w-20 h-20 sm:w-40 sm:h-40 [&>svg]:w-10 [&>svg]:h-10 sm:[&>svg]:w-20 sm:[&>svg]:h-20 rounded-full border border-brass-400/30 bg-white/5 text-brass-300 flex items-center justify-center" aria-hidden>
                   {s.icon}
                 </div>
               )}
               {on && (
-                <div className="slide-copy relative h-full flex flex-col justify-center items-start gap-3 px-6 sm:px-10 max-w-[78%] sm:max-w-[70%]">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-brass-400/40 bg-ink/40 px-3 py-1 text-[11px] sm:text-xs font-bold text-brass-200">
+                <div className="slide-copy relative h-full flex flex-col justify-center items-start gap-1.5 sm:gap-3 px-4 sm:px-10 max-w-[74%] sm:max-w-[70%]">
+                  <span className="inline-flex items-center gap-1.5 rounded-full border border-brass-400/40 bg-ink/40 px-2.5 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-bold text-brass-200">
                     {s.chip}
                   </span>
-                  <h2 className="text-2xl sm:text-[2.1rem] font-kufi leading-snug text-white">{s.title}</h2>
-                  <p className="text-xs sm:text-sm text-slate-200/90 leading-relaxed">{s.text}</p>
+                  <h2 className="text-lg min-[400px]:text-xl sm:text-[2.1rem] font-kufi leading-snug text-white">{s.title}</h2>
+                  <p className="hidden sm:block text-sm text-slate-200/90 leading-relaxed">{s.text}</p>
                   <button
                     onClick={s.onClick}
-                    className="mt-1 inline-flex items-center gap-2 bg-gradient-to-l from-brass-300 to-brass-500 text-ink text-sm font-black px-5 py-2.5 rounded-full shadow-lg shadow-black/30 hover:brightness-105 transition cursor-pointer"
+                    className="mt-1 inline-flex items-center gap-1.5 sm:gap-2 bg-gradient-to-l from-brass-300 to-brass-500 text-ink text-xs sm:text-sm font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-lg shadow-black/30 hover:brightness-105 transition cursor-pointer"
                   >
                     {s.cta} <ArrowLeft className="w-4 h-4" />
                   </button>
@@ -378,7 +381,7 @@ const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
         </div>
       </div>
 
-      <div className="flex justify-center gap-1.5 mt-4" role="tablist" aria-label="اختر إعلاناً">
+      <div className="flex justify-center gap-1.5 mt-2.5 sm:mt-4" role="tablist" aria-label="اختر إعلاناً">
         {slides.map((s, k) => (
           <button
             key={s.key}
@@ -417,45 +420,50 @@ const AccessCard: React.FC<{
   badge: string;
   title: string;
   text: string;
+  /** Shorter text for phones. */
+  short: string;
   cta: string;
   onOpen: () => void;
   secondary?: { label: string; onClick: () => void };
-  photo: string;
-  art: React.ReactNode;
+  illustration: React.ReactNode;
   icon: React.ReactNode;
-}> = ({ tone, badge, title, text, cta, onOpen, secondary, photo, art, icon }) => {
+}> = ({ tone, badge, title, text, short, cta, onOpen, secondary, illustration, icon }) => {
   const bg = tone === 'imams' ? 'from-lagoon-500 via-lagoon-700 to-[#0b3640]' : 'from-cedar-500 via-cedar-700 to-cedar-900';
   return (
     <div
       {...cardLink(onOpen)}
-      className={`lift group relative overflow-hidden isolate rounded-[2rem] bg-gradient-to-br ${bg} text-white p-6 sm:p-8 shadow-xl shadow-ink/20 hover:shadow-2xl hover:shadow-ink/30 cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-brass-300`}
+      className={`lift group relative overflow-hidden isolate rounded-[1.6rem] sm:rounded-[2rem] bg-gradient-to-br ${bg} text-white p-3.5 sm:p-8 shadow-xl shadow-ink/20 hover:shadow-2xl hover:shadow-ink/30 cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-brass-300 flex flex-col`}
     >
       <div className="absolute inset-0 -z-10" aria-hidden>
-        {photo ? (
-          <img src={asset(photo)} alt="" className="absolute inset-0 w-full h-full object-cover opacity-25 mix-blend-luminosity transition duration-700 group-hover:scale-105 group-hover:opacity-30" />
-        ) : (
-          <div className="absolute inset-0 opacity-40 mix-blend-soft-light">{art}</div>
-        )}
         <div className="absolute inset-0 khatam-pattern opacity-60" />
+        <div className="absolute -top-10 left-1/2 -translate-x-1/2 sm:left-10 sm:translate-x-0 w-48 h-48 sm:w-72 sm:h-72 rounded-full bg-brass-200/15 blur-2xl" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
       </div>
 
-      <div className="flex items-start justify-between gap-3">
+      {/* Phones: illustration on top. Larger screens: illustration on the left, badge and icon on top. */}
+      <div className="sm:hidden h-[6.5rem] -mt-1 flex items-end justify-center drop-shadow-lg transition-transform duration-500 group-hover:scale-105" aria-hidden>
+        {illustration}
+      </div>
+      <div className="hidden sm:block absolute left-5 top-12 w-48 lg:w-56 drop-shadow-xl transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-[1.03]" aria-hidden>
+        {illustration}
+      </div>
+      <div className="hidden sm:flex items-start justify-between gap-3">
         <span className="w-12 h-12 rounded-2xl bg-white/10 ring-1 ring-white/20 backdrop-blur flex items-center justify-center text-brass-200">{icon}</span>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-black/20 ring-1 ring-white/15 px-3 py-1 text-xs font-bold tabular-nums">
+      </div>
+
+      <div className="mt-2 sm:mt-24 space-y-1 sm:space-y-2 text-center sm:text-right flex-1">
+        <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-black/20 ring-1 ring-white/15 px-3 py-1 text-xs font-bold tabular-nums">
           <span className={`w-1.5 h-1.5 rounded-full ${tone === 'imams' ? 'bg-emerald-300' : 'bg-brass-300'}`} aria-hidden /> {badge}
         </span>
+        <h2 className="text-[0.95rem] min-[400px]:text-base sm:text-4xl font-kufi leading-snug drop-shadow">{title}</h2>
+        <p className="sm:hidden text-[11px] text-white/85 leading-relaxed">{short}</p>
+        <p className="hidden sm:block text-sm text-white/85 leading-relaxed max-w-sm">{text}</p>
       </div>
 
-      <div className="mt-8 sm:mt-12 space-y-2">
-        <h2 className="text-[1.75rem] sm:text-4xl font-kufi leading-snug drop-shadow">{title}</h2>
-        <p className="text-sm text-white/85 leading-relaxed max-w-md">{text}</p>
-      </div>
-
-      <div className="mt-6 flex flex-wrap items-center gap-2.5">
+      <div className="mt-3 sm:mt-6 flex flex-wrap items-center gap-2.5">
         <button
           onClick={stop(onOpen)}
-          className="inline-flex items-center gap-2 bg-gradient-to-l from-brass-200 to-brass-400 text-ink font-black px-5 py-3 rounded-full shadow-md hover:brightness-105 transition cursor-pointer"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-l from-brass-200 to-brass-400 text-ink text-[13px] sm:text-base font-black px-3 sm:px-5 py-2.5 sm:py-3 rounded-full shadow-md hover:brightness-105 transition cursor-pointer"
         >
           {cta}
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
@@ -463,7 +471,7 @@ const AccessCard: React.FC<{
         {secondary && (
           <button
             onClick={stop(secondary.onClick)}
-            className="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 ring-1 ring-white/20 text-white text-sm font-bold px-4 py-3 rounded-full transition cursor-pointer"
+            className="hidden sm:inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 ring-1 ring-white/20 text-white text-sm font-bold px-4 py-3 rounded-full transition cursor-pointer"
           >
             <Plus className="w-4 h-4" /> {secondary.label}
           </button>

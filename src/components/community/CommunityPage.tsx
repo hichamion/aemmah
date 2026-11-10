@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Bell, BookMarked, FilePenLine, Loader2, MessagesSquare, Pin, ScrollText, Search, Settings2, SlidersHorizontal, Users } from 'lucide-react';
+import { Bell, BookMarked, FilePenLine, Loader2, MessagesSquare, Pin, Search, Settings2, SlidersHorizontal, Users } from 'lucide-react';
 import { CommunityPost, PostComment, PostType } from '../../types/community';
 import { ImamProfile } from '../../types';
 import {
@@ -19,19 +19,18 @@ import { excerpt } from '../../lib/richtext';
 import { createReport } from '../../lib/db';
 import { AuthorAvatar, CommunityViewer, ImageGrid, PollBox, PostTypeGrid, ReactionBar, timeAgo } from './PostParts';
 import { CommunityBackdrop, CommunitySidebar, SidebarTab, TopicsPanel } from './CommunitySidebar';
-import { HadithCheck } from './HadithCheck';
 import { PostActions, PostDetail } from './PostDetail';
 import { PostComposer } from './PostComposer';
 import { CommunityAdmin } from './CommunityAdmin';
 
-type Tab = 'feed' | 'hadith' | 'saved' | 'drafts' | 'admin';
+type Tab = 'feed' | 'saved' | 'drafts' | 'admin';
 type Route = { tab: Tab; postId?: string };
 
 const parseRoute = (hash: string): Route => {
   const m = hash.match(/^#\/community\/post\/([\w-]+)/);
   if (m) return { tab: 'feed', postId: m[1] };
-  // «مكتبة الأئمة» was removed: old links (#/community/library) open the wall.
-  const t = hash.match(/^#\/community\/(hadith|saved|drafts|admin)/)?.[1] as Tab | undefined;
+  // Removed sections (#/community/library, #/community/hadith) open the wall.
+  const t = hash.match(/^#\/community\/(saved|drafts|admin)/)?.[1] as Tab | undefined;
   return { tab: t || 'feed' };
 };
 const go = (path: string) => {
@@ -181,7 +180,6 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
 
   const tabs: SidebarTab[] = [
     { key: 'feed', label: 'الحائط', hint: 'أحدث الخطب والمقالات والنقاشات', icon: <MessagesSquare className="w-4 h-4" /> },
-    { key: 'hadith', label: 'التحقق من صحة حديث', hint: 'البحث في الموسوعة الحديثية', icon: <ScrollText className="w-4 h-4" /> },
     { key: 'saved', label: 'محفوظاتي', hint: 'ما حفظته للرجوع إليه', icon: <BookMarked className="w-4 h-4" />, count: saved.size },
     { key: 'drafts', label: 'مسوداتي', hint: 'منشورات لم تُنشر بعد', icon: <FilePenLine className="w-4 h-4" />, count: drafts.length },
     ...(isAdmin ? [{ key: 'admin', label: 'الإشراف', hint: 'إعدادات الملتقى والنماذج', icon: <Settings2 className="w-4 h-4" /> }] : []),
@@ -258,8 +256,6 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
             )
           ) : route.tab === 'admin' && isAdmin ? (
             <CommunityAdmin settings={settings} onDone={(m) => onToast(m)} onError={(m) => onToast(m, 'error')} />
-          ) : route.tab === 'hadith' ? (
-            <HadithCheck embedUrl={settings.hadithEmbedUrl} />
           ) : route.tab === 'saved' ? (
             <LibraryView title="محفوظاتي" note="المنشورات التي حفظتها، مرتبة حسب تصنيفها." sections={settings.categories}
               posts={published.filter((p) => saved.has(p.id))} groupBy={(p) => p.category} render={card} />

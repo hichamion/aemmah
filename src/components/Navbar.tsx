@@ -16,6 +16,7 @@ import {
   Mail,
   ChevronDown,
   Trash2,
+  Settings as SettingsIcon,
 } from 'lucide-react';
 
 interface NavbarProps {
@@ -38,6 +39,7 @@ interface NavbarProps {
   /** Hide the statistics link until there is enough data to show. */
   showStats?: boolean;
   onOpenInbox?: () => void;
+  onOpenSettings: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -59,6 +61,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   unreadCount = 0,
   showStats = true,
   onOpenInbox,
+  onOpenSettings,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -98,7 +101,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const showMosqueIcon = currentRole === 'mosque' && !userPhoto;
 
   return (
-    <header className="bg-night/95 backdrop-blur text-white border-b border-white/10 sticky top-0 z-40 shadow-lg shadow-black/10">
+    <header className="bg-night text-white border-b border-white/10 sticky top-0 z-40 shadow-lg shadow-black/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-18 gap-6">
           
@@ -375,6 +378,16 @@ export const Navbar: React.FC<NavbarProps> = ({
               </button>
             )}
 
+            {/* Settings (on phones it is inside the menu) */}
+            <button
+              onClick={onOpenSettings}
+              className="hidden lg:flex w-10 h-10 items-center justify-center rounded-full text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer"
+              aria-label="الإعدادات"
+              title="الإعدادات"
+            >
+              <SettingsIcon className="w-5 h-5" />
+            </button>
+
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -456,6 +469,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </button>
             )}
+
+            <button
+              onClick={() => { onOpenSettings(); setMobileMenuOpen(false); }}
+              className="w-full text-right px-4 py-3 rounded-xl flex items-center gap-2 text-slate-700 border-t border-slate-100 mt-2 pt-4"
+            >
+              <SettingsIcon className="w-4 h-4" />
+              <span>الإعدادات</span>
+              <span className="mr-auto text-xs font-bold text-slate-400">المظهر، حجم الخط…</span>
+            </button>
           </div>
         </div>
       )}

@@ -305,3 +305,21 @@
   .lift, .lift:hover { transition: none; transform: none; }
   .slide-copy > *, .kenburns { animation: none; }
 }
+
+/* Bottom bar of phones: own compositing layer, always glued to the bottom edge (incl. the iPhone home-indicator area). */
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+/* «تقليل الحركة» setting (same effect as the system preference). */
+.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
