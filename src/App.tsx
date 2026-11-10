@@ -44,6 +44,7 @@ import { MosquePortal } from './components/MosquePortal';
 import { AuthOnboardingModal } from './components/AuthOnboardingModal';
 import { ImamModalForm } from './components/ImamModalForm';
 import { StatsConsent } from './components/StatsConsent';
+import { SettingsPanel } from './components/SettingsPanel';
 import { trackVisit } from './lib/visits';
 import { MosqueModalForm } from './components/MosqueModalForm';
 import { ImamFullModal } from './components/ImamFullModal';
@@ -227,6 +228,7 @@ export default function App() {
   // ------------------------------------------------------------------
   // Modals
   // ------------------------------------------------------------------
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isImamModalOpen, setIsImamModalOpen] = useState(false);
   const [editingImam, setEditingImam] = useState<ImamProfile | null>(null);
@@ -712,6 +714,7 @@ export default function App() {
         currentView={currentView}
         setCurrentView={setCurrentView}
         currentRole={role}
+        onOpenSettings={() => setSettingsOpen(true)}
         userName={displayName}
         userEmail={profile?.email || firebaseUser?.email || ''}
         userPhoto={role === 'imam' ? myImam?.photo : firebaseUser?.photoURL || undefined}
@@ -770,7 +773,6 @@ export default function App() {
                 onOpenAdminPanel={() => setCurrentView('admin')}
                 onOpenMyProfile={handleOpenMyProfile}
                 onOpenCommunity={() => setCurrentView('community')}
-                onOpenHadith={() => { window.location.hash = '#/community/hadith'; window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                 onOpenSupport={SUPPORT_ENABLED ? () => setCurrentView('support') : undefined}
                 userName={role === 'visitor' ? undefined : displayName}
                 currentRole={role}
@@ -907,6 +909,7 @@ export default function App() {
       {showIntro && <Intro onDone={() => setShowIntro(false)} />}
 
       <StatsConsent onPrivacy={() => setCurrentView('privacy')} />
+      <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} onPrivacy={() => setCurrentView('privacy')} />
 
       <MobileNav
         currentView={currentView}

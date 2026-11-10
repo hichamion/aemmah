@@ -38,7 +38,7 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
       <div
         ref={ref}
         dir="rtl"
-        className={`relative bg-[#f6faf7] text-slate-900 overflow-hidden flex ${
+        className={`keep-light relative bg-[#f6faf7] text-slate-900 overflow-hidden flex ${
           print ? 'w-[794px] min-h-[1123px] flex-row' : 'w-full flex-col md:flex-row rounded-3xl'
         }`}
         style={{ fontFamily: "'Cairo', system-ui, sans-serif" }}

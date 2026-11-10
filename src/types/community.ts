@@ -75,8 +75,6 @@ export interface CommunitySettings {
   postingEnabled: boolean;
   categories: string[];
   libraryCategories: string[];
-  /** iframe address of the official hdith.com search window (set by an admin; empty = default). */
-  hadithEmbedUrl?: string;
   /** Per post type; a missing type falls back to the built-in template, null = deleted by an admin. */
   templates: Partial<Record<PostType, PostTemplate | null>>;
 }

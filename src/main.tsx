@@ -14,7 +14,11 @@ import '@fontsource/ruwudu/700.css';
 // Bold Kufic font for the intro title.
 import '@fontsource/reem-kufi/arabic-700.css';
 import App from './App.tsx';
+import { initSettings } from './lib/settings';
 import './index.css';
+import './theme-dark.css';
+
+initSettings();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

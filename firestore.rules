@@ -549,10 +549,7 @@ service cloud.firestore {
 
     match /communitySettings/{docId} {
       allow read: if isCommunityMember();
-      // The hadith search window may only point to the official site (https://hdith.com/...).
-      allow write: if isAdmin()
-        && (request.resource == null
-            || request.resource.data.get('hadithEmbedUrl', '').matches('(https://([a-z0-9-]+[.])?hdith[.]com/.*)?'));
+      allow write: if isAdmin();
     }
 
     // ---------- anonymous visit statistics ----------

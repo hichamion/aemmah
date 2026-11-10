@@ -1,4 +1,5 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { Building2, Home, LogIn, User, Users } from 'lucide-react';
 import { UserRole } from '../types';
 import type { View } from '../App';
@@ -45,9 +46,10 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, role, unreadC
       </button>
     ));
 
-  return (
-    <nav aria-label="التنقل الرئيسي" className="lg:hidden fixed bottom-0 inset-x-0 z-40 pb-[env(safe-area-inset-bottom)]">
-      <div className="relative mx-2 mb-2 rounded-[1.75rem] bg-ink/95 backdrop-blur ring-1 ring-white/10 shadow-2xl shadow-black/40 flex items-stretch px-1">
+  const bar = (
+    <nav aria-label="التنقل الرئيسي" className="mobile-nav lg:hidden fixed bottom-0 inset-x-0 z-40">
+      {/* Opaque (no backdrop blur): blurred fixed bars jump while scrolling in iPhone Safari. */}
+      <div className="relative mx-2 mb-2 rounded-[1.75rem] bg-ink ring-1 ring-white/10 shadow-2xl shadow-black/40 flex items-stretch px-1">
         {side([
           { key: 'home', label: 'الرئيسية', icon: Home, active: currentView === 'home', onClick: onHome },
           { key: 'imams', label: 'الأئمة', icon: Users, active: currentView === 'mosque', onClick: onImams },
@@ -76,4 +78,6 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, role, unreadC
       </div>
     </nav>
   );
+  // Rendered directly in <body>, so no parent layout can turn the fixed bar into a scrolling one.
+  return typeof document === 'undefined' ? bar : createPortal(bar, document.body);
 };
