@@ -17,6 +17,7 @@ import {
 } from '../../lib/community';
 import { excerpt } from '../../lib/richtext';
 import { createReport } from '../../lib/db';
+import { scrollToTop } from '../../lib/scroll';
 import { AuthorAvatar, CommunityViewer, ImageGrid, PollBox, PostTypeGrid, ReactionBar, timeAgo } from './PostParts';
 import { CommunityBackdrop, CommunitySidebar, SidebarTab, TopicsPanel } from './CommunitySidebar';
 import { PostActions, PostDetail } from './PostDetail';
@@ -35,7 +36,7 @@ const parseRoute = (hash: string): Route => {
 };
 const go = (path: string) => {
   window.location.hash = `#/community${path}`;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  scrollToTop();
 };
 
 // Filters shown above the wall.

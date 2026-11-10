@@ -27,6 +27,8 @@ interface MosquePortalProps {
   onReportImam: (imam: ImamProfile) => void;
   inbox: InboxProps;
   initialTab?: Tab;
+  /** Reports the open tab (used by the phone bottom bar). */
+  onTabChange?: (tab: Tab) => void;
   /** Changes on every tab request from the parent (see App). */
   tabRequest?: number;
 }
@@ -63,6 +65,7 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
   onReportImam,
   inbox,
   initialTab = 'browse',
+  onTabChange,
   tabRequest = 0,
 }) => {
   const isMosque = currentRole === 'mosque';
@@ -71,6 +74,9 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
   useEffect(() => {
     setActiveTab(isMosque ? initialTab : 'browse');
   }, [initialTab, tabRequest, isMosque]);
+  useEffect(() => {
+    onTabChange?.(activeTab);
+  }, [activeTab, onTabChange]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [availFilter, setAvailFilter] = useState('all');

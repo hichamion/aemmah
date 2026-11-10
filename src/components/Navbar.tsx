@@ -101,7 +101,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const showMosqueIcon = currentRole === 'mosque' && !userPhoto;
 
   return (
-    <header className="bg-night text-white border-b border-white/10 sticky top-0 z-40 shadow-lg shadow-black/10">
+    <header className="liquid-glass-dark !border-x-0 !border-t-0 text-white sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-18 gap-6">
           
@@ -403,7 +403,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile & Tablet Navigation Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-slate-200 px-4 pt-3 pb-6 space-y-4 shadow-lg">
+        <div className="lg:hidden liquid-glass-light !rounded-none !border-x-0 text-slate-800 px-4 pt-3 pb-6 space-y-4">
           
           <div className="space-y-1.5 text-sm font-bold">
             <button

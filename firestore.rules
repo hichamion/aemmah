@@ -566,6 +566,24 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // ---------- per-profile counters (admin only) ----------
+    // profileStats/{imam|mosque}_{id} = { views, plays }: anyone may add exactly +1 to ONE counter.
+    function statOf(d, k) { return d.get(k, 0); }
+    match /profileStats/{id} {
+      allow read: if isAdmin();
+      allow create: if id.matches('(imam|mosque)_[A-Za-z0-9_-]{1,80}')
+        && request.resource.data.keys().hasOnly(['views', 'plays'])
+        && statOf(request.resource.data, 'views') is int && statOf(request.resource.data, 'plays') is int
+        && statOf(request.resource.data, 'views') + statOf(request.resource.data, 'plays') == 1
+        && statOf(request.resource.data, 'views') >= 0 && statOf(request.resource.data, 'plays') >= 0;
+      allow update: if request.resource.data.keys().hasOnly(['views', 'plays'])
+        && ((statOf(request.resource.data, 'views') == statOf(resource.data, 'views') + 1
+              && statOf(request.resource.data, 'plays') == statOf(resource.data, 'plays'))
+          || (statOf(request.resource.data, 'plays') == statOf(resource.data, 'plays') + 1
+              && statOf(request.resource.data, 'views') == statOf(resource.data, 'views')));
+      allow delete: if isAdmin();
+    }
+
     // Everything else is closed.
     match /{document=**} {
       allow read, write: if false;

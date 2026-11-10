@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { UserRole } from '../types';
-import { ImamIllustration, MosqueIllustration } from './HomeIllustrations';
 import { HERO_PHOTOS } from '../config';
 import { prefersStill, useSettings } from '../lib/settings';
 import {
@@ -206,7 +205,7 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
               </button>
               <button
                 onClick={secondary.onClick}
-                className="hidden sm:inline-flex items-center gap-1.5 border border-white/20 bg-white/5 hover:bg-white/10 text-white text-sm sm:text-base font-bold px-4 sm:px-5 py-2.5 sm:py-3 rounded-full transition cursor-pointer"
+                className="liquid-glass hidden sm:inline-flex items-center gap-1.5 hover:brightness-110 text-white text-sm sm:text-base font-bold px-4 sm:px-5 py-2.5 sm:py-3 rounded-full transition cursor-pointer"
               >
                 <span>{secondary.label}</span>
                 <ArrowLeft className="w-4 h-4" />
@@ -243,7 +242,8 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
               cta="تصفّح الأئمة"
               onOpen={onOpenImamList}
               secondary={currentRole === 'mosque' ? undefined : { label: currentRole === 'imam' ? 'تعديل ملفي' : 'التسجيل كإمام', onClick: currentRole === 'imam' ? onOpenMyProfile : onOpenImamAddModal }}
-              illustration={<ImamIllustration />}
+              photo="card-imams.jpg"
+              focus="72% 30%"
               icon={<Users className="w-6 h-6" />}
             />
             <AccessCard
@@ -255,7 +255,8 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
               cta="تصفّح المساجد"
               onOpen={onOpenMosqueList}
               secondary={currentRole === 'imam' ? undefined : { label: 'إضافة إعلان مسجد', onClick: onOpenMosqueAddModal }}
-              illustration={<MosqueIllustration />}
+              photo="card-mosques.jpg"
+              focus="40% 40%"
               icon={<Building2 className="w-6 h-6" />}
             />
           </div>
@@ -274,7 +275,7 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
 // ---------------------------------------------------------------------------
 
 const Stat: React.FC<{ value: number; label: string; dot: string }> = ({ value, label, dot }) => (
-  <div className="inline-flex items-center gap-2 rounded-full bg-white/5 border border-white/10 px-3 py-1.5">
+  <div className="liquid-glass inline-flex items-center gap-2 rounded-full px-3 py-1.5">
     <span className={`w-2 h-2 rounded-full ${dot}`} aria-hidden />
     <dt className="sr-only">{label}</dt>
     <dd className="font-black tabular-nums text-white">{value}</dd>
@@ -354,7 +355,7 @@ const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
               )}
               {on && (
                 <div className="slide-copy relative h-full flex flex-col justify-center items-start gap-1.5 sm:gap-3 px-4 sm:px-10 max-w-[74%] sm:max-w-[70%]">
-                  <span className="inline-flex items-center gap-1.5 rounded-full border border-brass-400/40 bg-ink/40 px-2.5 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-bold text-brass-200">
+                  <span className="liquid-glass inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-bold text-brass-200">
                     {s.chip}
                   </span>
                   <h2 className="text-lg min-[400px]:text-xl sm:text-[2.1rem] font-kufi leading-snug text-white">{s.title}</h2>
@@ -372,10 +373,10 @@ const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
         })}
 
         <div className="absolute z-20 bottom-3 left-3 hidden sm:flex gap-1.5">
-          <button onClick={() => go(-1)} aria-label="الإعلان السابق" className="w-9 h-9 rounded-full bg-ink/60 hover:bg-ink/80 border border-white/15 flex items-center justify-center cursor-pointer">
+          <button onClick={() => go(-1)} aria-label="الإعلان السابق" className="liquid-glass w-9 h-9 rounded-full hover:brightness-110 flex items-center justify-center cursor-pointer">
             <ChevronRight className="w-4 h-4" />
           </button>
-          <button onClick={() => go(1)} aria-label="الإعلان التالي" className="w-9 h-9 rounded-full bg-ink/60 hover:bg-ink/80 border border-white/15 flex items-center justify-center cursor-pointer">
+          <button onClick={() => go(1)} aria-label="الإعلان التالي" className="liquid-glass w-9 h-9 rounded-full hover:brightness-110 flex items-center justify-center cursor-pointer">
             <ChevronLeft className="w-4 h-4" />
           </button>
         </div>
@@ -425,45 +426,55 @@ const AccessCard: React.FC<{
   cta: string;
   onOpen: () => void;
   secondary?: { label: string; onClick: () => void };
-  illustration: React.ReactNode;
+  /** Background photo (public/), e.g. card-imams.jpg. */
+  photo: string;
+  /** CSS object-position of the photo, to keep the subject visible. */
+  focus?: string;
   icon: React.ReactNode;
-}> = ({ tone, badge, title, text, short, cta, onOpen, secondary, illustration, icon }) => {
-  const bg = tone === 'imams' ? 'from-lagoon-500 via-lagoon-700 to-[#0b3640]' : 'from-cedar-500 via-cedar-700 to-cedar-900';
+}> = ({ tone, badge, title, text, short, cta, onOpen, secondary, photo, focus = 'center', icon }) => {
+  // Brand tint over the photo: transparent at the top (the photo shows), deep at the bottom (the text reads).
+  const tint =
+    tone === 'imams'
+      ? 'from-[#0b3640]/95 via-[#155664]/55 to-[#2a8090]/10'
+      : 'from-cedar-900/95 via-cedar-800/50 to-cedar-600/5';
   return (
     <div
       {...cardLink(onOpen)}
-      className={`lift group relative overflow-hidden isolate rounded-[1.6rem] sm:rounded-[2rem] bg-gradient-to-br ${bg} text-white p-3.5 sm:p-8 shadow-xl shadow-ink/20 hover:shadow-2xl hover:shadow-ink/30 cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-brass-300 flex flex-col`}
+      className="lift group relative overflow-hidden isolate rounded-[1.6rem] sm:rounded-[2rem] bg-ink text-white min-h-[17.5rem] sm:min-h-[26rem] p-3.5 sm:p-8 shadow-xl shadow-ink/25 hover:shadow-2xl hover:shadow-ink/35 cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-brass-300 flex flex-col justify-end ring-1 ring-white/10"
     >
       <div className="absolute inset-0 -z-10" aria-hidden>
-        <div className="absolute inset-0 khatam-pattern opacity-60" />
-        <div className="absolute -top-10 left-1/2 -translate-x-1/2 sm:left-10 sm:translate-x-0 w-48 h-48 sm:w-72 sm:h-72 rounded-full bg-brass-200/15 blur-2xl" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+        <img
+          src={asset(photo)}
+          alt=""
+          loading="eager"
+          style={{ objectPosition: focus }}
+          className="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-105"
+        />
+        <div className={`absolute inset-0 bg-gradient-to-t ${tint}`} />
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/60 to-transparent" />
       </div>
 
-      {/* Phones: illustration on top. Larger screens: illustration on the left, badge and icon on top. */}
-      <div className="sm:hidden h-[6.5rem] -mt-1 flex items-end justify-center drop-shadow-lg transition-transform duration-500 group-hover:scale-105" aria-hidden>
-        {illustration}
-      </div>
-      <div className="hidden sm:block absolute left-5 top-12 w-48 lg:w-56 drop-shadow-xl transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-[1.03]" aria-hidden>
-        {illustration}
-      </div>
-      <div className="hidden sm:flex items-start justify-between gap-3">
-        <span className="w-12 h-12 rounded-2xl bg-white/10 ring-1 ring-white/20 backdrop-blur flex items-center justify-center text-brass-200">{icon}</span>
-      </div>
-
-      <div className="mt-2 sm:mt-24 space-y-1 sm:space-y-2 text-center sm:text-right flex-1">
-        <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-black/20 ring-1 ring-white/15 px-3 py-1 text-xs font-bold tabular-nums">
+      {/* Top row (larger screens): glass icon and count */}
+      <div className="hidden sm:flex absolute top-6 inset-x-6 items-start justify-between gap-3">
+        <span className="liquid-glass w-12 h-12 rounded-2xl flex items-center justify-center text-white">{icon}</span>
+        <span className="liquid-glass inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-black tabular-nums">
           <span className={`w-1.5 h-1.5 rounded-full ${tone === 'imams' ? 'bg-emerald-300' : 'bg-brass-300'}`} aria-hidden /> {badge}
         </span>
-        <h2 className="text-[0.95rem] min-[400px]:text-base sm:text-4xl font-kufi leading-snug drop-shadow">{title}</h2>
-        <p className="sm:hidden text-[11px] text-white/85 leading-relaxed">{short}</p>
-        <p className="hidden sm:block text-sm text-white/85 leading-relaxed max-w-sm">{text}</p>
+      </div>
+      <span className="sm:hidden liquid-glass absolute top-2.5 right-2.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-black tabular-nums">
+        <span className={`w-1.5 h-1.5 rounded-full ${tone === 'imams' ? 'bg-emerald-300' : 'bg-brass-300'}`} aria-hidden /> {badge}
+      </span>
+
+      <div className="space-y-1 sm:space-y-2 text-center sm:text-right [text-shadow:0_2px_12px_rgba(0,0,0,0.65)]">
+        <h2 className="text-[1.02rem] min-[400px]:text-lg sm:text-[2.6rem] font-kufi leading-snug">{title}</h2>
+        <p className="sm:hidden text-[11px] font-bold text-white leading-relaxed">{short}</p>
+        <p className="hidden sm:block text-[0.95rem] font-semibold text-white leading-relaxed max-w-md">{text}</p>
       </div>
 
       <div className="mt-3 sm:mt-6 flex flex-wrap items-center gap-2.5">
         <button
           onClick={stop(onOpen)}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-l from-brass-200 to-brass-400 text-ink text-[13px] sm:text-base font-black px-3 sm:px-5 py-2.5 sm:py-3 rounded-full shadow-md hover:brightness-105 transition cursor-pointer"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-gradient-to-l from-brass-200 to-brass-400 text-ink text-[13px] sm:text-base font-black px-3 sm:px-5 py-2.5 sm:py-3 rounded-full shadow-lg shadow-black/30 hover:brightness-105 transition cursor-pointer"
         >
           {cta}
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
@@ -471,7 +482,7 @@ const AccessCard: React.FC<{
         {secondary && (
           <button
             onClick={stop(secondary.onClick)}
-            className="hidden sm:inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 ring-1 ring-white/20 text-white text-sm font-bold px-4 py-3 rounded-full transition cursor-pointer"
+            className="liquid-glass hidden sm:inline-flex items-center gap-1.5 text-white text-sm font-bold px-4 py-3 rounded-full transition hover:brightness-110 cursor-pointer"
           >
             <Plus className="w-4 h-4" /> {secondary.label}
           </button>
@@ -485,7 +496,7 @@ type Service = { key: string; label: string; icon: React.ReactElement; onClick: 
 
 /** Round shortcuts with a brass ring (wraps on phones, one row on wide screens). */
 const QuickServices: React.FC<{ services: Service[] }> = ({ services }) => (
-  <nav aria-label="خدمات سريعة" className="bg-white/70 backdrop-blur rounded-[2rem] ring-1 ring-sand shadow-sm px-3 sm:px-6 py-6">
+  <nav aria-label="خدمات سريعة" className="liquid-glass-light rounded-[2rem] px-3 sm:px-6 py-6">
     <ul className="flex flex-wrap justify-center gap-x-2 gap-y-5 sm:gap-x-4">
       {services.map((s) => (
         <li key={s.key} className="w-[31%] sm:w-auto sm:min-w-[6.5rem]">
