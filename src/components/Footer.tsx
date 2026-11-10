@@ -99,7 +99,7 @@ export const Footer: React.FC<FooterProps> = ({
         </div>
 
         {/* Disclaimer: compact, readable, on every page. */}
-        <section aria-labelledby="disclaimer-title" className="rounded-2xl border border-amber-400/15 bg-white/[0.03] px-4 py-3.5 sm:px-5 text-xs leading-relaxed text-slate-400">
+        <section aria-labelledby="disclaimer-title" className="liquid-glass rounded-2xl !border-amber-400/20 px-4 py-3.5 sm:px-5 text-xs leading-relaxed text-slate-400">
           <h2 id="disclaimer-title" className="text-amber-300/90 font-black mb-1.5 flex items-center gap-1.5">
             <Scale className="w-3.5 h-3.5 shrink-0" />
             <span>تنبيه وإخلاء مسؤولية</span>

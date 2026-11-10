@@ -32,7 +32,16 @@ export const recitationLabel = (m: Pick<RecitationMeta, 'kind' | 'title'>) =>
 // ---------------------------------------------------------------------------
 
 /** Play / pause, progress bar (click to seek), elapsed and total time. Never starts on its own. */
-export const RecitationPlayer: React.FC<{ src: string; title: string; durationSec: number; date?: string; dark?: boolean }> = ({
+export const RecitationPlayer: React.FC<{
+  src: string;
+  title: string;
+  durationSec: number;
+  date?: string;
+  dark?: boolean;
+  /** Called on the first play (listen counter). */
+  onFirstPlay?: () => void;
+}> = ({
+  onFirstPlay,
   src,
   title,
   durationSec,
@@ -43,6 +52,7 @@ export const RecitationPlayer: React.FC<{ src: string; title: string; durationSe
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(durationSec);
+  const played = useRef(false);
 
   const toggle = () => {
     const a = audioRef.current;
@@ -66,7 +76,13 @@ export const RecitationPlayer: React.FC<{ src: string; title: string; durationSe
         ref={audioRef}
         src={src}
         preload="none"
-        onPlay={() => setPlaying(true)}
+        onPlay={() => {
+          setPlaying(true);
+          if (!played.current) {
+            played.current = true;
+            onFirstPlay?.();
+          }
+        }}
         onPause={() => setPlaying(false)}
         onEnded={() => setPlaying(false)}
         onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}

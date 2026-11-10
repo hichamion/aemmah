@@ -1,5 +1,4 @@
 import React from 'react';
-import { createPortal } from 'react-dom';
 import { Building2, Home, LogIn, User, Users } from 'lucide-react';
 import { UserRole } from '../types';
 import type { View } from '../App';
@@ -14,6 +13,8 @@ interface MobileNavProps {
   onCommunity: () => void;
   onAccount: () => void;
   onSignIn: () => void;
+  /** The user is on one of their own pages (profile, applications, messages, admin). */
+  accountActive?: boolean;
 }
 
 /** Eight-pointed star (khatam) used on the raised centre button. */
@@ -27,7 +28,7 @@ const Khatam: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 /** App-style bottom bar for phones (hidden on large screens): four tabs and a raised centre button for the community. */
-export const MobileNav: React.FC<MobileNavProps> = ({ currentView, role, unreadCount, onHome, onImams, onMosques, onCommunity, onAccount, onSignIn }) => {
+export const MobileNav: React.FC<MobileNavProps> = ({ currentView, role, unreadCount, onHome, onImams, onMosques, onCommunity, onAccount, onSignIn, accountActive = false }) => {
   const isVisitor = role === 'visitor';
   const side = (items: { key: string; label: string; icon: React.ElementType; active: boolean; onClick: () => void; badge?: number }[]) =>
     items.map(({ key, label, icon: Icon, active, onClick, badge }) => (
@@ -48,11 +49,10 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, role, unreadC
 
   const bar = (
     <nav aria-label="التنقل الرئيسي" className="mobile-nav lg:hidden fixed bottom-0 inset-x-0 z-40">
-      {/* Opaque (no backdrop blur): blurred fixed bars jump while scrolling in iPhone Safari. */}
-      <div className="relative mx-2 mb-2 rounded-[1.75rem] bg-ink ring-1 ring-white/10 shadow-2xl shadow-black/40 flex items-stretch px-1">
+      <div className="relative mx-2 mb-2 rounded-[1.75rem] liquid-glass-dark flex items-stretch px-1">
         {side([
           { key: 'home', label: 'الرئيسية', icon: Home, active: currentView === 'home', onClick: onHome },
-          { key: 'imams', label: 'الأئمة', icon: Users, active: currentView === 'mosque', onClick: onImams },
+          { key: 'imams', label: 'الأئمة', icon: Users, active: currentView === 'mosque' && !accountActive, onClick: onImams },
         ])}
         <div className="w-[4.75rem] shrink-0 flex flex-col items-center">
           <button
@@ -70,14 +70,15 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, role, unreadC
           </span>
         </div>
         {side([
-          { key: 'mosques', label: 'المساجد', icon: Building2, active: currentView === 'imam', onClick: onMosques },
+          { key: 'mosques', label: 'المساجد', icon: Building2, active: currentView === 'imam' && !accountActive, onClick: onMosques },
           isVisitor
             ? { key: 'signin', label: 'دخول', icon: LogIn, active: false, onClick: onSignIn }
-            : { key: 'account', label: 'حسابي', icon: User, active: !isVisitor && currentView === 'admin', onClick: onAccount, badge: unreadCount },
+            : { key: 'account', label: 'حسابي', icon: User, active: !isVisitor && accountActive, onClick: onAccount, badge: unreadCount },
         ])}
       </div>
     </nav>
   );
-  // Rendered directly in <body>, so no parent layout can turn the fixed bar into a scrolling one.
-  return typeof document === 'undefined' ? bar : createPortal(bar, document.body);
+  // Stays inside #root (same layer as the dialogs, which open above it). On phones only #root scrolls,
+  // so the browser toolbar never moves and the fixed bar stays glued to the bottom (see index.css).
+  return bar;
 };

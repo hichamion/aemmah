@@ -32,6 +32,8 @@ interface ImamPortalProps {
   onToast: (msg: string, kind?: 'success' | 'error') => void;
   inbox: InboxProps;
   initialTab?: Tab;
+  /** Reports the open tab (used by the phone bottom bar). */
+  onTabChange?: (tab: Tab) => void;
   /** Changes on every tab request from the parent (see App). */
   tabRequest?: number;
 }
@@ -62,6 +64,7 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
   onToast,
   inbox,
   initialTab = 'mosque_ads',
+  onTabChange,
   tabRequest = 0,
 }) => {
   const isImam = currentRole === 'imam';
@@ -75,6 +78,9 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
   useEffect(() => {
     setActiveTab(isImam ? initialTab : 'mosque_ads');
   }, [initialTab, tabRequest, isImam]);
+  useEffect(() => {
+    onTabChange?.(activeTab);
+  }, [activeTab, onTabChange]);
 
   const [quickRamadanNote, setQuickRamadanNote] = useState(myImam?.ramadanNote || '');
   const [quickAfterDate, setQuickAfterDate] = useState(myImam?.availableAfterDate || '');

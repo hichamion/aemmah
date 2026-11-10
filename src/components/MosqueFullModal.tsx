@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { AdminStatStrip, countProfileView } from '../lib/profileStats';
 import { MosqueContact, MosqueJob, UserRole } from '../types';
 import { ContactBlock } from './ContactBlock';
 import { MosqueCvSheet } from './MosqueCvSheet';
@@ -44,6 +45,10 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
   const { contact } = useContact<MosqueContact>('mosque', mosque?.id, !!mosque && canViewContact);
   const printRef = useRef<HTMLDivElement>(null);
   const [exporting, setExporting] = useState<ExportKind | null>(null);
+  // Anonymous view counter (not for the owner or admins).
+  useEffect(() => {
+    if (mosque?.id && !canEdit && mosque.approvalStatus === 'approved') countProfileView('mosque', mosque.id);
+  }, [mosque?.id, canEdit, mosque?.approvalStatus]);
 
   if (!mosque) return null;
 
@@ -180,6 +185,7 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
         {/* Actions */}
         <div className="px-4 py-3 bg-white border-t border-slate-200 flex flex-wrap justify-between items-center gap-2">
           <div className="flex flex-wrap items-center gap-2">
+            {currentRole === 'admin' && <AdminStatStrip kind="mosque" id={mosque.id} />}
             {canEdit && (
               <button
                 onClick={() => {

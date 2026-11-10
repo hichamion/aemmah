@@ -4,6 +4,7 @@ import { formatDate, getSafeImamAvatar } from '../utils/helpers';
 import { ContactBlock } from './ContactBlock';
 import { InboxCenter, InboxProps } from './InboxCenter';
 import { VisitStatsPanel } from './VisitStatsPanel';
+import { ProfileStat, useProfileStats } from '../lib/profileStats';
 import {
   CheckCircle2,
   XCircle,
@@ -18,6 +19,7 @@ import {
   Plus,
   MessageSquare,
   BarChart3,
+  Headphones,
 } from 'lucide-react';
 
 interface AdminPanelProps {
@@ -67,6 +69,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     setComposeRequest((prev) => ({ type, id, seq: (prev?.seq ?? 0) + 1 }));
     setActiveTab('inbox');
   };
+  // Views of each profile and plays of each recitation (admins only, see lib/profileStats).
+  const profileStats = useProfileStats(true);
   const [activeTab, setActiveTab] = useState<'pending' | 'all_imams' | 'all_mosques' | 'reports' | 'feedback' | 'inbox' | 'visits'>('pending');
   const unreadAdmin = inbox.messages.filter(
     (m) => !m.isRead && (m.receiverUid === 'admin' || m.receiverUid === inbox.currentUid)
@@ -470,6 +474,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   <div className="space-y-1 flex-1">
                     <div className="flex flex-wrap items-center justify-between gap-1">
                       <h4 className="font-black text-sm text-slate-900 font-amiri">{imam.name}</h4>
+                      <StatBadges stat={profileStats.get(`imam_${imam.id}`)} hasRecitation={!!imam.recitationMeta} />
                       <span
                         className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                           imam.approvalStatus === 'pending'
@@ -558,6 +563,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 <div className="space-y-1">
                   <div className="flex flex-wrap items-center justify-between gap-1">
                     <h4 className="font-black text-sm text-slate-900 font-amiri">{m.mosqueName}</h4>
+                    <StatBadges stat={profileStats.get(`mosque_${m.id}`)} />
                     <span
                       className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                         m.approvalStatus === 'pending'
@@ -741,3 +747,17 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
     </section>
   );
 };
+
+/** «👁 12 · 🎧 5»: opens of the profile card and plays of the recitation (since counting started). */
+const StatBadges: React.FC<{ stat?: ProfileStat; hasRecitation?: boolean }> = ({ stat, hasRecitation }) => (
+  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-500" title="عدد مرات فتح الملف وعدد مرات الاستماع إلى التلاوة">
+    <span className="inline-flex items-center gap-0.5 bg-slate-100 rounded-full px-2 py-0.5">
+      <Eye className="w-3 h-3" /> <span className="tabular-nums">{stat?.views ?? 0}</span> زيارة
+    </span>
+    {hasRecitation !== undefined && (
+      <span className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 ${hasRecitation ? 'bg-emerald-50 text-emerald-800' : 'bg-slate-100 text-slate-400'}`}>
+        <Headphones className="w-3 h-3" /> <span className="tabular-nums">{hasRecitation ? stat?.plays ?? 0 : '—'}</span> استماع
+      </span>
+    )}
+  </span>
+);

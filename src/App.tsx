@@ -46,6 +46,7 @@ import { ImamModalForm } from './components/ImamModalForm';
 import { StatsConsent } from './components/StatsConsent';
 import { SettingsPanel } from './components/SettingsPanel';
 import { trackVisit } from './lib/visits';
+import { scrollToTop } from './lib/scroll';
 import { MosqueModalForm } from './components/MosqueModalForm';
 import { ImamFullModal } from './components/ImamFullModal';
 import { MosqueFullModal } from './components/MosqueFullModal';
@@ -130,11 +131,14 @@ export default function App() {
   const [mosquePortalTab, setMosquePortalTabState] = useState<{ tab: MosqueTab; seq: number }>({ tab: 'browse', seq: 0 });
   const setImamPortalTab = useCallback((tab: ImamTab) => setImamPortalTabState((p) => ({ tab, seq: p.seq + 1 })), []);
   const setMosquePortalTab = useCallback((tab: MosqueTab) => setMosquePortalTabState((p) => ({ tab, seq: p.seq + 1 })), []);
+  // Tab really open in each portal (the user can switch tabs inside the portal).
+  const [imamTabOpen, setImamTabOpen] = useState<ImamTab>('mosque_ads');
+  const [mosqueTabOpen, setMosqueTabOpen] = useState<MosqueTab>('browse');
 
   const setCurrentView = useCallback((view: View) => {
     setCurrentViewState(view);
     if (window.location.hash !== VIEW_TO_HASH[view]) window.location.hash = VIEW_TO_HASH[view];
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToTop();
   }, []);
 
   useEffect(() => {
@@ -695,7 +699,7 @@ export default function App() {
           role="status"
           aria-live="polite"
           className={`fixed top-20 left-1/2 -translate-x-1/2 z-[60] px-5 py-3 rounded-2xl shadow-2xl border flex items-center gap-3 text-xs font-bold max-w-md w-[92%] sm:w-auto ${
-            toast.kind === 'error' ? 'bg-red-700 text-white border-red-500' : 'bg-slate-900 text-white border-slate-700'
+            toast.kind === 'error' ? 'bg-red-700/90 backdrop-blur-xl text-white border-red-400/60' : 'liquid-glass-dark text-white'
           }`}
         >
           {toast.kind === 'error' ? (
@@ -813,6 +817,7 @@ export default function App() {
                 onToast={showToast}
                 inbox={{ ...inboxProps, currentName: myImam?.name || displayName }}
                 initialTab={imamPortalTab.tab}
+                onTabChange={setImamTabOpen}
                 tabRequest={imamPortalTab.seq}
               />
             )}
@@ -839,6 +844,7 @@ export default function App() {
                 onReportImam={handleOpenReportImam}
                 inbox={{ ...inboxProps, currentName: myMosques[0]?.mosqueName || displayName }}
                 initialTab={mosquePortalTab.tab}
+                onTabChange={setMosqueTabOpen}
                 tabRequest={mosquePortalTab.seq}
               />
             )}
@@ -912,6 +918,11 @@ export default function App() {
       <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} onPrivacy={() => setCurrentView('privacy')} />
 
       <MobileNav
+        accountActive={
+          (role === 'admin' && currentView === 'admin') ||
+          (role === 'imam' && currentView === 'imam' && imamTabOpen !== 'mosque_ads') ||
+          (role === 'mosque' && currentView === 'mosque' && mosqueTabOpen !== 'browse')
+        }
         currentView={currentView}
         role={role}
         unreadCount={totalUnreadMessages}

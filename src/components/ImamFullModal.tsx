@@ -1,4 +1,5 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { AdminStatStrip, countProfileView, countRecitationPlay } from '../lib/profileStats';
 import { ImamContact, ImamProfile, UserRole } from '../types';
 import { getYoutubeEmbedUrl, safeHttpUrl } from '../utils/helpers';
 import { ContactBlock } from './ContactBlock';
@@ -48,6 +49,10 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
   const recitation = useRecitationAudio(imam?.id, !!imam?.recitationMeta, imam?.recitationMeta?.createdAt);
   const printRef = useRef<HTMLDivElement>(null);
   const [exporting, setExporting] = useState<ExportKind | null>(null);
+  // Anonymous view counter (not for the owner or admins).
+  useEffect(() => {
+    if (imam?.id && !canEdit && imam.approvalStatus === 'approved') countProfileView('imam', imam.id);
+  }, [imam?.id, canEdit, imam?.approvalStatus]);
 
   if (!imam) return null;
 
@@ -162,7 +167,7 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
   const meta = imam.recitationMeta;
   const audioSlot = meta ? (
     recitation.audio ? (
-      <RecitationPlayer src={recitation.audio} title={recitationLabel(meta)} durationSec={meta.durationSec} date={meta.createdAt} />
+      <RecitationPlayer src={recitation.audio} title={recitationLabel(meta)} durationSec={meta.durationSec} date={meta.createdAt} onFirstPlay={canEdit ? undefined : () => countRecitationPlay(imam.id)} />
     ) : recitation.loading ? (
       <p className="text-sm text-slate-500">جاري تحميل التسجيل…</p>
     ) : (
@@ -249,6 +254,7 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
         {/* Actions */}
         <div className="px-4 py-3 bg-white border-t border-slate-200 flex flex-wrap justify-between items-center gap-2">
           <div className="flex flex-wrap items-center gap-2">
+            {currentRole === 'admin' && <AdminStatStrip kind="imam" id={imam.id} showPlays={!!imam.recitationMeta} />}
             {canEdit && (
               <button
                 onClick={() => {
