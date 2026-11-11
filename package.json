@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "lint": "tsc --noEmit",
     "clean": "rm -rf dist",
-    "deploy:rules": "firebase deploy --only firestore:rules,storage",
+    "deploy:rules": "firebase deploy --only firestore:rules",
     "deploy": "npm run build && firebase deploy"
   },
   "dependencies": {
