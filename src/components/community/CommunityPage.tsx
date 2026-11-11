@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Bell, BookMarked, FilePenLine, Loader2, MessagesSquare, Pin, Search, Settings2, SlidersHorizontal, Users } from 'lucide-react';
+import { BarChart3, Bell, BookMarked, FilePenLine, Image as ImageIcon, Loader2, MessageCircle, MessagesSquare, Mic, Pin, Plus, Settings2, Users } from 'lucide-react';
 import { CommunityPost, PostComment, PostType } from '../../types/community';
 import { ImamProfile } from '../../types';
 import {
@@ -17,9 +17,10 @@ import {
 } from '../../lib/community';
 import { excerpt } from '../../lib/richtext';
 import { createReport } from '../../lib/db';
+import { firstNameOf } from '../../utils/helpers';
 import { scrollToTop } from '../../lib/scroll';
-import { AuthorAvatar, CommunityViewer, ImageGrid, PollBox, PostTypeGrid, ReactionBar, timeAgo } from './PostParts';
-import { CommunityBackdrop, CommunitySidebar, SidebarTab, TopicsPanel } from './CommunitySidebar';
+import { AuthorAvatar, CARD, CommunityViewer, ImageGrid, PollBox, PostMenu, ReactionBar, timeAgo } from './PostParts';
+import { CommunitySidebar, SidebarTab, TopicsPanel } from './CommunitySidebar';
 import { PostActions, PostDetail } from './PostDetail';
 import { PostComposer } from './PostComposer';
 import { CommunityAdmin } from './CommunityAdmin';
@@ -38,15 +39,6 @@ const go = (path: string) => {
   window.location.hash = `#/community${path}`;
   scrollToTop();
 };
-
-// Filters shown above the wall.
-const FILTERS: { key: string; label: string; types: PostType[] | null }[] = [
-  { key: 'all', label: 'الكل', types: null },
-  { key: 'articles', label: 'المقالات', types: ['article'] },
-  { key: 'questions', label: 'الأسئلة والنقاشات', types: ['question', 'poll'] },
-  { key: 'learning', label: 'المواد التعليمية', types: ['khutba', 'event'] },
-  { key: 'field', label: 'تجارب ميدانية', types: ['field'] },
-];
 
 interface Props {
   uid: string | null;
@@ -84,13 +76,14 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
   };
 
   const [composer, setComposer] = useState<{ open: boolean; type?: PostType; existing: CommunityPost | null }>({ open: false, existing: null });
-  const [filter, setFilter] = useState('all');
-  const [sort, setSort] = useState<'new' | 'top'>('new');
-  const [search, setSearch] = useState('');
-  const [advanced, setAdvanced] = useState(false);
-  const [category, setCategory] = useState('');
-  const [author, setAuthor] = useState('');
   const [showBell, setShowBell] = useState(false);
+  // Escape closes the notifications list.
+  useEffect(() => {
+    if (!showBell) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setShowBell(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showBell]);
 
   // ---------------- gate ----------------
   if (!isMember) {
@@ -162,22 +155,13 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
   const drafts = posts.filter((p) => p.status === 'draft' && p.authorUid === uid);
   const openPost = route.postId ? posts.find((p) => p.id === route.postId) : undefined;
 
-  // ---------------- feed list ----------------
-  const q = search.trim().toLowerCase();
-  const types = FILTERS.find((f) => f.key === filter)?.types;
-  const feed = published
-    .filter((p) => !types || types.includes(p.type))
-    .filter((p) => !category || p.category === category)
-    .filter((p) => !author || p.authorName.includes(author))
-    .filter((p) => !q || `${p.title} ${p.body} ${p.authorName} ${p.category}`.toLowerCase().includes(q))
-    .sort((a, b) => {
-      if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
-      if (sort === 'top') {
-        const d = b.likeCount + b.commentCount * 2 - (a.likeCount + a.commentCount * 2);
-        if (d) return d;
-      }
-      return (b.publishedAt || b.createdAt).localeCompare(a.publishedAt || a.createdAt);
-    });
+  // ---------------- feed: pinned first, then newest ----------------
+  const feed = [...published].sort((a, b) => {
+    if (a.pinned !== b.pinned) return a.pinned ? -1 : 1;
+    return (b.publishedAt || b.createdAt).localeCompare(a.publishedAt || a.createdAt);
+  });
+  const canPost = viewer.canInteract && (settings.postingEnabled || isAdmin);
+  const firstName = isAdmin ? '' : firstNameOf(viewer.name);
 
   const tabs: SidebarTab[] = [
     { key: 'feed', label: 'الحائط', hint: 'أحدث الخطب والمقالات والنقاشات', icon: <MessagesSquare className="w-4 h-4" /> },
@@ -190,185 +174,203 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
 
   const card = (p: CommunityPost) => <PostCard key={p.id} post={p} viewer={viewer} imams={imamsById} saved={saved.has(p.id)} actions={actions} />;
 
+  const openTab = (k: string) => go(k === 'feed' ? '' : `/${k}`);
+
   return (
-    <div className="community-bg relative flex-1 w-full">
-    <CommunityBackdrop />
-    <section className="relative flex-1 w-full max-w-7xl mx-auto px-3 sm:px-6 py-5 sm:py-8 space-y-5">
-      {/* Banner */}
-      <header className="glass-card overflow-hidden bg-gradient-to-l from-[#2fbf7a] via-[#12804c] to-[#05472b] text-white rounded-[2rem] px-6 py-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="relative z-10">
-          <h1 className="text-3xl sm:text-4xl font-black font-amiri">ملتقى الأئمة</h1>
-          <p className="text-sm text-green-50/90">مساحة تواصل مهنية وعلمية خاصة بالأئمة المسجلين</p>
-        </div>
-        <div className="relative z-10 flex items-center gap-2">
-          <div className="relative">
-            <button onClick={() => { setShowBell((v) => !v); if (!showBell) markNotificationsRead(viewer.uid, notifications); }}
-              aria-label={`الإشعارات${unread ? ` (${unread} جديد)` : ''}`} className="relative w-11 h-11 rounded-full glass flex items-center justify-center cursor-pointer">
-              <Bell className="w-5 h-5" />
-              {unread > 0 && <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[11px] font-black min-w-5 h-5 px-1 rounded-full flex items-center justify-center">{unread}</span>}
-            </button>
-            {showBell && (
-              <div className="absolute left-0 mt-2 w-80 max-w-[85vw] bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-200 p-2 z-30">
-                <div className="flex justify-between items-center px-2 py-1">
-                  <p className="font-black text-sm">الإشعارات</p>
-                  {notifications.length > 0 && <button onClick={() => clearNotifications(viewer.uid)} className="text-xs text-slate-500 cursor-pointer">مسح الكل</button>}
-                </div>
-                {notifications.length === 0 && <p className="text-sm text-slate-500 p-3">لا توجد إشعارات.</p>}
-                <ul className="max-h-80 overflow-y-auto">
-                  {notifications.map((n) => (
-                    <li key={n.id}>
-                      <button onClick={() => { setShowBell(false); go(`/post/${n.postId}`); }} className={`w-full text-right px-3 py-2 rounded-xl hover:bg-slate-50 text-sm cursor-pointer ${n.read ? '' : 'bg-emerald-50/60'}`}>
-                        <b>{n.fromName}</b> {n.type === 'reply' ? 'ردّ على تعليقك في' : 'علّق على منشورك'} «{n.postTitle}»
-                        <span className="block text-xs text-slate-500">{timeAgo(n.createdAt)}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+    <div className="relative flex-1 w-full">
+      <section className="relative w-full max-w-6xl mx-auto sm:px-6 pb-8 sm:pt-6">
+        {/* Top bar: title, new post, notifications (the list opens above everything) */}
+        <header className="relative z-40 bg-white sm:rounded-2xl border-b sm:border border-slate-200 shadow-sm px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-3xl font-kufi text-cedar-800 leading-tight">ملتقى الأئمة</h1>
+            <p className="hidden sm:block text-sm text-slate-500">مساحة تواصل مهنية وعلمية خاصة بالأئمة المسجلين</p>
           </div>
-        </div>
-      </header>
-
-      <div className="grid grid-cols-1 lg:grid-cols-[250px_minmax(0,1fr)] xl:grid-cols-[250px_minmax(0,1fr)_260px] gap-5 items-start">
-        {/* Right sidebar (RTL): sections + categories */}
-        <CommunitySidebar
-          tabs={tabs}
-          active={activeTab}
-          onTab={(k) => {
-            go(k === 'feed' ? '' : `/${k}`);
-            // Phones: the tiles sit above the content — bring the chosen section into view.
-            if (window.innerWidth < 1024) window.setTimeout(() => document.getElementById('cm-main')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
-          }}
-          categories={settings.categories.map((c) => ({ name: c, count: published.filter((p) => p.category === c).length }))}
-          category={category}
-          onCategory={(c) => { setCategory(c); if (c) setAdvanced(true); go(''); }}
-        />
-
-        {/* Main column */}
-        <main id="cm-main" key={route.postId || route.tab} className="cm-enter space-y-4 min-w-0 scroll-mt-20">
-          {error && <p className="bg-red-50 text-red-800 border border-red-200 rounded-2xl p-3 text-sm">تعذر تحميل الملتقى ({error}). إن كان الخطأ permission-denied فانشر قواعد الأمان الجديدة.</p>}
-
-          {route.postId ? (
-            openPost ? (
-              <PostDetail post={openPost} viewer={viewer} imams={imamsById} saved={saved.has(openPost.id)} actions={actions} onBack={() => go('')} />
-            ) : (
-              <p className="bg-white rounded-3xl border border-slate-200 p-8 text-center text-slate-500">{loading ? 'جاري التحميل…' : 'هذا المنشور غير موجود أو حُذف.'}</p>
-            )
-          ) : route.tab === 'admin' && isAdmin ? (
-            <CommunityAdmin settings={settings} onDone={(m) => onToast(m)} onError={(m) => onToast(m, 'error')} />
-          ) : route.tab === 'saved' ? (
-            <LibraryView title="محفوظاتي" note="المنشورات التي حفظتها، مرتبة حسب تصنيفها." sections={settings.categories}
-              posts={published.filter((p) => saved.has(p.id))} groupBy={(p) => p.category} render={card} />
-          ) : route.tab === 'drafts' ? (
-            <div className="space-y-3">
-              <h2 className="font-black text-lg text-slate-900">مسوداتي</h2>
-              {drafts.length === 0 && <p className="text-sm text-slate-500 bg-white rounded-2xl border border-slate-200 p-6 text-center">لا توجد مسودات.</p>}
-              {drafts.map((p) => (
-                <div key={p.id} className="bg-white rounded-2xl border border-slate-200 p-4 flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="font-black truncate">{p.title}</p>
-                    <p className="text-xs text-slate-500">{postTypeLabel(p.type)} · آخر تعديل {timeAgo(p.updatedAt)}</p>
+          <div className="flex items-center gap-2">
+            {canPost && (
+              <button onClick={() => setComposer({ open: true, existing: null })}
+                className="hidden sm:inline-flex items-center gap-1.5 bg-emerald-800 hover:bg-emerald-700 text-white text-sm font-black px-4 py-2.5 rounded-full cursor-pointer">
+                <Plus className="w-4 h-4" /> منشور جديد
+              </button>
+            )}
+            {canPost && (
+              <button onClick={() => setComposer({ open: true, existing: null })} aria-label="منشور جديد"
+                className="sm:hidden w-10 h-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center cursor-pointer">
+                <Plus className="w-5 h-5" />
+              </button>
+            )}
+            <div className="relative">
+              <button
+                onClick={() => { setShowBell((v) => !v); if (!showBell) markNotificationsRead(viewer.uid, notifications); }}
+                aria-label={`الإشعارات${unread ? ` (${unread} جديد)` : ''}`}
+                aria-expanded={showBell}
+                className={`relative w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center cursor-pointer transition ${showBell ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
+              >
+                <Bell className={`w-5 h-5 ${unread ? 'animate-[bell_1s_ease-in-out_2]' : ''}`} />
+                {unread > 0 && <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[11px] font-black min-w-5 h-5 px-1 rounded-full flex items-center justify-center ring-2 ring-white">{unread}</span>}
+              </button>
+              {showBell && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setShowBell(false)} aria-hidden />
+                  <div role="dialog" aria-label="الإشعارات"
+                    className="fixed sm:absolute inset-x-2 sm:inset-x-auto top-[4.5rem] sm:top-full sm:left-0 sm:mt-2 sm:w-96 z-50 bg-white text-slate-800 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.45)] ring-1 ring-black/10 overflow-hidden">
+                    <div className="flex justify-between items-center px-4 py-3 border-b border-slate-100">
+                      <p className="font-black text-lg">الإشعارات</p>
+                      {notifications.length > 0 && <button onClick={() => clearNotifications(viewer.uid)} className="text-xs font-bold text-emerald-800 hover:underline cursor-pointer">مسح الكل</button>}
+                    </div>
+                    {notifications.length === 0 && <p className="text-sm text-slate-500 px-4 py-8 text-center">لا توجد إشعارات بعد.</p>}
+                    <ul className="max-h-[60vh] overflow-y-auto p-1.5">
+                      {notifications.map((n) => (
+                        <li key={n.id}>
+                          <button onClick={() => { setShowBell(false); go(`/post/${n.postId}`); }}
+                            className={`w-full text-right flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-sm cursor-pointer ${n.read ? '' : 'bg-emerald-50'}`}>
+                            <span className="w-10 h-10 shrink-0 rounded-full bg-emerald-700 text-white flex items-center justify-center"><MessageCircle className="w-5 h-5" /></span>
+                            <span className="flex-1 min-w-0">
+                              <span className="block leading-snug"><b>{n.fromName}</b> {n.type === 'reply' ? 'ردّ على تعليقك في' : 'علّق على منشورك'} «{n.postTitle}»</span>
+                              <span className={`block text-xs mt-0.5 ${n.read ? 'text-slate-500' : 'text-emerald-700 font-bold'}`}>{timeAgo(n.createdAt)}</span>
+                            </span>
+                            {!n.read && <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 mt-2 shrink-0" aria-label="جديد" />}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <div className="flex gap-2 shrink-0">
-                    <button onClick={() => actions.onEdit(p)} className="bg-emerald-800 text-white text-sm font-bold px-4 py-2 rounded-full cursor-pointer">متابعة التحرير</button>
-                    <button onClick={() => actions.onDelete(p)} className="text-red-700 text-sm font-bold px-3 py-2 cursor-pointer">حذف</button>
-                  </div>
-                </div>
-              ))}
+                </>
+              )}
             </div>
-          ) : (
-            <>
-              {/* Composer prompt */}
-              {viewer.canInteract ? (
-                settings.postingEnabled || isAdmin ? (
-                  <div className="bg-white rounded-3xl border border-slate-200 p-4 space-y-3 shadow-sm">
-                    <button onClick={() => setComposer({ open: true, existing: null })} className="w-full flex items-center gap-3 cursor-pointer text-right">
-                      <AuthorAvatar imamId={viewer.imamId} imams={imamsById} />
-                      <span className="flex-1 bg-slate-100 hover:bg-slate-200 rounded-full px-4 py-3 text-slate-500 text-sm">شاركنا خطبةً أو درساً، أو اطرح سؤالاً…</span>
-                    </button>
-                    <PostTypeGrid compact onPick={(t) => setComposer({ open: true, type: t, existing: null })} />
-                  </div>
+          </div>
+        </header>
+
+        {/* Phones / tablets: tab bar with icons (larger screens use the side menu) */}
+        <nav aria-label="أقسام الملتقى" className="lg:hidden bg-white border-b border-slate-200 flex mb-2 sm:mb-4 sm:rounded-2xl sm:border sm:mt-3">
+          {tabs.map((t) => {
+            const on = activeTab === t.key;
+            return (
+              <button key={t.key} onClick={() => openTab(t.key)} aria-current={on ? 'page' : undefined}
+                className={`relative flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-bold cursor-pointer transition ${on ? 'text-emerald-800' : 'text-slate-500 hover:bg-slate-50'}`}>
+                <span className="relative [&>svg]:w-[22px] [&>svg]:h-[22px]">
+                  {t.icon}
+                  {!!t.count && <span className="absolute -top-1.5 -left-2.5 bg-slate-200 text-slate-700 text-[10px] font-black min-w-4 h-4 px-1 rounded-full flex items-center justify-center">{t.count}</span>}
+                </span>
+                {t.label}
+                {on && <span className="absolute bottom-0 inset-x-4 h-[3px] rounded-t-full bg-emerald-700" aria-hidden />}
+              </button>
+            );
+          })}
+        </nav>
+
+        <div className="grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)] xl:grid-cols-[240px_minmax(0,1fr)_260px] gap-5 items-start lg:mt-5">
+          <div className="hidden lg:block">
+            <CommunitySidebar tabs={tabs} active={activeTab} onTab={openTab} />
+          </div>
+
+          <main key={route.postId || route.tab} className="cm-enter space-y-2 sm:space-y-4 min-w-0">
+            {error && <p className="bg-red-50 text-red-800 border border-red-200 sm:rounded-2xl p-3 text-sm">تعذر تحميل الملتقى ({error}).</p>}
+
+            {route.postId ? (
+              openPost ? (
+                <PostDetail post={openPost} viewer={viewer} imams={imamsById} saved={saved.has(openPost.id)} actions={actions} onBack={() => go('')} />
+              ) : (
+                <p className={`${CARD} p-8 text-center text-slate-500`}>{loading ? 'جاري التحميل…' : 'هذا المنشور غير موجود أو حُذف.'}</p>
+              )
+            ) : route.tab === 'admin' && isAdmin ? (
+              <CommunityAdmin settings={settings} onDone={(m) => onToast(m)} onError={(m) => onToast(m, 'error')} />
+            ) : route.tab === 'saved' ? (
+              <>
+                <h2 className="font-black text-lg text-slate-900 px-4 sm:px-0 pt-2">محفوظاتي</h2>
+                {published.filter((p) => saved.has(p.id)).length === 0 ? (
+                  <p className={`${CARD} p-8 text-center text-slate-500`}>لم تحفظ أي منشور بعد. اضغط «⋯» على منشور ثم «حفظ المنشور».</p>
                 ) : (
-                  <p className="bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl p-3 text-sm font-bold">النشر موقوف مؤقتاً من الإدارة. يمكنك الاطلاع والقراءة.</p>
-                )
-              ) : (
-                <p className="bg-white border border-slate-200 rounded-2xl p-3 text-sm text-slate-600">يمكنك الاطلاع على الملتقى. النشر والتفاعل متاحان بعد أن تعتمد الإدارة ملفك كإمام.</p>
-              )}
-
-              {/* Filters */}
-              <div className="bg-white rounded-3xl border border-slate-200 p-3 space-y-3">
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="flex-1 min-w-48 relative">
-                    <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="ابحث في المنشورات…" aria-label="بحث"
-                      className="w-full border border-slate-200 rounded-full pr-9 pl-3 py-2 text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-600" />
-                  </div>
-                  <select value={sort} onChange={(e) => setSort(e.target.value as 'new' | 'top')} aria-label="الترتيب" className="border border-slate-200 rounded-full px-3 py-2 text-sm bg-white">
-                    <option value="new">الأحدث</option>
-                    <option value="top">الأكثر تفاعلاً</option>
-                  </select>
-                  <button onClick={() => setAdvanced((v) => !v)} aria-expanded={advanced} className="inline-flex items-center gap-1 text-sm font-bold px-3 py-2 rounded-full border border-slate-200 cursor-pointer">
-                    <SlidersHorizontal className="w-4 h-4" /> بحث متقدم
-                  </button>
-                </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {FILTERS.map((f) => (
-                    <button key={f.key} onClick={() => setFilter(f.key)} aria-pressed={filter === f.key}
-                      className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold cursor-pointer ${filter === f.key ? 'bg-amber-400 text-slate-950' : 'bg-slate-100 text-slate-700'}`}>
-                      {f.label}
-                    </button>
-                  ))}
-                </div>
-                {advanced && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <select value={category} onChange={(e) => setCategory(e.target.value)} aria-label="التصنيف" className="border border-slate-200 rounded-xl px-3 py-2 text-sm bg-white">
-                      <option value="">كل التصنيفات</option>
-                      {settings.categories.map((c) => <option key={c} value={c}>{c}</option>)}
-                    </select>
-                    <input value={author} onChange={(e) => setAuthor(e.target.value)} placeholder="اسم الكاتب" aria-label="الكاتب" className="border border-slate-200 rounded-xl px-3 py-2 text-sm" />
-                  </div>
+                  published.filter((p) => saved.has(p.id)).map(card)
                 )}
-              </div>
+              </>
+            ) : route.tab === 'drafts' ? (
+              <>
+                <h2 className="font-black text-lg text-slate-900 px-4 sm:px-0 pt-2">مسوداتي</h2>
+                {drafts.length === 0 && <p className={`${CARD} p-8 text-center text-slate-500`}>لا توجد مسودات.</p>}
+                {drafts.map((p) => (
+                  <div key={p.id} className={`${CARD} p-4 flex items-center justify-between gap-3`}>
+                    <div className="min-w-0">
+                      <p className="font-black truncate">{p.title}</p>
+                      <p className="text-xs text-slate-500">{postTypeLabel(p.type)} · آخر تعديل {timeAgo(p.updatedAt)}</p>
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      <button onClick={() => actions.onEdit(p)} className="bg-emerald-800 text-white text-sm font-bold px-4 py-2 rounded-full cursor-pointer">متابعة التحرير</button>
+                      <button onClick={() => actions.onDelete(p)} className="text-red-700 text-sm font-bold px-3 py-2 cursor-pointer">حذف</button>
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <>
+                {/* «What's on your mind?» box */}
+                {canPost ? (
+                  <div className={`${CARD} px-4 pt-3 pb-1`}>
+                    <div className="flex items-center gap-2.5">
+                      <AuthorAvatar imamId={viewer.imamId} imams={imamsById} size="w-10 h-10" />
+                      <button onClick={() => setComposer({ open: true, existing: null })}
+                        className="flex-1 text-right bg-slate-100 hover:bg-slate-200 rounded-full px-4 py-2.5 text-slate-500 text-[15px] cursor-pointer transition">
+                        بمَ تفكّر{firstName ? ` يا ${firstName}` : ''}؟
+                      </button>
+                    </div>
+                    <div className="flex border-t border-slate-200 mt-3 pt-1">
+                      {QUICK.map((q) => (
+                        <button key={q.type} onClick={() => setComposer({ open: true, type: q.type, existing: null })}
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-slate-100 text-[13px] sm:text-sm font-bold text-slate-600 cursor-pointer">
+                          <span className={q.color}>{q.icon}</span> {q.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ) : viewer.canInteract ? (
+                  <p className="bg-amber-50 border-y sm:border border-amber-200 text-amber-900 sm:rounded-2xl p-3 text-sm font-bold">النشر موقوف مؤقتاً من الإدارة. يمكنك الاطلاع والقراءة.</p>
+                ) : (
+                  <p className={`${CARD} p-3 text-sm text-slate-600`}>يمكنك الاطلاع على الملتقى. النشر والتفاعل متاحان بعد أن تعتمد الإدارة ملفك كإمام.</p>
+                )}
 
-              {loading ? (
-                <p className="text-center text-slate-500 py-10 flex items-center justify-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> جاري التحميل…</p>
-              ) : feed.length === 0 ? (
-                <p className="bg-white rounded-3xl border border-slate-200 p-10 text-center text-slate-500">لا توجد منشورات بعد{q || category || author || filter !== 'all' ? ' تطابق البحث' : ''}.</p>
-              ) : (
-                feed.map(card)
-              )}
-            </>
-          )}
-        </main>
+                {loading ? (
+                  <p className="text-center text-slate-500 py-10 flex items-center justify-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> جاري التحميل…</p>
+                ) : feed.length === 0 ? (
+                  <p className={`${CARD} p-10 text-center text-slate-500`}>لا توجد منشورات بعد. كن أول من ينشر.</p>
+                ) : (
+                  feed.map(card)
+                )}
+              </>
+            )}
+          </main>
 
-        {/* Left column: latest topics */}
-        <aside className="hidden xl:block space-y-4 xl:sticky xl:top-24">
-          <TopicsPanel
-            title="أحدث المواضيع"
-            posts={latest}
-            onOpen={(id) => go(`/post/${id}`)}
-            footer={<span className="flex items-center gap-2"><Users className="w-4 h-4 text-emerald-700" /> {imams.length} إماماً على المنصة</span>}
-          />
-        </aside>
-      </div>
+          {/* Left column: latest topics */}
+          <aside className="hidden xl:block space-y-4 xl:sticky xl:top-24">
+            <TopicsPanel
+              title="أحدث المواضيع"
+              posts={latest}
+              onOpen={(id) => go(`/post/${id}`)}
+              footer={<span className="flex items-center gap-2"><Users className="w-4 h-4 text-emerald-700" /> {imams.length} إماماً على المنصة</span>}
+            />
+          </aside>
+        </div>
 
-      <PostComposer
-        open={composer.open}
-        initialType={composer.type}
-        existing={composer.existing}
-        settings={settings}
-        author={{ uid: viewer.uid, name: viewer.name, imamId: viewer.imamId }}
-        onClose={() => setComposer({ open: false, existing: null })}
-        onSaved={(m, id) => { onToast(m); if (composer.existing?.status !== 'published') go(`/post/${id}`); }}
-        onError={(m) => onToast(m, 'error')}
-      />
-    </section>
+        <PostComposer
+          open={composer.open}
+          initialType={composer.type}
+          existing={composer.existing}
+          settings={settings}
+          author={{ uid: viewer.uid, name: viewer.name, imamId: viewer.imamId }}
+          onClose={() => setComposer({ open: false, existing: null })}
+          onSaved={(m, id) => { onToast(m); if (composer.existing?.status !== 'published') go(`/post/${id}`); }}
+          onError={(m) => onToast(m, 'error')}
+        />
+      </section>
     </div>
   );
 };
 
 // ---------------------------------------------------------------------------
+
+const QUICK: { type: PostType; label: string; icon: React.ReactNode; color: string }[] = [
+  { type: 'field', label: 'صورة', icon: <ImageIcon className="w-5 h-5" />, color: 'text-emerald-600' },
+  { type: 'khutba', label: 'خطبة', icon: <Mic className="w-5 h-5" />, color: 'text-sky-600' },
+  { type: 'poll', label: 'استطلاع', icon: <BarChart3 className="w-5 h-5" />, color: 'text-amber-600' },
+];
 
 const PostCard: React.FC<{ post: CommunityPost; viewer: CommunityViewer; imams: Map<string, ImamProfile>; saved: boolean; actions: PostActions }> = ({
   post,
@@ -380,75 +382,50 @@ const PostCard: React.FC<{ post: CommunityPost; viewer: CommunityViewer; imams: 
   const open = () => go(`/post/${post.id}`);
   const long = post.body.length > 260;
   return (
-    <article className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-      <div className="p-4 sm:p-5 space-y-3">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <AuthorAvatar imamId={post.authorImamId} imams={imams} />
-          <div className="min-w-0 flex-1">
-            <p className="font-black text-slate-900 truncate">{post.authorName}</p>
-            <p className="text-xs text-slate-500">{timeAgo(post.publishedAt || post.createdAt)} · {post.category}</p>
-          </div>
-          <div className="flex items-center gap-1.5 shrink-0 w-full sm:w-auto">
-            {post.pinned && <span className="inline-flex items-center gap-1 text-[11px] font-black text-amber-800 bg-amber-50 px-2 py-1 rounded-full"><Pin className="w-3 h-3" /> مثبّت</span>}
-            <span className="text-[11px] font-bold text-emerald-900 bg-emerald-50 px-2 py-1 rounded-full">{postTypeIcon(post.type)} {postTypeLabel(post.type)}</span>
-          </div>
+    <article className={CARD}>
+      <header className="flex items-start gap-2.5 px-4 pt-3">
+        <AuthorAvatar imamId={post.authorImamId} imams={imams} size="w-10 h-10" />
+        <div className="flex-1 min-w-0">
+          <p className="font-bold text-[15px] text-slate-900 truncate">{post.authorName}</p>
+          <p className="text-xs text-slate-500 flex flex-wrap items-center gap-x-1">
+            <span>{timeAgo(post.publishedAt || post.createdAt)}</span>
+            <span aria-hidden>·</span>
+            <span>{postTypeIcon(post.type)} {postTypeLabel(post.type)}</span>
+            {post.pinned && (
+              <>
+                <span aria-hidden>·</span>
+                <span className="inline-flex items-center gap-0.5 text-amber-700 font-bold"><Pin className="w-3 h-3" /> مثبّت</span>
+              </>
+            )}
+          </p>
         </div>
-        <button onClick={open} className="block text-right w-full cursor-pointer group">
-          <h2 className="text-xl font-black text-slate-900 font-amiri leading-snug group-hover:text-emerald-800">{post.title}</h2>
-          {post.body.trim() && <p className="text-sm text-slate-700 leading-relaxed mt-1.5">{excerpt(post.body)}</p>}
-          {long && <span className="text-sm font-bold text-emerald-800">اقرأ المزيد ←</span>}
-        </button>
-        <ImageGrid ids={post.images} />
-        {post.poll && <PollBox post={post} viewer={viewer} onError={actions.onError} />}
-        {post.files.length > 0 && (
-          <button onClick={open} className="text-xs font-bold text-red-800 bg-red-50 px-3 py-1.5 rounded-full cursor-pointer">📎 {post.files.length} ملف PDF مرفق</button>
-        )}
-        <ReactionBar
+        <PostMenu
           post={post}
           viewer={viewer}
           saved={saved}
           onToggleSave={() => actions.onToggleSave(post)}
-          onComment={open}
           onReport={() => actions.onReport(post)}
           onEdit={() => actions.onEdit(post)}
           onDelete={() => actions.onDelete(post)}
           onPin={() => actions.onPin(post)}
           onError={actions.onError}
-          onCopied={() => actions.onInfo('تم نسخ رابط المنشور.')}
         />
+      </header>
+      <button onClick={open} className="block text-right w-full cursor-pointer px-4 pt-2 pb-2">
+        {post.title && <h2 className="font-black text-[17px] text-slate-900 leading-snug">{post.title}</h2>}
+        {post.body.trim() && <p className="text-[15px] text-slate-800 leading-relaxed mt-1 whitespace-pre-line">{excerpt(post.body)}</p>}
+        {long && <span className="text-sm font-bold text-slate-500 hover:underline">عرض المزيد</span>}
+      </button>
+      {post.images.length > 0 && <ImageGrid ids={post.images} flush />}
+      {post.poll && <div className="px-4 pt-2"><PollBox post={post} viewer={viewer} onError={actions.onError} /></div>}
+      {post.files.length > 0 && (
+        <div className="px-4 pt-2">
+          <button onClick={open} className="text-xs font-bold text-red-800 bg-red-50 px-3 py-1.5 rounded-full cursor-pointer">📎 {post.files.length} ملف PDF مرفق</button>
+        </div>
+      )}
+      <div className="px-4 pb-1">
+        <ReactionBar post={post} viewer={viewer} onComment={open} onError={actions.onError} onCopied={() => actions.onInfo('تم نسخ رابط المنشور.')} />
       </div>
     </article>
-  );
-};
-
-const LibraryView: React.FC<{
-  title: string;
-  note: string;
-  sections: string[];
-  posts: CommunityPost[];
-  groupBy: (p: CommunityPost) => string;
-  render: (p: CommunityPost) => React.ReactNode;
-}> = ({ title, note, sections, posts, groupBy, render }) => {
-  const [section, setSection] = useState('');
-  const all = Array.from(new Set([...sections, ...posts.map(groupBy).filter(Boolean)]));
-  const shown = posts.filter((p) => !section || groupBy(p) === section);
-  return (
-    <div className="space-y-4">
-      <div>
-        <h2 className="font-black text-lg text-slate-900">{title}</h2>
-        <p className="text-sm text-slate-500">{note}</p>
-      </div>
-      <div className="flex flex-wrap gap-1.5">
-        <button onClick={() => setSection('')} className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold cursor-pointer ${!section ? 'bg-amber-400 text-slate-950' : 'bg-white border border-slate-200'}`}>
-          الكل ({posts.length})
-        </button>
-        {all.map((s) => (
-          <button key={s} onClick={() => setSection(s)} className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold cursor-pointer ${section === s ? 'bg-amber-400 text-slate-950' : 'bg-white border border-slate-200'}`}>
-            {s} ({posts.filter((p) => groupBy(p) === s).length})
-          </button>
-        ))}
-      </div>
-      {shown.length === 0 ? <p className="bg-white rounded-3xl border border-slate-200 p-10 text-center text-slate-500">لا توجد مواد هنا بعد.</p> : shown.map(render)}
-    </div>
   );
 };

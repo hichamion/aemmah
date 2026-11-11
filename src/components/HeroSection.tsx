@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { UserRole } from '../types';
 import { HERO_PHOTOS } from '../config';
+import { firstNameOf } from '../utils/helpers';
 import { prefersStill, useSettings } from '../lib/settings';
 import {
   ArrowLeft,
@@ -69,12 +70,7 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
     showStats,
     onOpenContact,
   } = props;
-  // First name for the greeting; compound names stay whole (عبد الله، أبو بكر، عبد الرحمن…).
-  const firstName = (() => {
-    const w = (userName || '').replace(/^(الشيخ|الإمام|القارئ|الأستاذ|د\.)\s+/, '').trim().split(/\s+/).filter(Boolean);
-    if (!w.length) return '';
-    return /^(عبد|عبدال|أبو|ابو|أبي|بن)$/.test(w[0]) && w[1] ? `${w[0]} ${w[1]}` : w[0];
-  })();
+  const firstName = firstNameOf(userName);
   const scrollToHow = () => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
 
   // Role-aware main actions of the hero.
@@ -223,14 +219,13 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
         </div>
 
         {/* Soft arch at the bottom of the hero */}
-        <svg className="absolute bottom-0 inset-x-0 w-full h-10 sm:h-14 text-parchment" viewBox="0 0 1440 56" preserveAspectRatio="none" aria-hidden>
+        <svg className="absolute bottom-0 inset-x-0 w-full h-10 sm:h-14 home-arch" viewBox="0 0 1440 56" preserveAspectRatio="none" aria-hidden>
           <path d="M0 56V28C240 4 480 0 720 0s480 4 720 28v28z" fill="currentColor" />
         </svg>
       </section>
 
       {/* ---------------- Access cards + services ---------------- */}
-      <section className="bg-parchment relative">
-        <div className="khatam-pattern-light absolute inset-0 pointer-events-none" aria-hidden />
+      <section className="relative">
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-[4.5rem] sm:-mt-28 space-y-8 sm:space-y-12 pb-6">
           <div className="grid grid-cols-2 gap-3 sm:gap-7">
             <AccessCard

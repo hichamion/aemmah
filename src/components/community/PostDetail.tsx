@@ -4,7 +4,7 @@ import { CommunityPost, PostComment } from '../../types/community';
 import { ImamProfile } from '../../types';
 import { addComment, deleteComment, openPdf, postTypeIcon, postTypeLabel, useComments } from '../../lib/community';
 import { RichText } from '../../lib/richtext';
-import { AuthorAvatar, CommunityViewer, ImageGrid, PollBox, ReactionBar, timeAgo } from './PostParts';
+import { AuthorAvatar, CARD, CommunityViewer, ImageGrid, PollBox, PostMenu, ReactionBar, timeAgo } from './PostParts';
 
 export interface PostActions {
   onEdit: (p: CommunityPost) => void;
@@ -87,7 +87,7 @@ export const PostDetail: React.FC<{
   );
 
   return (
-    <article className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+    <article className={`${CARD} overflow-hidden`}>
       <div className="px-5 sm:px-8 pt-5">
         <button onClick={onBack} className="text-sm font-bold text-emerald-800 inline-flex items-center gap-1 cursor-pointer mb-4">
           <ArrowRight className="w-4 h-4" /> العودة إلى الملتقى
@@ -97,11 +97,26 @@ export const PostDetail: React.FC<{
           <div>
             <p className="font-black text-slate-900">{post.authorName}</p>
             <p className="text-xs text-slate-500">
-              {timeAgo(post.publishedAt || post.createdAt)} · {postTypeIcon(post.type)} {postTypeLabel(post.type)} · {post.category}
+              {timeAgo(post.publishedAt || post.createdAt)} · {postTypeIcon(post.type)} {postTypeLabel(post.type)}
               {post.status === 'draft' && <span className="mr-1 text-amber-700 font-black">· مسودة</span>}
             </p>
           </div>
           {post.pinned && <span className="mr-auto inline-flex items-center gap-1 text-xs font-black text-amber-800 bg-amber-50 px-2 py-1 rounded-full"><Pin className="w-3 h-3" /> مثبّت</span>}
+          {post.status === 'published' && (
+            <span className={post.pinned ? '' : 'mr-auto'}>
+              <PostMenu
+                post={post}
+                viewer={viewer}
+                saved={saved}
+                onToggleSave={() => actions.onToggleSave(post)}
+                onReport={() => actions.onReport(post)}
+                onEdit={() => actions.onEdit(post)}
+                onDelete={() => actions.onDelete(post)}
+                onPin={() => actions.onPin(post)}
+                onError={actions.onError}
+              />
+            </span>
+          )}
         </div>
         <h1 className="text-2xl sm:text-3xl font-black text-slate-900 font-amiri mt-5 leading-snug">{post.title}</h1>
       </div>
@@ -131,13 +146,7 @@ export const PostDetail: React.FC<{
           <ReactionBar
             post={post}
             viewer={viewer}
-            saved={saved}
-            onToggleSave={() => actions.onToggleSave(post)}
             onComment={() => inputRef.current?.focus()}
-            onReport={() => actions.onReport(post)}
-            onEdit={() => actions.onEdit(post)}
-            onDelete={() => actions.onDelete(post)}
-            onPin={() => actions.onPin(post)}
             onError={actions.onError}
             onCopied={() => actions.onInfo('تم نسخ رابط المنشور.')}
           />

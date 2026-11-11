@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { ImamProfile, MosqueJob, Application, UserRole, ApplicationStatus } from '../types';
 import { formatDate, getSafeImamAvatar } from '../utils/helpers';
+import { PageBanner, bannerTab } from './PageBanner';
 import { InboxCenter, InboxProps } from './InboxCenter';
 import { ContactBlock } from './ContactBlock';
 import { ImamMiniCard } from './MiniCards';
-import { Search, Trash2, Plus, UserCheck, Lock, Clock, ShieldAlert } from 'lucide-react';
+import { Search, Trash2, Plus, UserCheck, Lock, Clock, ShieldAlert, Users } from 'lucide-react';
 
 type Tab = 'browse' | 'manage_mosques' | 'applications' | 'inbox';
 
@@ -107,28 +108,15 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
 
   const unreadForMe = inbox.messages.filter((m) => !m.isRead && m.receiverUid === inbox.currentUid).length;
 
-  const tabClass = (tab: Tab) =>
-    `text-xs font-bold px-3.5 py-2.5 rounded-xl transition cursor-pointer whitespace-nowrap ${
-      activeTab === tab ? 'bg-white text-emerald-950 font-black shadow-xs' : 'bg-emerald-950/60 hover:bg-emerald-950 text-emerald-100'
-    }`;
+  const tabClass = (tab: Tab) => bannerTab('imams', activeTab === tab);
 
   return (
     <section className="flex-1 py-6 sm:py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-6">
-      <div className="glass-card overflow-hidden bg-gradient-to-l from-[#4fd1e8] via-[#1aa3bf] to-[#0b5f7a] text-white p-6 sm:p-7 rounded-[2rem] flex flex-wrap justify-between items-center gap-4">
-        <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-black font-amiri">
-            الأئمة المتاحون{availableImamsCount > 0 ? ` (${availableImamsCount})` : ''}
-          </h1>
-          <p className="text-xs sm:text-sm text-emerald-100/90">
-            تصفح الأئمة والقرّاء المتاحين واستمع لتلاواتهم، أو سجّل كإمام جديد في المنصة
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
+      <PageBanner tone="imams" title="الأئمة المتاحون" count={availableImamsCount} subtitle="تصفح الأئمة والقرّاء المتاحين واستمع لتلاواتهم، أو سجّل كإمام جديد في المنصة" icon={<Users />}>
           {(currentRole === 'imam' || currentRole === 'visitor' || currentRole === 'admin') && (
             <button
               onClick={onOpenImamAdd}
-              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm px-4 py-2.5 rounded-full shadow transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
             >
               <Plus className="w-4 h-4" />
               <span>{currentRole === 'admin' ? 'إضافة إمام' : 'التسجيل كإمام'}</span>
@@ -154,8 +142,7 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
               </button>
             </>
           )}
-        </div>
-      </div>
+      </PageBanner>
 
       {/* Privacy notices */}
       {currentRole === 'visitor' && (

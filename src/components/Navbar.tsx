@@ -40,6 +40,8 @@ interface NavbarProps {
   showStats?: boolean;
   onOpenInbox?: () => void;
   onOpenSettings: () => void;
+  /** Unread community notifications. */
+  communityUnread?: number;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -62,6 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   showStats = true,
   onOpenInbox,
   onOpenSettings,
+  communityUnread = 0,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -161,6 +164,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <MessagesSquare className="w-4 h-4 text-amber-300" />
               المجتمع
+              {communityUnread > 0 && (
+                <span className="bg-red-600 text-white text-[10px] font-black min-w-4 h-4 px-1 rounded-full flex items-center justify-center">{communityUnread}</span>
+              )}
             </button>
 
             {showStats && (

@@ -64,6 +64,16 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
             </div>
           </div>
 
+          {/* Phones: name and the wanted imam right under the photo (the main column header is hidden there). */}
+          {!print && (
+            <div className="md:hidden text-center space-y-1">
+              {closed && <span className="inline-block bg-white/15 text-white text-xs font-black px-3 py-1 rounded-full">الإعلان مغلق حالياً</span>}
+              <h1 className="text-3xl font-black leading-tight font-amiri">{mosque.mosqueName}</h1>
+              {mosque.legalName && <p className="text-sm text-white/75">{mosque.legalName}</p>}
+              <p className="text-lg font-black text-amber-300">{mosque.lookingType}</p>
+            </div>
+          )}
+
           <section className="space-y-3">
             <SideTitle icon={<MapPin className="w-5 h-5" />}>الموقع</SideTitle>
             <ContactLine icon={<MapPin className="w-4 h-4" />} value={`${mosque.city}، ${mosque.country}`} />
@@ -111,7 +121,7 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
 
         {/* ---------------- Main column ---------------- */}
         <main className={`relative flex-1 flex flex-col gap-7 px-7 pt-9 ${print ? 'pb-36' : 'pb-32'}`}>
-          <header className="text-center space-y-2">
+          <header className={`text-center space-y-2 ${print ? '' : 'hidden md:block'}`}>
             {closed && (
               <span className="inline-block bg-slate-200 text-slate-700 text-xs font-black px-3 py-1 rounded-full">
                 الإعلان مغلق حالياً

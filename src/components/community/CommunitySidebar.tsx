@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ChevronLeft, Hash, Plus } from 'lucide-react';
+import React from 'react';
+import { ChevronLeft } from 'lucide-react';
 import { CommunityPost } from '../../types/community';
 import { timeAgo } from './PostParts';
 
@@ -21,24 +21,19 @@ export const Ornament: React.FC<{ className?: string }> = ({ className = 'w-5 h-
 );
 
 /**
- * Right sidebar of «ملتقى الأئمة» (RTL): section tiles and an expanding list of categories.
- * On phones the tiles become a compact grid above the wall (no horizontal scrolling).
+ * Right sidebar of «ملتقى الأئمة» on larger screens (RTL): section tiles. Phones use the tab bar of the page.
  */
 export const CommunitySidebar: React.FC<{
   tabs: SidebarTab[];
   active: string | null;
   onTab: (key: string) => void;
-  categories: { name: string; count: number }[];
-  category: string;
-  onCategory: (c: string) => void;
-}> = ({ tabs, active, onTab, categories, category, onCategory }) => {
-  const [open, setOpen] = useState(!!category);
+}> = ({ tabs, active, onTab }) => {
   return (
     <nav aria-label="أقسام الملتقى" className="lg:sticky lg:top-24 space-y-3">
       <p className="hidden lg:flex items-center gap-2 text-[#0b5e37] font-black text-lg font-amiri px-1">
         <Ornament className="w-5 h-5 text-amber-500" /> أقسام الملتقى
       </p>
-      <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-2">
+      <ul className="grid grid-cols-1 gap-2">
         {tabs.map((t) => {
           const on = active === t.key;
           return (
@@ -64,42 +59,6 @@ export const CommunitySidebar: React.FC<{
           );
         })}
 
-        {/* Categories accordion */}
-        <li className="col-span-2 sm:col-span-3 lg:col-span-1">
-          <button
-            onClick={() => setOpen((v) => !v)}
-            aria-expanded={open}
-            aria-controls="cm-categories"
-            className="cm-tile w-full text-right rounded-2xl px-3 py-3 flex items-center gap-2.5 cursor-pointer text-[#0b3a2a] ring-1 ring-emerald-900/5"
-          >
-            <span className="w-9 h-9 shrink-0 rounded-xl bg-white/80 text-emerald-800 shadow-xs flex items-center justify-center">
-              <Hash className="w-4 h-4" />
-            </span>
-            <span className="flex-1 text-sm font-black">التصنيفات{category ? ` · ${category}` : ''}</span>
-            <Plus className={`w-4 h-4 text-emerald-800 transition-transform duration-300 ${open ? 'rotate-45' : ''}`} />
-          </button>
-          <div id="cm-categories" className="cm-collapse" data-open={open}>
-            <div>
-              <ul className="pt-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-1">
-                {categories.map((c) => (
-                  <li key={c.name}>
-                    <button
-                      onClick={() => onCategory(c.name === category ? '' : c.name)}
-                      aria-pressed={c.name === category}
-                      className={`w-full text-right text-[13px] px-3 py-2 rounded-xl cursor-pointer flex items-center gap-2 transition ${
-                        c.name === category ? 'bg-emerald-800 text-white font-bold' : 'bg-white/70 hover:bg-white text-slate-700'
-                      }`}
-                    >
-                      <span className={`w-1.5 h-1.5 rotate-45 shrink-0 ${c.name === category ? 'bg-amber-300' : 'bg-emerald-600/60'}`} aria-hidden />
-                      <span className="flex-1 truncate">{c.name}</span>
-                      <span className={`text-[11px] ${c.name === category ? 'text-white/80' : 'text-slate-400'}`}>{c.count}</span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </li>
       </ul>
     </nav>
   );
@@ -137,24 +96,3 @@ export const TopicsPanel: React.FC<{ title: string; posts: CommunityPost[]; onOp
     {footer && <div className="border-t border-slate-100 px-4 py-3 text-xs text-slate-600">{footer}</div>}
   </section>
 );
-
-/** Very faint Arabic letters behind the community page (decorative only). */
-export const CommunityBackdrop: React.FC = () => {
-  const glyphs: { t: string; cls: string }[] = [
-    { t: 'ن', cls: 'top-[4%] right-[3%] text-[13rem] rotate-[-8deg]' },
-    { t: 'اقرأ', cls: 'top-[30%] left-[2%] text-[9rem] rotate-[6deg]' },
-    { t: 'ق', cls: 'top-[58%] right-[8%] text-[12rem] rotate-[10deg]' },
-    { t: 'ص', cls: 'bottom-[4%] left-[18%] text-[11rem] rotate-[-6deg]' },
-    { t: 'ع', cls: 'top-[12%] left-[38%] text-[8rem] rotate-[4deg]' },
-    { t: 'و', cls: 'bottom-[22%] right-[42%] text-[9rem] rotate-[-12deg]' },
-  ];
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      {glyphs.map((g) => (
-        <span key={g.t + g.cls} className={`community-watermark font-maghribi absolute ${g.cls}`}>
-          {g.t}
-        </span>
-      ))}
-    </div>
-  );
-};
