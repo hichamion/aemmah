@@ -584,6 +584,28 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // ---------- home banner announcements (managed by admins) ----------
+    function validAnnouncement(d) {
+      return d.keys().hasOnly(['chip', 'title', 'text', 'cta', 'target', 'url', 'image', 'order', 'active', 'createdAt', 'updatedAt'])
+        && str(d.chip, 40) && nonEmpty(d.title, 80) && str(d.text, 220) && str(d.cta, 30)
+        && d.target in ['imams', 'mosques', 'community', 'imam-register', 'mosque-add', 'contact', 'url', 'none']
+        && str(d.url, 300) && (d.target != 'url' || d.url.matches('https://.+'))
+        && d.image is string && d.image.size() <= 450000
+        && (d.image == '' || d.image.matches('data:image/(jpeg|png|webp);base64,.+'))
+        && d.order is int && d.active is bool
+        && str(d.createdAt, 40) && str(d.updatedAt, 40);
+    }
+    match /announcements/{id} {
+      allow read: if true;
+      allow create, update: if isAdmin() && validAnnouncement(incoming());
+      allow delete: if isAdmin();
+    }
+    match /siteSettings/{id} {
+      allow read: if true;
+      allow write: if isAdmin() && id == 'home'
+        && incoming().keys().hasOnly(['showDefaultSlides']) && incoming().showDefaultSlides is bool;
+    }
+
     // Everything else is closed.
     match /{document=**} {
       allow read, write: if false;

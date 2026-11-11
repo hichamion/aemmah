@@ -1,5 +1,6 @@
 import React from 'react';
-import { ShieldCheck, Building2, Mic, Info, Scale } from 'lucide-react';
+import { MosqueIcon } from './MosqueIcon';
+import { ShieldCheck, Mic, Info, Scale } from 'lucide-react';
 import { LogoMark } from './Logo';
 import { CONTACT_EMAIL } from '../config';
 
@@ -65,7 +66,7 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Mosques */}
           <nav className="space-y-3" aria-label="للمساجد والجمعيات">
             <h2 className="text-white font-extrabold flex items-center gap-1.5">
-              <Building2 className="w-4 h-4 text-amber-400" />
+              <MosqueIcon className="w-4 h-4 text-amber-400" />
               <span>للمساجد والجمعيات</span>
             </h2>
             <ul className="space-y-2">

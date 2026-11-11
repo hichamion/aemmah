@@ -10,7 +10,10 @@ export async function renderNodeToPng(node: HTMLElement): Promise<Blob> {
     )
   );
   const { toBlob } = await import('html-to-image');
-  const blob = await toBlob(node, { pixelRatio: 2, cacheBust: true, backgroundColor: '#f7f9fa' });
+  const options = { pixelRatio: 2, cacheBust: true, backgroundColor: '#f7f9fa' };
+  // iPhone / iPad Safari often paints images and fonts only from the second render on: warm up once.
+  if (isAppleTouch()) await toBlob(node, options).catch(() => null);
+  const blob = await toBlob(node, options);
   if (!blob) throw new Error('render failed');
   return blob;
 }
@@ -30,7 +33,22 @@ export function downloadPng(png: Blob, baseName: string) {
   saveBlob(png, `${baseName}.png`);
 }
 
+/** iPhone / iPad (iPadOS presents itself as a Mac with a touch screen). */
+export const isAppleTouch = () =>
+  /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.userAgent.includes('Macintosh') && navigator.maxTouchPoints > 1);
+
+/**
+ * Phones and tablets: a download started seconds after the tap (the CV takes time to render) is blocked
+ * by the browser. There the file is handed to the user with a second tap (see ExportReadySheet).
+ */
+export const needsSecondTap = () => isAppleTouch() || window.matchMedia?.('(pointer: coarse)').matches;
+
 export async function downloadPdf(png: Blob, baseName: string) {
+  saveBlob(await pdfBlob(png), `${baseName}.pdf`);
+}
+
+/** One-page A4 PDF made from the rendered PNG. */
+export async function pdfBlob(png: Blob): Promise<Blob> {
   const { jsPDF } = await import('jspdf');
   const dataUrl = await new Promise<string>((resolve, reject) => {
     const r = new FileReader();
@@ -48,7 +66,7 @@ export async function downloadPdf(png: Blob, baseName: string) {
   const width = 210;
   const height = Math.min(297, (img.height * width) / img.width);
   pdf.addImage(dataUrl, 'PNG', 0, 0, width, height, undefined, 'FAST');
-  pdf.save(`${baseName}.pdf`);
+  return pdf.output('blob');
 }
 
 /**

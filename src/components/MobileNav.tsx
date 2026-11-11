@@ -1,5 +1,6 @@
 import React from 'react';
-import { Building2, Home, LogIn, User, Users } from 'lucide-react';
+import { MosqueIcon } from './MosqueIcon';
+import { Home, LogIn, User, Users } from 'lucide-react';
 import { UserRole } from '../types';
 import type { View } from '../App';
 
@@ -77,7 +78,7 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, role, unreadC
           </span>
         </div>
         {side([
-          { key: 'mosques', label: 'المساجد', icon: Building2, active: currentView === 'imam' && !accountActive, onClick: onMosques },
+          { key: 'mosques', label: 'المساجد', icon: MosqueIcon, active: currentView === 'imam' && !accountActive, onClick: onMosques },
           isVisitor
             ? { key: 'signin', label: 'دخول', icon: LogIn, active: false, onClick: onSignIn }
             : { key: 'account', label: 'حسابي', icon: User, active: !isVisitor && accountActive, onClick: onAccount, badge: unreadCount },

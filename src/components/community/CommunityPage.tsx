@@ -88,7 +88,9 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
   // ---------------- gate ----------------
   if (!isMember) {
     return (
-      <section className="flex-1 max-w-2xl mx-auto w-full px-4 py-16 text-center space-y-5">
+      <section className="relative flex-1 max-w-2xl mx-auto w-full px-4 py-16 text-center space-y-5">
+        <CommunityPhoto />
+        <div className="bg-white/90 backdrop-blur rounded-3xl p-8 space-y-5 shadow-xl">
         <MessagesSquare className="w-14 h-14 mx-auto text-emerald-700" />
         <h1 className="text-3xl font-black font-amiri text-slate-900">ملتقى الأئمة</h1>
         <p className="text-slate-600 leading-relaxed">مساحة تواصل مهنية وعلمية خاصة بالأئمة المسجلين في منصة أئمة: خطب ودروس، ومقالات، ونقاشات، وتجارب دعوية.</p>
@@ -97,6 +99,7 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
         ) : (
           <p className="text-sm text-slate-500">الملتقى متاح لحسابات الأئمة فقط.</p>
         )}
+        </div>
       </section>
     );
   }
@@ -178,6 +181,7 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
 
   return (
     <div className="relative flex-1 w-full">
+      <CommunityPhoto />
       <section className="relative w-full max-w-6xl mx-auto sm:px-6 pb-8 sm:pt-6">
         {/* Top bar: title, new post, notifications (the list opens above everything) */}
         <header className="relative z-40 bg-white sm:rounded-2xl border-b sm:border border-slate-200 shadow-sm px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
@@ -365,6 +369,11 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
 };
 
 // ---------------------------------------------------------------------------
+
+/** Golden mosque skyline behind the community (fixed while the posts scroll). */
+const CommunityPhoto: React.FC = () => (
+  <div className="community-photo" aria-hidden style={{ backgroundImage: `url(${import.meta.env.BASE_URL}bg-community.jpg)` }} />
+);
 
 const QUICK: { type: PostType; label: string; icon: React.ReactNode; color: string }[] = [
   { type: 'field', label: 'صورة', icon: <ImageIcon className="w-5 h-5" />, color: 'text-emerald-600' },

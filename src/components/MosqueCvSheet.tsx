@@ -1,5 +1,6 @@
 import React from 'react';
-import { Building2, ClipboardList, HandCoins, Home, Mail, MapPin, MessageCircle, Phone, User } from 'lucide-react';
+import { MosqueIcon } from './MosqueIcon';
+import { ClipboardList, HandCoins, Home, Mail, MapPin, MessageCircle, Phone, User } from 'lucide-react';
 import { MosqueContact, MosqueJob } from '../types';
 import { getSafeMosquePhoto } from '../utils/helpers';
 import { ContactLine, CvFooter, Ribbon, Row, SideTitle, SITE_URL, useQrCode } from './ImamCvSheet';
@@ -152,7 +153,7 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
           )}
 
           <section className="space-y-3">
-            <Ribbon icon={<Building2 className="w-5 h-5" />} tone={TONE}>
+            <Ribbon icon={<MosqueIcon className="w-5 h-5" />} tone={TONE}>
               تفاصيل الإعلان
             </Ribbon>
             <div className="space-y-2 pr-2">

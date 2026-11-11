@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { MosqueIcon } from './MosqueIcon';
 import { ImamProfile, MosqueJob, Application, UserRole, AvailabilityState } from '../types';
 import { formatDate, getSafeImamAvatar } from '../utils/helpers';
 import { PageBanner, bannerTab } from './PageBanner';
@@ -7,7 +8,7 @@ import { ContactBlock } from './ContactBlock';
 import { MosqueMiniCard } from './MiniCards';
 import { RecitationManager } from './Recitation';
 import { useRecitationAudio } from '../lib/db';
-import { Edit3, Eye, Trash2, Plus, Clock, XCircle, Building2 } from 'lucide-react';
+import { Edit3, Eye, Trash2, Plus, Clock, XCircle } from 'lucide-react';
 
 type Tab = 'manage' | 'mosque_ads' | 'applications' | 'inbox';
 
@@ -106,7 +107,7 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
 
   return (
     <section className="flex-1 py-6 sm:py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-6">
-      <PageBanner tone="mosques" title="إعلانات المساجد والجمعيات" count={activeMosques.length} subtitle="تصفح المساجد التي تبحث عن إمام وتقدّم إليها" icon={<Building2 />}>
+      <PageBanner tone="mosques" title="إعلانات المساجد والجمعيات" count={activeMosques.length} subtitle="تصفح المساجد التي تبحث عن إمام وتقدّم إليها" icon={<MosqueIcon />}>
           {(currentRole === 'mosque' || currentRole === 'admin' || currentRole === 'visitor') && (
             <button
               onClick={onOpenMosqueAdd}
