@@ -51,12 +51,40 @@ VITE_FIREBASE_EMULATOR=1 npm run dev
 - في **Authentication → Settings → Authorized domains** أضف النطاق الذي ستنشر عليه الموقع.
 
 ### 2. نشر قواعد الأمان (أهم خطوة)
+
+**تلقائياً (مُستحسن):** كل دمج في `main` يغيّر `firestore.rules` يشغّل `.github/workflows/deploy-rules.yml`، فيُنشر الملف على Firebase دون نسخ ولصق.
+يحتاج ذلك إعطاء GitHub إذناً بالنشر **مرة واحدة**. يكفي أحد الخيارين:
+
+**أ) مفتاح حساب خدمة** (الأبسط)
+1. في [Google Cloud Console](https://console.cloud.google.com/iam-admin/serviceaccounts?project=applied-sunspot-701dl) افتح **IAM und Verwaltung ← Dienstkonten ← Dienstkonto erstellen**. سمّه `github-rules`، ثم **Erstellen und fortfahren**.
+2. أضف الأدوار التالية، ثم **Fertig**:
+   - **Firebase Rules Admin**
+   - **Firebase Viewer**
+   - **Service Usage Consumer**
+3. افتح الحساب الجديد ← تبويب **Schlüssel ← Schlüssel hinzufügen ← Neuen Schlüssel erstellen ← JSON ← Erstellen**. يُنزَّل ملف JSON.
+4. في GitHub افتح **Settings ← Secrets and variables ← Actions ← New repository secret**:
+   - الاسم: `FIREBASE_SERVICE_ACCOUNT`
+   - القيمة: محتوى ملف JSON كاملاً.
+
+   احذف الملف من جهازك بعد ذلك.
+5. شغّل النشر أول مرة: **Actions ← Deploy Firestore rules ← Run workflow**.
+
+> إن كان زر إنشاء المفاتيح معطّلاً، فسياسة المؤسسة `iam.disableServiceAccountKeyCreation` مفعّلة. استعمل الخيار (ب)، أو أوقف هذه السياسة للمشروع.
+
+**ب) Workload Identity (بلا أي مفتاح)**
+أنشئ «Workload Identity Pool» لـ GitHub مرتبطاً بالمستودع `hichamion/mihrab` وحساب الخدمة نفسه. ثم أضف في **Settings ← Secrets and variables ← Actions ← Variables** متغيرين:
+- `WIF_PROVIDER`: الصيغة `projects/<رقم المشروع>/locations/global/workloadIdentityPools/<pool>/providers/<provider>`
+- `WIF_SERVICE_ACCOUNT`: الصيغة `github-rules@applied-sunspot-701dl.iam.gserviceaccount.com`
+
+ما دام لم يُضف أي منهما، تنجح العملية دون نشر، وتكتب في صفحة Actions تنبيهاً بأن القواعد لم تُنشر.
+
+**يدوياً من جهازك:**
 ```bash
 npm install -g firebase-tools
 firebase login
 npm run deploy:rules
 ```
-ينشر هذا الأمر `firestore.rules` على قاعدة البيانات المحددة في `firebase.json`، و`storage.rules` على Storage.
+**أو من المتصفح:** Firebase Console ← Firestore Database ← **Regeln** ← الصق محتوى `firestore.rules` ← **Veröffentlichen**.
 
 > ⚠️ إذا واصلت تعديل التطبيق داخل AI Studio، تأكد أنه لا يستبدل `firestore.rules` بنسخة مفتوحة.
 
@@ -133,7 +161,7 @@ firebase.json             إعدادات النشر
 - [ ] املأ بيانات الجهة المسؤولة في `src/components/PrivacyPage.tsx` (المتغير `OPERATOR`).
 - [ ] اضبط بريد التواصل `CONTACT_EMAIL` في `src/config.ts` ليظهر رابط «تواصل معنا» في الفوتر.
 - [ ] راجع سياسة الخصوصية مع مختص قانوني في بلدك. في ألمانيا يلزم أيضاً **Impressum**.
-- [ ] نفّذ `npm run deploy:rules` وتأكد من تطبيق القواعد.
+- [ ] انشر القواعد (تلقائياً عبر GitHub Actions أو `npm run deploy:rules`) وتأكد من تطبيقها.
 - [ ] عيّن حساب المدير، ثم جرّب التسجيل كإمام ثم كمسجد بحسابين مختلفين.
 - [ ] اختر ترخيصاً للمشروع (LICENSE) إن كان المستودع عاماً.
 - [ ] أضف `hichamion.github.io` إلى **Authentication → Settings → Authorized domains**.
