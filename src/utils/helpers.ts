@@ -161,3 +161,10 @@ export function imamLanguages(imam: {
 /** "ألمانيا (كولونيا)، فرنسا" */
 export const formatPreferredLocations = (locs?: import('../types').PreferredLocation[]) =>
   (locs || []).map((l) => (l.area.trim() ? `${l.country} (${l.area.trim()})` : l.country)).join('، ');
+
+/** First name for greetings: drops a leading title and keeps compound names whole (عبد الله، أبو بكر…). */
+export function firstNameOf(fullName: string | undefined): string {
+  const w = (fullName || '').replace(/^(الشيخ|الإمام|القارئ|الأستاذ|د\.)\s+/, '').trim().split(/\s+/).filter(Boolean);
+  if (!w.length) return '';
+  return /^(عبد|عبدال|أبو|ابو|أبي|بن)$/.test(w[0]) && w[1] ? `${w[0]} ${w[1]}` : w[0];
+}

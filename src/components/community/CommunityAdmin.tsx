@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Plus, RotateCcw, Save, Trash2 } from 'lucide-react';
+import { RotateCcw, Save, Trash2 } from 'lucide-react';
 import { CommunitySettings, PostType } from '../../types/community';
 import { DEFAULT_TEMPLATES, POST_TYPES, saveCommunitySettings, templateFor } from '../../lib/community';
 
-/** Admin tools of «ملتقى الأئمة»: pause posting, categories and post templates. */
+/** Admin tools of «ملتقى الأئمة»: pause posting and post templates. */
 export const CommunityAdmin: React.FC<{ settings: CommunitySettings; onDone: (m: string) => void; onError: (m: string) => void }> = ({
   settings,
   onDone,
@@ -30,7 +30,6 @@ export const CommunityAdmin: React.FC<{ settings: CommunitySettings; onDone: (m:
         </label>
       </section>
 
-      <ListEditor title="تصنيفات المنشورات" items={settings.categories} onSave={(categories) => save({ categories }, 'تم حفظ التصنيفات.')} />
 
       <section className="bg-white border border-slate-200 rounded-3xl p-5 space-y-4">
         <div>
@@ -43,36 +42,6 @@ export const CommunityAdmin: React.FC<{ settings: CommunitySettings; onDone: (m:
         ))}
       </section>
     </div>
-  );
-};
-
-const ListEditor: React.FC<{ title: string; items: string[]; onSave: (items: string[]) => void }> = ({ title, items, onSave }) => {
-  const [list, setList] = useState(items);
-  const [value, setValue] = useState('');
-  const changed = JSON.stringify(list) !== JSON.stringify(items);
-  return (
-    <section className="bg-white border border-slate-200 rounded-3xl p-5 space-y-3">
-      <h2 className="font-black text-slate-900">{title}</h2>
-      <ul className="flex flex-wrap gap-2">
-        {list.map((c, i) => (
-          <li key={i} className="flex items-center gap-1 bg-emerald-50 border border-emerald-200 rounded-full pr-1 pl-3 py-1">
-            <input value={c} maxLength={60} aria-label="اسم التصنيف" onChange={(e) => setList((p) => p.map((x, j) => (j === i ? e.target.value : x)))}
-              className="bg-transparent text-sm font-bold text-emerald-900 w-32 px-2 outline-none" />
-            <button onClick={() => setList((p) => p.filter((_, j) => j !== i))} aria-label={`حذف ${c}`} className="text-red-600 cursor-pointer"><Trash2 className="w-3.5 h-3.5" /></button>
-          </li>
-        ))}
-      </ul>
-      <div className="flex gap-2">
-        <input value={value} maxLength={60} onChange={(e) => setValue(e.target.value)} placeholder="إضافة تصنيف…" className="flex-1 border border-slate-300 rounded-xl px-3 py-2 text-sm" />
-        <button onClick={() => { if (value.trim() && !list.includes(value.trim())) setList((p) => [...p, value.trim()]); setValue(''); }}
-          className="inline-flex items-center gap-1 bg-slate-100 font-bold px-3 py-2 rounded-xl text-sm cursor-pointer"><Plus className="w-4 h-4" /> إضافة</button>
-      </div>
-      {changed && (
-        <button onClick={() => onSave(list.map((x) => x.trim()).filter(Boolean))} className="inline-flex items-center gap-1.5 bg-emerald-800 text-white font-black px-4 py-2 rounded-full text-sm cursor-pointer">
-          <Save className="w-4 h-4" /> حفظ
-        </button>
-      )}
-    </section>
   );
 };
 

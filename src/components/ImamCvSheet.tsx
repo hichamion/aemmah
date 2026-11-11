@@ -207,6 +207,14 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
             </div>
           </div>
 
+          {/* Phones: name and title right under the photo (the main column header is hidden there). */}
+          {!print && (
+            <div className="md:hidden text-center -mt-3 space-y-1">
+              <h1 className="text-3xl font-black leading-tight font-amiri">{imam.name}</h1>
+              <p className="text-lg font-black text-amber-300">{imamTitle(imam.titles)}</p>
+            </div>
+          )}
+
           <section className="space-y-3">
             <SideTitle icon={<User className="w-5 h-5" />}>المعلومات الشخصية</SideTitle>
             <ContactLine icon={<User className="w-4 h-4" />} value={imam.age ? `${imam.age} سنة` : ''} />
@@ -290,7 +298,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
 
         {/* ---------------- Main column ---------------- */}
         <main className={`relative flex-1 flex flex-col gap-7 px-7 pt-9 ${print ? 'pb-36' : 'pb-32'}`}>
-          <header className="text-center space-y-2">
+          <header className={`text-center space-y-2 ${print ? '' : 'hidden md:block'}`}>
             <h1 className="text-4xl font-black text-[#0b3a4f] leading-tight font-amiri">{imam.name}</h1>
             <p className="text-xl font-black text-amber-600">{imamTitle(imam.titles)}</p>
             <div className="flex items-center justify-center gap-2" aria-hidden>

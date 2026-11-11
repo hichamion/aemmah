@@ -68,7 +68,8 @@ export const PostComposer: React.FC<Props> = ({ open, initialType, existing, set
       setPollOptions(existing.poll?.options?.length ? existing.poll.options : ['', '']);
     } else {
       setType(initialType || 'khutba');
-      setCategory(settings.categories[0] || 'عام');
+      // Categories are no longer chosen by the author (kept in the data for older posts).
+      setCategory('عام');
       setTitle('');
       setBody('');
       setKeepImages([]);
@@ -169,12 +170,7 @@ export const PostComposer: React.FC<Props> = ({ open, initialType, existing, set
             </button>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <input className={`${field} md:col-span-2 font-bold`} maxLength={200} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="عنوان المنشور" aria-label="عنوان المنشور" />
-            <select className={field} value={category} onChange={(e) => setCategory(e.target.value)} aria-label="التصنيف">
-              {settings.categories.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
-          </div>
+          <input className={`${field} w-full font-bold`} maxLength={200} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="عنوان المنشور" aria-label="عنوان المنشور" />
 
           <div className="border border-slate-300 rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-emerald-600">
             <div className="flex flex-wrap items-center gap-0.5 px-2 py-1 border-b border-slate-200 bg-slate-50">

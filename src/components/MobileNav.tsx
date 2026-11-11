@@ -15,6 +15,8 @@ interface MobileNavProps {
   onSignIn: () => void;
   /** The user is on one of their own pages (profile, applications, messages, admin). */
   accountActive?: boolean;
+  /** Unread community notifications (red count on the centre button). */
+  communityUnread?: number;
 }
 
 /** Eight-pointed star (khatam) used on the raised centre button. */
@@ -28,7 +30,7 @@ const Khatam: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 /** App-style bottom bar for phones (hidden on large screens): four tabs and a raised centre button for the community. */
-export const MobileNav: React.FC<MobileNavProps> = ({ currentView, role, unreadCount, onHome, onImams, onMosques, onCommunity, onAccount, onSignIn, accountActive = false }) => {
+export const MobileNav: React.FC<MobileNavProps> = ({ currentView, role, unreadCount, onHome, onImams, onMosques, onCommunity, onAccount, onSignIn, accountActive = false, communityUnread = 0 }) => {
   const isVisitor = role === 'visitor';
   const side = (items: { key: string; label: string; icon: React.ElementType; active: boolean; onClick: () => void; badge?: number }[]) =>
     items.map(({ key, label, icon: Icon, active, onClick, badge }) => (
@@ -57,13 +59,18 @@ export const MobileNav: React.FC<MobileNavProps> = ({ currentView, role, unreadC
         <div className="w-[4.75rem] shrink-0 flex flex-col items-center">
           <button
             onClick={onCommunity}
-            aria-label="ملتقى الأئمة"
+            aria-label={communityUnread ? `ملتقى الأئمة (${communityUnread} إشعار جديد)` : 'ملتقى الأئمة'}
             aria-current={currentView === 'community' ? 'page' : undefined}
-            className={`-mt-6 w-16 h-16 rounded-full p-[3px] bg-gradient-to-br from-brass-200 via-brass-500 to-brass-700 shadow-lg shadow-black/40 cursor-pointer transition active:scale-95 ${currentView === 'community' ? 'ring-4 ring-brass-300/30' : ''}`}
+            className={`relative -mt-6 w-16 h-16 rounded-full p-[3px] bg-gradient-to-br from-brass-200 via-brass-500 to-brass-700 shadow-lg shadow-black/40 cursor-pointer transition active:scale-95 ${currentView === 'community' ? 'ring-4 ring-brass-300/30' : ''}`}
           >
             <span className="w-full h-full rounded-full bg-gradient-to-br from-cedar-600 to-cedar-900 text-brass-100 flex items-center justify-center">
               <Khatam className="w-9 h-9" />
             </span>
+            {communityUnread > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-[11px] font-black min-w-5 h-5 px-1 rounded-full flex items-center justify-center ring-2 ring-ink">
+                {communityUnread}
+              </span>
+            )}
           </button>
           <span className={`text-[11px] font-black mt-0.5 ${currentView === 'community' ? 'text-brass-300' : 'text-slate-400'}`} aria-hidden>
             الملتقى

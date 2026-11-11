@@ -1,4 +1,4 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AlertTriangle, CheckCircle2, Loader2, X } from 'lucide-react';
 import {
   Application,
@@ -45,7 +45,9 @@ import { AuthOnboardingModal } from './components/AuthOnboardingModal';
 import { ImamModalForm } from './components/ImamModalForm';
 import { StatsConsent } from './components/StatsConsent';
 import { SettingsPanel } from './components/SettingsPanel';
+import { SiteBackdrop } from './components/SiteBackdrop';
 import { trackVisit } from './lib/visits';
+import { useNotifications } from './lib/community';
 import { scrollToTop } from './lib/scroll';
 import { MosqueModalForm } from './components/MosqueModalForm';
 import { ImamFullModal } from './components/ImamFullModal';
@@ -225,6 +227,29 @@ export default function App() {
 
   const displayName =
     role === 'imam' && myImam ? myImam.name : profile?.displayName || firebaseUser?.displayName || 'مستخدم منصة أئمة';
+  // Community notifications everywhere in the site: a red count on «المجتمع / الملتقى»
+  // and a message when a new comment or reply arrives (not for the ones already there when the page opened).
+  const communityNotifications = useNotifications(uid, !!uid && (role === 'imam' || role === 'admin'));
+  const communityUnread = communityNotifications.filter((n) => !n.read).length;
+  // 0 = initial empty list, 1 = first answer from Firestore (baseline, no message), then live.
+  const notifPhase = useRef(0);
+  const seenNotifications = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    notifPhase.current = 0;
+    seenNotifications.current = new Set();
+  }, [uid]);
+  useEffect(() => {
+    if (!uid) return;
+    const phase = notifPhase.current;
+    notifPhase.current = Math.min(2, phase + 1);
+    const fresh = communityNotifications.filter((n) => !n.read && !seenNotifications.current.has(n.id));
+    communityNotifications.forEach((n) => seenNotifications.current.add(n.id));
+    if (phase >= 2 && fresh.length) {
+      const n = fresh[0];
+      showToast(`🔔 ${n.fromName} ${n.type === 'reply' ? 'ردّ على تعليقك في' : 'علّق على منشورك'} «${n.postTitle}»`);
+    }
+  }, [communityNotifications, uid, showToast]);
+
   const canSeeImamContacts = role === 'admin' || (role === 'mosque' && profile?.verified === true);
   // Same rule as mosqueContacts in firestore.rules: admins and imams whose profile is approved.
   const canSeeMosqueContacts = role === 'admin' || (role === 'imam' && myImam?.approvalStatus === 'approved');
@@ -693,7 +718,8 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans selection:bg-emerald-600 selection:text-white">
+    <div className="relative isolate min-h-screen flex flex-col text-slate-800 font-sans selection:bg-emerald-600 selection:text-white">
+      <SiteBackdrop />
       {toast && (
         <div
           role="status"
@@ -719,6 +745,7 @@ export default function App() {
         setCurrentView={setCurrentView}
         currentRole={role}
         onOpenSettings={() => setSettingsOpen(true)}
+        communityUnread={communityUnread}
         userName={displayName}
         userEmail={profile?.email || firebaseUser?.email || ''}
         userPhoto={role === 'imam' ? myImam?.photo : firebaseUser?.photoURL || undefined}
@@ -918,6 +945,7 @@ export default function App() {
       <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} onPrivacy={() => setCurrentView('privacy')} />
 
       <MobileNav
+        communityUnread={communityUnread}
         accountActive={
           (role === 'admin' && currentView === 'admin') ||
           (role === 'imam' && currentView === 'imam' && imamTabOpen !== 'mosque_ads') ||

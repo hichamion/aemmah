@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bookmark, BookmarkCheck, Flag, Link2, MessageCircle, MoreHorizontal, Pin, ThumbsDown, ThumbsUp, Trash2, Edit3 } from 'lucide-react';
+import { Bookmark, BookmarkCheck, Flag, MessageCircle, MoreHorizontal, Pin, Share2, ThumbsDown, ThumbsUp, Trash2, Edit3 } from 'lucide-react';
 import { CommunityPost, PostType } from '../../types/community';
 import { ImamProfile } from '../../types';
 import { getSafeImamAvatar } from '../../utils/helpers';
@@ -14,6 +14,9 @@ export interface CommunityViewer {
   /** Approved imam or admin: may post, comment and react. */
   canInteract: boolean;
 }
+
+/** White card: full width on phones (like a social feed), rounded on larger screens. */
+export const CARD = 'bg-white border-y sm:border border-slate-200 sm:rounded-2xl shadow-sm';
 
 export const timeAgo = (iso: string) => {
   if (!iso) return '';
@@ -41,14 +44,14 @@ const MediaImg: React.FC<{ id: string; className?: string; onClick?: () => void 
 };
 
 /** 1–6 images in a Facebook-like grid; clicking opens a lightbox. */
-export const ImageGrid: React.FC<{ ids: string[] }> = ({ ids }) => {
+export const ImageGrid: React.FC<{ ids: string[]; /** Edge to edge, no rounding (feed cards). */ flush?: boolean }> = ({ ids, flush }) => {
   const [open, setOpen] = useState<string | null>(null);
   if (!ids.length) return null;
   const shown = ids.slice(0, 4);
   const extra = ids.length - shown.length;
   return (
     <>
-      <div className={`grid gap-1 rounded-2xl overflow-hidden ${shown.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
+      <div className={`grid gap-1 overflow-hidden ${flush ? '' : 'rounded-2xl'} ${shown.length === 1 ? 'grid-cols-1' : 'grid-cols-2'}`}>
         {shown.map((id, i) => (
           <div key={id} className={`relative ${shown.length === 1 ? 'aspect-video' : 'aspect-square'} ${shown.length === 3 && i === 0 ? 'row-span-2 aspect-auto' : ''}`}>
             <MediaImg id={id} onClick={() => setOpen(id)} />
@@ -118,30 +121,22 @@ export const PollBox: React.FC<{ post: CommunityPost; viewer: CommunityViewer; o
   );
 };
 
-/** Like / dislike / comment / save / share (+ report and moderation). Counts only, never names. */
+/** Facebook-like action area: counts row, then «أعجبني · تعليق · مشاركة». Counts only, never names. */
 export const ReactionBar: React.FC<{
   post: CommunityPost;
   viewer: CommunityViewer;
-  saved: boolean;
-  onToggleSave: () => void;
   onComment: () => void;
-  onReport: () => void;
-  onEdit: () => void;
-  onDelete: () => void;
-  onPin: () => void;
   onError: (m: string) => void;
   onCopied: () => void;
-}> = ({ post, viewer, saved, onToggleSave, onComment, onReport, onEdit, onDelete, onPin, onError, onCopied }) => {
+}> = ({ post, viewer, onComment, onError, onCopied }) => {
   const mine = useMyVote(post.id, viewer.uid);
   const [busy, setBusy] = useState(false);
-  const [menu, setMenu] = useState(false);
-  const isAuthor = post.authorUid === viewer.uid;
 
-  const react = async (v: 1 | -1) => {
+  const like = async () => {
     if (!viewer.canInteract) return onError('التفاعل متاح للأئمة المعتمدين.');
     setBusy(true);
     try {
-      await vote(post.id, viewer.uid, v);
+      await vote(post.id, viewer.uid, 1);
     } catch (e) {
       console.error(e);
       onError('تعذر تسجيل التفاعل.');
@@ -161,63 +156,103 @@ export const ReactionBar: React.FC<{
       // cancelled
     }
   };
-  const btn = 'flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-xl text-sm font-bold transition cursor-pointer disabled:opacity-60';
+  const btn = 'flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-lg text-[13px] sm:text-sm font-bold transition cursor-pointer disabled:opacity-60 hover:bg-slate-100';
+  const hasCounts = post.likeCount > 0 || post.dislikeCount > 0 || post.commentCount > 0;
 
   return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between text-xs text-slate-500 px-1">
-        <span className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1"><ThumbsUp className="w-3.5 h-3.5 text-emerald-700" /> {post.likeCount}</span>
-          <span className="inline-flex items-center gap-1"><ThumbsDown className="w-3.5 h-3.5 text-slate-500" /> {post.dislikeCount}</span>
-        </span>
-        <span>{post.commentCount} تعليق</span>
-      </div>
-      <div className="flex items-center gap-1 border-t border-slate-100 pt-1">
-        <button className={`${btn} ${mine === 1 ? 'text-emerald-800 bg-emerald-50' : 'text-slate-600 hover:bg-slate-50'}`} disabled={busy} onClick={() => react(1)} aria-pressed={mine === 1}>
-          <ThumbsUp className={`w-4 h-4 ${mine === 1 ? 'fill-current' : ''}`} /> <span className="hidden sm:inline">إعجاب</span>
-        </button>
-        <button className={`${btn} ${mine === -1 ? 'text-slate-900 bg-slate-100' : 'text-slate-600 hover:bg-slate-50'}`} disabled={busy} onClick={() => react(-1)} aria-pressed={mine === -1}>
-          <ThumbsDown className={`w-4 h-4 ${mine === -1 ? 'fill-current' : ''}`} /> <span className="hidden sm:inline">عدم إعجاب</span>
-        </button>
-        <button className={`${btn} text-slate-600 hover:bg-slate-50`} onClick={onComment}>
-          <MessageCircle className="w-4 h-4" /> <span className="hidden sm:inline">تعليق</span>
-        </button>
-        <button className={`${btn} ${saved ? 'text-amber-700' : 'text-slate-600'} hover:bg-slate-50`} onClick={onToggleSave} aria-pressed={saved}>
-          {saved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />} <span className="hidden sm:inline">{saved ? 'محفوظ' : 'حفظ'}</span>
-        </button>
-        <button className={`${btn} text-slate-600 hover:bg-slate-50`} onClick={share} aria-label="مشاركة الرابط">
-          <Link2 className="w-4 h-4" /> <span className="hidden md:inline">مشاركة</span>
-        </button>
-        <div className="relative">
-          <button className="p-2 rounded-xl hover:bg-slate-50 text-slate-500 cursor-pointer" onClick={() => setMenu((v) => !v)} aria-label="خيارات أخرى" aria-expanded={menu}>
-            <MoreHorizontal className="w-4 h-4" />
-          </button>
-          {menu && (
-            <div className="absolute left-0 bottom-full mb-1 w-52 bg-white rounded-2xl shadow-xl border border-slate-200 p-1.5 z-20 text-sm" onMouseLeave={() => setMenu(false)}>
-              {(isAuthor || viewer.isAdmin) && (
-                <button className="w-full text-right flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-50 cursor-pointer" onClick={() => { setMenu(false); onEdit(); }}>
-                  <Edit3 className="w-4 h-4" /> تعديل
-                </button>
-              )}
-              {viewer.isAdmin && (
-                  <button className="w-full text-right flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-50 cursor-pointer" onClick={() => { setMenu(false); onPin(); }}>
-                    <Pin className="w-4 h-4" /> {post.pinned ? 'إلغاء التثبيت' : 'تثبيت في الأعلى'}
-                  </button>
-              )}
-              {!isAuthor && (
-                <button className="w-full text-right flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-slate-50 cursor-pointer" onClick={() => { setMenu(false); onReport(); }}>
-                  <Flag className="w-4 h-4" /> إبلاغ الإدارة
-                </button>
-              )}
-              {(isAuthor || viewer.isAdmin) && (
-                <button className="w-full text-right flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-red-50 text-red-700 cursor-pointer" onClick={() => { setMenu(false); onDelete(); }}>
-                  <Trash2 className="w-4 h-4" /> حذف
-                </button>
-              )}
-            </div>
+    <div>
+      {hasCounts && (
+        <div className="flex items-center justify-between text-xs text-slate-500 py-2">
+          <span className="flex items-center gap-2">
+            {post.likeCount > 0 && (
+              <span className="inline-flex items-center gap-1">
+                <span className="w-[18px] h-[18px] rounded-full bg-emerald-700 text-white inline-flex items-center justify-center"><ThumbsUp className="w-2.5 h-2.5 fill-current" /></span>
+                <span className="tabular-nums">{post.likeCount}</span>
+              </span>
+            )}
+            {post.dislikeCount > 0 && (
+              <span className="inline-flex items-center gap-1 text-slate-400"><ThumbsDown className="w-3 h-3" /> <span className="tabular-nums">{post.dislikeCount}</span></span>
+            )}
+          </span>
+          {post.commentCount > 0 && (
+            <button onClick={onComment} className="hover:underline cursor-pointer tabular-nums">{post.commentCount} تعليق</button>
           )}
         </div>
+      )}
+      <div className="flex items-center gap-1 border-t border-slate-200 pt-1">
+        <button className={`${btn} ${mine === 1 ? 'text-emerald-700' : 'text-slate-600'}`} disabled={busy} onClick={like} aria-pressed={mine === 1}>
+          <ThumbsUp className={`w-[18px] h-[18px] ${mine === 1 ? 'fill-current' : ''}`} /> أعجبني
+        </button>
+        <button className={`${btn} text-slate-600`} onClick={onComment}>
+          <MessageCircle className="w-[18px] h-[18px]" /> تعليق
+        </button>
+        <button className={`${btn} text-slate-600`} onClick={share} aria-label="مشاركة الرابط">
+          <Share2 className="w-[18px] h-[18px]" /> مشاركة
+        </button>
       </div>
+    </div>
+  );
+};
+
+/** «⋯» menu of a post (header, top-left): save, dislike, and the author / admin actions. */
+export const PostMenu: React.FC<{
+  post: CommunityPost;
+  viewer: CommunityViewer;
+  saved: boolean;
+  onToggleSave: () => void;
+  onReport: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onPin: () => void;
+  onError: (m: string) => void;
+}> = ({ post, viewer, saved, onToggleSave, onReport, onEdit, onDelete, onPin, onError }) => {
+  const mine = useMyVote(post.id, viewer.uid);
+  const [open, setOpen] = useState(false);
+  const isAuthor = post.authorUid === viewer.uid;
+  const item = 'w-full text-right flex items-center gap-2.5 px-3 py-2.5 rounded-xl hover:bg-slate-100 cursor-pointer font-bold';
+  const run = (fn: () => void) => () => {
+    setOpen(false);
+    fn();
+  };
+  const dislike = async () => {
+    if (!viewer.canInteract) return onError('التفاعل متاح للأئمة المعتمدين.');
+    try {
+      await vote(post.id, viewer.uid, -1);
+    } catch {
+      onError('تعذر تسجيل التفاعل.');
+    }
+  };
+  return (
+    <div className="relative shrink-0">
+      <button onClick={() => setOpen((v) => !v)} aria-label="خيارات المنشور" aria-expanded={open}
+        className="w-9 h-9 rounded-full hover:bg-slate-100 text-slate-500 flex items-center justify-center cursor-pointer">
+        <MoreHorizontal className="w-5 h-5" />
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} aria-hidden />
+          <div className="absolute left-0 top-full mt-1 w-60 bg-white rounded-2xl shadow-2xl ring-1 ring-black/5 p-1.5 z-40 text-sm text-slate-700">
+            <button className={item} onClick={run(onToggleSave)}>
+              {saved ? <BookmarkCheck className="w-4 h-4 text-amber-600" /> : <Bookmark className="w-4 h-4" />} {saved ? 'إزالة من المحفوظات' : 'حفظ المنشور'}
+            </button>
+            <button className={item} onClick={run(dislike)} aria-pressed={mine === -1}>
+              <ThumbsDown className={`w-4 h-4 ${mine === -1 ? 'fill-current' : ''}`} /> {mine === -1 ? 'إلغاء «لا يعجبني»' : 'لا يعجبني'}
+            </button>
+            {(isAuthor || viewer.isAdmin) && (
+              <button className={item} onClick={run(onEdit)}><Edit3 className="w-4 h-4" /> تعديل المنشور</button>
+            )}
+            {viewer.isAdmin && (
+              <button className={item} onClick={run(onPin)}><Pin className="w-4 h-4" /> {post.pinned ? 'إلغاء التثبيت' : 'تثبيت في الأعلى'}</button>
+            )}
+            {!isAuthor && (
+              <button className={item} onClick={run(onReport)}><Flag className="w-4 h-4" /> إبلاغ الإدارة</button>
+            )}
+            {(isAuthor || viewer.isAdmin) && (
+              <button className={`${item} text-red-700 hover:bg-red-50`} onClick={run(onDelete)}><Trash2 className="w-4 h-4" /> حذف المنشور</button>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

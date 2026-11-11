@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { ImamProfile, MosqueJob, Application, UserRole, AvailabilityState } from '../types';
 import { formatDate, getSafeImamAvatar } from '../utils/helpers';
+import { PageBanner, bannerTab } from './PageBanner';
 import { InboxCenter, InboxProps } from './InboxCenter';
 import { ContactBlock } from './ContactBlock';
 import { MosqueMiniCard } from './MiniCards';
 import { RecitationManager } from './Recitation';
 import { useRecitationAudio } from '../lib/db';
-import { Edit3, Eye, Trash2, Plus, Clock, XCircle } from 'lucide-react';
+import { Edit3, Eye, Trash2, Plus, Clock, XCircle, Building2 } from 'lucide-react';
 
 type Tab = 'manage' | 'mosque_ads' | 'applications' | 'inbox';
 
@@ -101,28 +102,15 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
   const myApplications = applications; // already limited to this imam by the query
   const unreadForMe = inbox.messages.filter((m) => !m.isRead && m.receiverUid === inbox.currentUid).length;
 
-  const tabClass = (tab: Tab) =>
-    `text-xs font-bold px-3.5 py-2.5 rounded-xl transition cursor-pointer whitespace-nowrap ${
-      activeTab === tab ? 'bg-white text-sky-950 font-black shadow-xs' : 'bg-sky-950/50 hover:bg-sky-950/80 text-white'
-    }`;
+  const tabClass = (tab: Tab) => bannerTab('mosques', activeTab === tab);
 
   return (
     <section className="flex-1 py-6 sm:py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-6">
-      <div className="glass-card overflow-hidden bg-gradient-to-l from-[#2fbf7a] via-[#12804c] to-[#05472b] text-white p-6 sm:p-7 rounded-[2rem] flex flex-wrap justify-between items-center gap-4">
-        <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-black font-amiri">
-            إعلانات المساجد والجمعيات{activeMosques.length > 0 ? ` (${activeMosques.length})` : ''}
-          </h1>
-          <p className="text-xs sm:text-sm text-sky-100">
-            تصفح المساجد التي تبحث عن إمام وتقدّم إليها
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
+      <PageBanner tone="mosques" title="إعلانات المساجد والجمعيات" count={activeMosques.length} subtitle="تصفح المساجد التي تبحث عن إمام وتقدّم إليها" icon={<Building2 />}>
           {(currentRole === 'mosque' || currentRole === 'admin' || currentRole === 'visitor') && (
             <button
               onClick={onOpenMosqueAdd}
-              className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+              className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm px-4 py-2.5 rounded-full shadow transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
             >
               <Plus className="w-4 h-4" />
               <span>إضافة إعلان مسجد</span>
@@ -148,8 +136,7 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
               </button>
             </>
           )}
-        </div>
-      </div>
+      </PageBanner>
 
       {/* TAB: MY IMAM PROFILE */}
       {activeTab === 'manage' && isImam && !myImam && (
