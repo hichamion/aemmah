@@ -71,6 +71,15 @@ VITE_FIREBASE_EMULATOR=1 npm run dev
 
 > إن كان زر إنشاء المفاتيح معطّلاً، فسياسة المؤسسة `iam.disableServiceAccountKeyCreation` مفعّلة. استعمل الخيار (ب)، أو أوقف هذه السياسة للمشروع.
 
+**ج) رمز دخول من حسابك** (إن كان «Dienstkonto erstellen» رمادياً)
+1. ثبّت Node.js من [nodejs.org](https://nodejs.org) (نسخة LTS).
+2. افتح Terminal ونفّذ `npx firebase-tools login:ci`.
+3. سجّل الدخول بحساب Google الخاص بـ Firebase في المتصفح الذي يُفتح.
+4. انسخ الرمز الطويل الذي يظهر في Terminal (يبدأ غالباً بـ `1//`).
+5. أضفه في GitHub ← **Settings ← Secrets and variables ← Actions ← New repository secret**:
+   - الاسم: `FIREBASE_TOKEN`
+   - القيمة: الرمز الذي نسخته.
+
 **ب) Workload Identity (بلا أي مفتاح)**
 أنشئ «Workload Identity Pool» لـ GitHub مرتبطاً بالمستودع `hichamion/mihrab` وحساب الخدمة نفسه. ثم أضف في **Settings ← Secrets and variables ← Actions ← Variables** متغيرين:
 - `WIF_PROVIDER`: الصيغة `projects/<رقم المشروع>/locations/global/workloadIdentityPools/<pool>/providers/<provider>`
