@@ -5,7 +5,9 @@ name: Deploy Firestore rules
 #
 # One-time setup (see README → «نشر قواعد الأمان تلقائياً»). Either:
 #   A) repository secret FIREBASE_SERVICE_ACCOUNT  = JSON key of a service account, or
-#   B) repository variables WIF_PROVIDER + WIF_SERVICE_ACCOUNT (Workload Identity, no key at all).
+#   B) repository variables WIF_PROVIDER + WIF_SERVICE_ACCOUNT (Workload Identity, no key at all), or
+#   C) repository secret FIREBASE_TOKEN = output of `npx firebase-tools login:ci` (the owner's own sign-in;
+#      use it when creating service accounts is not allowed in the Google Cloud project).
 # Until one of them exists the job only writes a note and succeeds, so it never blocks anything.
 
 on:
@@ -40,6 +42,7 @@ jobs:
         id: mode
         env:
           SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FB_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
           WIF_PROVIDER: ${{ vars.WIF_PROVIDER }}
           WIF_SERVICE_ACCOUNT: ${{ vars.WIF_SERVICE_ACCOUNT }}
         run: |
@@ -47,12 +50,14 @@ jobs:
             echo "mode=key" >> "$GITHUB_OUTPUT"
           elif [ -n "$WIF_PROVIDER" ] && [ -n "$WIF_SERVICE_ACCOUNT" ]; then
             echo "mode=wif" >> "$GITHUB_OUTPUT"
+          elif [ -n "$FB_TOKEN" ]; then
+            echo "mode=token" >> "$GITHUB_OUTPUT"
           else
             echo "mode=none" >> "$GITHUB_OUTPUT"
             {
               echo "### ⚠️ Firestore rules were NOT published"
               echo "GitHub has no permission for the Firebase project yet."
-              echo "Add the secret \`FIREBASE_SERVICE_ACCOUNT\` (or the variables \`WIF_PROVIDER\` and \`WIF_SERVICE_ACCOUNT\`),"
+              echo "Add the secret \`FIREBASE_SERVICE_ACCOUNT\` or \`FIREBASE_TOKEN\` (or the variables \`WIF_PROVIDER\` and \`WIF_SERVICE_ACCOUNT\`),"
               echo "then run this workflow again (Actions → Deploy Firestore rules → Run workflow)."
             } >> "$GITHUB_STEP_SUMMARY"
           fi
@@ -78,6 +83,9 @@ jobs:
 
       - name: Publish firestore.rules
         if: steps.mode.outputs.mode != 'none'
+        env:
+          # Used only in mode "token" (the other modes sign in through google-github-actions/auth).
+          FIREBASE_TOKEN: ${{ steps.mode.outputs.mode == 'token' && secrets.FIREBASE_TOKEN || '' }}
         run: npx --yes firebase-tools@15 deploy --only firestore:rules --project "$PROJECT_ID" --non-interactive
 
       - name: Summary
