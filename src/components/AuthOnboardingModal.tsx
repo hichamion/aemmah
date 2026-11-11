@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { MosqueIcon } from './MosqueIcon';
 import type { User } from 'firebase/auth';
-import { X, CheckCircle2, Lock, ArrowLeft, Building2, Loader2 } from 'lucide-react';
+import { X, CheckCircle2, Lock, ArrowLeft, Loader2 } from 'lucide-react';
 import { createUserProfile, nowIso } from '../lib/db';
 import { signInWith, signOutUser } from '../lib/auth';
 import { DEFAULT_IMAM_SILHOUETTE_AVATAR } from '../utils/helpers';
@@ -197,7 +198,7 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                 <div className="flex items-center gap-3 min-w-0">
                   {selectedRole === 'mosque' ? (
                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-sky-500 to-blue-700 text-white flex items-center justify-center shadow shrink-0">
-                      <Building2 className="w-6 h-6" />
+                      <MosqueIcon className="w-6 h-6" />
                     </div>
                   ) : (
                     <img
@@ -264,7 +265,7 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                     }`}
                   >
                     <div className="w-11 h-11 rounded-xl bg-sky-600 text-white flex items-center justify-center shrink-0">
-                      <Building2 className="w-6 h-6" />
+                      <MosqueIcon className="w-6 h-6" />
                     </div>
                     <div>
                       <div className="font-black text-sky-950 text-sm">نحن جمعية / مسجد</div>

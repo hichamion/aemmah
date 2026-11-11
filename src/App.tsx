@@ -46,6 +46,7 @@ import { ImamModalForm } from './components/ImamModalForm';
 import { StatsConsent } from './components/StatsConsent';
 import { SettingsPanel } from './components/SettingsPanel';
 import { SiteBackdrop } from './components/SiteBackdrop';
+import { AppErrorBoundary } from './components/AppErrorBoundary';
 import { trackVisit } from './lib/visits';
 import { useNotifications } from './lib/community';
 import { scrollToTop } from './lib/scroll';
@@ -778,6 +779,7 @@ export default function App() {
       />
 
       <main className="flex-1 flex flex-col">
+        <AppErrorBoundary key={currentView}>
         <Suspense
           fallback={
             <div className="flex-1 flex items-center justify-center py-24 text-slate-500 text-sm gap-2">
@@ -896,6 +898,7 @@ export default function App() {
                 onOpenImamAdd={handleOpenImamAdd}
                 onOpenMosqueAdd={handleOpenMosqueAdd}
                 inbox={{ ...inboxProps, currentName: 'إدارة منصة أئمة', onBroadcast: handleBroadcast }}
+                onToast={showToast}
               />
             )}
 
@@ -926,6 +929,7 @@ export default function App() {
           </>
         )}
       </Suspense>
+        </AppErrorBoundary>
       </main>
 
       <Footer

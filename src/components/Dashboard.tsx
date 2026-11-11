@@ -1,14 +1,7 @@
 import React from 'react';
+import { MosqueIcon } from './MosqueIcon';
 import { ImamProfile, MosqueJob } from '../types';
-import { 
-  Building2, 
-  Users, 
-  TrendingUp, 
-  CheckCircle2, 
-  Sparkles,
-  ArrowUpRight,
-  FileCheck,
-} from 'lucide-react';
+import { Users, TrendingUp, CheckCircle2, Sparkles, ArrowUpRight, FileCheck } from 'lucide-react';
 import {
   ResponsiveContainer,
   AreaChart,
@@ -152,7 +145,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
             onClick={onOpenMosques}
             className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-black px-5 py-2.5 rounded-xl text-xs shadow-md transition cursor-pointer flex items-center gap-1.5"
           >
-            <Building2 className="w-4 h-4" />
+            <MosqueIcon className="w-4 h-4" />
             <span>إعلانات المساجد ({activeMosquesCount})</span>
           </button>
         </div>
@@ -166,7 +159,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <div className="flex justify-between items-start">
             <span className="text-xs font-bold text-slate-500">عدد الإعلانات النشطة للمساجد</span>
             <div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-700 flex items-center justify-center font-bold">
-              <Building2 className="w-5 h-5" />
+              <MosqueIcon className="w-5 h-5" />
             </div>
           </div>
           <div className="flex items-baseline gap-2">

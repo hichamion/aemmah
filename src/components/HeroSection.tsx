@@ -1,28 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { MosqueIcon } from './MosqueIcon';
 import { UserRole } from '../types';
 import { HERO_PHOTOS } from '../config';
 import { firstNameOf } from '../utils/helpers';
 import { prefersStill, useSettings } from '../lib/settings';
-import {
-  ArrowLeft,
-  AudioLines,
-  Building2,
-  ChevronLeft,
-  ChevronRight,
-  FileSignature,
-  HandHeart,
-  LogIn,
-  Mail,
-  MessagesSquare,
-  Mic,
-  PieChart,
-  Plus,
-  HelpCircle,
-  ShieldCheck,
-  Sparkles,
-  UserRound,
-  Users,
-} from 'lucide-react';
+import { AnnouncementTarget, useAnnouncements } from '../lib/announcements';
+import { ArrowLeft, AudioLines, ChevronLeft, ChevronRight, FileSignature, HandHeart, LogIn, Mail, MessagesSquare, Mic, PieChart, Plus, HelpCircle, ShieldCheck, Sparkles, UserRound, Users } from 'lucide-react';
 
 interface HeroSectionProps {
   onOpenImamList: () => void;
@@ -81,7 +64,7 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
       ? { label: `لوحة الإدارة${pendingCount ? ` · ${pendingCount} طلب جديد` : ''}`, icon: <ShieldCheck className="w-4 h-4" />, onClick: onOpenAdminPanel }
       : currentRole === 'imam'
       ? { label: 'ملفي الشخصي كإمام', icon: <UserRound className="w-4 h-4" />, onClick: onOpenMyProfile }
-      : { label: 'إعلانات مسجدي', icon: <Building2 className="w-4 h-4" />, onClick: onOpenMyProfile };
+      : { label: 'إعلانات مسجدي', icon: <MosqueIcon className="w-4 h-4" />, onClick: onOpenMyProfile };
   const secondary =
     currentRole === 'imam'
       ? { label: 'تصفح إعلانات المساجد', onClick: onOpenMosqueList }
@@ -129,7 +112,7 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
       text: 'انشر إعلان مسجدك بالشروط والمدينة، واستقبل طلبات الأئمة المعتمدين.',
       cta: currentRole === 'imam' ? 'تصفح المساجد' : 'انشر إعلانك',
       onClick: currentRole === 'imam' ? onOpenMosqueList : onOpenMosqueAddModal,
-      icon: <Building2 className="w-16 h-16 sm:w-20 sm:h-20" strokeWidth={1.2} />,
+      icon: <MosqueIcon className="w-16 h-16 sm:w-20 sm:h-20" strokeWidth={1.2} />,
     },
     {
       key: 'recitation',
@@ -145,6 +128,31 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
       icon: <AudioLines className="w-16 h-16 sm:w-20 sm:h-20" strokeWidth={1.2} />,
     },
   ];
+
+  // Announcements written by the admin come first; the built-in slides follow unless the admin hid them.
+  const { items: announcements, showDefaults } = useAnnouncements();
+  const go: Record<AnnouncementTarget, (() => void) | undefined> = {
+    imams: onOpenImamList,
+    mosques: onOpenMosqueList,
+    community: onOpenCommunity,
+    'imam-register': onOpenImamAddModal,
+    'mosque-add': onOpenMosqueAddModal,
+    contact: onOpenContact,
+    url: undefined,
+    none: undefined,
+  };
+  const adminSlides: Slide[] = announcements
+    .filter((x) => x.active)
+    .map((x) => ({
+      key: `ad-${x.id}`,
+      chip: x.chip,
+      title: x.title,
+      text: x.text,
+      cta: x.target === 'none' ? '' : x.cta,
+      onClick: x.target === 'url' ? () => window.open(x.url, '_blank', 'noopener') : go[x.target] ?? (() => {}),
+      image: x.image || undefined,
+    }));
+  const allSlides = adminSlides.length && !showDefaults ? adminSlides : [...adminSlides, ...slides];
 
   const services: Service[] = [
     { key: 'khutab', label: 'خطب ودروس', icon: <Mic />, onClick: onOpenCommunity },
@@ -215,7 +223,7 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
           </div>
 
           {/* Promotional carousel */}
-          <PromoCarousel slides={slides} />
+          <PromoCarousel slides={allSlides} />
         </div>
 
         {/* Soft arch at the bottom of the hero */}
@@ -252,7 +260,7 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
               secondary={currentRole === 'imam' ? undefined : { label: 'إضافة إعلان مسجد', onClick: onOpenMosqueAddModal }}
               photo="card-mosques.jpg"
               focus="40% 40%"
-              icon={<Building2 className="w-6 h-6" />}
+              icon={<MosqueIcon className="w-6 h-6" />}
             />
           </div>
 
@@ -283,9 +291,12 @@ type Slide = {
   chip: string;
   title: React.ReactNode;
   text: string;
+  /** Empty = no button. */
   cta: string;
   onClick: () => void;
   photo?: string;
+  /** Full image URL (announcements of the admin). */
+  image?: string;
   icon?: React.ReactNode;
 };
 
@@ -317,7 +328,7 @@ const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
       onBlur={() => setPaused(false)}
     >
       <div
-        className="relative h-[10.5rem] min-[400px]:h-44 sm:h-[19rem] lg:h-[21rem] rounded-[1.6rem] sm:rounded-[2rem] overflow-hidden ring-1 ring-brass-400/25 shadow-2xl shadow-black/40 bg-ink-soft touch-pan-y"
+        className="relative h-[10.5rem] min-[400px]:h-44 sm:h-[19rem] lg:h-[21rem] rounded-[1.6rem] sm:rounded-[2rem] overflow-hidden border-[3px] border-brass-400/90 shadow-[0_24px_60px_-18px_rgba(0,0,0,0.7),0_0_0_6px_rgba(214,174,92,0.14)] bg-ink-soft touch-pan-y"
         onPointerDown={(e) => (startX.current = e.clientX)}
         onPointerUp={(e) => {
           if (startX.current === null) return;
@@ -337,7 +348,9 @@ const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
               aria-hidden={!on}
               className={`absolute inset-0 transition-opacity duration-700 ${on ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none'}`}
             >
-              {s.photo ? (
+              {s.image ? (
+                <img src={s.image} alt="" className={`absolute inset-0 w-full h-full object-cover opacity-80 ${on ? 'kenburns' : ''}`} />
+              ) : s.photo ? (
                 <img src={asset(s.photo)} alt="" className={`absolute inset-0 w-full h-full object-cover opacity-55 ${on ? 'kenburns' : ''}`} />
               ) : (
                 <div className="absolute inset-0 khatam-pattern bg-gradient-to-br from-lagoon-700 via-ink-soft to-cedar-900" />
@@ -350,17 +363,19 @@ const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
               )}
               {on && (
                 <div className="slide-copy relative h-full flex flex-col justify-center items-start gap-1.5 sm:gap-3 px-4 sm:px-10 max-w-[74%] sm:max-w-[70%]">
-                  <span className="liquid-glass inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-bold text-brass-200">
-                    {s.chip}
-                  </span>
+                  {s.chip && (
+                    <span className="liquid-glass inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-bold text-brass-200">
+                      {s.chip}
+                    </span>
+                  )}
                   <h2 className="text-lg min-[400px]:text-xl sm:text-[2.1rem] font-kufi leading-snug text-white">{s.title}</h2>
                   <p className="hidden sm:block text-sm text-slate-200/90 leading-relaxed">{s.text}</p>
-                  <button
+                  {s.cta && <button
                     onClick={s.onClick}
                     className="mt-1 inline-flex items-center gap-1.5 sm:gap-2 bg-gradient-to-l from-brass-300 to-brass-500 text-ink text-xs sm:text-sm font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-lg shadow-black/30 hover:brightness-105 transition cursor-pointer"
                   >
                     {s.cta} <ArrowLeft className="w-4 h-4" />
-                  </button>
+                  </button>}
                 </div>
               )}
             </div>

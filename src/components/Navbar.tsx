@@ -1,23 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { MosqueIcon } from './MosqueIcon';
 import { UserRole } from '../types';
 import type { View } from '../App';
 import { DEFAULT_IMAM_SILHOUETTE_AVATAR, getSafeImamAvatar } from '../utils/helpers';
 import { LogoMark } from './Logo';
-import {
-  Building2,
-  MessagesSquare,
-  Menu,
-  X,
-  ShieldCheck,
-  LogIn,
-  LogOut,
-  User as UserIcon,
-  Edit3,
-  Mail,
-  ChevronDown,
-  Trash2,
-  Settings as SettingsIcon,
-} from 'lucide-react';
+import { MessagesSquare, Menu, X, ShieldCheck, LogIn, LogOut, User as UserIcon, Edit3, Mail, ChevronDown, Trash2, Settings as SettingsIcon } from 'lucide-react';
 
 interface NavbarProps {
   currentView: View;
@@ -214,7 +201,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <div className="relative">
                     {showMosqueIcon ? (
                       <div className="w-9 h-9 rounded-full bg-gradient-to-br from-sky-500 to-blue-700 text-white flex items-center justify-center shadow-xs">
-                        <Building2 className="w-5 h-5" />
+                        <MosqueIcon className="w-5 h-5" />
                       </div>
                     ) : (
                       <img
@@ -252,7 +239,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <div className="relative">
                         {showMosqueIcon ? (
                           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-sky-500 to-blue-700 text-white flex items-center justify-center shadow-md">
-                            <Building2 className="w-8 h-8" />
+                            <MosqueIcon className="w-8 h-8" />
                           </div>
                         ) : (
                           <img

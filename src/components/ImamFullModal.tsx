@@ -8,7 +8,8 @@ import { X, ExternalLink, Phone, Edit3, Share2, Flag, Lock, ImageDown, FileDown,
 import { useDialog } from '../lib/useDialog';
 import { useContact, useRecitationAudio } from '../lib/db';
 import { RecitationPlayer, recitationLabel, VISIBILITY_OPTIONS } from './Recitation';
-import { cvFileName, downloadPdf, downloadPng, renderNodeToPng, shareImage } from '../lib/cvExport';
+import { cvFileName, downloadPdf, downloadPng, renderNodeToPng, shareImage, needsSecondTap, pdfBlob } from '../lib/cvExport';
+import { ExportReadySheet, ReadyFile } from './ExportReadySheet';
 
 interface ImamFullModalProps {
   imam: ImamProfile | null;
@@ -49,6 +50,7 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
   const recitation = useRecitationAudio(imam?.id, !!imam?.recitationMeta, imam?.recitationMeta?.createdAt);
   const printRef = useRef<HTMLDivElement>(null);
   const [exporting, setExporting] = useState<ExportKind | null>(null);
+  const [ready, setReady] = useState<ReadyFile | null>(null);
   // Anonymous view counter (not for the owner or admins).
   useEffect(() => {
     if (imam?.id && !canEdit && imam.approvalStatus === 'approved') countProfileView('imam', imam.id);
@@ -82,6 +84,12 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
       for (let i = 0; i < 30 && !node.querySelector('img[data-qr]'); i++) await new Promise((r) => setTimeout(r, 100));
       const png = await renderNodeToPng(node);
       const name = cvFileName(imam.id);
+      const shareText = `السيرة الذاتية للشيخ ${imam.name} — إمام وقارئ (${imam.riwaya}).\nمنصة أئمة تربط الأئمة والقرّاء بالمساجد في أوروبا:\n${profileUrl || `https://${SITE_URL}/`}`;
+      // Phones: hand the file over with a second tap (a late download is blocked by the browser).
+      if (needsSecondTap()) {
+        setReady(kind === 'pdf' ? { blob: await pdfBlob(png), fileName: `${name}.pdf` } : { blob: png, fileName: `${name}.png`, text: kind === 'share' ? shareText : undefined });
+        return;
+      }
       if (kind === 'png') downloadPng(png, name);
       else if (kind === 'pdf') await downloadPdf(png, name);
       else
@@ -318,6 +326,7 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
           />
         </div>
       )}
+      <ExportReadySheet file={ready} onClose={() => setReady(null)} />
     </div>
   );
 };

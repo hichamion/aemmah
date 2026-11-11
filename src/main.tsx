@@ -15,10 +15,18 @@ import '@fontsource/ruwudu/700.css';
 import '@fontsource/reem-kufi/arabic-700.css';
 import App from './App.tsx';
 import { initSettings } from './lib/settings';
+import { reloadForUpdate } from './components/AppErrorBoundary';
 import './index.css';
 import './theme-dark.css';
 
 initSettings();
+
+// After an update the old code files are gone: a page that still runs the previous version
+// reloads itself (once) instead of breaking when it opens a section for the first time.
+window.addEventListener('vite:preloadError', (event) => {
+  event.preventDefault();
+  reloadForUpdate();
+});
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

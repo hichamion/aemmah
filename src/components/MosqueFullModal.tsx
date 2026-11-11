@@ -7,7 +7,8 @@ import { SITE_URL } from './ImamCvSheet';
 import { X, Edit3, Share2, Flag, Lock, ImageDown, FileDown, Loader2, Link2, Send, Check } from 'lucide-react';
 import { useDialog } from '../lib/useDialog';
 import { useContact } from '../lib/db';
-import { downloadPdf, downloadPng, renderNodeToPng, shareImage } from '../lib/cvExport';
+import { downloadPdf, downloadPng, renderNodeToPng, shareImage, needsSecondTap, pdfBlob } from '../lib/cvExport';
+import { ExportReadySheet, ReadyFile } from './ExportReadySheet';
 
 interface MosqueFullModalProps {
   mosque: MosqueJob | null;
@@ -45,6 +46,7 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
   const { contact } = useContact<MosqueContact>('mosque', mosque?.id, !!mosque && canViewContact);
   const printRef = useRef<HTMLDivElement>(null);
   const [exporting, setExporting] = useState<ExportKind | null>(null);
+  const [ready, setReady] = useState<ReadyFile | null>(null);
   // Anonymous view counter (not for the owner or admins).
   useEffect(() => {
     if (mosque?.id && !canEdit && mosque.approvalStatus === 'approved') countProfileView('mosque', mosque.id);
@@ -74,6 +76,12 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
       if (!node) throw new Error('no node');
       for (let i = 0; i < 30 && !node.querySelector('img[data-qr]'); i++) await new Promise((r) => setTimeout(r, 100));
       const png = await renderNodeToPng(node);
+      const shareText = `${mosque.mosqueName} (${mosque.city}) — ${mosque.lookingType}.\nللتقديم عبر منصة أئمة التي تربط الأئمة بالمساجد في أوروبا:\n${shareUrl || `https://${SITE_URL}/`}`;
+      // Phones: hand the file over with a second tap (a late download is blocked by the browser).
+      if (needsSecondTap()) {
+        setReady(kind === 'pdf' ? { blob: await pdfBlob(png), fileName: `${fileName}.pdf` } : { blob: png, fileName: `${fileName}.png`, text: kind === 'share' ? shareText : undefined });
+        return;
+      }
       if (kind === 'png') downloadPng(png, fileName);
       else if (kind === 'pdf') await downloadPdf(png, fileName);
       else
@@ -249,6 +257,7 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
           <MosqueCvSheet ref={printRef} mosque={mosque} contact={canViewContact ? contact : null} layout="print" shareUrl={shareUrl} />
         </div>
       )}
+      <ExportReadySheet file={ready} onClose={() => setReady(null)} />
     </div>
   );
 };
