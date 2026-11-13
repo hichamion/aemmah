@@ -27,7 +27,7 @@ export const SupportPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
   return (
     <section className="flex-1 py-8 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto w-full space-y-4">
-      <button onClick={onBack} className="text-emerald-800 font-bold text-sm flex items-center gap-1 cursor-pointer">
+      <button onClick={onBack} className="text-brass-300 hover:text-brass-200 font-bold text-sm flex items-center gap-1 cursor-pointer">
         <ArrowRight className="w-4 h-4" />
         <span>العودة للرئيسية</span>
       </button>

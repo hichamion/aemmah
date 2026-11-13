@@ -378,58 +378,37 @@
   80% { transform: rotate(-4deg); }
 }
 
-/* ---------- Site background (SiteBackdrop): warm grey + Andalusian ornament ---------- */
+/* ---------- Site background (SiteBackdrop): night blue with a dawn glow ---------- */
 .site-backdrop {
   position: fixed;
   inset: 0;
   z-index: -10;
   pointer-events: none;
   overflow: hidden;
-  background:
-    radial-gradient(70rem 40rem at 50% -10%, rgb(255 255 255 / 0.75), transparent 70%),
-    linear-gradient(180deg, #f2f1ed 0%, #ebe9e3 55%, #e4e1d9 100%);
+  background-color: #0d1520;
+  --glow: rgb(30 58 43 / 0.2);
 }
-.site-backdrop__rosette {
+.site-backdrop__dawn {
   position: absolute;
-  top: -34vmin;
-  left: 50%;
-  width: min(118vmin, 1150px);
-  transform: translateX(-50%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 78%);
-  mask-image: linear-gradient(to bottom, #000 30%, transparent 78%);
+  top: -10rem;
+  right: -10rem;
+  width: 24rem;
+  height: 24rem;
+  border-radius: 9999px;
+  background: rgb(197 168 128 / 0.15);
+  filter: blur(120px);
 }
-.site-backdrop__hi { stroke: #ffffff; stroke-opacity: 0.95; stroke-width: 0.9; }
-.site-backdrop__lo { stroke: #b9b2a4; stroke-opacity: 0.45; stroke-width: 0.9; }
-.site-backdrop__lattice {
+.site-backdrop__glow {
   position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke-linejoin='round'%3E%3Cg stroke='%23b9b2a4' stroke-opacity='0.55' stroke-width='3' transform='translate(1 1.4)'%3E%3Cpath d='M35 35h50v50H35zM60 25l35 35-35 35-35-35zM95 60h25M0 60h25M60 95v25M60 0v25M-25-25h50v50h-50zM95-25h50v50H95zM-25 95h50v50h-50zM95 95h50v50H95z'/%3E%3Ccircle cx='60' cy='60' r='9'/%3E%3C/g%3E%3Cg stroke='%23ffffff' stroke-opacity='0.95' stroke-width='3'%3E%3Cpath d='M35 35h50v50H35zM60 25l35 35-35 35-35-35zM95 60h25M0 60h25M60 95v25M60 0v25M-25-25h50v50h-50zM95-25h50v50H95zM-25 95h50v50h-50zM95 95h50v50H95z'/%3E%3Ccircle cx='60' cy='60' r='9'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  background-size: 120px 120px;
-  background-position: center bottom;
-  -webkit-mask-image: linear-gradient(to top, #000 0%, rgb(0 0 0 / 0.7) 18%, transparent 52%);
-  mask-image: linear-gradient(to top, #000 0%, rgb(0 0 0 / 0.7) 18%, transparent 52%);
+  top: 50%;
+  left: -10rem;
+  width: 24rem;
+  height: 24rem;
+  border-radius: 9999px;
+  background: var(--glow);
+  filter: blur(120px);
+  transition: background 0.5s ease;
 }
-.site-backdrop__skyline {
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  width: 100%;
-  height: 130px;
-  color: rgb(150 140 122 / 0.16);
-}
-.dark .site-backdrop {
-  background:
-    radial-gradient(70rem 40rem at 50% -10%, rgb(47 138 125 / 0.12), transparent 70%),
-    linear-gradient(180deg, #0c191d 0%, #0b171b 60%, #0a1418 100%);
-}
-.dark .site-backdrop__hi { stroke: #8fd3b9; stroke-opacity: 0.07; }
-.dark .site-backdrop__lo { stroke-opacity: 0; }
-.dark .site-backdrop__lattice { opacity: 0.06; filter: invert(1); }
-.dark .site-backdrop__skyline { color: rgb(143 211 185 / 0.05); }
-/* Arch at the bottom of the home hero: same tone as the site background just below it. */
-.home-arch { color: #f0eee9; }
-.dark .home-arch { color: #0c191d; }
-
 /* ---------- Home hero: deep teal with the Andalusian star-and-hexagon lattice (vector, sharp on any screen) ---------- */
 .home-hero {
   background-color: #193d4b;
@@ -473,25 +452,11 @@
   background: linear-gradient(90deg, var(--section-2), var(--section), var(--section-2));
 }
 @media (min-width: 640px) { .section-line { top: calc(4.5rem + env(safe-area-inset-top)); } }
-/* the backdrop takes a light tint of the section */
-[data-section='imams'] .site-backdrop {
-  background:
-    radial-gradient(70rem 40rem at 50% -10%, rgb(255 255 255 / 0.7), transparent 70%),
-    linear-gradient(180deg, #eaf3f4 0%, #dfecee 55%, #d4e5e8 100%);
-}
-[data-section='mosques'] .site-backdrop {
-  background:
-    radial-gradient(70rem 40rem at 50% -10%, rgb(255 255 255 / 0.7), transparent 70%),
-    linear-gradient(180deg, #ecf3ee 0%, #e1ece4 55%, #d6e6da 100%);
-}
-[data-section='account'] .site-backdrop {
-  background:
-    radial-gradient(70rem 40rem at 50% -10%, rgb(255 255 255 / 0.7), transparent 70%),
-    linear-gradient(180deg, #f5f0e4 0%, #eee5d1 55%, #e6dbc2 100%);
-}
-.dark [data-section='imams'] .site-backdrop { background: linear-gradient(180deg, #0b1a1f 0%, #0a1a1e 100%); }
-.dark [data-section='mosques'] .site-backdrop { background: linear-gradient(180deg, #0b1a16 0%, #0a1714 100%); }
-.dark [data-section='account'] .site-backdrop { background: linear-gradient(180deg, #16140d 0%, #12100b 100%); }
+/* the green glow of the background takes the colour of the section */
+[data-section='imams'] .site-backdrop { --glow: rgb(29 107 120 / 0.32); }
+[data-section='mosques'] .site-backdrop { --glow: rgb(30 90 72 / 0.36); }
+[data-section='community'] .site-backdrop { --glow: rgb(169 132 58 / 0.25); }
+[data-section='account'] .site-backdrop { --glow: rgb(214 174 92 / 0.22); }
 
 /* ---------- Phone bottom bar (MobileNav): slim ivory pill, green tabs (gold when active) ---------- */
 .ivory-bar {
@@ -519,3 +484,6 @@
 }
 .ivory-centre.is-active .ivory-centre__green { color: #f6dc97; }
 .ivory-centre.is-active { box-shadow: 0 10px 22px -8px rgb(0 0 0 / 0.5), 0 0 0 3px rgb(214 174 92 / 0.35), inset 0 1px 0 #fff; }
+
+/* The soft arch under the home hero melts into the dark site backdrop. */
+.home-arch { color: #0d1520; }

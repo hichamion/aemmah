@@ -19,7 +19,7 @@ export const PrivacyPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [consent, setConsent] = useState(getStatsConsent);
   return (
     <section className="flex-1 py-8 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full">
-      <button onClick={onBack} className="text-emerald-800 font-bold text-xs flex items-center gap-1 mb-4 cursor-pointer">
+      <button onClick={onBack} className="text-brass-300 hover:text-brass-200 font-bold text-xs flex items-center gap-1 mb-4 cursor-pointer">
         <ArrowRight className="w-4 h-4" />
         <span>العودة للرئيسية</span>
       </button>

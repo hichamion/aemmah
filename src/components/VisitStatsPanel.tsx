@@ -16,7 +16,7 @@ export const VisitStatsPanel: React.FC = () => {
     );
   if (!stats)
     return (
-      <p className="text-center text-slate-500 py-10 flex items-center justify-center gap-2 text-sm">
+      <p className="text-center text-white/70 py-10 flex items-center justify-center gap-2 text-sm">
         <Loader2 className="w-4 h-4 animate-spin" /> جاري حساب الإحصاءات…
       </p>
     );
@@ -32,8 +32,8 @@ export const VisitStatsPanel: React.FC = () => {
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-emerald-700" /> إحصاءات الزيارات
+        <h3 className="text-lg font-black text-parchment flex items-center gap-2">
+          <BarChart3 className="w-5 h-5 text-brass-300" /> إحصاءات الزيارات
         </h3>
         <button onClick={reload} className="inline-flex items-center gap-1.5 text-xs font-bold bg-white border border-slate-200 px-3 py-2 rounded-xl cursor-pointer hover:bg-slate-50">
           <RefreshCw className="w-3.5 h-3.5" /> تحديث
@@ -63,7 +63,7 @@ export const VisitStatsPanel: React.FC = () => {
         </div>
       </div>
 
-      <p className="text-xs text-slate-500 leading-relaxed flex gap-2">
+      <p className="text-xs text-white/70 leading-relaxed flex gap-2">
         <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
         <span>
           تُحصى كل فتحة جديدة للموقع (لا يُحتسب تحديث الصفحة ولا الرجوع للخلف) دون حفظ أي بيانات شخصية أو عنوان IP. عدد «الزوار المميزين»
