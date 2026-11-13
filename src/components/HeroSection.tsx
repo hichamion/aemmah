@@ -5,7 +5,7 @@ import { HERO_PHOTOS } from '../config';
 import { firstNameOf } from '../utils/helpers';
 import { prefersStill, useSettings } from '../lib/settings';
 import { AnnouncementTarget, useAnnouncements } from '../lib/announcements';
-import { ArrowLeft, AudioLines, ChevronLeft, ChevronRight, FileSignature, HandHeart, LogIn, Mail, MessagesSquare, Mic, PieChart, Plus, HelpCircle, ShieldCheck, Sparkles, UserRound, Users } from 'lucide-react';
+import { ArrowLeft, AudioLines, ChevronLeft, ChevronRight, FileSignature, HandHeart, LogIn, Mail, Mic, PieChart, Plus, HelpCircle, ShieldCheck, Sparkles, UserRound, Users, UsersRound } from 'lucide-react';
 
 interface HeroSectionProps {
   onOpenImamList: () => void;
@@ -160,7 +160,6 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
     currentRole === 'imam'
       ? { key: 'apply', label: 'التقدّم لإمامة', icon: <FileSignature />, onClick: onOpenMosqueList }
       : { key: 'request', label: 'طلب إمام', icon: <FileSignature />, onClick: onOpenMosqueAddModal },
-    { key: 'community', label: 'ملتقى الأئمة', icon: <MessagesSquare />, onClick: onOpenCommunity },
     ...(showStats ? [{ key: 'stats', label: 'الإحصائيات', icon: <PieChart />, onClick: onOpenDashboard }] : []),
     { key: 'how', label: 'كيف تعمل المنصة؟', icon: <HelpCircle />, onClick: scrollToHow },
     { key: 'contact', label: 'راسل الإدارة', icon: <Mail />, onClick: onOpenContact },
@@ -173,9 +172,9 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
       <section className="home-hero relative overflow-hidden text-white">
         <div className="khatam-pattern absolute inset-0 pointer-events-none" aria-hidden />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-12 pb-[5.5rem] sm:pb-32 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-3 sm:gap-8 lg:gap-12 items-center">
-          {/* Welcome */}
-          <div className="space-y-2 sm:space-y-5 text-center lg:text-right">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-12 pb-[5.5rem] sm:pb-32 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-3 sm:gap-8 lg:gap-12 items-center">
+          {/* Welcome (larger screens only: on phones the banner and the two cards come first) */}
+          <div className="hidden sm:block space-y-5 text-center lg:text-right">
             <p className="hidden sm:inline-flex items-center gap-2 rounded-full border border-brass-400/30 bg-white/5 px-3.5 py-1.5 text-xs font-bold text-brass-200">
               <Sparkles className="w-3.5 h-3.5" />
               {firstName ? 'السلام عليكم ورحمة الله' : 'جسر تواصل وربط بين الأئمة والمساجد'}
@@ -264,7 +263,7 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
             />
           </div>
 
-          <QuickServices services={services} />
+          <QuickServices services={services} onCommunity={onOpenCommunity} />
         </div>
 
         <div className="relative px-4 sm:px-6 lg:px-8 pb-16">
@@ -505,8 +504,25 @@ const AccessCard: React.FC<{
 type Service = { key: string; label: string; icon: React.ReactElement; onClick: () => void };
 
 /** Round shortcuts with a brass ring (wraps on phones, one row on wide screens). */
-const QuickServices: React.FC<{ services: Service[] }> = ({ services }) => (
-  <nav aria-label="خدمات سريعة" className="liquid-glass-light rounded-[2rem] px-3 sm:px-6 py-6">
+const QuickServices: React.FC<{ services: Service[]; onCommunity: () => void }> = ({ services, onCommunity }) => (
+  <nav aria-label="خدمات سريعة" className="liquid-glass-light rounded-[2rem] px-3 sm:px-6 py-5 sm:py-6 space-y-5">
+    {/* Featured: the imams' community (its own colours and shape, not one more circle) */}
+    <button onClick={onCommunity}
+      className="group relative w-full overflow-hidden rounded-[1.6rem] text-right cursor-pointer bg-gradient-to-l from-[#0f3127] via-cedar-700 to-[#2f7a63] text-white px-4 sm:px-6 py-4 flex items-center gap-4 shadow-[0_14px_30px_-14px_rgba(15,49,39,0.8)] ring-2 ring-brass-400/70 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus-visible:ring-4 focus-visible:ring-brass-300">
+      <span className="absolute inset-0 khatam-pattern opacity-70" aria-hidden />
+      <span className="absolute -left-10 -top-12 w-40 h-40 rounded-full bg-brass-300/20 blur-2xl" aria-hidden />
+      <span className="relative w-14 h-14 shrink-0 rounded-2xl bg-gradient-to-br from-brass-200 via-brass-400 to-brass-600 text-ink flex items-center justify-center shadow-lg">
+        <UsersRound className="w-7 h-7" />
+      </span>
+      <span className="relative flex-1 min-w-0">
+        <span className="block font-kufi text-xl sm:text-2xl leading-tight">ملتقى الأئمة</span>
+        <span className="block text-xs sm:text-sm text-white/85 mt-0.5">خطب ودروس ونقاشات وتجارب بين الأئمة المعتمدين</span>
+      </span>
+      <span className="relative shrink-0 inline-flex items-center gap-1 bg-gradient-to-l from-brass-200 to-brass-400 text-ink text-xs sm:text-sm font-black px-3.5 py-2 rounded-full">
+        ادخل <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+      </span>
+    </button>
+
     <ul className="flex flex-wrap justify-center gap-x-2 gap-y-5 sm:gap-x-4">
       {services.map((s) => (
         <li key={s.key} className="w-[31%] sm:w-auto sm:min-w-[6.5rem]">

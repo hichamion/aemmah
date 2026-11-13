@@ -4,7 +4,7 @@ import { UserRole } from '../types';
 import type { View } from '../App';
 import { DEFAULT_IMAM_SILHOUETTE_AVATAR, getSafeImamAvatar } from '../utils/helpers';
 import { LogoMark } from './Logo';
-import { MessagesSquare, Menu, X, ShieldCheck, LogIn, LogOut, User as UserIcon, Edit3, Mail, ChevronDown, Trash2, Settings as SettingsIcon } from 'lucide-react';
+import { MessagesSquare, Menu, X, ShieldCheck, LogIn, LogOut, User as UserIcon, Edit3, Mail, ChevronDown, Trash2, Settings as SettingsIcon, Smartphone } from 'lucide-react';
 
 interface NavbarProps {
   currentView: View;
@@ -27,6 +27,8 @@ interface NavbarProps {
   showStats?: boolean;
   onOpenInbox?: () => void;
   onOpenSettings: () => void;
+  /** Undefined once the site is installed as an app. */
+  onOpenInstall?: () => void;
   /** Unread community notifications. */
   communityUnread?: number;
 }
@@ -51,6 +53,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   showStats = true,
   onOpenInbox,
   onOpenSettings,
+  onOpenInstall,
   communityUnread = 0,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -91,7 +94,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const showMosqueIcon = currentRole === 'mosque' && !userPhoto;
 
   return (
-    <header className="liquid-glass-dark !border-x-0 !border-t-0 text-white sticky top-0 z-40">
+    <header className="liquid-glass-dark !border-x-0 !border-t-0 text-white sticky top-0 z-40 pt-[env(safe-area-inset-top)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-18 gap-6">
           
@@ -460,6 +463,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                     {pendingCount}
                   </span>
                 )}
+              </button>
+            )}
+
+            {onOpenInstall && (
+              <button
+                onClick={() => { onOpenInstall(); setMobileMenuOpen(false); }}
+                className="w-full text-right px-4 py-3 rounded-xl flex items-center gap-2 bg-brass-100 text-ink font-black mt-2"
+              >
+                <Smartphone className="w-4 h-4" />
+                <span>ثبّت التطبيق على هاتفك</span>
               </button>
             )}
 

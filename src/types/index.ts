@@ -13,7 +13,8 @@ export type UserRole = 'visitor' | 'imam' | 'mosque' | 'admin';
 export type AccountRole = 'imam' | 'mosque';
 
 export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
-export type AvailabilityState = 'available_now' | 'busy_ramadan' | 'paused';
+/** paused = not published (hidden from mosques). ramadan_only = only for tarawih / the month of Ramadan. */
+export type AvailabilityState = 'available_now' | 'ramadan_only' | 'busy_ramadan' | 'paused';
 
 /** Firestore: users/{uid} */
 export interface UserProfile {

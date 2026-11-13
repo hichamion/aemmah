@@ -37,7 +37,8 @@ const parseRoute = (hash: string): Route => {
 };
 const go = (path: string) => {
   window.location.hash = `#/community${path}`;
-  scrollToTop();
+  // After the new section is drawn (see App: scrolling first keeps the old position).
+  requestAnimationFrame(() => requestAnimationFrame(() => scrollToTop(false)));
 };
 
 interface Props {

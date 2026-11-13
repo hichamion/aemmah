@@ -17,4 +17,6 @@ if (import.meta.env.DEV && import.meta.env.VITE_FIREBASE_EMULATOR === '1') {
 }
 
 export const googleProvider = new GoogleAuthProvider();
+// Always show Google's account chooser (otherwise phones sign in silently with the last used Gmail account).
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 export const facebookProvider = new FacebookAuthProvider();

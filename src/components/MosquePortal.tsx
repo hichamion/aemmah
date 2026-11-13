@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { ImamProfile, MosqueJob, Application, UserRole, ApplicationStatus } from '../types';
 import { formatDate, getSafeImamAvatar } from '../utils/helpers';
 import { PageBanner, bannerTab } from './PageBanner';
+import { PublishCard } from './PublishCard';
 import { InboxCenter, InboxProps } from './InboxCenter';
 import { ContactBlock } from './ContactBlock';
 import { ImamMiniCard } from './MiniCards';
-import { Search, Trash2, Plus, UserCheck, Lock, Clock, ShieldAlert, Users } from 'lucide-react';
+import { Search, Trash2, Plus, UserCheck, Lock, Clock, ShieldAlert, Users, UserRound } from 'lucide-react';
 
 type Tab = 'browse' | 'manage_mosques' | 'applications' | 'inbox';
 
@@ -28,6 +29,8 @@ interface MosquePortalProps {
   onReportImam: (imam: ImamProfile) => void;
   inbox: InboxProps;
   initialTab?: Tab;
+  /** The signed-in imam already has a profile: offer «تعديل ملفي» instead of registering. */
+  hasOwnImamProfile?: boolean;
   /** Reports the open tab (used by the phone bottom bar). */
   onTabChange?: (tab: Tab) => void;
   /** Changes on every tab request from the parent (see App). */
@@ -66,6 +69,7 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
   onReportImam,
   inbox,
   initialTab = 'browse',
+  hasOwnImamProfile = false,
   onTabChange,
   tabRequest = 0,
 }) => {
@@ -108,18 +112,22 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
 
   const unreadForMe = inbox.messages.filter((m) => !m.isRead && m.receiverUid === inbox.currentUid).length;
 
-  const tabClass = (tab: Tab) => bannerTab('imams', activeTab === tab);
+  const tabClass = (tab: Tab) => bannerTab(activeTab === 'browse' ? 'imams' : 'account', activeTab === tab);
 
   return (
     <section className="flex-1 py-6 sm:py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-6">
-      <PageBanner tone="imams" title="الأئمة المتاحون" count={availableImamsCount} subtitle="تصفح الأئمة والقرّاء المتاحين واستمع لتلاواتهم، أو سجّل كإمام جديد في المنصة" icon={<Users />}>
+      <PageBanner
+        {...(activeTab === 'browse'
+          ? { tone: 'imams' as const, title: 'الأئمة المتاحون', count: availableImamsCount, subtitle: 'الأئمة والقرّاء المتاحون — استمع لتلاواتهم واطّلع على سيرهم', icon: <Users /> }
+          : { tone: 'account' as const, title: 'حسابي', subtitle: 'إعلانات مسجدك، وطلبات الأئمة، ورسائلك', icon: <UserRound /> })}
+      >
           {(currentRole === 'imam' || currentRole === 'visitor' || currentRole === 'admin') && (
             <button
               onClick={onOpenImamAdd}
-              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm px-4 py-2.5 rounded-full shadow transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-full shadow transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
             >
               <Plus className="w-4 h-4" />
-              <span>{currentRole === 'admin' ? 'إضافة إمام' : 'التسجيل كإمام'}</span>
+              <span>{currentRole === 'admin' ? 'إضافة إمام' : hasOwnImamProfile ? 'تعديل ملفي' : 'التسجيل كإمام'}</span>
             </button>
           )}
 
@@ -193,6 +201,7 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
             >
               <option value="all">جميع حالات التفرغ</option>
               <option value="available_now">متاح فوراً (رمضان أو عقد دائم)</option>
+              <option value="ramadan_only">متاح لرمضان فقط (التراويح)</option>
               <option value="busy_ramadan">ملتزم في رمضان ومتاح بعده</option>
             </select>
 
@@ -269,9 +278,12 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
           </div>
 
           {myMosques.length === 0 && (
-            <div className="bg-white border border-slate-200 rounded-2xl p-10 text-center text-xs text-slate-500">
-              لم تنشر أي إعلان بعد.
-            </div>
+            <PublishCard
+              state="none"
+              title="انشر ملف مسجدك للأئمة"
+              text="مسجد شاغر يبحث عن إمام دائم، أو عن إمام لصلاة التراويح فقط؟ انشر إعلانك ليراه الأئمة المعتمدون ويتقدموا إليه بعد مراجعة الإدارة."
+              action={{ label: 'نشر إعلان مسجدي', onClick: onOpenMosqueAdd }}
+            />
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -285,7 +297,7 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
                   <div className="space-y-3">
                     <div className="flex justify-between items-start gap-2">
                       <div>
-                        <span className="text-xs font-bold text-sky-700">{isClosed ? 'الإعلان متوقف' : m.lookingType}</span>
+                        <span className={`text-xs font-bold ${isClosed ? 'text-slate-500' : 'text-sky-700'}`}>{isClosed ? 'غير منشور — لا يراه الأئمة' : m.lookingType}</span>
                         <h4 className="text-base font-black text-slate-900 mt-0.5 font-amiri">{m.mosqueName}</h4>
                         <p className="text-xs text-slate-500">
                           {m.country} · {m.city}
@@ -349,9 +361,11 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
                     </button>
                     <button
                       onClick={() => onToggleMosqueActive(m)}
-                      className="bg-slate-800 text-white font-bold px-3 py-1.5 rounded-xl text-xs cursor-pointer"
+                      className={`font-black px-3.5 py-1.5 rounded-full text-xs cursor-pointer ${
+                        isClosed ? 'bg-gradient-to-l from-brass-300 to-brass-500 text-ink shadow' : 'bg-white border border-slate-300 text-slate-700'
+                      }`}
                     >
-                      {isClosed ? 'تفعيل' : 'إيقاف'}
+                      {isClosed ? '📢 نشر الإعلان للأئمة' : 'إيقاف النشر'}
                     </button>
                     <button
                       onClick={() => onDeleteMosque(m)}

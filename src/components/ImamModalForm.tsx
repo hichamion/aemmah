@@ -538,6 +538,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
                   onChange={(e) => set('availabilityState', e.target.value as ImamEditableFields['availabilityState'])}
                   className="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white font-bold text-slate-900">
                   <option value="available_now">متاح حالياً (لرمضان أو للإمامة الدائمة)</option>
+                  <option value="ramadan_only">متاح لرمضان فقط (صلاة التراويح)</option>
                   <option value="busy_ramadan">ملتزم في رمضان — ومتاح للتعاقد بعده</option>
                   <option value="paused">إيقاف الإعلان مؤقتاً (إخفاء الملف)</option>
                 </select>

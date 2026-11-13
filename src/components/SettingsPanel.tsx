@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { BarChart3, Monitor, Moon, RotateCcw, Sparkles, Sun, Type, Wind, X } from 'lucide-react';
+import { BarChart3, Monitor, Moon, RotateCcw, Smartphone, Sparkles, Sun, Type, Wind, X } from 'lucide-react';
 import { resetSettings, saveSettings, Settings, ThemeChoice, useSettings } from '../lib/settings';
 import { getStatsConsent, setStatsConsent } from '../lib/visits';
 import { useDialog } from '../lib/useDialog';
 
 /** «الإعدادات»: theme (light / dark / automatic), text size, motion, intro and the statistics choice. */
-export const SettingsPanel: React.FC<{ open: boolean; onClose: () => void; onPrivacy: () => void }> = ({ open, onClose, onPrivacy }) => {
+export const SettingsPanel: React.FC<{ open: boolean; onClose: () => void; onPrivacy: () => void; onInstall?: () => void }> = ({ open, onClose, onPrivacy, onInstall }) => {
   const s = useSettings();
   const [consent, setConsent] = useState(getStatsConsent);
   const dialogRef = useDialog(open, onClose);
@@ -113,6 +113,12 @@ export const SettingsPanel: React.FC<{ open: boolean; onClose: () => void; onPri
               }}
             />
           </section>
+
+          {onInstall && (
+            <button onClick={onInstall} className="w-full inline-flex items-center justify-center gap-1.5 rounded-2xl bg-brass-100 border border-brass-300 py-3 font-black text-ink cursor-pointer">
+              <Smartphone className="w-4 h-4" /> ثبّت منصة أئمة كتطبيق على هاتفك
+            </button>
+          )}
 
           <button onClick={resetSettings} className="w-full inline-flex items-center justify-center gap-1.5 rounded-2xl border border-slate-200 py-2.5 font-bold text-slate-600 hover:bg-slate-50 cursor-pointer">
             <RotateCcw className="w-4 h-4" /> استعادة الإعدادات الافتراضية
