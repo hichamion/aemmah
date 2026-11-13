@@ -19,9 +19,9 @@ interface MobileNavProps {
   communityUnread?: number;
 }
 
-/* ---------- Filled golden icons (fill = the shared gold gradient #nav-gold-fill) ---------- */
+/* ---------- Filled icons (colour = currentColor: green, gold when active) ---------- */
 type IconProps = { className?: string };
-const GOLD = 'url(#nav-gold-fill)';
+const GOLD = 'currentColor';
 
 const HomeIcon: React.FC<IconProps> = ({ className }) => (
   <svg viewBox="0 0 24 24" className={className} aria-hidden>
@@ -30,12 +30,22 @@ const HomeIcon: React.FC<IconProps> = ({ className }) => (
   </svg>
 );
 
+/** Imam (as in the reference design): tall cap with a small arch, face and beard, V-neck collar.
+ *  The thin light lines use the colour of the bar (--nav-cut), so they read as cut-outs. */
 const ImamIcon: React.FC<IconProps> = ({ className }) => (
   <svg viewBox="0 0 24 24" className={className} aria-hidden>
-    <path fill={GOLD} d="M7.3 7.2C7.3 4.2 9.4 2.4 12 2.4s4.7 1.8 4.7 4.8z" />
-    <rect fill={GOLD} x="6.8" y="7" width="10.4" height="1.6" rx=".8" />
-    <path fill={GOLD} d="M8 9.2h8c0 3.2-1.8 5.6-4 5.6S8 12.4 8 9.2z" />
-    <path fill={GOLD} fillRule="evenodd" d="M3.4 21.6c.4-3.9 3.6-6.2 8.6-6.2s8.2 2.3 8.6 6.2zM10.6 16.2 12 19.6l1.4-3.4z" />
+    {/* cap with a small arch */}
+    <path fill={GOLD} fillRule="evenodd" d="M7.2 7.4V4.7C7.2 3.1 8.7 2.1 12 2.1s4.8 1 4.8 2.6v2.7zM10.6 5.9Q12 3.9 13.4 5.9Q12 5.1 10.6 5.9z" />
+    {/* head with beard */}
+    <path fill={GOLD} d="M7.3 7.9h9.4v3.3c0 2.8-2.1 4.6-4.7 4.6s-4.7-1.8-4.7-4.6z" />
+    {/* face outline and beard line (cut-outs) */}
+    <path fill="none" stroke="var(--nav-cut, #f4ece3)" strokeWidth=".7" strokeLinecap="round" d="M8.6 8.2v2.5c0 1.1.7 1.7 1.6 1.7.8 0 1.1-.4 1.8-.4s1 .4 1.8.4c.9 0 1.6-.6 1.6-1.7V8.2" />
+    <path fill="none" stroke="var(--nav-cut, #f4ece3)" strokeWidth=".6" strokeLinecap="round" d="M9.6 13.5c.7.5 1.5.8 2.4.8s1.7-.3 2.4-.8" />
+    {/* shoulders */}
+    <path fill={GOLD} d="M2.9 22.2c0-2 .4-3.5 1.6-4.6 1.7-1.5 4.2-1.9 7.5-1.9s5.8.4 7.5 1.9c1.2 1.1 1.6 2.6 1.6 4.6z" />
+    {/* shirt and V-neck collar (cut-outs) */}
+    <path fill="var(--nav-cut, #f4ece3)" d="M10.3 15.8 12 18.7l1.7-2.9z" />
+    <path fill="none" stroke="var(--nav-cut, #f4ece3)" strokeWidth=".6" strokeLinecap="round" d="M9.8 16.1l2.2 5.4 2.2-5.4" />
   </svg>
 );
 
@@ -73,17 +83,22 @@ const AccountIcon: React.FC<IconProps> = ({ className }) => (
   </svg>
 );
 
-const SignInIcon: React.FC<IconProps> = ({ className }) => <LogIn className={className} color="#d9b46a" strokeWidth={2.2} />;
+const SignInIcon: React.FC<IconProps> = ({ className }) => <LogIn className={className} strokeWidth={2.4} />;
 
-/** Mosque skylines (dark bronze silhouettes) for the side parts of the bar. */
-const SKYLINE =
-  'M0 96V80h8v-6q5-8 10 0v6h6V58l2.5-6 2.5 6v22h8v-10q12-22 24 0v10h6V64l2-5 2 5v16h6v-8q8-14 16 0v8h6V50l3-8 3 8v30h10V68q10-18 20 0v12h6V60l2-5 2 5v20h8v-6q5-9 10 0v6h6v16z';
-const CURVE = 'M318 118 C366 118 372 26 430 16 C462 8 538 8 570 16 C628 26 634 118 682 118';
+/** Faint beige mosque skyline (decoration of the light bar). */
+const Skyline: React.FC<{ className?: string; flip?: boolean }> = ({ className, flip }) => (
+  <svg viewBox="0 0 200 50" preserveAspectRatio="xMidYMax meet" className={className} style={flip ? { transform: 'scaleX(-1)' } : undefined} aria-hidden>
+    <path
+      fill="currentColor"
+      d="M0 50V40h8v-4q4-7 8 0v4h6V22l2-5 2 5v18h8v-7q10-17 20 0v7h6V27l2-4 2 4v13h6v-5q6-10 12 0v5h6V18l3-7 3 7v22h8V31q8-14 16 0v9h6V26l2-4 2 4v14h8v-4q4-7 8 0v4h6v10z"
+    />
+  </svg>
+);
 
 /**
- * Phone bottom bar, as in the reference design: one dark pill whose sides warm into bronze-gold with mosque
- * skylines, a green centre framed by two glowing golden curves (the community), and filled golden icons.
- * The active tab glows brighter (smooth gold transition).
+ * Phone bottom bar (reference design): a slim ivory pill with faint mosque skylines and a thin golden
+ * line, green tabs, and a round green «الملتقى» button in an ivory and gold ring above a green band.
+ * The active tab turns gold (smooth transition).
  */
 export const MobileNav: React.FC<MobileNavProps> = ({
   currentView,
@@ -106,111 +121,77 @@ export const MobileNav: React.FC<MobileNavProps> = ({
       key={key}
       onClick={onClick}
       aria-current={active ? 'page' : undefined}
-      className={`gold-tab relative flex-1 flex flex-col items-center justify-center gap-0.5 pt-1 cursor-pointer ${active ? 'is-active' : ''}`}
+      className={`ivory-tab relative flex-1 flex flex-col items-center justify-center gap-0.5 cursor-pointer ${active ? 'is-active' : ''}`}
     >
-      <span className="gold-tab__glow" aria-hidden />
-      <Icon className="relative w-[25px] h-[25px]" />
-      <span className="gold-tab__label relative text-[11.5px] font-black leading-tight">{label}</span>
+      <Icon className="relative w-[24px] h-[24px]" />
+      <span className="relative text-[11px] font-black leading-tight">{label}</span>
       {!!badge && (
-        <span className="absolute top-0.5 left-1/2 ml-2.5 bg-red-600 text-white text-[10px] font-black min-w-4 h-4 px-1 rounded-full flex items-center justify-center">{badge}</span>
+        <span className="absolute top-1 left-1/2 ml-2 bg-red-600 text-white text-[10px] font-black min-w-4 h-4 px-1 rounded-full flex items-center justify-center">{badge}</span>
       )}
     </button>
   );
+  const divider = (k: string) => <span key={k} className="w-px self-center h-7 bg-[#d8cbbb]" aria-hidden />;
 
   return (
     <nav aria-label="التنقل الرئيسي" className="mobile-nav lg:hidden fixed bottom-0 inset-x-0 z-40">
-      <div className="relative mx-2 mb-2 h-[4.25rem]">
-        {/* The whole bar is one drawing, stretched to the width (its proportions match the design). */}
-        <svg className="gold-bar absolute -top-[13px] inset-x-0 w-full h-[calc(100%+13px)]" viewBox="0 0 1000 120" preserveAspectRatio="none" aria-hidden>
-          <defs>
-            <linearGradient id="nav-gold-fill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#f6dfa0" />
-              <stop offset="0.5" stopColor="#d9b46a" />
-              <stop offset="1" stopColor="#a8803f" />
-            </linearGradient>
-            {/* sides: near black at the ends, warming to bronze-gold towards the centre */}
-            <linearGradient id="nav-side" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stopColor="#050304" />
-              <stop offset="0.16" stopColor="#0b0807" />
-              <stop offset="0.3" stopColor="#3a2b1b" />
-              <stop offset="0.4" stopColor="#8a6a3e" />
-              <stop offset="0.44" stopColor="#a8854f" />
-              <stop offset="0.56" stopColor="#a8854f" />
-              <stop offset="0.6" stopColor="#8a6a3e" />
-              <stop offset="0.7" stopColor="#3a2b1b" />
-              <stop offset="0.84" stopColor="#0b0807" />
-              <stop offset="1" stopColor="#050304" />
-            </linearGradient>
-            <linearGradient id="nav-shade" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#000" stopOpacity="0" />
-              <stop offset="1" stopColor="#000" stopOpacity="0.45" />
-            </linearGradient>
-            <linearGradient id="nav-green" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#2b6f58" />
-              <stop offset="0.5" stopColor="#1d5443" />
-              <stop offset="1" stopColor="#123b2f" />
-            </linearGradient>
-            <linearGradient id="nav-edge" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stopColor="#c99a4e" />
-              <stop offset="0.5" stopColor="#fff0c2" />
-              <stop offset="1" stopColor="#c99a4e" />
-            </linearGradient>
-            <linearGradient id="nav-sky-l" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stopColor="#140d07" stopOpacity="0.15" />
-              <stop offset="0.45" stopColor="#140d07" stopOpacity="0.85" />
-              <stop offset="1" stopColor="#140d07" stopOpacity="0.55" />
-            </linearGradient>
-            <linearGradient id="nav-sky-r" x1="1" y1="0" x2="0" y2="0">
-              <stop offset="0" stopColor="#140d07" stopOpacity="0.15" />
-              <stop offset="0.45" stopColor="#140d07" stopOpacity="0.85" />
-              <stop offset="1" stopColor="#140d07" stopOpacity="0.55" />
-            </linearGradient>
-            <filter id="nav-glow" x="-20%" y="-60%" width="140%" height="220%">
-              <feGaussianBlur stdDeviation="3" />
-            </filter>
-            <clipPath id="nav-pill">
-              <rect x="0" y="14" width="1000" height="104" rx="52" />
-            </clipPath>
-          </defs>
+      <div className="relative mx-3 mb-2.5 h-14">
+        {/* the ivory pill */}
+        <div className="ivory-bar absolute inset-0 rounded-full overflow-hidden">
+          <Skyline className="absolute bottom-0 right-2 h-[62%] w-[26%] text-[#cdbfae]/55" />
+          <Skyline className="absolute bottom-0 left-2 h-[62%] w-[26%] text-[#cdbfae]/55" flip />
+          <Skyline className="absolute bottom-0 right-[33%] h-[46%] w-[12%] text-[#cdbfae]/45" flip />
+          <Skyline className="absolute bottom-0 left-[33%] h-[46%] w-[12%] text-[#cdbfae]/45" />
+          {/* green band under the centre, with a golden edge */}
+          <svg className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[64%] h-[34%]" viewBox="0 0 400 20" preserveAspectRatio="none" aria-hidden>
+            <defs>
+              <linearGradient id="ivory-band" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor="#1f6a50" />
+                <stop offset="1" stopColor="#0d3f30" />
+              </linearGradient>
+              <linearGradient id="ivory-edge" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stopColor="#c9a24e" stopOpacity="0" />
+                <stop offset="0.3" stopColor="#d6ae5c" />
+                <stop offset="0.5" stopColor="#f3d998" />
+                <stop offset="0.7" stopColor="#d6ae5c" />
+                <stop offset="1" stopColor="#c9a24e" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <path d="M0 20 C90 19 150 6 200 4 C250 6 310 19 400 20 Z" fill="url(#ivory-band)" />
+            <path d="M0 20 C90 19 150 6 200 4 C250 6 310 19 400 20" fill="none" stroke="url(#ivory-edge)" strokeWidth="1.6" />
+          </svg>
+          {/* thin golden line along the bottom */}
+          <span className="absolute bottom-0 inset-x-6 h-[2px] bg-gradient-to-l from-transparent via-[#c9a24e] to-transparent" aria-hidden />
+        </div>
 
-          {/* the pill */}
-          <g clipPath="url(#nav-pill)">
-            <rect x="0" y="14" width="1000" height="104" fill="url(#nav-side)" />
-            <path d={SKYLINE} transform="translate(178 4) scale(1.22 1.18)" fill="url(#nav-sky-l)" />
-            <path d={SKYLINE} transform="translate(822 4) scale(-1.22 1.18)" fill="url(#nav-sky-r)" />
-            <rect x="0" y="14" width="1000" height="104" fill="url(#nav-shade)" />
-          </g>
-          <rect x="0.8" y="14.8" width="998.4" height="102.4" rx="51.2" fill="none" stroke="#d6ae5c" strokeOpacity="0.28" strokeWidth="1.2" />
-
-          {/* green centre: narrow at the top (rising above the bar), wide at the bottom, golden S-curves */}
-          <path d={`${CURVE} Z`} fill="url(#nav-green)" />
-          <path d={CURVE} fill="none" stroke="url(#nav-edge)" strokeWidth="5" opacity="0.55" filter="url(#nav-glow)" />
-          <path d={CURVE} fill="none" stroke="url(#nav-edge)" strokeWidth="2.2" />
-        </svg>
-
-        <div className="relative h-full flex items-stretch px-2">
+        <div className="relative h-full flex items-stretch px-3">
           {tab('home', 'الرئيسية', HomeIcon, currentView === 'home', onHome)}
+          {divider('d1')}
           {tab('imams', 'الأئمة', ImamIcon, currentView === 'mosque' && !accountActive, onImams)}
-          <div className="w-[34%] shrink-0 flex justify-center">
-            <button
-              onClick={onCommunity}
-              aria-label={communityUnread ? `ملتقى الأئمة (${communityUnread} إشعار جديد)` : 'ملتقى الأئمة'}
-              aria-current={communityOn ? 'page' : undefined}
-              className={`gold-tab gold-tab--centre relative -mt-2.5 flex flex-col items-center justify-center gap-0.5 px-3 cursor-pointer ${communityOn ? 'is-active' : ''}`}
-            >
-              <span className="gold-tab__glow" aria-hidden />
-              <CommunityIcon className="relative w-[42px] h-[30px]" />
-              <span className="gold-tab__label relative text-[14px] font-black leading-tight">الملتقى</span>
-              {communityUnread > 0 && (
-                <span className="absolute top-0 -right-0.5 bg-red-600 text-white text-[11px] font-black min-w-5 h-5 px-1 rounded-full flex items-center justify-center ring-2 ring-[#1d5443]">
-                  {communityUnread}
-                </span>
-              )}
-            </button>
-          </div>
+          <div className="w-[84px] shrink-0" aria-hidden />
           {tab('mosques', 'المساجد', MosqueIcon, currentView === 'imam' && !accountActive, onMosques)}
+          {divider('d2')}
           {isVisitor ? tab('signin', 'دخول', SignInIcon, false, onSignIn) : tab('account', 'حسابي', AccountIcon, accountActive, onAccount, unreadCount)}
         </div>
+
+        {/* round «الملتقى» button: ivory ring, thin gold ring, green inside */}
+        <button
+          onClick={onCommunity}
+          aria-label={communityUnread ? `ملتقى الأئمة (${communityUnread} إشعار جديد)` : 'ملتقى الأئمة'}
+          aria-current={communityOn ? 'page' : undefined}
+          className={`ivory-centre absolute left-1/2 -translate-x-1/2 -top-[11px] w-[74px] h-[74px] rounded-full p-[5px] cursor-pointer ${communityOn ? 'is-active' : ''}`}
+        >
+          <span className="ivory-centre__gold block w-full h-full rounded-full p-[1.5px]">
+            <span className="ivory-centre__green w-full h-full rounded-full flex flex-col items-center justify-center gap-0">
+              <CommunityIcon className="w-[28px] h-[20px]" />
+              <span className="text-[10.5px] font-black leading-tight mt-0.5">الملتقى</span>
+            </span>
+          </span>
+          {communityUnread > 0 && (
+            <span className="absolute top-0 right-0 bg-red-600 text-white text-[11px] font-black min-w-5 h-5 px-1 rounded-full flex items-center justify-center ring-2 ring-[#fbf6f0]">
+              {communityUnread}
+            </span>
+          )}
+        </button>
       </div>
     </nav>
   );
