@@ -493,28 +493,29 @@
 .dark [data-section='mosques'] .site-backdrop { background: linear-gradient(180deg, #0b1a16 0%, #0a1714 100%); }
 .dark [data-section='account'] .site-backdrop { background: linear-gradient(180deg, #16140d 0%, #12100b 100%); }
 
-/* ---------- Phone bottom bar (MobileNav): golden tabs on the drawn bar ---------- */
-.gold-bar { filter: drop-shadow(0 12px 22px rgb(0 0 0 / 0.55)); }
-.gold-tab { opacity: 0.82; transition: opacity 0.35s ease; }
-.gold-tab svg { transition: filter 0.35s ease, transform 0.35s ease; }
-.gold-tab__label {
-  background: linear-gradient(180deg, #f6dfa0, #c99a4e);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* ---------- Phone bottom bar (MobileNav): slim ivory pill, green tabs (gold when active) ---------- */
+.ivory-bar {
+  background: linear-gradient(180deg, #fdf9f4 0%, #f3ebe2 55%, #e7dbce 100%);
+  border: 1px solid rgb(255 255 255 / 0.85);
+  box-shadow: 0 12px 26px -10px rgb(0 0 0 / 0.45), 0 2px 6px rgb(0 0 0 / 0.08), inset 0 1px 0 #fff;
 }
-.gold-tab:hover { opacity: 1; }
-.gold-tab.is-active { opacity: 1; }
-.gold-tab.is-active svg { filter: drop-shadow(0 0 7px rgb(255 226 150 / 0.75)) brightness(1.15); transform: translateY(-1px) scale(1.07); }
-.gold-tab__glow {
-  position: absolute;
-  inset: 10% 18%;
-  border-radius: 9999px;
-  background: radial-gradient(closest-side, rgb(255 226 150 / 0.3), transparent);
-  opacity: 0;
-  transform: scale(0.6);
-  transition: opacity 0.35s ease, transform 0.35s ease;
+.ivory-tab { color: #0b4a3b; transition: color 0.35s ease; --nav-cut: #f3ebe2; }
+.ivory-tab svg { transition: transform 0.35s ease, filter 0.35s ease; }
+.ivory-tab:hover { color: #0f5f4a; }
+.ivory-tab.is-active { color: #b0853a; }
+.ivory-tab.is-active svg { transform: translateY(-1px) scale(1.08); filter: drop-shadow(0 0 5px rgb(214 174 92 / 0.55)); }
+.ivory-centre {
+  background: linear-gradient(180deg, #fffdf9 0%, #efe4d6 100%);
+  box-shadow: 0 10px 22px -8px rgb(0 0 0 / 0.5), inset 0 1px 0 #fff;
+  transition: transform 0.35s ease;
 }
-.gold-tab.is-active .gold-tab__glow { opacity: 1; transform: scale(1); }
-.gold-tab--centre { opacity: 0.95; }
-.gold-tab--centre .gold-tab__glow { inset: 0 -10%; }
+.ivory-centre:active { transform: translateX(-50%) scale(0.96); }
+.ivory-centre__gold { background: linear-gradient(180deg, #f3d998, #b8893a); }
+.ivory-centre__green {
+  background: radial-gradient(circle at 50% 30%, #0d7a59 0%, #075c43 45%, #02362a 100%);
+  color: #f6efe2;
+  box-shadow: inset 0 2px 6px rgb(0 0 0 / 0.35);
+  transition: color 0.35s ease;
+}
+.ivory-centre.is-active .ivory-centre__green { color: #f6dc97; }
+.ivory-centre.is-active { box-shadow: 0 10px 22px -8px rgb(0 0 0 / 0.5), 0 0 0 3px rgb(214 174 92 / 0.35), inset 0 1px 0 #fff; }
