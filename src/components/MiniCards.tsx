@@ -46,7 +46,7 @@ interface ImamMiniCardProps {
 }
 
 export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, onOpen, onReport }) => {
-  const busy = imam.availabilityState === 'busy_ramadan';
+  const busy = imam.availabilityState === 'busy_ramadan' || imam.availabilityState === 'ramadan_only';
   const languages = imamLanguages(imam).map((l) => l.name).join('، ');
 
   return (
@@ -85,7 +85,9 @@ export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, 
             busy ? 'bg-amber-50 text-amber-900 border border-amber-200' : 'bg-emerald-50 text-emerald-900 border border-emerald-200'
           }`}
         >
-          {busy
+          {imam.availabilityState === 'ramadan_only'
+            ? 'متاح لرمضان فقط (صلاة التراويح)'
+            : imam.availabilityState === 'busy_ramadan'
             ? `ملتزم في رمضان — متاح للتعاقد: ${imam.availableAfterDate || 'بعد العيد'}`
             : imam.availabilityState === 'paused'
             ? 'غير متاح حالياً'

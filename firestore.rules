@@ -93,7 +93,7 @@ service cloud.firestore {
         && str(d.get('germanLevel', ''), 10)
         && str(d.get('youtubeUrl', ''), 300)
         && str(d.get('cvText', ''), 5000)
-        && d.get('availabilityState', 'available_now') in ['available_now', 'busy_ramadan', 'paused']
+        && d.get('availabilityState', 'available_now') in ['available_now', 'ramadan_only', 'busy_ramadan', 'paused']
         && str(d.get('ramadanNote', ''), 300)
         && str(d.get('availableAfterDate', ''), 100)
         && str(d.get('photo', ''), 200000)

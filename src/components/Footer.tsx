@@ -16,6 +16,8 @@ interface FooterProps {
   /** Undefined while no support method is configured. */
   onOpenSupport?: () => void;
   onOpenPrivacy: () => void;
+  /** The signed-in imam already has a profile. */
+  hasOwnImamProfile?: boolean;
 }
 
 const linkClass = 'hover:text-amber-300 transition cursor-pointer text-right';
@@ -29,6 +31,7 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenContact,
   onOpenSupport,
   onOpenPrivacy,
+  hasOwnImamProfile = false,
 }) => {
   return (
     <footer className="bg-night text-slate-400 border-t border-emerald-900/60 pt-12 pb-28 lg:pb-8 px-4 sm:px-6 lg:px-8 text-sm">
@@ -59,7 +62,7 @@ export const Footer: React.FC<FooterProps> = ({
             </h2>
             <ul className="space-y-2">
               <li><button onClick={onOpenMosquesList} className={linkClass}>تصفح إعلانات المساجد</button></li>
-              <li><button onClick={onOpenImamAdd} className={linkClass}>أنشئ ملفك كإمام</button></li>
+              <li><button onClick={onOpenImamAdd} className={linkClass}>{hasOwnImamProfile ? 'تعديل ملفي كإمام' : 'أنشئ ملفك كإمام'}</button></li>
             </ul>
           </nav>
 

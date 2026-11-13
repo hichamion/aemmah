@@ -339,7 +339,10 @@ export const MosqueModalForm: React.FC<MosqueModalFormProps> = ({ isOpen, onClos
                   className="w-full border border-amber-300 rounded-xl px-3 py-2 bg-white font-bold text-slate-900 focus:outline-none"
                 >
                   <option value="نبحث عن إمام رسمي بعقد دائم">نبحث عن إمام رسمي بعقد دائم</option>
-                  <option value="نبحث عن إمام لصلاة التراويح وشهر رمضان">نبحث عن إمام لصلاة التراويح وشهر رمضان</option>
+                  <option value="نبحث عن إمام لصلاة التراويح فقط (رمضان)">نبحث عن إمام لصلاة التراويح فقط (رمضان)</option>
+                  {formData.lookingType === 'نبحث عن إمام لصلاة التراويح وشهر رمضان' && (
+                    <option value="نبحث عن إمام لصلاة التراويح وشهر رمضان">نبحث عن إمام لصلاة التراويح وشهر رمضان</option>
+                  )}
                   <option value="نبحث عن إمام يبدأ معنا رسمياً بعد رمضان">نبحث عن إمام يبدأ معنا رسمياً بعد رمضان</option>
                 </select>
               </div>

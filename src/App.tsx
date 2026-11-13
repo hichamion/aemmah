@@ -47,6 +47,7 @@ import { StatsConsent } from './components/StatsConsent';
 import { SettingsPanel } from './components/SettingsPanel';
 import { SiteBackdrop } from './components/SiteBackdrop';
 import { AppErrorBoundary } from './components/AppErrorBoundary';
+import { InstallGuide, isInstalled } from './components/InstallGuide';
 import { trackVisit } from './lib/visits';
 import { useNotifications } from './lib/community';
 import { scrollToTop } from './lib/scroll';
@@ -141,8 +142,13 @@ export default function App() {
   const setCurrentView = useCallback((view: View) => {
     setCurrentViewState(view);
     if (window.location.hash !== VIEW_TO_HASH[view]) window.location.hash = VIEW_TO_HASH[view];
-    scrollToTop();
   }, []);
+
+  // Back to the top AFTER the new page is drawn (scrolling before it, the browser kept the old
+  // position and showed the bottom of the shorter page).
+  useEffect(() => {
+    requestAnimationFrame(() => scrollToTop(false));
+  }, [currentView]);
 
   useEffect(() => {
     const onHash = () => {
@@ -251,6 +257,40 @@ export default function App() {
     }
   }, [communityNotifications, uid, showToast]);
 
+  // Which part of the site the user is in: each one has its own colours (index.css, [data-section]).
+  const section: 'home' | 'imams' | 'mosques' | 'community' | 'account' | 'other' =
+    (role === 'admin' && currentView === 'admin') ||
+    (role === 'imam' && currentView === 'imam' && imamTabOpen !== 'mosque_ads') ||
+    (role === 'mosque' && currentView === 'mosque' && mosqueTabOpen !== 'browse')
+      ? 'account'
+      : currentView === 'home'
+      ? 'home'
+      : currentView === 'mosque'
+      ? 'imams'
+      : currentView === 'imam'
+      ? 'mosques'
+      : currentView === 'community'
+      ? 'community'
+      : 'other';
+
+  // A short rise-and-fade when the section changes (animated in place: nothing is remounted).
+  const mainRef = useRef<HTMLElement>(null);
+  const firstSection = useRef(true);
+  useEffect(() => {
+    if (firstSection.current) {
+      firstSection.current = false;
+      return;
+    }
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('reduce-motion')) return;
+    mainRef.current?.animate(
+      [
+        { opacity: 0, transform: 'translateY(14px)' },
+        { opacity: 1, transform: 'none' },
+      ],
+      { duration: 380, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' }
+    );
+  }, [section]);
+
   const canSeeImamContacts = role === 'admin' || (role === 'mosque' && profile?.verified === true);
   // Same rule as mosqueContacts in firestore.rules: admins and imams whose profile is approved.
   const canSeeMosqueContacts = role === 'admin' || (role === 'imam' && myImam?.approvalStatus === 'approved');
@@ -259,6 +299,8 @@ export default function App() {
   // Modals
   // ------------------------------------------------------------------
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [installOpen, setInstallOpen] = useState(false);
+  const openInstallAuto = useCallback(() => setInstallOpen(true), []);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isImamModalOpen, setIsImamModalOpen] = useState(false);
   const [editingImam, setEditingImam] = useState<ImamProfile | null>(null);
@@ -719,7 +761,7 @@ export default function App() {
   };
 
   return (
-    <div className="relative isolate min-h-screen flex flex-col text-slate-800 font-sans selection:bg-emerald-600 selection:text-white">
+    <div data-section={section} className="relative isolate min-h-screen flex flex-col text-slate-800 font-sans selection:bg-emerald-600 selection:text-white">
       <SiteBackdrop />
       {toast && (
         <div
@@ -746,6 +788,7 @@ export default function App() {
         setCurrentView={setCurrentView}
         currentRole={role}
         onOpenSettings={() => setSettingsOpen(true)}
+        onOpenInstall={isInstalled() ? undefined : () => setInstallOpen(true)}
         communityUnread={communityUnread}
         userName={displayName}
         userEmail={profile?.email || firebaseUser?.email || ''}
@@ -778,7 +821,9 @@ export default function App() {
         }
       />
 
-      <main className="flex-1 flex flex-col">
+      {/* thin line in the colour of the section, under the header */}
+      <div className="section-line" aria-hidden />
+      <main ref={mainRef} className="flex-1 flex flex-col">
         <AppErrorBoundary key={currentView}>
         <Suspense
           fallback={
@@ -875,6 +920,7 @@ export default function App() {
                 initialTab={mosquePortalTab.tab}
                 onTabChange={setMosqueTabOpen}
                 tabRequest={mosquePortalTab.seq}
+                hasOwnImamProfile={!!myImam}
               />
             )}
 
@@ -941,20 +987,18 @@ export default function App() {
         onOpenHowItWorks={goHowItWorks}
         onOpenContact={() => setCurrentView('contact')}
         onOpenSupport={SUPPORT_ENABLED ? () => setCurrentView('support') : undefined}
+        hasOwnImamProfile={!!myImam}
       />
 
       {showIntro && <Intro onDone={() => setShowIntro(false)} />}
 
       <StatsConsent onPrivacy={() => setCurrentView('privacy')} />
-      <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} onPrivacy={() => setCurrentView('privacy')} />
+      <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} onPrivacy={() => setCurrentView('privacy')} onInstall={isInstalled() ? undefined : () => { setSettingsOpen(false); setInstallOpen(true); }} />
+      <InstallGuide open={installOpen} onClose={() => setInstallOpen(false)} onAutoOpen={openInstallAuto} />
 
       <MobileNav
         communityUnread={communityUnread}
-        accountActive={
-          (role === 'admin' && currentView === 'admin') ||
-          (role === 'imam' && currentView === 'imam' && imamTabOpen !== 'mosque_ads') ||
-          (role === 'mosque' && currentView === 'mosque' && mosqueTabOpen !== 'browse')
-        }
+        accountActive={section === 'account'}
         currentView={currentView}
         role={role}
         unreadCount={totalUnreadMessages}

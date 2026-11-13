@@ -46,6 +46,7 @@ export const SITE_URL =
 
 const AVAILABILITY: Record<ImamProfile['availabilityState'], string> = {
   available_now: 'متاح فوراً لصلاة التراويح أو للتعاقد الدائم',
+  ramadan_only: 'متاح لرمضان فقط (صلاة التراويح)',
   busy_ramadan: 'ملتزم في رمضان، ومتاح للتعاقد بعده',
   paused: 'غير متاح حالياً',
 };
