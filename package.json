@@ -1,8 +1,8 @@
 {
-  "name": "mihrab",
+  "name": "aemmah",
   "private": true,
-  "version": "1.0.1",
-  "description": "Mihrab — platform connecting imams and Quran reciters with mosques in Europe",
+  "version": "2.8.0",
+  "description": "Aemmah — platform connecting imams and Quran reciters with mosques in Europe",
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
@@ -10,14 +10,20 @@
     "preview": "vite preview",
     "lint": "tsc --noEmit",
     "clean": "rm -rf dist",
-    "deploy:rules": "firebase deploy --only firestore:rules,storage",
+    "deploy:rules": "firebase deploy --only firestore:rules",
     "deploy": "npm run build && firebase deploy"
   },
   "dependencies": {
+    "@breezystack/lamejs": "^1.2.7",
     "@fontsource/amiri": "^5.0.0",
     "@fontsource/cairo": "^5.0.0",
+    "@fontsource/reem-kufi": "^5.3.0",
+    "@fontsource/ruwudu": "^5.3.0",
     "firebase": "^13.1.0",
+    "html-to-image": "^1.11.13",
+    "jspdf": "^3.0.1",
     "lucide-react": "^0.546.0",
+    "qrcode": "^1.5.4",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
     "recharts": "^3.10.1"
@@ -25,6 +31,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^22.14.0",
+    "@types/qrcode": "^1.5.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",

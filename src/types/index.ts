@@ -1,5 +1,5 @@
 /**
- * Data model for Mihrab.
+ * Data model for Aemmah (منصة أئمة).
  *
  * Public documents (imams, mosques) contain no phone numbers or e-mails.
  * Contact details live in separate collections (imamContacts, mosqueContacts)
@@ -13,7 +13,8 @@ export type UserRole = 'visitor' | 'imam' | 'mosque' | 'admin';
 export type AccountRole = 'imam' | 'mosque';
 
 export type ApprovalStatus = 'pending' | 'approved' | 'rejected';
-export type AvailabilityState = 'available_now' | 'busy_ramadan' | 'paused';
+/** paused = not published (hidden from mosques). ramadan_only = only for tarawih / the month of Ramadan. */
+export type AvailabilityState = 'available_now' | 'ramadan_only' | 'busy_ramadan' | 'paused';
 
 /** Firestore: users/{uid} */
 export interface UserProfile {
@@ -21,7 +22,7 @@ export interface UserProfile {
   email: string;
   displayName: string;
   photoURL?: string;
-  provider: 'google' | 'facebook';
+  provider: 'google' | 'facebook' | 'password' | 'phone';
   role: AccountRole;
   /** Set to true by an admin when one of the user's mosques is approved. Only admins can change it. */
   verified?: boolean;
@@ -29,13 +30,74 @@ export interface UserProfile {
   privacyAcceptedAt: string;
 }
 
+export interface ImamExperience {
+  title: string;
+  place: string;
+  /** Years as text, e.g. '2015'. */
+  from: string;
+  to: string;
+}
+export interface ImamCertificate {
+  name: string;
+  issuer: string;
+  year: string;
+}
+export interface PreferredLocation {
+  country: string;
+  /** City or region; empty = anywhere in the country. */
+  area: string;
+}
+export type LanguageLevel = 'native' | 'excellent' | 'very_good' | 'good' | 'basic';
+export interface ImamLanguage {
+  name: string;
+  level: LanguageLevel;
+}
+export type RecitationKind = 'fatiha' | 'short_surah' | 'passage';
+/** Who may listen: everyone, signed-in members, or verified mosques only (owner and admins always can). */
+export type RecitationVisibility = 'public' | 'members' | 'mosques';
+export interface RecitationMeta {
+  kind: RecitationKind;
+  /** Surah name or passage, e.g. «سورة الفاتحة», «سورة الملك»… */
+  title: string;
+  durationSec: number;
+  visibility: RecitationVisibility;
+  createdAt: string;
+}
+/** Firestore: recitations/{imamId} — the audio sample (MP3 data URL, at most 60 s). */
+export interface Recitation extends RecitationMeta {
+  ownerUid: string;
+  audio: string;
+}
+
+export type MaritalStatus = '' | 'single' | 'married' | 'married_children';
+
 /** Firestore: imams/{id}. For self-registered imams the id equals the owner's uid (one profile per account). */
 export interface ImamProfile {
   id: string;
   ownerUid: string;
   name: string;
   age: number;
+  /** Current place of residence (city and country). */
   country: string;
+  /** Nationality, e.g. «مغربي». Optional for profiles created before it existed. */
+  nationality?: string;
+  /** What the imam does: «إمام», «خطيب», «محفظ» and/or titles they typed. */
+  titles?: string[];
+  /** Current job or occupation (free text). */
+  currentJob?: string;
+  /** Past and present positions, as many as the imam wants. `to` empty = still in this position. */
+  experiences?: ImamExperience[];
+  /** Certificates, ijazas and diplomas, as many as the imam wants. */
+  certificates?: ImamCertificate[];
+  /** European countries (optionally a city / region in each) where the imam would like to serve. */
+  preferredLocations?: PreferredLocation[];
+  /** Languages with a level. The older free-text `languages` field is kept in sync for search. */
+  languageList?: ImamLanguage[];
+  maritalStatus?: MaritalStatus;
+  /** Already lives in a European country (so no immigration procedure is needed). */
+  livesInEurope?: boolean;
+  /** Public summary of the recitation sample; the audio itself is in recitations/{imamId}. */
+  recitationMeta?: RecitationMeta | null;
   hasVisa: 'yes' | 'no';
   visaDetails: string;
   hasCerts: 'yes' | 'no';
@@ -85,12 +147,14 @@ export interface MosqueJob {
   details: string;
   salaryAndBenefits: string;
   housingProvided: boolean;
+  /** Small compressed JPEG as a data URL (profile picture of the mosque), or '' for the default image. */
+  photo?: string;
   approvalStatus: ApprovalStatus;
   createdAt: string;
   updatedAt?: string;
 }
 
-/** Firestore: mosqueContacts/{mosqueId} — readable by signed-in imams/mosques, the owner and admins. */
+/** Firestore: mosqueContacts/{mosqueId} — readable by the owner, admins and imams with an approved profile. */
 export interface MosqueContact {
   ownerUid: string;
   contactPerson: string;
@@ -143,7 +207,8 @@ export interface PlatformMessage {
 /** Firestore: reports/{id} — only admins can read them. */
 export interface ReportItem {
   id: string;
-  targetType: 'imam' | 'mosque';
+  /** For a comment, targetId is "{postId}/{commentId}". */
+  targetType: 'imam' | 'mosque' | 'post' | 'comment';
   targetId: string;
   targetName: string;
   reason: string;
@@ -152,6 +217,21 @@ export interface ReportItem {
   reporterRole: 'imam' | 'mosque' | 'admin';
   reportedAt: string;
   status: 'pending' | 'reviewed';
+}
+
+/** Firestore: feedback/{id} — "contact the admin / suggestion" form, open to everyone, readable by admins only. */
+export type FeedbackKind = 'message' | 'suggestion' | 'problem';
+export interface FeedbackItem {
+  id: string;
+  kind: FeedbackKind;
+  name: string;
+  /** Optional, so the admin can reply. */
+  email: string;
+  message: string;
+  /** Set when the sender was signed in. */
+  senderUid?: string;
+  createdAt: string;
+  status: 'new' | 'handled';
 }
 
 /** Files picked in the imam form, uploaded on save. */

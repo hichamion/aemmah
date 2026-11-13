@@ -1,0 +1,97 @@
+name: Deploy Firestore rules
+
+# Publishes firestore.rules to Firebase whenever it changes on main (and on demand),
+# so nobody has to copy / paste the rules into the Firebase console any more.
+#
+# One-time setup (see README → «نشر قواعد الأمان تلقائياً»). Either:
+#   A) repository secret FIREBASE_SERVICE_ACCOUNT  = JSON key of a service account, or
+#   B) repository variables WIF_PROVIDER + WIF_SERVICE_ACCOUNT (Workload Identity, no key at all), or
+#   C) repository secret FIREBASE_TOKEN = output of `npx firebase-tools login:ci` (the owner's own sign-in;
+#      use it when creating service accounts is not allowed in the Google Cloud project).
+# Until one of them exists the job only writes a note and succeeds, so it never blocks anything.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - firestore.rules
+      - firebase.json
+      - .github/workflows/deploy-rules.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # needed only for option B (Workload Identity)
+
+concurrency:
+  group: firestore-rules
+  cancel-in-progress: false
+
+env:
+  PROJECT_ID: applied-sunspot-701dl
+
+jobs:
+  deploy-rules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Choose authentication
+        id: mode
+        env:
+          SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          FB_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          WIF_PROVIDER: ${{ vars.WIF_PROVIDER }}
+          WIF_SERVICE_ACCOUNT: ${{ vars.WIF_SERVICE_ACCOUNT }}
+        run: |
+          if [ -n "$SA_KEY" ]; then
+            echo "mode=key" >> "$GITHUB_OUTPUT"
+          elif [ -n "$WIF_PROVIDER" ] && [ -n "$WIF_SERVICE_ACCOUNT" ]; then
+            echo "mode=wif" >> "$GITHUB_OUTPUT"
+          elif [ -n "$FB_TOKEN" ]; then
+            echo "mode=token" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=none" >> "$GITHUB_OUTPUT"
+            {
+              echo "### ⚠️ Firestore rules were NOT published"
+              echo "GitHub has no permission for the Firebase project yet."
+              echo "Add the secret \`FIREBASE_SERVICE_ACCOUNT\` or \`FIREBASE_TOKEN\` (or the variables \`WIF_PROVIDER\` and \`WIF_SERVICE_ACCOUNT\`),"
+              echo "then run this workflow again (Actions → Deploy Firestore rules → Run workflow)."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Authenticate (service account key)
+        if: steps.mode.outputs.mode == 'key'
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+
+      - name: Authenticate (Workload Identity, no key)
+        if: steps.mode.outputs.mode == 'wif'
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.WIF_PROVIDER }}
+          service_account: ${{ vars.WIF_SERVICE_ACCOUNT }}
+
+      - name: Setup Node
+        if: steps.mode.outputs.mode != 'none'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Publish firestore.rules
+        if: steps.mode.outputs.mode != 'none'
+        env:
+          # Used only in mode "token" (the other modes sign in through google-github-actions/auth).
+          FIREBASE_TOKEN: ${{ steps.mode.outputs.mode == 'token' && secrets.FIREBASE_TOKEN || '' }}
+        run: npx --yes firebase-tools@15 deploy --only firestore:rules --project "$PROJECT_ID" --non-interactive
+
+      - name: Summary
+        if: steps.mode.outputs.mode != 'none'
+        run: |
+          {
+            echo "### ✅ Firestore rules published"
+            echo "Project \`$PROJECT_ID\`, commit \`${GITHUB_SHA::7}\`."
+          } >> "$GITHUB_STEP_SUMMARY"

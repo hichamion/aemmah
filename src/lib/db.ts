@@ -16,19 +16,22 @@ import {
   writeBatch,
   addDoc,
 } from 'firebase/firestore';
-import { deleteObject, ref, uploadBytes } from 'firebase/storage';
-import { auth, db, storage } from '../firebase';
+import { auth, db } from '../firebase';
+import { compressImage } from './image';
 import {
   ADMIN_INBOX,
   Application,
   ApplicationStatus,
   AvailabilityState,
+  FeedbackItem,
   ImamContact,
   ImamFormFiles,
   ImamProfile,
   MosqueContact,
   MosqueJob,
   PlatformMessage,
+  Recitation,
+  RecitationMeta,
   ReportItem,
   UserProfile,
   UserRole,
@@ -111,8 +114,10 @@ export interface PlatformData {
   applications: Application[];
   messages: PlatformMessage[];
   reports: ReportItem[];
+  feedback: FeedbackItem[];
   loading: boolean;
-  error: string | null;
+  /** Which data failed to load and why (Firestore error code), e.g. { source: 'البلاغات', code: 'permission-denied' }. */
+  error: { source: string; code: string } | null;
 }
 
 /**
@@ -125,15 +130,20 @@ export function usePlatformData(uid: string | null, role: UserRole): PlatformDat
   const [applications, setApplications] = useState<Application[]>([]);
   const [messages, setMessages] = useState<PlatformMessage[]>([]);
   const [reports, setReports] = useState<ReportItem[]>([]);
+  const [feedback, setFeedback] = useState<FeedbackItem[]>([]);
   const [loadedImams, setLoadedImams] = useState(false);
   const [loadedMosques, setLoadedMosques] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<PlatformData['error']>(null);
 
   useEffect(() => {
     const isAdmin = role === 'admin';
-    const onError = (err: Error) => {
-      console.error('[Firestore]', err);
-      setError(err.message);
+    setError(null);
+    const onError = (source: string) => (err: Error) => {
+      // A listener from the previous account (just after signing in/out) may fail before it is replaced; ignore it.
+      if ((auth.currentUser?.uid ?? null) !== uid) return;
+      const code = (err as { code?: string }).code || err.message;
+      console.error(`[Firestore] ${source}:`, err);
+      setError({ source, code });
     };
 
     // Imams
@@ -165,19 +175,21 @@ export function usePlatformData(uid: string | null, role: UserRole): PlatformDat
 
     // Reports (admin only)
     const reportSources: Source[] = isAdmin ? [collection(db, 'reports')] : [];
+    const feedbackSources: Source[] = isAdmin ? [collection(db, 'feedback')] : [];
 
     const unsubs = [
       subscribeMerged<ImamProfile>(imamSources, (items) => {
         setImams(items.sort(byDesc((i) => i.createdAt)));
         setLoadedImams(true);
-      }, onError),
+      }, onError('الأئمة')),
       subscribeMerged<MosqueJob>(mosqueSources, (items) => {
         setMosques(items.sort(byDesc((m) => m.createdAt)));
         setLoadedMosques(true);
-      }, onError),
-      subscribeMerged<Application>(appSources, (items) => setApplications(items.sort(byDesc((a) => a.appliedAt))), onError),
-      subscribeMerged<PlatformMessage>(msgSources, (items) => setMessages(items.sort(byDesc((m) => m.sentAt))), onError),
-      subscribeMerged<ReportItem>(reportSources, (items) => setReports(items.sort(byDesc((r) => r.reportedAt))), onError),
+      }, onError('المساجد')),
+      subscribeMerged<Application>(appSources, (items) => setApplications(items.sort(byDesc((a) => a.appliedAt))), onError('طلبات الترشح')),
+      subscribeMerged<PlatformMessage>(msgSources, (items) => setMessages(items.sort(byDesc((m) => m.sentAt))), onError('الرسائل')),
+      subscribeMerged<ReportItem>(reportSources, (items) => setReports(items.sort(byDesc((r) => r.reportedAt))), onError('البلاغات')),
+      subscribeMerged<FeedbackItem>(feedbackSources, (items) => setFeedback(items.sort(byDesc((f) => f.createdAt))), onError('رسائل الزوار')),
     ];
     return () => unsubs.forEach((u) => u());
   }, [uid, role]);
@@ -188,6 +200,7 @@ export function usePlatformData(uid: string | null, role: UserRole): PlatformDat
     applications,
     messages,
     reports,
+    feedback,
     loading: !(loadedImams && loadedMosques),
     error,
   };
@@ -260,29 +273,100 @@ export async function createUserProfile(profile: UserProfile) {
 // File helpers
 // ---------------------------------------------------------------------------
 
-const MAX_DOC_SIZE = 5 * 1024 * 1024; // 5 MB
+// Private documents (visa, certificates) are stored in Firestore as base64 chunks:
+// Cloud Storage is not enabled for this project (uploads there never finished).
+// privateDocs/{imamId}_{kind} holds the details, privateDocs/{id}/chunks/{n} the data — owner and admins only.
+const MAX_DOC_SIZE = 2 * 1024 * 1024; // 2 MB
+const DOC_CHUNK = 700_000;
 const ALLOWED_DOC_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+export const PRIVATE_DOC_PREFIX = 'privateDocs/';
 
 export function validateDocumentFile(file: File): string | null {
   if (!ALLOWED_DOC_TYPES.includes(file.type)) return 'نوع الملف غير مدعوم. المسموح: PDF أو JPG أو PNG أو WEBP.';
-  if (file.size > MAX_DOC_SIZE) return 'حجم الملف أكبر من 5 ميغابايت.';
+  // Photos are shrunk before upload, so only PDFs are limited by their raw size.
+  if (file.type === 'application/pdf' && file.size > MAX_DOC_SIZE) return 'حجم ملف PDF أكبر من 2 ميغابايت. اضغطه أو صوّر الوثيقة بدلاً منه.';
+  if (file.size > 15 * 1024 * 1024) return 'حجم الصورة أكبر من 15 ميغابايت.';
   return null;
 }
 
-async function uploadPrivateDocument(ownerUid: string, imamId: string, kind: 'visa' | 'certs', file: File) {
-  const safeName = file.name.replace(/[^\w.\-]+/g, '_').slice(-80);
-  const path = `private/${ownerUid}/${imamId}/${kind}-${Date.now()}-${safeName}`;
-  await uploadBytes(ref(storage, path), file, { contentType: file.type });
-  return { path, name: file.name };
+async function readAsBase64(file: Blob): Promise<string> {
+  const url = await new Promise<string>((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result));
+    r.onerror = () => reject(new Error('تعذر قراءة الملف.'));
+    r.readAsDataURL(file);
+  });
+  return url.slice(url.indexOf(',') + 1);
 }
 
-async function deleteStorageFile(path?: string) {
-  if (!path) return;
+async function uploadPrivateDocument(ownerUid: string, imamId: string, kind: 'visa' | 'certs', file: File) {
+  let mime = file.type;
+  let b64: string;
+  if (mime.startsWith('image/')) {
+    const dataUrl = await compressImage(file, 1600, 1_200_000);
+    mime = 'image/jpeg';
+    b64 = dataUrl.slice(dataUrl.indexOf(',') + 1);
+  } else {
+    b64 = await readAsBase64(file);
+  }
+  const chunks = Array.from({ length: Math.ceil(b64.length / DOC_CHUNK) }, (_, i) => b64.slice(i * DOC_CHUNK, (i + 1) * DOC_CHUNK));
+  if (chunks.length > 4) throw new Error('الملف كبير جداً بعد المعالجة (الحد 2 ميغابايت).');
+  const id = `${imamId}_${kind}`;
+  const old = await getDoc(doc(db, 'privateDocs', id)).catch(() => null);
+  const oldCount = old?.exists() ? Number(old.data().chunkCount) || 0 : 0;
+  const batch = writeBatch(db);
+  batch.set(doc(db, 'privateDocs', id), {
+    ownerUid,
+    imamId,
+    kind,
+    name: file.name.slice(0, 150),
+    mime,
+    size: Math.round((b64.length * 3) / 4),
+    chunkCount: chunks.length,
+    createdAt: nowIso(),
+  });
+  chunks.forEach((data, i) => batch.set(doc(db, 'privateDocs', id, 'chunks', String(i)), { data }));
+  for (let i = chunks.length; i < oldCount; i++) batch.delete(doc(db, 'privateDocs', id, 'chunks', String(i)));
+  await batch.commit();
+  return { path: `${PRIVATE_DOC_PREFIX}${id}`, name: file.name.slice(0, 150) };
+}
+
+async function deletePrivateDocument(path?: string) {
+  if (!path?.startsWith(PRIVATE_DOC_PREFIX)) return; // old Cloud Storage paths: nothing stored there
+  const id = path.slice(PRIVATE_DOC_PREFIX.length);
   try {
-    await deleteObject(ref(storage, path));
+    const meta = await getDoc(doc(db, 'privateDocs', id));
+    const n = meta.exists() ? Number(meta.data().chunkCount) || 0 : 0;
+    const batch = writeBatch(db);
+    for (let i = 0; i < n; i++) batch.delete(doc(db, 'privateDocs', id, 'chunks', String(i)));
+    batch.delete(doc(db, 'privateDocs', id));
+    await batch.commit();
   } catch {
     // Already gone or no permission — not critical.
   }
+}
+
+/** Opens a private document (owner or admin) in a new tab / download. */
+export async function openPrivateDocument(path: string) {
+  if (!path.startsWith(PRIVATE_DOC_PREFIX)) throw new Error('هذا الملف رُفع بنسخة قديمة ولم يُحفظ. ارفعه من جديد.');
+  const id = path.slice(PRIVATE_DOC_PREFIX.length);
+  const meta = await getDoc(doc(db, 'privateDocs', id));
+  if (!meta.exists()) throw new Error('الملف غير موجود.');
+  const { chunkCount, mime, name } = meta.data() as { chunkCount: number; mime: string; name: string };
+  const parts = await Promise.all(Array.from({ length: chunkCount }, (_, i) => getDoc(doc(db, 'privateDocs', id, 'chunks', String(i)))));
+  const bin = atob(parts.map((p) => (p.data()?.data as string) || '').join(''));
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const url = URL.createObjectURL(new Blob([bytes], { type: mime }));
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.download = `${id}.${mime === 'application/pdf' ? 'pdf' : 'jpg'}`;
+  void name;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
 // ---------------------------------------------------------------------------
@@ -295,6 +379,15 @@ export type ImamEditableFields = Pick<
   | 'name'
   | 'age'
   | 'country'
+  | 'nationality'
+  | 'titles'
+  | 'currentJob'
+  | 'experiences'
+  | 'certificates'
+  | 'preferredLocations'
+  | 'languageList'
+  | 'maritalStatus'
+  | 'livesInEurope'
   | 'hasVisa'
   | 'visaDetails'
   | 'hasCerts'
@@ -330,18 +423,18 @@ export async function saveImam(params: {
   };
   if (files.photo !== undefined) data.photo = files.photo;
 
-  // Private documents go to Cloud Storage (owner-only access).
+  // Private documents go to Firestore (owner and admins only).
   if (files.visaFile) {
     const up = await uploadPrivateDocument(ownerUid, id, 'visa', files.visaFile);
     data.visaFilePath = up.path;
     data.visaFileName = up.name;
-    await deleteStorageFile(existing?.visaFilePath);
+    if (existing?.visaFilePath !== up.path) await deletePrivateDocument(existing?.visaFilePath);
   }
   if (files.certsFile) {
     const up = await uploadPrivateDocument(ownerUid, id, 'certs', files.certsFile);
     data.certsFilePath = up.path;
     data.certsFileName = up.name;
-    await deleteStorageFile(existing?.certsFilePath);
+    if (existing?.certsFilePath !== up.path) await deletePrivateDocument(existing?.certsFilePath);
   }
 
   const batch = writeBatch(db);
@@ -383,10 +476,77 @@ export async function deleteImam(imam: ImamProfile) {
   const batch = writeBatch(db);
   batch.delete(doc(db, 'imams', imam.id));
   batch.delete(doc(db, 'imamContacts', imam.id));
+  batch.delete(doc(db, 'recitations', imam.id));
   await batch.commit();
   contactCache.delete(`imam:${imam.id}`);
-  await deleteStorageFile(imam.visaFilePath);
-  await deleteStorageFile(imam.certsFilePath);
+  await deletePrivateDocument(imam.visaFilePath);
+  await deletePrivateDocument(imam.certsFilePath);
+}
+
+// ---------------------------------------------------------------------------
+// Recitation sample (audio in recitations/{imamId}, public summary in imams/{imamId}.recitationMeta)
+// ---------------------------------------------------------------------------
+
+/** Saves (or replaces) the imam's recitation sample. */
+export async function saveRecitation(imam: Pick<ImamProfile, 'id' | 'ownerUid'>, meta: Omit<RecitationMeta, 'createdAt'>, audio: string) {
+  const createdAt = nowIso();
+  const summary: RecitationMeta = { ...meta, title: meta.title.trim().slice(0, 120), createdAt };
+  const batch = writeBatch(db);
+  batch.set(doc(db, 'recitations', imam.id), { ...summary, ownerUid: imam.ownerUid, audio } satisfies Recitation);
+  batch.update(doc(db, 'imams', imam.id), { recitationMeta: summary, updatedAt: nowIso() });
+  await batch.commit();
+  recitationCache.delete(imam.id);
+}
+
+/** Changes who may listen, without re-uploading the audio. */
+export async function setRecitationVisibility(imam: Pick<ImamProfile, 'id' | 'recitationMeta'>, visibility: RecitationMeta['visibility']) {
+  if (!imam.recitationMeta) return;
+  const batch = writeBatch(db);
+  batch.update(doc(db, 'recitations', imam.id), { visibility });
+  batch.update(doc(db, 'imams', imam.id), { recitationMeta: { ...imam.recitationMeta, visibility }, updatedAt: nowIso() });
+  await batch.commit();
+  recitationCache.delete(imam.id);
+}
+
+export async function deleteRecitation(imamId: string) {
+  const batch = writeBatch(db);
+  batch.delete(doc(db, 'recitations', imamId));
+  batch.update(doc(db, 'imams', imamId), { recitationMeta: null, updatedAt: nowIso() });
+  await batch.commit();
+  recitationCache.delete(imamId);
+}
+
+const recitationCache = new Map<string, string | null>();
+
+/**
+ * Loads the audio of a recitation sample when the viewer opens the profile (never autoplayed).
+ * `denied` = the imam's privacy setting does not allow this viewer.
+ */
+export function useRecitationAudio(imamId: string | undefined, enabled: boolean, version?: string) {
+  const [state, setState] = useState<{ audio: string | null; loading: boolean; denied: boolean }>({ audio: null, loading: false, denied: false });
+  useEffect(() => {
+    if (!imamId || !enabled) {
+      setState({ audio: null, loading: false, denied: false });
+      return;
+    }
+    if (recitationCache.has(imamId)) {
+      setState({ audio: recitationCache.get(imamId) ?? null, loading: false, denied: false });
+      return;
+    }
+    let cancelled = false;
+    setState({ audio: null, loading: true, denied: false });
+    getDoc(doc(db, 'recitations', imamId))
+      .then((snap) => {
+        const audio = snap.exists() ? (snap.data() as Recitation).audio : null;
+        recitationCache.set(imamId, audio);
+        if (!cancelled) setState({ audio, loading: false, denied: false });
+      })
+      .catch(() => !cancelled && setState({ audio: null, loading: false, denied: true }));
+    return () => {
+      cancelled = true;
+    };
+  }, [imamId, enabled, version]);
+  return state;
 }
 
 // ---------------------------------------------------------------------------
@@ -407,6 +567,7 @@ export type MosqueEditableFields = Pick<
   | 'details'
   | 'salaryAndBenefits'
   | 'housingProvided'
+  | 'photo'
 >;
 
 export async function saveMosque(params: {
@@ -552,6 +713,31 @@ export async function resolveReport(id: string) {
 }
 
 // ---------------------------------------------------------------------------
+// Feedback ("contact the admin" / suggestions) — anyone may send, only admins read
+// ---------------------------------------------------------------------------
+
+export async function sendFeedback(item: Pick<FeedbackItem, 'kind' | 'name' | 'email' | 'message'>) {
+  const uid = auth.currentUser?.uid;
+  await addDoc(collection(db, 'feedback'), {
+    kind: item.kind,
+    name: item.name.trim().slice(0, 120),
+    email: item.email.trim().slice(0, 200),
+    message: item.message.trim().slice(0, 3000),
+    ...(uid ? { senderUid: uid } : {}),
+    createdAt: nowIso(),
+    status: 'new',
+  });
+}
+
+export async function setFeedbackHandled(id: string) {
+  await updateDoc(doc(db, 'feedback', id), { status: 'handled' });
+}
+
+export async function deleteFeedback(id: string) {
+  await deleteDoc(doc(db, 'feedback', id));
+}
+
+// ---------------------------------------------------------------------------
 // Account deletion (GDPR "right to erasure")
 // ---------------------------------------------------------------------------
 
@@ -575,6 +761,14 @@ export async function deleteMyData(uid: string) {
   // Messages sent or received
   const myMsgs = await getDocs(query(collection(db, 'messages'), where('participants', 'array-contains', uid)));
   for (const m of myMsgs.docs) await deleteDoc(m.ref);
+
+  // Community: own posts, saved posts and notifications (comments on others' posts stay, under the author's name).
+  const myPosts = await getDocs(query(collection(db, 'posts'), where('authorUid', '==', uid))).catch(() => null);
+  for (const p of myPosts?.docs ?? []) await deleteDoc(p.ref).catch(() => {});
+  for (const sub of ['saved', 'notifications']) {
+    const snap = await getDocs(collection(db, 'users', uid, sub)).catch(() => null);
+    for (const d of snap?.docs ?? []) await deleteDoc(d.ref).catch(() => {});
+  }
 
   await deleteDoc(doc(db, 'users', uid));
 
@@ -600,6 +794,17 @@ export function describeError(err: unknown): string {
     return 'هذا البريد مسجل مسبقاً بطريقة دخول أخرى. جرّب الدخول بجوجل.';
   if (code.includes('unauthorized-domain')) return 'هذا النطاق غير مصرح به في إعدادات Firebase Authentication.';
   if (code.includes('operation-not-allowed')) return 'طريقة تسجيل الدخول هذه غير مفعلة في إعدادات Firebase.';
-  if (code.includes('storage/')) return 'تعذر رفع الملف. تأكد من تفعيل Firebase Storage ومن حجم الملف.';
+  if (code.includes('storage/')) return 'تعذر رفع الملف. تحقق من حجمه ونوعه ثم أعد المحاولة.';
+  if (code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found'))
+    return 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
+  if (code.includes('email-already-in-use')) return 'هذا البريد مسجّل مسبقاً. سجّل الدخول، أو استعمل «نسيت كلمة المرور».';
+  if (code.includes('weak-password')) return 'كلمة المرور ضعيفة. استعمل 8 أحرف على الأقل.';
+  if (code.includes('invalid-email')) return 'البريد الإلكتروني غير صحيح.';
+  if (code.includes('invalid-phone-number')) return 'رقم الهاتف غير صحيح. اكتبه بالصيغة الدولية، مثل ‎+49 151 2345678';
+  if (code.includes('invalid-verification-code')) return 'رمز التحقق غير صحيح.';
+  if (code.includes('code-expired')) return 'انتهت صلاحية الرمز. اطلب رمزاً جديداً.';
+  if (code.includes('too-many-requests')) return 'محاولات كثيرة. انتظر قليلاً ثم حاول مجدداً.';
+  if (code.includes('billing-not-enabled') || code.includes('quota-exceeded'))
+    return 'الدخول بالهاتف غير متاح حالياً (يتطلب تفعيل الرسائل في Firebase).';
   return 'حدث خطأ غير متوقع. حاول مرة أخرى.';
 }

@@ -64,26 +64,40 @@ service cloud.firestore {
 
     // ---------- imams ----------
     function validImam(d) {
-      return d.keys().hasOnly(['ownerUid', 'name', 'age', 'country', 'hasVisa', 'visaDetails', 'hasCerts', 'degree',
+      return d.keys().hasOnly(['ownerUid', 'name', 'age', 'country', 'nationality', 'titles', 'currentJob', 'experiences',
+                               'certificates', 'preferredLocations', 'languageList', 'maritalStatus', 'livesInEurope', 'recitationMeta', 'hasVisa', 'visaDetails', 'hasCerts', 'degree',
                                'riwaya', 'languages', 'germanLevel', 'youtubeUrl', 'cvText', 'availabilityState',
                                'ramadanNote', 'availableAfterDate', 'photo', 'visaFilePath', 'visaFileName',
                                'certsFilePath', 'certsFileName', 'approvalStatus', 'isVerified', 'createdAt', 'updatedAt'])
+        // Fields added in later versions are read with defaults, so older profiles stay editable.
         && nonEmpty(d.name, 120)
-        && d.age is int && d.age >= 18 && d.age <= 90
-        && nonEmpty(d.country, 120)
-        && d.hasVisa in ['yes', 'no']
-        && d.hasCerts in ['yes', 'no']
-        && str(d.visaDetails, 500)
-        && str(d.degree, 300)
-        && nonEmpty(d.riwaya, 60)
-        && str(d.languages, 300)
-        && str(d.germanLevel, 10)
-        && str(d.youtubeUrl, 300)
-        && str(d.cvText, 5000)
-        && d.availabilityState in ['available_now', 'busy_ramadan', 'paused']
-        && str(d.ramadanNote, 300)
-        && str(d.availableAfterDate, 100)
-        && str(d.photo, 200000)
+        // Only the name (and the protected phone / e-mail) are required; age 0 = not given.
+        && d.get('age', 0) is number && (d.get('age', 0) == 0 || (d.get('age', 0) >= 18 && d.get('age', 0) <= 90))
+        && str(d.get('country', ''), 120)
+        && str(d.get('nationality', ''), 80)
+        && d.get('titles', []) is list && d.get('titles', []).size() <= 8
+        && str(d.get('currentJob', ''), 150)
+        && d.get('experiences', []) is list && d.get('experiences', []).size() <= 30
+        && d.get('certificates', []) is list && d.get('certificates', []).size() <= 30
+        && d.get('preferredLocations', []) is list && d.get('preferredLocations', []).size() <= 30
+        && d.get('languageList', []) is list && d.get('languageList', []).size() <= 20
+        && d.get('maritalStatus', '') in ['', 'single', 'married', 'married_children']
+        && d.get('livesInEurope', false) is bool
+        && (d.get('recitationMeta', null) == null || d.recitationMeta is map)
+        && d.get('hasVisa', 'no') in ['yes', 'no']
+        && d.get('hasCerts', 'no') in ['yes', 'no']
+        && str(d.get('visaDetails', ''), 500)
+        && str(d.get('degree', ''), 300)
+        && str(d.get('riwaya', ''), 60)
+        && str(d.get('languages', ''), 300)
+        && str(d.get('germanLevel', ''), 10)
+        && str(d.get('youtubeUrl', ''), 300)
+        && str(d.get('cvText', ''), 5000)
+        && d.get('availabilityState', 'available_now') in ['available_now', 'ramadan_only', 'busy_ramadan', 'paused']
+        && str(d.get('ramadanNote', ''), 300)
+        && str(d.get('availableAfterDate', ''), 100)
+        && str(d.get('photo', ''), 200000)
+        && str(d.get('visaFilePath', ''), 200) && str(d.get('certsFilePath', ''), 200)
         && d.approvalStatus in ['pending', 'approved', 'rejected']
         && d.isVerified is bool;
     }
@@ -128,11 +142,76 @@ service cloud.firestore {
       allow delete: if isAdmin() || (signedIn() && resource.data.ownerUid == me());
     }
 
+    // ---------- private documents of an imam (visa, certificates) ----------
+    // privateDocs/{imamId}_{kind} + chunks/{n}: base64 data, readable by the owner and admins only.
+    match /privateDocs/{docId} {
+      allow get: if signedIn() && (resource == null || resource.data.ownerUid == me() || isAdmin());
+      allow list: if false;
+      allow create, update: if signedIn()
+        && incoming().keys().hasOnly(['ownerUid', 'imamId', 'kind', 'name', 'mime', 'size', 'chunkCount', 'createdAt'])
+        && incoming().kind in ['visa', 'certs']
+        && docId == incoming().imamId + '_' + incoming().kind
+        && nonEmpty(incoming().name, 150) && str(incoming().createdAt, 40)
+        && incoming().mime in ['application/pdf', 'image/jpeg']
+        && incoming().size is int && incoming().size > 0 && incoming().size <= 2200000
+        && incoming().chunkCount is int && incoming().chunkCount >= 1 && incoming().chunkCount <= 4
+        && (isAdmin()
+            || (incoming().ownerUid == me()
+                && (resource == null || resource.data.ownerUid == me())
+                && (incoming().imamId == me()
+                    || get(/databases/$(database)/documents/imams/$(incoming().imamId)).data.ownerUid == me())));
+      allow delete: if signedIn() && (resource.data.ownerUid == me() || isAdmin());
+
+      match /chunks/{n} {
+        allow get: if signedIn() && (get(/databases/$(database)/documents/privateDocs/$(docId)).data.ownerUid == me() || isAdmin());
+        allow list: if false;
+        allow create, update: if signedIn()
+          && n in ['0', '1', '2', '3']
+          && incoming().keys().hasOnly(['data'])
+          && incoming().data is string && incoming().data.size() <= 700000
+          && (isAdmin() || getAfter(/databases/$(database)/documents/privateDocs/$(docId)).data.ownerUid == me());
+        allow delete: if signedIn()
+          && (isAdmin() || get(/databases/$(database)/documents/privateDocs/$(docId)).data.ownerUid == me());
+      }
+    }
+
+    // ---------- recitation sample (audio) ----------
+    // recitations/{imamId}: MP3 data URL (≤ ~330 KB, i.e. about 60 s at 32 kbps) and its details.
+    // Readable according to the imam's choice; owner and admins always.
+    function validRecitation(d) {
+      return d.keys().hasOnly(['ownerUid', 'audio', 'kind', 'title', 'durationSec', 'visibility', 'createdAt'])
+        && d.audio is string && d.audio.size() <= 450000
+        && d.audio.matches('data:audio/mpeg;base64,[A-Za-z0-9+/=]+')
+        && d.kind in ['fatiha', 'short_surah', 'passage']
+        && str(d.title, 120)
+        && d.durationSec is number && d.durationSec > 0 && d.durationSec <= 61
+        && d.visibility in ['public', 'members', 'mosques']
+        && str(d.createdAt, 40);
+    }
+
+    match /recitations/{imamId} {
+      allow get: if resource == null
+        || resource.data.visibility == 'public'
+        || (resource.data.visibility == 'members' && hasProfile())
+        || (resource.data.visibility == 'mosques' && isVerifiedMosque())
+        || (signedIn() && resource.data.ownerUid == me())
+        || isAdmin();
+      allow list: if false;
+      // The imam (whose imam document id is their uid) or an admin, for an existing imam profile.
+      allow create, update: if signedIn()
+        && validRecitation(incoming())
+        && exists(/databases/$(database)/documents/imams/$(imamId))
+        && (isAdmin()
+            || (incoming().ownerUid == me()
+                && get(/databases/$(database)/documents/imams/$(imamId)).data.ownerUid == me()));
+      allow delete: if isAdmin() || (signedIn() && resource.data.ownerUid == me());
+    }
+
     // ---------- mosques ----------
     function validMosque(d) {
       return d.keys().hasOnly(['ownerUid', 'mosqueName', 'legalName', 'country', 'city', 'fullAddress', 'lookingType',
                                'riwayaRequired', 'activeState', 'requirements', 'details', 'salaryAndBenefits',
-                               'housingProvided', 'approvalStatus', 'createdAt', 'updatedAt'])
+                               'housingProvided', 'photo', 'approvalStatus', 'createdAt', 'updatedAt'])
         && nonEmpty(d.mosqueName, 150)
         && str(d.legalName, 200)
         && nonEmpty(d.country, 100)
@@ -145,6 +224,7 @@ service cloud.firestore {
         && str(d.details, 5000)
         && str(d.salaryAndBenefits, 500)
         && d.housingProvided is bool
+        && str(d.get('photo', ''), 200000)
         && d.approvalStatus in ['pending', 'approved', 'rejected'];
     }
 
@@ -170,11 +250,13 @@ service cloud.firestore {
     }
 
     match /mosqueContacts/{mosqueId} {
-      // Any registered imam or mosque may contact a mosque.
+      // Like imam contacts: only the owner, admins and imams whose profile the admins approved.
       allow get: if signedIn() && (resource == null
         || resource.data.ownerUid == me()
         || isAdmin()
-        || hasProfile());
+        || (isImamUser()
+            && exists(/databases/$(database)/documents/imams/$(me()))
+            && get(/databases/$(database)/documents/imams/$(me())).data.approvalStatus == 'approved'));
       allow list: if isAdmin();
       allow create, update: if signedIn()
         && incoming().keys().hasOnly(['ownerUid', 'contactPerson', 'phone', 'whatsapp', 'email'])
@@ -245,10 +327,283 @@ service cloud.firestore {
                                       'reporterRole', 'reportedAt', 'status'])
         && incoming().reporterUid == me()
         && incoming().status == 'pending'
-        && incoming().targetType in ['imam', 'mosque']
+        && incoming().targetType in ['imam', 'mosque', 'post', 'comment']
         && nonEmpty(incoming().reason, 300)
         && str(incoming().details, 2000)
         && str(incoming().targetName, 200);
+    }
+
+    // ---------- feedback ("contact the admin" / suggestions) ----------
+    // Anyone, even without an account, may send one; only admins read, mark or delete them.
+    match /feedback/{feedbackId} {
+      allow read, delete: if isAdmin();
+      allow update: if isAdmin() && changedKeys().hasOnly(['status']) && incoming().status in ['new', 'handled'];
+      allow create: if incoming().keys().hasOnly(['kind', 'name', 'email', 'message', 'senderUid', 'createdAt', 'status'])
+        && incoming().kind in ['message', 'suggestion', 'problem']
+        && str(incoming().name, 120)
+        && str(incoming().email, 200)
+        && nonEmpty(incoming().message, 3000) && incoming().message.size() >= 10
+        && str(incoming().createdAt, 40)
+        && incoming().status == 'new'
+        && (!incoming().keys().hasAny(['senderUid']) || (signedIn() && incoming().senderUid == me()));
+    }
+
+    // ---------- community: «ملتقى الأئمة» ----------
+    // Read: imam accounts and admins. Write (post, comment, react): approved imams and admins.
+    function isCommunityMember() { return isAdmin() || isImamUser(); }
+    function isApprovedImam() {
+      return isImamUser()
+        && exists(/databases/$(database)/documents/imams/$(me()))
+        && get(/databases/$(database)/documents/imams/$(me())).data.approvalStatus == 'approved';
+    }
+    function postingOpen() {
+      return !exists(/databases/$(database)/documents/communitySettings/main)
+        || get(/databases/$(database)/documents/communitySettings/main).data.get('postingEnabled', true) == true;
+    }
+    function canContribute() { return isAdmin() || (isApprovedImam() && postingOpen()); }
+    function canReact() { return isAdmin() || isApprovedImam(); }
+    function postDoc(postId) { return /databases/$(database)/documents/posts/$(postId); }
+
+    function validPostContent(d) {
+      return d.type in ['khutba', 'article', 'question', 'field', 'poll', 'event']
+        && nonEmpty(d.title, 200)
+        && str(d.body, 60000)
+        && str(d.category, 60)
+        && d.images is list && d.images.size() <= 6
+        && d.files is list && d.files.size() <= 3
+        && (d.poll == null || (d.poll is map && d.poll.options is list && d.poll.options.size() >= 2 && d.poll.options.size() <= 6))
+        && d.pollCounts is list && d.pollCounts.size() <= 6
+        && d.status in ['draft', 'published']
+        && str(d.publishedAt, 40)
+        && str(d.updatedAt, 40);
+    }
+
+    // Like / dislike counters must change exactly as the viewer's own vote document changes.
+    function voteCountersOk(postId) {
+      let v = /databases/$(database)/documents/posts/$(postId)/votes/$(me());
+      let b = exists(v) ? get(v).data.value : 0;
+      let a = existsAfter(v) ? getAfter(v).data.value : 0;
+      return a != b
+        && incoming().likeCount == resource.data.likeCount + (a == 1 ? 1 : 0) - (b == 1 ? 1 : 0)
+        && incoming().dislikeCount == resource.data.dislikeCount + (a == -1 ? 1 : 0) - (b == -1 ? 1 : 0);
+    }
+
+    // Poll totals must change exactly as the viewer's own poll vote changes (anonymous totals).
+    function pollSlotOk(i, a, b) {
+      return i >= resource.data.pollCounts.size()
+        || incoming().pollCounts[i] == resource.data.pollCounts[i] + (a == i ? 1 : 0) - (b == i ? 1 : 0);
+    }
+    function pollCountsOk(postId) {
+      let v = /databases/$(database)/documents/posts/$(postId)/pollVotes/$(me());
+      let b = exists(v) ? get(v).data.option : -1;
+      let a = existsAfter(v) ? getAfter(v).data.option : -1;
+      return a != b
+        && incoming().pollCounts.size() == resource.data.pollCounts.size()
+        && a < resource.data.pollCounts.size()
+        && pollSlotOk(0, a, b) && pollSlotOk(1, a, b) && pollSlotOk(2, a, b)
+        && pollSlotOk(3, a, b) && pollSlotOk(4, a, b) && pollSlotOk(5, a, b);
+    }
+
+    // The comment counter moves by one, together with the comment created / deleted in the same write.
+    function commentCounterOk(postId) {
+      let c = /databases/$(database)/documents/posts/$(postId)/comments/$(incoming().lastCommentId);
+      return (incoming().commentCount == resource.data.commentCount + 1
+              && !exists(c) && existsAfter(c) && getAfter(c).data.authorUid == me())
+          || (incoming().commentCount == resource.data.commentCount - 1
+              && exists(c) && !existsAfter(c) && (get(c).data.authorUid == me() || isAdmin()));
+    }
+
+    match /posts/{postId} {
+      allow read: if isCommunityMember()
+        && (resource.data.status == 'published' || resource.data.authorUid == me() || isAdmin());
+      allow create: if canContribute()
+        && incoming().keys().hasOnly(['authorUid', 'authorName', 'authorImamId', 'type', 'category', 'title', 'body',
+                                      'images', 'files', 'poll', 'pollCounts', 'status', 'pinned', 'inLibrary',
+                                      'libraryCategory', 'likeCount', 'dislikeCount', 'commentCount', 'lastCommentId',
+                                      'createdAt', 'updatedAt', 'publishedAt'])
+        && incoming().authorUid == me()
+        && str(incoming().authorName, 150) && str(incoming().authorImamId, 128)
+        && (isAdmin() || incoming().authorImamId == me())
+        && incoming().pinned == false && incoming().inLibrary == false && incoming().libraryCategory == ''
+        && incoming().likeCount == 0 && incoming().dislikeCount == 0
+        && incoming().commentCount == 0 && incoming().lastCommentId == ''
+        && str(incoming().createdAt, 40)
+        && validPostContent(incoming());
+      allow update: if
+        // The author edits the content (never the counters, pin or library flags).
+        (signedIn() && resource.data.authorUid == me() && canContribute()
+          && !changedKeys().hasAny(['authorUid', 'authorImamId', 'pinned', 'inLibrary', 'libraryCategory', 'likeCount',
+                                    'dislikeCount', 'commentCount', 'lastCommentId', 'createdAt'])
+          && validPostContent(incoming()))
+        // Moderation: pin, library, edit.
+        || (isAdmin()
+          && !changedKeys().hasAny(['authorUid', 'likeCount', 'dislikeCount', 'commentCount', 'lastCommentId', 'createdAt'])
+          && incoming().pinned is bool && incoming().inLibrary is bool && str(incoming().libraryCategory, 60)
+          && validPostContent(incoming()))
+        // Reactions and comments from members, only on published posts.
+        || (resource.data.status == 'published' && canReact()
+          && changedKeys().hasOnly(['likeCount', 'dislikeCount']) && voteCountersOk(postId))
+        || (resource.data.status == 'published' && canReact()
+          && changedKeys().hasOnly(['pollCounts']) && pollCountsOk(postId))
+        || (isCommunityMember()
+          && changedKeys().hasOnly(['commentCount', 'lastCommentId']) && commentCounterOk(postId));
+      allow delete: if isAdmin() || (signedIn() && resource.data.authorUid == me());
+
+      // One like OR dislike per member (document id = uid); nobody can read others' votes.
+      match /votes/{uid} {
+        allow read: if signedIn() && uid == me();
+        allow create, update: if canReact() && uid == me()
+          && incoming().keys().hasOnly(['value']) && incoming().value in [1, -1]
+          && get(postDoc(postId)).data.status == 'published'
+          && (getAfter(postDoc(postId)).data.likeCount != get(postDoc(postId)).data.likeCount
+              || getAfter(postDoc(postId)).data.dislikeCount != get(postDoc(postId)).data.dislikeCount);
+        allow delete: if canReact() && uid == me()
+          && (getAfter(postDoc(postId)).data.likeCount != get(postDoc(postId)).data.likeCount
+              || getAfter(postDoc(postId)).data.dislikeCount != get(postDoc(postId)).data.dislikeCount);
+      }
+
+      // One poll vote per member; only the totals on the post are visible.
+      match /pollVotes/{uid} {
+        allow read: if signedIn() && uid == me();
+        allow create, update: if canReact() && uid == me()
+          && incoming().keys().hasOnly(['option']) && incoming().option is int && incoming().option >= 0
+          && get(postDoc(postId)).data.poll != null
+          && incoming().option < get(postDoc(postId)).data.poll.options.size()
+          && getAfter(postDoc(postId)).data.pollCounts != get(postDoc(postId)).data.pollCounts;
+        allow delete: if canReact() && uid == me()
+          && getAfter(postDoc(postId)).data.pollCounts != get(postDoc(postId)).data.pollCounts;
+      }
+
+      match /comments/{commentId} {
+        allow read: if isCommunityMember();
+        allow create: if canContribute()
+          && incoming().keys().hasOnly(['authorUid', 'authorName', 'authorImamId', 'body', 'parentId', 'createdAt'])
+          && incoming().authorUid == me()
+          && (isAdmin() || incoming().authorImamId == me())
+          && str(incoming().authorName, 150) && str(incoming().authorImamId, 128)
+          && nonEmpty(incoming().body, 3000) && str(incoming().parentId, 128) && str(incoming().createdAt, 40)
+          && get(postDoc(postId)).data.status == 'published'
+          && getAfter(postDoc(postId)).data.commentCount == get(postDoc(postId)).data.commentCount + 1
+          && getAfter(postDoc(postId)).data.lastCommentId == commentId;
+        allow delete: if signedIn() && (resource.data.authorUid == me() || isAdmin())
+          && getAfter(postDoc(postId)).data.commentCount == get(postDoc(postId)).data.commentCount - 1
+          && getAfter(postDoc(postId)).data.lastCommentId == commentId;
+      }
+    }
+
+    // Post images (compressed, ≤ ~260 KB) and PDF attachments (≤ 2 MB, split in ≤ 4 chunks).
+    match /media/{mediaId} {
+      allow read: if isCommunityMember();
+      allow create: if canContribute()
+        && incoming().keys().hasOnly(['ownerUid', 'data', 'createdAt'])
+        && incoming().ownerUid == me() && str(incoming().createdAt, 40)
+        && incoming().data is string && incoming().data.size() <= 450000
+        && incoming().data.matches('data:image/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+');
+      allow delete: if signedIn() && (resource.data.ownerUid == me() || isAdmin());
+    }
+
+    match /files/{fileId} {
+      allow read: if isCommunityMember();
+      allow create: if canContribute()
+        && incoming().keys().hasOnly(['ownerUid', 'name', 'size', 'chunkCount', 'mime', 'createdAt'])
+        && incoming().ownerUid == me()
+        && nonEmpty(incoming().name, 150) && str(incoming().createdAt, 40)
+        && incoming().size is int && incoming().size > 0 && incoming().size <= 2097152
+        && incoming().chunkCount is int && incoming().chunkCount >= 1 && incoming().chunkCount <= 4
+        && incoming().mime == 'application/pdf';
+      allow delete: if signedIn() && (resource.data.ownerUid == me() || isAdmin());
+
+      match /chunks/{n} {
+        allow read: if isCommunityMember();
+        allow create: if canContribute()
+          && getAfter(/databases/$(database)/documents/files/$(fileId)).data.ownerUid == me()
+          && n in ['0', '1', '2', '3']
+          && incoming().keys().hasOnly(['data'])
+          && incoming().data is string && incoming().data.size() <= 700000
+          && incoming().data.matches('[A-Za-z0-9+/=]+')
+          // The first chunk must start like a PDF file ("%PDF" in base64).
+          && (n != '0' || incoming().data.matches('JVBER[A-Za-z0-9+/=]*'));
+        allow delete: if signedIn()
+          && (get(/databases/$(database)/documents/files/$(fileId)).data.ownerUid == me() || isAdmin());
+      }
+    }
+
+    // Personal library (saved posts) and notifications.
+    match /users/{userId}/saved/{postId} {
+      allow read, delete: if signedIn() && me() == userId;
+      allow create, update: if signedIn() && me() == userId && isCommunityMember()
+        && incoming().keys().hasOnly(['savedAt', 'folder'])
+        && str(incoming().savedAt, 40) && str(incoming().folder, 60);
+    }
+
+    match /users/{userId}/notifications/{notificationId} {
+      allow read, delete: if signedIn() && me() == userId;
+      allow update: if signedIn() && me() == userId && changedKeys().hasOnly(['read']) && incoming().read is bool;
+      allow create: if isCommunityMember() && userId != me()
+        && incoming().keys().hasOnly(['type', 'postId', 'postTitle', 'fromUid', 'fromName', 'createdAt', 'read'])
+        && incoming().type in ['comment', 'reply']
+        && incoming().fromUid == me() && incoming().read == false
+        && str(incoming().postId, 128) && str(incoming().postTitle, 200)
+        && str(incoming().fromName, 150) && str(incoming().createdAt, 40);
+    }
+
+    match /communitySettings/{docId} {
+      allow read: if isCommunityMember();
+      allow write: if isAdmin();
+    }
+
+    // ---------- anonymous visit statistics ----------
+    // visits/{id}: one per opening of the site; visitors/{id}: first visit of a browser whose user agreed.
+    // Only a server timestamp is stored (no IP, no user data). Create-only; admins read the counts.
+    match /visits/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['at']) && request.resource.data.at == request.time;
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+    match /visitors/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['at']) && request.resource.data.at == request.time;
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    // ---------- per-profile counters (admin only) ----------
+    // profileStats/{imam|mosque}_{id} = { views, plays }: anyone may add exactly +1 to ONE counter.
+    function statOf(d, k) { return d.get(k, 0); }
+    match /profileStats/{id} {
+      allow read: if isAdmin();
+      allow create: if id.matches('(imam|mosque)_[A-Za-z0-9_-]{1,80}')
+        && request.resource.data.keys().hasOnly(['views', 'plays'])
+        && statOf(request.resource.data, 'views') is int && statOf(request.resource.data, 'plays') is int
+        && statOf(request.resource.data, 'views') + statOf(request.resource.data, 'plays') == 1
+        && statOf(request.resource.data, 'views') >= 0 && statOf(request.resource.data, 'plays') >= 0;
+      allow update: if request.resource.data.keys().hasOnly(['views', 'plays'])
+        && ((statOf(request.resource.data, 'views') == statOf(resource.data, 'views') + 1
+              && statOf(request.resource.data, 'plays') == statOf(resource.data, 'plays'))
+          || (statOf(request.resource.data, 'plays') == statOf(resource.data, 'plays') + 1
+              && statOf(request.resource.data, 'views') == statOf(resource.data, 'views')));
+      allow delete: if isAdmin();
+    }
+
+    // ---------- home banner announcements (managed by admins) ----------
+    function validAnnouncement(d) {
+      return d.keys().hasOnly(['chip', 'title', 'text', 'cta', 'target', 'url', 'image', 'order', 'active', 'createdAt', 'updatedAt'])
+        && str(d.chip, 40) && nonEmpty(d.title, 80) && str(d.text, 220) && str(d.cta, 30)
+        && d.target in ['imams', 'mosques', 'community', 'imam-register', 'mosque-add', 'contact', 'url', 'none']
+        && str(d.url, 300) && (d.target != 'url' || d.url.matches('https://.+'))
+        && d.image is string && d.image.size() <= 450000
+        && (d.image == '' || d.image.matches('data:image/(jpeg|png|webp);base64,.+'))
+        && d.order is int && d.active is bool
+        && str(d.createdAt, 40) && str(d.updatedAt, 40);
+    }
+    match /announcements/{id} {
+      allow read: if true;
+      allow create, update: if isAdmin() && validAnnouncement(incoming());
+      allow delete: if isAdmin();
+    }
+    match /siteSettings/{id} {
+      allow read: if true;
+      allow write: if isAdmin() && id == 'home'
+        && incoming().keys().hasOnly(['showDefaultSlides']) && incoming().showDefaultSlides is bool;
     }
 
     // Everything else is closed.

@@ -22,11 +22,19 @@ export interface InboxProps {
   onSendMessage: (msg: NewMessage) => Promise<boolean>;
   onMarkAsRead: (messageId: string) => void;
   onDeleteMessage: (messageId: string) => void;
+  /** Admin only: sends one message to each recipient (e.g. "all imams") and reports once. */
+  onBroadcast?: (msgs: NewMessage[]) => Promise<boolean>;
 }
 
 interface InboxCenterProps extends InboxProps {
   currentRole: 'imam' | 'mosque' | 'admin';
+  /** Opens the compose window for this recipient; `seq` changes on every request. */
+  composeRequest?: { type: 'imam' | 'mosque'; id: string; seq: number } | null;
+  onComposeOpened?: () => void;
 }
+
+/** Recipient id meaning "everyone of this type" (admin broadcast). */
+const ALL = '__all__';
 
 type RecipientType = 'mosque' | 'imam' | 'admin';
 
@@ -40,6 +48,9 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
   onSendMessage,
   onMarkAsRead,
   onDeleteMessage,
+  onBroadcast,
+  composeRequest,
+  onComposeOpened,
 }) => {
   // Messages are already limited by the Firestore query to those this account may read.
   const userMessages = messages;
@@ -59,6 +70,16 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
   const [newRecipientId, setNewRecipientId] = useState<string>('');
   const [newSubject, setNewSubject] = useState('');
   const [newContent, setNewContent] = useState('');
+
+  // Opened from elsewhere (e.g. the "مراسلة" button in the admin panel) with a recipient already chosen.
+  useEffect(() => {
+    if (!composeRequest) return;
+    setNewRecipientType(composeRequest.type);
+    setIsComposing(true);
+    // After the type effect below has run, select the requested recipient.
+    window.setTimeout(() => setNewRecipientId(composeRequest.id), 0);
+    onComposeOpened?.();
+  }, [composeRequest?.seq]);
 
   // Pick a valid default recipient whenever the list or type changes.
   useEffect(() => {
@@ -124,9 +145,41 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
     if (!newSubject.trim() || !newContent.trim()) return;
 
     let receiverUid = ADMIN_INBOX;
-    let receiverName = 'إدارة محراب';
+    let receiverName = 'إدارة منصة أئمة';
     let relatedMosqueId: string | undefined;
     let relatedImamId: string | undefined;
+
+    // Admin broadcast: one message per account (an owner of several mosques gets it once).
+    if (currentRole === 'admin' && newRecipientId === ALL && onBroadcast && newRecipientType !== 'admin') {
+      const targets = new Map<string, { uid: string; name: string; imamId?: string; mosqueId?: string }>();
+      if (newRecipientType === 'imam') recipientImams.forEach((im) => targets.set(im.ownerUid, { uid: im.ownerUid, name: im.name, imamId: im.id }));
+      else recipientMosques.forEach((m) => targets.set(m.ownerUid, { uid: m.ownerUid, name: m.mosqueName, mosqueId: m.id }));
+      targets.delete(currentUid);
+      if (targets.size === 0) return;
+      setSending(true);
+      const ok = await onBroadcast(
+        Array.from(targets.values()).map((t) => ({
+          senderUid: currentUid,
+          senderType: 'admin',
+          senderName: currentName,
+          receiverUid: t.uid,
+          receiverType: newRecipientType,
+          receiverName: t.name,
+          subject: newSubject,
+          content: newContent,
+          category: 'admin_alert',
+          relatedMosqueId: t.mosqueId,
+          relatedImamId: t.imamId,
+        }))
+      );
+      setSending(false);
+      if (ok) {
+        setIsComposing(false);
+        setNewSubject('');
+        setNewContent('');
+      }
+      return;
+    }
 
     if (newRecipientType === 'mosque') {
       const m = recipientMosques.find((x) => x.id === newRecipientId);
@@ -170,9 +223,9 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
   // Which recipient types this role may write to.
   const recipientOptions: { type: RecipientType; label: string }[] =
     currentRole === 'imam'
-      ? [{ type: 'mosque', label: '🕌 إلى مسجد' }, { type: 'admin', label: '🛡️ إدارة محراب' }]
+      ? [{ type: 'mosque', label: '🕌 إلى مسجد' }, { type: 'admin', label: '🛡️ إدارة منصة أئمة' }]
       : currentRole === 'mosque'
-      ? [{ type: 'imam', label: '🎙️ إلى إمام' }, { type: 'admin', label: '🛡️ إدارة محراب' }]
+      ? [{ type: 'imam', label: '🎙️ إلى إمام' }, { type: 'admin', label: '🛡️ إدارة منصة أئمة' }]
       : [{ type: 'imam', label: '🎙️ إلى إمام' }, { type: 'mosque', label: '🕌 إلى مسجد' }];
 
   return (
@@ -196,7 +249,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
               )}
             </div>
             <p className="text-xs text-slate-500">
-              التواصل المباشر بين الأئمة وإدارات المساجد، وإشعارات التوثيق من إدارة منصة محراب
+              التواصل المباشر بين الأئمة وإدارات المساجد، وإشعارات التوثيق من إدارة منصة أئمة
             </p>
           </div>
         </div>
@@ -251,7 +304,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
           }`}
         >
           <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-          <span>رسائل إدارة محراب</span>
+          <span>رسائل إدارة منصة أئمة</span>
         </button>
 
         <button
@@ -306,7 +359,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                         {isAdmin ? (
                           <span className="bg-emerald-900 text-amber-300 text-xs px-2 py-0.5 rounded font-black flex items-center gap-1">
                             <ShieldCheck className="w-3 h-3 text-amber-400" />
-                            إدارة محراب
+                            إدارة منصة أئمة
                           </span>
                         ) : sentByMe ? (
                           <span className="bg-blue-100 text-blue-900 text-xs px-2 py-0.5 rounded font-bold">
@@ -358,7 +411,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                         : 'bg-amber-100 text-amber-900'
                     }`}>
                       {selectedMessage.senderType === 'admin'
-                        ? '🛡️ رسالة رسمية من إدارة منصة محراب'
+                        ? '🛡️ رسالة رسمية من إدارة منصة أئمة'
                         : selectedMessage.category === 'interview'
                         ? '🗓️ دعوة لمقابلة رسمية'
                         : '💬 استفسار ومراسلة مباشرة'}
@@ -490,6 +543,9 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                     className="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white font-bold"
                   >
                     {recipientMosques.length === 0 && <option value="">لا توجد مساجد متاحة</option>}
+                    {currentRole === 'admin' && recipientMosques.length > 1 && (
+                      <option value={ALL}>📢 جميع المساجد ({recipientMosques.length})</option>
+                    )}
                     {recipientMosques.map((m) => (
                       <option key={m.id} value={m.id}>
                         {m.mosqueName} ({m.city} — {m.country})
@@ -508,6 +564,9 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                     className="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white font-bold"
                   >
                     {recipientImams.length === 0 && <option value="">لا يوجد أئمة متاحون</option>}
+                    {currentRole === 'admin' && recipientImams.length > 1 && (
+                      <option value={ALL}>📢 جميع الأئمة ({recipientImams.length})</option>
+                    )}
                     {recipientImams.map((im) => (
                       <option key={im.id} value={im.id}>
                         {im.name} ({im.country}) - {im.riwaya}

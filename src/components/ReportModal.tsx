@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AlertTriangle, X, Flag, Loader2 } from 'lucide-react';
+import { useDialog } from '../lib/useDialog';
 
 interface ReportModalProps {
   target: { type: 'imam' | 'mosque'; id: string; name: string } | null;
@@ -39,6 +40,8 @@ export const ReportModal: React.FC<ReportModalProps> = ({ target, onClose, onCon
     }
   }, [target?.type, target?.id]);
 
+  const dialogRef = useDialog(!!target, onClose);
+
   if (!target) return null;
   const isImam = target.type === 'imam';
 
@@ -51,7 +54,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ target, onClose, onCon
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto" role="dialog" ref={dialogRef} tabIndex={-1} aria-modal="true">
       <div className="bg-white rounded-3xl max-w-lg w-full p-6 md:p-7 shadow-2xl my-8 text-xs space-y-5 border-2 border-red-100">
         <div className="flex justify-between items-center border-b pb-3">
           <div className="flex items-center gap-2.5">

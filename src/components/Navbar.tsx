@@ -1,20 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { MosqueIcon } from './MosqueIcon';
 import { UserRole } from '../types';
 import type { View } from '../App';
 import { DEFAULT_IMAM_SILHOUETTE_AVATAR, getSafeImamAvatar } from '../utils/helpers';
-import {
-  Building2,
-  Menu,
-  X,
-  ShieldCheck,
-  LogIn,
-  LogOut,
-  User as UserIcon,
-  Edit3,
-  Mail,
-  ChevronDown,
-  Trash2,
-} from 'lucide-react';
+import { LogoMark } from './Logo';
+import { MessagesSquare, Menu, X, ShieldCheck, LogIn, LogOut, User as UserIcon, Edit3, Mail, ChevronDown, Trash2, Settings as SettingsIcon, Smartphone } from 'lucide-react';
 
 interface NavbarProps {
   currentView: View;
@@ -33,7 +23,14 @@ interface NavbarProps {
   mosquesCount: number;
   pendingCount: number;
   unreadCount?: number;
+  /** Hide the statistics link until there is enough data to show. */
+  showStats?: boolean;
   onOpenInbox?: () => void;
+  onOpenSettings: () => void;
+  /** Undefined once the site is installed as an app. */
+  onOpenInstall?: () => void;
+  /** Unread community notifications. */
+  communityUnread?: number;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -53,7 +50,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   mosquesCount,
   pendingCount,
   unreadCount = 0,
+  showStats = true,
   onOpenInbox,
+  onOpenSettings,
+  onOpenInstall,
+  communityUnread = 0,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -93,7 +94,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const showMosqueIcon = currentRole === 'mosque' && !userPhoto;
 
   return (
-    <header className="bg-white text-slate-900 border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+    <header className="liquid-glass-dark !border-x-0 !border-t-0 text-white sticky top-0 z-40 pt-[env(safe-area-inset-top)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-18 gap-6">
           
@@ -102,24 +103,20 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => { setCurrentView('home'); setMobileMenuOpen(false); }}
             className="flex items-center gap-2.5 text-right cursor-pointer whitespace-nowrap shrink-0 focus:outline-none"
           >
-            <img
-              src={DEFAULT_IMAM_SILHOUETTE_AVATAR}
-              alt="شعار محراب"
-              className="w-10 h-10 rounded-xl object-cover border border-emerald-700/30 shadow-xs"
-            />
-            <span className="text-xl sm:text-2xl font-black tracking-tight text-emerald-950 font-amiri">
-              مِحراب
+            <LogoMark className="w-10 h-10 shadow-xs rounded-xl" />
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-white font-amiri">
+              منصة أئمة
             </span>
           </button>
 
           {/* Zone 2: Clean Single-Line Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-6 text-sm font-bold text-slate-600">
+          <nav className="hidden lg:flex items-center gap-6 text-sm font-bold text-slate-300">
             <button
               onClick={() => setCurrentView('home')}
               className={`py-1 transition-colors cursor-pointer whitespace-nowrap shrink-0 border-b-2 ${
                 currentView === 'home'
-                  ? 'border-emerald-700 text-emerald-900 font-black'
-                  : 'border-transparent hover:text-slate-950'
+                  ? 'border-amber-400 text-white font-black'
+                  : 'border-transparent hover:text-white'
               }`}
             >
               الرئيسية
@@ -129,42 +126,59 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setCurrentView('mosque')}
               className={`py-1 transition-colors cursor-pointer whitespace-nowrap shrink-0 border-b-2 ${
                 currentView === 'mosque'
-                  ? 'border-emerald-700 text-emerald-900 font-black'
-                  : 'border-transparent hover:text-slate-950'
+                  ? 'border-amber-400 text-white font-black'
+                  : 'border-transparent hover:text-white'
               }`}
             >
-              قائمة الأئمة المتوفرين ({imamsCount})
+              الأئمة المتاحون
             </button>
 
             <button
               onClick={() => setCurrentView('imam')}
               className={`py-1 transition-colors cursor-pointer whitespace-nowrap shrink-0 border-b-2 ${
                 currentView === 'imam'
-                  ? 'border-sky-600 text-sky-900 font-black'
-                  : 'border-transparent hover:text-slate-950'
+                  ? 'border-amber-400 text-white font-black'
+                  : 'border-transparent hover:text-white'
               }`}
             >
-              قائمة المساجد المتوفرة ({mosquesCount})
+              إعلانات المساجد
             </button>
 
+            <button
+              onClick={() => setCurrentView('community')}
+              className={`py-1 transition-colors cursor-pointer whitespace-nowrap shrink-0 border-b-2 inline-flex items-center gap-1.5 ${
+                currentView === 'community'
+                  ? 'border-amber-400 text-white font-black'
+                  : 'border-transparent hover:text-white'
+              }`}
+            >
+              <MessagesSquare className="w-4 h-4 text-amber-300" />
+              المجتمع
+              {communityUnread > 0 && (
+                <span className="bg-red-600 text-white text-[10px] font-black min-w-4 h-4 px-1 rounded-full flex items-center justify-center">{communityUnread}</span>
+              )}
+            </button>
+
+            {showStats && (
             <button
               onClick={() => setCurrentView('dashboard')}
               className={`py-1 transition-colors cursor-pointer whitespace-nowrap shrink-0 border-b-2 ${
                 currentView === 'dashboard'
-                  ? 'border-emerald-700 text-emerald-900 font-black'
-                  : 'border-transparent hover:text-slate-950'
+                  ? 'border-amber-400 text-white font-black'
+                  : 'border-transparent hover:text-white'
               }`}
             >
               الإحصائيات
             </button>
+            )}
 
             {currentRole === 'admin' && (
               <button
                 onClick={() => setCurrentView('admin')}
                 className={`py-1 transition-colors cursor-pointer whitespace-nowrap shrink-0 border-b-2 flex items-center gap-1.5 ${
                   currentView === 'admin'
-                    ? 'border-amber-500 text-amber-900 font-black'
-                    : 'border-transparent text-amber-700 hover:text-amber-900'
+                    ? 'border-amber-400 text-amber-300 font-black'
+                    : 'border-transparent text-amber-400 hover:text-amber-300'
                 }`}
               >
                 <span>لوحة الإدارة</span>
@@ -185,12 +199,12 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {/* Account Pill Button (Avatar + Name + Role like Google/Facebook) */}
                 <button
                   onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                  className="flex items-center gap-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/90 rounded-full py-1.5 pl-3 pr-1.5 transition cursor-pointer focus:outline-none"
+                  className="flex items-center gap-2.5 bg-white/5 hover:bg-white/10 border border-white/15 rounded-full py-1.5 pl-3 pr-1.5 transition cursor-pointer focus:outline-none"
                 >
                   <div className="relative">
                     {showMosqueIcon ? (
                       <div className="w-9 h-9 rounded-full bg-gradient-to-br from-sky-500 to-blue-700 text-white flex items-center justify-center shadow-xs">
-                        <Building2 className="w-5 h-5" />
+                        <MosqueIcon className="w-5 h-5" />
                       </div>
                     ) : (
                       <img
@@ -208,15 +222,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </div>
 
                   <div className="text-right hidden md:block max-w-[150px]">
-                    <p className="text-xs font-black text-slate-900 truncate leading-tight">
+                    <p className="text-xs font-black text-white truncate leading-tight">
                       {displayUserName}
                     </p>
-                    <p className="text-xs font-bold text-emerald-700 truncate">
+                    <p className="text-xs font-bold text-amber-300 truncate">
                       {roleBadgeText}
                     </p>
                   </div>
 
-                  <ChevronDown className="w-4 h-4 text-slate-500" />
+                  <ChevronDown className="w-4 h-4 text-slate-300" />
                 </button>
 
                 {/* Google / Gemini / Facebook Style Profile Popover Menu */}
@@ -228,7 +242,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <div className="relative">
                         {showMosqueIcon ? (
                           <div className="w-16 h-16 rounded-full bg-gradient-to-br from-sky-500 to-blue-700 text-white flex items-center justify-center shadow-md">
-                            <Building2 className="w-8 h-8" />
+                            <MosqueIcon className="w-8 h-8" />
                           </div>
                         ) : (
                           <img
@@ -353,17 +367,27 @@ export const Navbar: React.FC<NavbarProps> = ({
             ) : (
               <button
                 onClick={onOpenAuthModal}
-                className="bg-emerald-800 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
+                className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-4 py-2.5 rounded-full shadow-xs transition flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
               >
                 <LogIn className="w-4 h-4" />
                 <span>تسجيل الدخول</span>
               </button>
             )}
 
+            {/* Settings (on phones it is inside the menu) */}
+            <button
+              onClick={onOpenSettings}
+              className="hidden lg:flex w-10 h-10 items-center justify-center rounded-full text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer"
+              aria-label="الإعدادات"
+              title="الإعدادات"
+            >
+              <SettingsIcon className="w-5 h-5" />
+            </button>
+
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-xl text-slate-700 hover:bg-slate-100 focus:outline-none cursor-pointer"
+              className="lg:hidden p-2 rounded-xl text-white hover:bg-white/10 focus:outline-none cursor-pointer"
               aria-label="القائمة"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -375,7 +399,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
       {/* Mobile & Tablet Navigation Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t border-slate-200 px-4 pt-3 pb-6 space-y-4 shadow-lg">
+        <div className="lg:hidden liquid-glass-light !rounded-none !border-x-0 text-slate-800 px-4 pt-3 pb-6 space-y-4">
           
           <div className="space-y-1.5 text-sm font-bold">
             <button
@@ -394,7 +418,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <span>قائمة الأئمة المتوفرين</span>
-              <span className="text-xs text-emerald-700 font-bold">{imamsCount}</span>
+              {imamsCount > 0 && <span className="text-xs text-emerald-700 font-bold">{imamsCount}</span>}
             </button>
 
             <button
@@ -404,9 +428,20 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <span>قائمة المساجد والجمعيات المتوفرة</span>
-              <span className="text-xs text-sky-700 font-bold">{mosquesCount}</span>
+              {mosquesCount > 0 && <span className="text-xs text-sky-700 font-bold">{mosquesCount}</span>}
             </button>
 
+            <button
+              onClick={() => { setCurrentView('community'); setMobileMenuOpen(false); }}
+              className={`w-full text-right px-4 py-3 rounded-xl flex items-center gap-2 ${
+                currentView === 'community' ? 'bg-emerald-50 text-emerald-900 font-black' : 'text-slate-700'
+              }`}
+            >
+              <MessagesSquare className="w-4 h-4" />
+              <span>المجتمع — ملتقى الأئمة</span>
+            </button>
+
+            {showStats && (
             <button
               onClick={() => { setCurrentView('dashboard'); setMobileMenuOpen(false); }}
               className={`w-full text-right px-4 py-3 rounded-xl ${
@@ -415,6 +450,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               لوحة الإحصائيات
             </button>
+            )}
 
             {currentRole === 'admin' && (
               <button
@@ -429,6 +465,25 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </button>
             )}
+
+            {onOpenInstall && (
+              <button
+                onClick={() => { onOpenInstall(); setMobileMenuOpen(false); }}
+                className="w-full text-right px-4 py-3 rounded-xl flex items-center gap-2 bg-brass-100 text-ink font-black mt-2"
+              >
+                <Smartphone className="w-4 h-4" />
+                <span>ثبّت التطبيق على هاتفك</span>
+              </button>
+            )}
+
+            <button
+              onClick={() => { onOpenSettings(); setMobileMenuOpen(false); }}
+              className="w-full text-right px-4 py-3 rounded-xl flex items-center gap-2 text-slate-700 border-t border-slate-100 mt-2 pt-4"
+            >
+              <SettingsIcon className="w-4 h-4" />
+              <span>الإعدادات</span>
+              <span className="mr-auto text-xs font-bold text-slate-400">المظهر، حجم الخط…</span>
+            </button>
           </div>
         </div>
       )}

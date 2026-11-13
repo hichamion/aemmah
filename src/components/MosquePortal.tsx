@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { ImamProfile, MosqueJob, Application, UserRole, ApplicationStatus } from '../types';
 import { formatDate, getSafeImamAvatar } from '../utils/helpers';
+import { PageBanner, bannerTab } from './PageBanner';
+import { PublishCard } from './PublishCard';
 import { InboxCenter, InboxProps } from './InboxCenter';
 import { ContactBlock } from './ContactBlock';
-import { Search, Play, Trash2, Plus, UserCheck, Flag, Lock, Clock, ShieldAlert } from 'lucide-react';
+import { ImamMiniCard } from './MiniCards';
+import { Search, Trash2, Plus, UserCheck, Lock, Clock, ShieldAlert, Users, UserRound } from 'lucide-react';
 
 type Tab = 'browse' | 'manage_mosques' | 'applications' | 'inbox';
 
@@ -26,6 +29,10 @@ interface MosquePortalProps {
   onReportImam: (imam: ImamProfile) => void;
   inbox: InboxProps;
   initialTab?: Tab;
+  /** The signed-in imam already has a profile: offer «تعديل ملفي» instead of registering. */
+  hasOwnImamProfile?: boolean;
+  /** Reports the open tab (used by the phone bottom bar). */
+  onTabChange?: (tab: Tab) => void;
   /** Changes on every tab request from the parent (see App). */
   tabRequest?: number;
 }
@@ -62,6 +69,8 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
   onReportImam,
   inbox,
   initialTab = 'browse',
+  hasOwnImamProfile = false,
+  onTabChange,
   tabRequest = 0,
 }) => {
   const isMosque = currentRole === 'mosque';
@@ -70,6 +79,9 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
   useEffect(() => {
     setActiveTab(isMosque ? initialTab : 'browse');
   }, [initialTab, tabRequest, isMosque]);
+  useEffect(() => {
+    onTabChange?.(activeTab);
+  }, [activeTab, onTabChange]);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [availFilter, setAvailFilter] = useState('all');
@@ -77,6 +89,7 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
   const [riwayaFilter, setRiwayaFilter] = useState('all');
 
   // `imams` contains approved profiles only; hide paused ones.
+  const availableImamsCount = imams.filter((imam) => imam.availabilityState !== 'paused').length;
   const visibleImams = imams.filter((imam) => {
     if (imam.availabilityState === 'paused') return false;
     const q = searchTerm.trim().toLowerCase();
@@ -84,48 +97,45 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
       !q ||
       imam.name.toLowerCase().includes(q) ||
       imam.country.toLowerCase().includes(q) ||
+      (imam.nationality || '').toLowerCase().includes(q) ||
+      (imam.titles || []).some((t) => t.toLowerCase().includes(q)) ||
+      (imam.preferredLocations || []).some((l) => `${l.country} ${l.area}`.toLowerCase().includes(q)) ||
       imam.degree.toLowerCase().includes(q) ||
       imam.languages.toLowerCase().includes(q);
     const matchesAvail = availFilter === 'all' || imam.availabilityState === availFilter;
-    const matchesVisa = visaFilter === 'all' || imam.hasVisa === visaFilter;
+    // Living in Europe counts as "no immigration procedure needed", like having a visa.
+    const inEurope = imam.hasVisa === 'yes' || imam.livesInEurope ? 'yes' : 'no';
+    const matchesVisa = visaFilter === 'all' || inEurope === visaFilter;
     const matchesRiwaya = riwayaFilter === 'all' || imam.riwaya.includes(riwayaFilter);
     return matchesSearch && matchesAvail && matchesVisa && matchesRiwaya;
   });
 
   const unreadForMe = inbox.messages.filter((m) => !m.isRead && m.receiverUid === inbox.currentUid).length;
 
-  const tabClass = (tab: Tab) =>
-    `text-xs font-bold px-3.5 py-2.5 rounded-xl transition cursor-pointer whitespace-nowrap ${
-      activeTab === tab ? 'bg-white text-emerald-950 font-black shadow-xs' : 'bg-emerald-950/60 hover:bg-emerald-950 text-emerald-100'
-    }`;
+  const tabClass = (tab: Tab) => bannerTab(activeTab === 'browse' ? 'imams' : 'account', activeTab === tab);
 
   return (
     <section className="flex-1 py-6 sm:py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-6">
-      <div className="bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-950 text-white p-6 sm:p-7 rounded-3xl shadow-md flex flex-wrap justify-between items-center gap-4">
-        <div className="space-y-1">
-          <h2 className="text-2xl sm:text-3xl font-black font-amiri">قائمة الأئمة المتوفرين ({visibleImams.length})</h2>
-          <p className="text-xs sm:text-sm text-emerald-100/90">
-            تصفح الأئمة والقرّاء المتاحين واستمع لتلاواتهم، أو سجّل كإمام جديد في المنصة
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
+      <PageBanner
+        {...(activeTab === 'browse'
+          ? { tone: 'imams' as const, title: 'الأئمة المتاحون', count: availableImamsCount, subtitle: 'الأئمة والقرّاء المتاحون — استمع لتلاواتهم واطّلع على سيرهم', icon: <Users /> }
+          : { tone: 'account' as const, title: 'حسابي', subtitle: 'إعلانات مسجدك، وطلبات الأئمة، ورسائلك', icon: <UserRound /> })}
+      >
           {(currentRole === 'imam' || currentRole === 'visitor' || currentRole === 'admin') && (
             <button
               onClick={onOpenImamAdd}
-              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm px-4 py-2.5 rounded-xl shadow transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
+              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-[11px] sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-full shadow transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
             >
               <Plus className="w-4 h-4" />
-              <span>{currentRole === 'admin' ? 'إضافة إمام' : 'التسجيل كإمام'}</span>
+              <span>{currentRole === 'admin' ? 'إضافة إمام' : hasOwnImamProfile ? 'تعديل ملفي' : 'التسجيل كإمام'}</span>
             </button>
           )}
 
-          <button onClick={() => setActiveTab('browse')} className={tabClass('browse')}>
-            الأئمة المتاحون ({visibleImams.length})
-          </button>
-
           {isMosque && (
             <>
+              <button onClick={() => setActiveTab('browse')} className={tabClass('browse')}>
+                الأئمة المتاحون
+              </button>
               <button onClick={() => setActiveTab('manage_mosques')} className={tabClass('manage_mosques')}>
                 إعلاناتي ({myMosques.length})
               </button>
@@ -140,8 +150,7 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
               </button>
             </>
           )}
-        </div>
-      </div>
+      </PageBanner>
 
       {/* Privacy notices */}
       {currentRole === 'visitor' && (
@@ -177,7 +186,7 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
                 type="search"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="ابحث بالاسم أو البلد أو المؤهل..."
+                placeholder="ابحث بالاسم أو الجنسية أو مكان الإقامة أو الصفة..."
                 aria-label="بحث"
                 className="w-full border border-slate-300 rounded-xl px-3 py-2.5 pr-9 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
               />
@@ -192,6 +201,7 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
             >
               <option value="all">جميع حالات التفرغ</option>
               <option value="available_now">متاح فوراً (رمضان أو عقد دائم)</option>
+              <option value="ramadan_only">متاح لرمضان فقط (التراويح)</option>
               <option value="busy_ramadan">ملتزم في رمضان ومتاح بعده</option>
             </select>
 
@@ -202,8 +212,8 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
               className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold bg-white"
             >
               <option value="all">جميع حالات التأشيرة</option>
-              <option value="yes">لديه فيزا شنغن أو إقامة أوروبية</option>
-              <option value="no">يحتاج استقدام وتأشيرة عمل</option>
+              <option value="yes">مقيم في أوروبا أو لديه فيزا / إقامة</option>
+              <option value="no">يحتاج إجراءات استقدام إلى أوروبا</option>
             </select>
 
             <select
@@ -222,93 +232,30 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
 
           {visibleImams.length === 0 && (
             <div className="bg-white border border-slate-200 rounded-2xl p-10 text-center text-xs text-slate-500">
-              لا يوجد أئمة مطابقون للبحث حالياً.
+              {availableImamsCount === 0
+                ? 'لا توجد ملفات أئمة منشورة بعد. سجّل ملفك ليكون من أوائل الأئمة على المنصة.'
+                : 'لا يوجد أئمة مطابقون لهذا البحث. جرّب تغيير عوامل التصفية.'}
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {visibleImams.map((imam) => {
-              const isRamadanBusy = imam.availabilityState === 'busy_ramadan';
-              return (
-                <div
-                  key={imam.id}
-                  className="bg-white rounded-2xl border border-slate-200 hover:border-emerald-500/60 transition-all duration-200 overflow-hidden flex flex-col justify-between text-xs shadow-2xs hover:shadow-md"
-                >
-                  <div className="p-5 space-y-4">
-                    <div className="flex items-start gap-3.5">
-                      <img
-                        src={getSafeImamAvatar(imam.photo)}
-                        alt={imam.name}
-                        loading="lazy"
-                        className="w-16 h-16 rounded-2xl object-cover border border-emerald-700/30 shrink-0"
-                      />
-                      <div className="space-y-1">
-                        <h4 className="font-black text-base text-slate-900 font-amiri">{imam.name}</h4>
-                        <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 font-medium">
-                          <span>{imam.country}</span>
-                          <span aria-hidden="true">·</span>
-                          <span>{imam.age} سنة</span>
-                          <span aria-hidden="true">·</span>
-                          <span className="text-emerald-800 font-bold">{imam.riwaya}</span>
-                        </div>
-                        <p className="text-xs text-slate-600 font-semibold pt-0.5">
-                          {imam.hasVisa === 'yes' ? 'لديه تأشيرة شنغن / إقامة أوروبية' : 'يحتاج إجراءات استقدام'}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div
-                      className={`px-3 py-2 rounded-xl text-xs font-bold ${
-                        isRamadanBusy
-                          ? 'bg-amber-50 text-amber-900 border border-amber-200/80'
-                          : 'bg-emerald-50 text-emerald-900 border border-emerald-200/80'
-                      }`}
-                    >
-                      {isRamadanBusy
-                        ? `ملتزم في رمضان — متاح للتعاقد: ${imam.availableAfterDate || 'بعد العيد'}`
-                        : 'متاح حالياً لصلاة التراويح أو التعاقد الدائم'}
-                    </div>
-
-                    <div className="space-y-1.5 text-slate-600 text-xs pt-1 border-t border-slate-100">
-                      <p className="line-clamp-1">
-                        <strong className="text-slate-800">المؤهل:</strong> {imam.degree || '—'}
-                      </p>
-                      <p className="line-clamp-1">
-                        <strong className="text-slate-800">اللغات:</strong> {imam.languages || '—'}
-                      </p>
-                    </div>
-
-                    <ContactBlock
-                      kind="imam"
-                      id={imam.id}
-                      canView={canSeeImamContacts}
-                      lockedText={
-                        isMosque ? 'تظهر الأرقام بعد توثيق حسابك' : 'أرقام التواصل للمساجد الموثقة فقط'
-                      }
-                      onLockedClick={currentRole === 'visitor' ? onOpenAuthModal : undefined}
-                    />
-                  </div>
-
-                  <div className="p-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-2">
-                    <button
-                      onClick={() => onViewImamFull(imam)}
-                      className="flex-1 bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer text-xs whitespace-nowrap"
-                    >
-                      <Play className="w-3.5 h-3.5 fill-current" />
-                      <span>الاستماع للتلاوة وعرض الملف</span>
-                    </button>
-                    <button
-                      onClick={() => onReportImam(imam)}
-                      title="إبلاغ الإدارة"
-                      className="px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-xl border border-red-200 transition cursor-pointer flex items-center gap-1 text-xs font-bold shrink-0"
-                    >
-                      <Flag className="w-3.5 h-3.5" />
-                      <span>إبلاغ</span>
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+            {visibleImams.map((imam) => (
+              <ImamMiniCard
+                key={imam.id}
+                imam={imam}
+                onOpen={() => onViewImamFull(imam)}
+                onReport={() => onReportImam(imam)}
+                contactBlock={
+                  <ContactBlock
+                    kind="imam"
+                    id={imam.id}
+                    canView={canSeeImamContacts}
+                    lockedText={isMosque ? 'تظهر الأرقام بعد توثيق حسابك' : 'أرقام التواصل للمساجد الموثقة فقط'}
+                    onLockedClick={currentRole === 'visitor' ? onOpenAuthModal : undefined}
+                  />
+                }
+              />
+            ))}
           </div>
         </div>
       )}
@@ -331,9 +278,12 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
           </div>
 
           {myMosques.length === 0 && (
-            <div className="bg-white border border-slate-200 rounded-2xl p-10 text-center text-xs text-slate-500">
-              لم تنشر أي إعلان بعد.
-            </div>
+            <PublishCard
+              state="none"
+              title="انشر ملف مسجدك للأئمة"
+              text="مسجد شاغر يبحث عن إمام دائم، أو عن إمام لصلاة التراويح فقط؟ انشر إعلانك ليراه الأئمة المعتمدون ويتقدموا إليه بعد مراجعة الإدارة."
+              action={{ label: 'نشر إعلان مسجدي', onClick: onOpenMosqueAdd }}
+            />
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -347,7 +297,7 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
                   <div className="space-y-3">
                     <div className="flex justify-between items-start gap-2">
                       <div>
-                        <span className="text-xs font-bold text-sky-700">{isClosed ? 'الإعلان متوقف' : m.lookingType}</span>
+                        <span className={`text-xs font-bold ${isClosed ? 'text-slate-500' : 'text-sky-700'}`}>{isClosed ? 'غير منشور — لا يراه الأئمة' : m.lookingType}</span>
                         <h4 className="text-base font-black text-slate-900 mt-0.5 font-amiri">{m.mosqueName}</h4>
                         <p className="text-xs text-slate-500">
                           {m.country} · {m.city}
@@ -411,9 +361,11 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
                     </button>
                     <button
                       onClick={() => onToggleMosqueActive(m)}
-                      className="bg-slate-800 text-white font-bold px-3 py-1.5 rounded-xl text-xs cursor-pointer"
+                      className={`font-black px-3.5 py-1.5 rounded-full text-xs cursor-pointer ${
+                        isClosed ? 'bg-gradient-to-l from-brass-300 to-brass-500 text-ink shadow' : 'bg-white border border-slate-300 text-slate-700'
+                      }`}
                     >
-                      {isClosed ? 'تفعيل' : 'إيقاف'}
+                      {isClosed ? '📢 نشر الإعلان للأئمة' : 'إيقاف النشر'}
                     </button>
                     <button
                       onClick={() => onDeleteMosque(m)}

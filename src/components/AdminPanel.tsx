@@ -1,21 +1,13 @@
 import React, { useState } from 'react';
-import { ImamProfile, MosqueJob, ReportItem } from '../types';
+import { MosqueIcon } from './MosqueIcon';
+import { FeedbackItem, ImamProfile, MosqueJob, ReportItem } from '../types';
 import { formatDate, getSafeImamAvatar } from '../utils/helpers';
 import { ContactBlock } from './ContactBlock';
 import { InboxCenter, InboxProps } from './InboxCenter';
-import {
-  CheckCircle2,
-  XCircle,
-  Edit3,
-  Trash2,
-  Eye,
-  Flag,
-  Building2,
-  Mic,
-  Clock,
-  Mail,
-  Plus
-} from 'lucide-react';
+import { VisitStatsPanel } from './VisitStatsPanel';
+import { AnnouncementsAdmin } from './AnnouncementsAdmin';
+import { ProfileStat, useProfileStats } from '../lib/profileStats';
+import { CheckCircle2, XCircle, Edit3, Trash2, Eye, Flag, Mic, Clock, Mail, Plus, MessageSquare, BarChart3, Headphones, Megaphone } from 'lucide-react';
 
 interface AdminPanelProps {
   imams: ImamProfile[];
@@ -30,9 +22,14 @@ interface AdminPanelProps {
   onDeleteMosque: (mosque: MosqueJob) => void;
   onToggleMosqueActive: (mosque: MosqueJob) => void;
   onResolveReport: (reportId: string) => void;
+  feedback: FeedbackItem[];
+  onFeedbackHandled: (id: string) => void;
+  onDeleteFeedback: (id: string) => void;
   onOpenImamAdd: () => void;
   onOpenMosqueAdd: () => void;
   inbox: InboxProps;
+  /** Messages of the announcements editor. */
+  onToast: (msg: string, kind?: 'success' | 'error') => void;
 }
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({
@@ -48,11 +45,23 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   onDeleteMosque,
   onToggleMosqueActive,
   onResolveReport,
+  feedback,
+  onFeedbackHandled,
+  onDeleteFeedback,
   onOpenImamAdd,
   onOpenMosqueAdd,
   inbox,
+  onToast,
 }) => {
-  const [activeTab, setActiveTab] = useState<'pending' | 'all_imams' | 'all_mosques' | 'reports' | 'inbox'>('pending');
+  // Opens the inbox compose window for one imam / mosque ("مراسلة" buttons).
+  const [composeRequest, setComposeRequest] = useState<{ type: 'imam' | 'mosque'; id: string; seq: number } | null>(null);
+  const messageTo = (type: 'imam' | 'mosque', id: string) => {
+    setComposeRequest((prev) => ({ type, id, seq: (prev?.seq ?? 0) + 1 }));
+    setActiveTab('inbox');
+  };
+  // Views of each profile and plays of each recitation (admins only, see lib/profileStats).
+  const profileStats = useProfileStats(true);
+  const [activeTab, setActiveTab] = useState<'pending' | 'all_imams' | 'all_mosques' | 'reports' | 'feedback' | 'inbox' | 'visits' | 'ads'>('pending');
   const unreadAdmin = inbox.messages.filter(
     (m) => !m.isRead && (m.receiverUid === 'admin' || m.receiverUid === inbox.currentUid)
   ).length;
@@ -60,6 +69,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const pendingImams = imams.filter((i) => i.approvalStatus === 'pending');
   const pendingMosques = mosques.filter((m) => m.approvalStatus === 'pending');
   const pendingReports = reports.filter((r) => r.status === 'pending');
+  const newFeedback = feedback.filter((f) => f.status === 'new');
   const totalPendingCount = pendingImams.length + pendingMosques.length;
 
   return (
@@ -73,9 +83,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-xl sm:text-2xl font-black font-amiri">
+              <h1 className="text-xl sm:text-2xl font-black font-amiri">
                 لوحة تحكم الإدارة
-              </h2>
+              </h1>
               <span className="bg-amber-400/20 text-amber-300 border border-amber-400/40 text-xs font-black px-2.5 py-0.5 rounded-full">
                 صلاحيات كاملة: مراجعة • تعديل • موافقة
               </span>
@@ -181,7 +191,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
           }`}
         >
-          <Building2 className="w-4 h-4" />
+          <MosqueIcon className="w-4 h-4" />
           <span>إدارة وتعديل جميع المساجد ({mosques.length})</span>
         </button>
 
@@ -198,6 +208,21 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('feedback')}
+          className={`px-4 py-2.5 rounded-xl font-black transition cursor-pointer flex items-center gap-2 ${
+            activeTab === 'feedback'
+              ? 'bg-sky-700 text-white shadow-md'
+              : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+          }`}
+        >
+          <MessageSquare className="w-4 h-4" />
+          <span>رسائل الزوار والاقتراحات</span>
+          {newFeedback.length > 0 && (
+            <span className="bg-red-500 text-white text-xs px-1.5 rounded-full font-black">{newFeedback.length}</span>
+          )}
+        </button>
+
+        <button
           onClick={() => setActiveTab('inbox')}
           className={`px-4 py-2.5 rounded-xl font-black transition cursor-pointer flex items-center gap-2 ${
             activeTab === 'inbox'
@@ -210,6 +235,30 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           {unreadAdmin > 0 && (
             <span className="bg-red-500 text-white text-xs px-1.5 rounded-full font-black">{unreadAdmin}</span>
           )}
+        </button>
+
+        <button
+          onClick={() => setActiveTab('visits')}
+          className={`px-4 py-2.5 rounded-xl font-black transition cursor-pointer flex items-center gap-2 ${
+            activeTab === 'visits'
+              ? 'bg-emerald-800 text-white shadow-md'
+              : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+          }`}
+        >
+          <BarChart3 className="w-4 h-4" />
+          <span>إحصاءات الزيارات</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('ads')}
+          className={`px-4 py-2.5 rounded-xl font-black transition cursor-pointer flex items-center gap-2 ${
+            activeTab === 'ads'
+              ? 'bg-amber-500 text-slate-950 shadow-md'
+              : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+          }`}
+        >
+          <Megaphone className="w-4 h-4" />
+          <span>إعلانات الواجهة</span>
         </button>
       </div>
 
@@ -275,6 +324,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                           >
                             <Eye className="w-3.5 h-3.5" />
                             <span>معاينة</span>
+                          </button>
+                          <button
+                            onClick={() => messageTo('imam', imam.id)}
+                            className="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-black px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 cursor-pointer"
+                          >
+                            <Mail className="w-3.5 h-3.5" />
+                            <span>مراسلة</span>
                           </button>
                           <button
                             onClick={() => onEditImam(imam)}
@@ -345,6 +401,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
 
                         <div className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-sky-200/70">
                           <button
+                            onClick={() => messageTo('mosque', m.id)}
+                            className="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-black px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 cursor-pointer"
+                          >
+                            <Mail className="w-3.5 h-3.5" />
+                            <span>مراسلة</span>
+                          </button>
+                          <button
                             onClick={() => onEditMosque(m)}
                             className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 cursor-pointer"
                           >
@@ -413,6 +476,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   <div className="space-y-1 flex-1">
                     <div className="flex flex-wrap items-center justify-between gap-1">
                       <h4 className="font-black text-sm text-slate-900 font-amiri">{imam.name}</h4>
+                      <StatBadges stat={profileStats.get(`imam_${imam.id}`)} hasRecitation={!!imam.recitationMeta} />
                       <span
                         className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                           imam.approvalStatus === 'pending'
@@ -452,6 +516,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     عرض الملف
                   </button>
                   <button
+                            onClick={() => messageTo('imam', imam.id)}
+                            className="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-black px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 cursor-pointer"
+                          >
+                            <Mail className="w-3.5 h-3.5" />
+                            <span>مراسلة</span>
+                          </button>
+                          <button
                     onClick={() => onEditImam(imam)}
                     className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-3 py-1.5 rounded-xl text-xs cursor-pointer"
                   >
@@ -494,6 +565,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 <div className="space-y-1">
                   <div className="flex flex-wrap items-center justify-between gap-1">
                     <h4 className="font-black text-sm text-slate-900 font-amiri">{m.mosqueName}</h4>
+                    <StatBadges stat={profileStats.get(`mosque_${m.id}`)} />
                     <span
                       className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                         m.approvalStatus === 'pending'
@@ -530,6 +602,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                     </button>
                   )}
                   <button
+                            onClick={() => messageTo('mosque', m.id)}
+                            className="bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 font-black px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 cursor-pointer"
+                          >
+                            <Mail className="w-3.5 h-3.5" />
+                            <span>مراسلة</span>
+                          </button>
+                          <button
                     onClick={() => onEditMosque(m)}
                     className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-3 py-1.5 rounded-xl text-xs cursor-pointer"
                   >
@@ -572,9 +651,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <span className="bg-red-600 text-white text-xs font-black px-2 py-0.5 rounded-full">
-                        {rep.targetType === 'imam' ? 'بلاغ عن إمام' : 'بلاغ عن مسجد'}
+                        {rep.targetType === 'imam' ? 'بلاغ عن إمام' : rep.targetType === 'mosque' ? 'بلاغ عن مسجد' : rep.targetType === 'post' ? 'بلاغ عن منشور' : 'بلاغ عن تعليق'}
                       </span>
-                      <h4 className="font-black text-slate-900">{rep.targetName}</h4>
+                      {rep.targetType === 'post' || rep.targetType === 'comment' ? (
+                        <a href={`#/community/post/${rep.targetId.split('/')[0]}`} className="font-black text-emerald-800 underline">{rep.targetName}</a>
+                      ) : (
+                        <h4 className="font-black text-slate-900">{rep.targetName}</h4>
+                      )}
                       <span className="text-xs text-slate-400">{formatDate(rep.reportedAt, true)}</span>
                     </div>
                     <p className="font-bold text-red-900">السبب: {rep.reason}</p>
@@ -601,8 +684,85 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         </div>
       )}
 
+      {/* TAB: VISITOR MESSAGES & SUGGESTIONS */}
+      {activeTab === 'feedback' && (
+        <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
+          <h3 className="font-black text-base text-slate-900 border-b pb-3">
+            رسائل الزوار والاقتراحات ({feedback.length})
+          </h3>
+          {feedback.length === 0 ? (
+            <p className="text-sm text-slate-400 py-8 text-center">لا توجد رسائل بعد.</p>
+          ) : (
+            <div className="space-y-3">
+              {feedback.map((f) => (
+                <div
+                  key={f.id}
+                  className={`p-4 rounded-2xl border text-sm space-y-2 ${
+                    f.status === 'new' ? 'border-sky-300 bg-sky-50/60' : 'border-slate-200 bg-slate-50'
+                  }`}
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="bg-sky-700 text-white text-xs font-black px-2 py-0.5 rounded-full">
+                      {f.kind === 'suggestion' ? 'اقتراح' : f.kind === 'problem' ? 'مشكلة تقنية' : 'رسالة'}
+                    </span>
+                    <span className="font-black text-slate-900">{f.name || 'زائر بدون اسم'}</span>
+                    {f.email && (
+                      <a href={`mailto:${f.email}`} dir="ltr" className="text-sky-800 underline">
+                        {f.email}
+                      </a>
+                    )}
+                    <span className="text-xs text-slate-400">{formatDate(f.createdAt, true)}</span>
+                    {f.senderUid && <span className="text-xs text-emerald-700 font-bold">(مستخدم مسجل)</span>}
+                  </div>
+                  <p className="text-slate-700 whitespace-pre-wrap leading-relaxed">{f.message}</p>
+                  <div className="flex gap-2">
+                    {f.status === 'new' ? (
+                      <button
+                        onClick={() => onFeedbackHandled(f.id)}
+                        className="bg-emerald-700 hover:bg-emerald-600 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs cursor-pointer"
+                      >
+                        ✓ تمت المعالجة
+                      </button>
+                    ) : (
+                      <span className="bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full text-xs">تمت المعالجة ✓</span>
+                    )}
+                    <button
+                      onClick={() => onDeleteFeedback(f.id)}
+                      className="text-red-600 hover:bg-red-50 font-bold px-3 py-1.5 rounded-xl text-xs cursor-pointer flex items-center gap-1"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      حذف
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* TAB 5: ADMIN INBOX */}
-      {activeTab === 'inbox' && <InboxCenter currentRole="admin" {...inbox} />}
+      {/* TAB 6: VISIT STATISTICS (admins only) */}
+      {activeTab === 'visits' && <VisitStatsPanel />}
+
+      {/* TAB 7: HOME BANNER ANNOUNCEMENTS (admins only) */}
+      {activeTab === 'ads' && <AnnouncementsAdmin onDone={(m) => onToast(m)} onError={(m) => onToast(m, 'error')} />}
+
+      {activeTab === 'inbox' && <InboxCenter currentRole="admin" {...inbox} composeRequest={composeRequest} onComposeOpened={() => setComposeRequest(null)} />}
     </section>
   );
 };
+
+/** «👁 12 · 🎧 5»: opens of the profile card and plays of the recitation (since counting started). */
+const StatBadges: React.FC<{ stat?: ProfileStat; hasRecitation?: boolean }> = ({ stat, hasRecitation }) => (
+  <span className="inline-flex items-center gap-1.5 text-[11px] font-bold text-slate-500" title="عدد مرات فتح الملف وعدد مرات الاستماع إلى التلاوة">
+    <span className="inline-flex items-center gap-0.5 bg-slate-100 rounded-full px-2 py-0.5">
+      <Eye className="w-3 h-3" /> <span className="tabular-nums">{stat?.views ?? 0}</span> زيارة
+    </span>
+    {hasRecitation !== undefined && (
+      <span className={`inline-flex items-center gap-0.5 rounded-full px-2 py-0.5 ${hasRecitation ? 'bg-emerald-50 text-emerald-800' : 'bg-slate-100 text-slate-400'}`}>
+        <Headphones className="w-3 h-3" /> <span className="tabular-nums">{hasRecitation ? stat?.plays ?? 0 : '—'}</span> استماع
+      </span>
+    )}
+  </span>
+);

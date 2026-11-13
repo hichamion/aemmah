@@ -1,5 +1,75 @@
 @import "tailwindcss";
 
+/*
+ * Aemmah palette, inspired by night / Islamic app designs:
+ * deep teal-green (emerald), teal-cyan and night navy (sky / blue), warm gold (amber).
+ * Overriding the Tailwind scales recolours every component at once.
+ */
+@theme {
+  --color-emerald-50: #effaf8;
+  --color-emerald-100: #d7f0eb;
+  --color-emerald-200: #b0e0d7;
+  --color-emerald-300: #7fc8bb;
+  --color-emerald-400: #4fa89a;
+  --color-emerald-500: #2f8a7d;
+  --color-emerald-600: #236f66;
+  --color-emerald-700: #1d5953;
+  --color-emerald-800: #194844;
+  --color-emerald-900: #153b38;
+  --color-emerald-950: #0b2422;
+
+  --color-sky-50: #ecf9fb;
+  --color-sky-100: #cff0f5;
+  --color-sky-200: #a3e2ec;
+  --color-sky-300: #67cbdb;
+  --color-sky-400: #2fb0c5;
+  --color-sky-500: #1795ab;
+  --color-sky-600: #137a8f;
+  --color-sky-700: #136275;
+  --color-sky-800: #15505f;
+  --color-sky-900: #154350;
+  --color-sky-950: #0a2a35;
+
+  --color-blue-600: #12405e;
+  --color-blue-700: #0f2f4a;
+  --color-blue-800: #0c2539;
+  --color-blue-900: #0a1c2c;
+
+  /* Gold = brass of the «سَمْت» identity (warmer and calmer than the old yellow). */
+  --color-amber-300: #e4c67f;
+  --color-amber-400: #d6ae5c;
+  --color-amber-500: #c9a24e;
+  --color-amber-600: #a9843a;
+
+  --color-slate-50: #f2f6f6;
+
+  /* Night background used by the header and the home hero. */
+  --color-night: #0c1d22;
+
+  /* «سَمْت» identity: night ink, cedar green, lagoon teal, brass gold, parchment. */
+  --color-ink: #0c1d22;
+  --color-ink-soft: #14303a;
+  --color-cedar-500: #2f7a63;
+  --color-cedar-600: #256853;
+  --color-cedar-700: #1e5a48;
+  --color-cedar-800: #164536;
+  --color-cedar-900: #0f3127;
+  --color-lagoon-400: #3c98a6;
+  --color-lagoon-500: #2a8090;
+  --color-lagoon-600: #1d6b78;
+  --color-lagoon-700: #155664;
+  --color-lagoon-800: #0f414c;
+  --color-brass-100: #f7edd3;
+  --color-brass-200: #efdcab;
+  --color-brass-300: #e4c67f;
+  --color-brass-400: #d6ae5c;
+  --color-brass-500: #c9a24e;
+  --color-brass-600: #a9843a;
+  --color-brass-700: #84662c;
+  --color-parchment: #f7f2e7;
+  --color-sand: #ece3cf;
+}
+
 @layer base {
   body {
     font-family: 'Cairo', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -8,6 +78,19 @@
 
 .font-amiri {
   font-family: 'Amiri', serif;
+}
+
+/*
+ * Andalusi / Maghribi titles. First choice: an Andalusi font — the "Andalus" font installed on the
+ * visitor's computer (Windows), or a font file placed at public/fonts/andalusi.woff2 (see public/fonts/README.txt).
+ * The @font-face is declared in index.html so its relative URL works under any base path.
+ * Otherwise the bundled Maghribi-style Ruwudu font is used.
+ */
+
+.font-maghribi {
+  font-family: 'AemmahAndalusi', 'Ruwudu', 'Amiri', serif;
+  font-weight: 700;
+  line-height: 1.5;
 }
 
 /* Custom scrollbar for clean UI */
@@ -26,3 +109,412 @@
   background: #94a3b8;
 }
 
+
+/* Starry night sky (home hero), drawn with small radial gradients. */
+.night-sky {
+  background-color: var(--color-night);
+  background-image:
+    radial-gradient(1px 1px at 20px 30px, rgba(255, 255, 255, 0.7), transparent 60%),
+    radial-gradient(1px 1px at 90px 120px, rgba(255, 255, 255, 0.5), transparent 60%),
+    radial-gradient(1.5px 1.5px at 160px 60px, rgba(255, 255, 255, 0.6), transparent 60%),
+    radial-gradient(1px 1px at 230px 170px, rgba(255, 255, 255, 0.45), transparent 60%),
+    radial-gradient(1px 1px at 300px 20px, rgba(255, 255, 255, 0.55), transparent 60%),
+    radial-gradient(120% 80% at 50% 0%, #12344a 0%, transparent 60%),
+    radial-gradient(90% 60% at 50% 100%, #0f3b38 0%, transparent 70%);
+  background-size: 320px 220px, 320px 220px, 320px 220px, 320px 220px, 320px 220px, 100% 100%, 100% 100%;
+}
+
+/*
+ * "Liquid glass" surfaces (Apple-style): strong blur + saturation, a soft diagonal sheen,
+ * a bright top edge and a faint inner glow. Use on top of colour or photos.
+ */
+.glass {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.06) 60%, rgba(255, 255, 255, 0.12));
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 24px rgba(255, 255, 255, 0.06),
+    0 10px 40px rgba(2, 12, 20, 0.35);
+}
+
+/* Lighter, more opaque glass for primary buttons and the phone navigation bar. */
+.glass-light {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.78));
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 8px 30px rgba(2, 12, 20, 0.25);
+}
+
+/* Glass card that keeps its own colour gradient underneath (home cards, page banners). */
+.glass-card {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 0 40px rgba(255, 255, 255, 0.07),
+    0 20px 50px rgba(2, 12, 20, 0.35);
+}
+.glass-card::before {
+  /* Sheen across the top of the card */
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.06) 28%, transparent 45%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Bold Kufic titles (intro). */
+.font-kufi {
+  font-family: 'Reem Kufi', 'Cairo', sans-serif;
+  word-spacing: 0.14em;
+  font-weight: 700;
+}
+
+/* ---------------- Intro screen ---------------- */
+@keyframes intro-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes intro-fade-up { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes intro-title {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); filter: blur(12px); letter-spacing: 0.25em; }
+  to { opacity: 1; transform: none; filter: blur(0); letter-spacing: 0; }
+}
+@keyframes intro-shine { from { background-position: 200% 50%; } to { background-position: -200% 50%; } }
+@keyframes intro-swing { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+@keyframes intro-drop { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: none; } }
+@keyframes intro-flicker { 0%, 100% { opacity: 1; } 45% { opacity: 0.75; } 60% { opacity: 0.95; } }
+@keyframes intro-twinkle { 0%, 100% { opacity: 0.25; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.15); } }
+@keyframes intro-grow { from { opacity: 0; transform: scaleX(0); } to { opacity: 1; transform: none; } }
+@keyframes intro-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(248, 187, 71, 0.45); } 50% { box-shadow: 0 0 0 14px rgba(248, 187, 71, 0); } }
+@keyframes intro-leave { to { opacity: 0; transform: scale(1.06); filter: blur(6px); } }
+
+.intro-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: intro-draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.2s forwards; }
+.intro-draw-2 { animation-delay: 0.6s; }
+.intro-draw-3 { animation-duration: 1s; animation-delay: 1.2s; }
+.intro-glow { opacity: 0; animation: intro-fade-up 1.2s ease 1.4s forwards; }
+.intro-lantern { opacity: 0; transform-origin: 120px 60px; animation: intro-drop 0.8s ease-out 1.5s forwards, intro-swing 3.2s ease-in-out 2.3s infinite; }
+.intro-flame { animation: intro-flicker 1.4s ease-in-out 2s infinite; }
+.intro-title {
+  opacity: 0;
+  background: linear-gradient(100deg, #f8bb47 20%, #fff6dc 40%, #f8bb47 60%) 0 0 / 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: intro-title 1s cubic-bezier(0.2, 0.8, 0.2, 1) 1.9s forwards, intro-shine 4s linear 3s infinite;
+}
+.intro-sub { opacity: 0; animation: intro-fade-up 0.8s ease 2.6s forwards; }
+.intro-line { opacity: 0; animation: intro-grow 0.7s ease 3s forwards; }
+.intro-ayah { opacity: 0; animation: intro-fade-up 1s ease 3.3s forwards; }
+.intro-ayah-ref { opacity: 0; animation: intro-fade-up 0.8s ease 3.7s forwards; }
+.intro-enter { opacity: 0; animation: intro-fade-up 0.7s ease 4.1s forwards, intro-pulse 2.2s ease 4.8s infinite; }
+.intro-star { opacity: 0.4; animation: intro-twinkle 3s ease-in-out infinite; }
+.intro-leave { animation: intro-leave 0.7s ease forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .intro *, .intro { animation: none !important; }
+  .intro .intro-draw { stroke-dashoffset: 0; }
+  .intro [class*='intro-'] { opacity: 1; }
+  .intro-leave { opacity: 0; }
+}
+
+/* ---------- ملتقى الأئمة ---------- */
+/* Sidebar tiles: soft gradient with faint geometric lines (inspired by classic Arabic portals). */
+.cm-tile {
+  background-color: #eaf6f0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='64' viewBox='0 0 160 64'%3E%3Cg fill='none' stroke='%2312804c' stroke-opacity='0.13' stroke-width='0.8'%3E%3Cpath d='M40 6 L100 58 M40 6 L150 30 M40 6 L70 64 M40 6 L10 64 M40 6 L130 0 M100 58 L150 30 M70 64 L150 30'/%3E%3Ccircle cx='40' cy='6' r='1.6' fill='%2312804c' fill-opacity='0.25'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(100deg, #f7fcf9 0%, #e3f3eb 55%, #d3ece0 100%);
+  background-repeat: no-repeat;
+  background-position: left center, 0 0;
+  background-size: auto 100%, 100% 100%;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease, color 0.25s ease;
+}
+.cm-tile:hover { box-shadow: 0 8px 22px -14px rgba(5, 71, 43, 0.55); transform: translateX(-2px); }
+.cm-tile[aria-current='page'] {
+  color: #fff;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='64' viewBox='0 0 160 64'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.16' stroke-width='0.8'%3E%3Cpath d='M40 6 L100 58 M40 6 L150 30 M40 6 L70 64 M40 6 L10 64 M40 6 L130 0 M100 58 L150 30 M70 64 L150 30'/%3E%3C/g%3E%3C/svg%3E"),
+    linear-gradient(100deg, #2fbf7a 0%, #12804c 55%, #05472b 100%);
+  box-shadow: 0 10px 24px -14px rgba(5, 71, 43, 0.8);
+}
+/* Accordion panel: animates its height without measuring. */
+.cm-collapse { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease, opacity 0.3s ease; opacity: 0; }
+.cm-collapse[data-open='true'] { grid-template-rows: 1fr; opacity: 1; }
+.cm-collapse > * { overflow: hidden; }
+@keyframes cm-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.cm-enter { animation: cm-in 0.35s ease both; }
+@media (prefers-reduced-motion: reduce) {
+  .cm-tile, .cm-collapse { transition: none; }
+  .cm-tile:hover { transform: none; }
+  .cm-enter { animation: none; }
+}
+
+/* ---------- Home («سَمْت» identity) ---------- */
+/* Faint eight-pointed-star lattice for dark surfaces. */
+.khatam-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23e4c67f' stroke-opacity='0.09' stroke-width='1'%3E%3Crect x='22' y='22' width='28' height='28'/%3E%3Crect x='22' y='22' width='28' height='28' transform='rotate(45 36 36)'/%3E%3Cpath d='M0 36h16M56 36h16M36 0v16M36 56v16'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 72px 72px;
+}
+/* Same lattice for light surfaces. */
+.khatam-pattern-light {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%231e5a48' stroke-opacity='0.06' stroke-width='1'%3E%3Crect x='22' y='22' width='28' height='28'/%3E%3Crect x='22' y='22' width='28' height='28' transform='rotate(45 36 36)'/%3E%3Cpath d='M0 36h16M56 36h16M36 0v16M36 56v16'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 72px 72px;
+}
+
+.brass-text {
+  background: linear-gradient(100deg, #f3dfa8 0%, #d6ae5c 45%, #f0d595 70%, #c09543 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.lift { transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s ease; }
+.lift:hover { transform: translateY(-4px); }
+@keyframes slide-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.slide-copy > * { animation: slide-in 0.6s ease both; }
+.slide-copy > *:nth-child(2) { animation-delay: 0.08s; }
+.slide-copy > *:nth-child(3) { animation-delay: 0.16s; }
+.slide-copy > *:nth-child(4) { animation-delay: 0.24s; }
+@keyframes kenburns { from { transform: scale(1.04); } to { transform: scale(1.12); } }
+.kenburns { animation: kenburns 9s ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .lift, .lift:hover { transition: none; transform: none; }
+  .slide-copy > *, .kenburns { animation: none; }
+}
+
+/* Bottom bar of phones: own compositing layer, always glued to the bottom edge (incl. the iPhone home-indicator area). */
+.mobile-nav {
+  position: fixed;
+  bottom: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+/* «تقليل الحركة» setting (same effect as the system preference). */
+.reduce-motion *, .reduce-motion *::before, .reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ---------- Liquid glass (in the spirit of recent iOS / macOS) ---------- */
+/* On photos and dark surfaces: clear glass with a light rim and a soft specular highlight. */
+.liquid-glass {
+  background: linear-gradient(135deg, rgb(255 255 255 / 0.24) 0%, rgb(255 255 255 / 0.07) 55%, rgb(255 255 255 / 0.14) 100%);
+  -webkit-backdrop-filter: blur(18px) saturate(185%);
+  backdrop-filter: blur(18px) saturate(185%);
+  border: 1px solid rgb(255 255 255 / 0.32);
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 0.55),
+    inset 0 -1px 1px rgb(255 255 255 / 0.12),
+    0 8px 24px -10px rgb(0 0 0 / 0.4);
+}
+/* Bars over the page (header, bottom bar, toasts): tinted night glass. */
+.liquid-glass-dark {
+  background: linear-gradient(180deg, rgb(20 44 52 / 0.8) 0%, rgb(12 29 34 / 0.9) 100%);
+  -webkit-backdrop-filter: blur(26px) saturate(190%);
+  backdrop-filter: blur(26px) saturate(190%);
+  border: 1px solid rgb(255 255 255 / 0.12);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.18),
+    inset 0 -1px 0 rgb(0 0 0 / 0.25),
+    0 12px 32px -12px rgb(0 0 0 / 0.55);
+}
+/* Panels on light pages: milky glass. */
+.liquid-glass-light {
+  background: linear-gradient(135deg, rgb(255 255 255 / 0.78) 0%, rgb(255 255 255 / 0.56) 100%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid rgb(255 255 255 / 0.85);
+  box-shadow:
+    inset 0 1px 1px rgb(255 255 255 / 0.9),
+    0 10px 30px -14px rgb(12 29 34 / 0.28);
+}
+.dark .liquid-glass-light {
+  background: linear-gradient(135deg, rgb(24 44 52 / 0.72) 0%, rgb(15 30 35 / 0.6) 100%);
+  border-color: rgb(255 255 255 / 0.09);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 10px 30px -14px rgb(0 0 0 / 0.6);
+}
+/* Browsers without backdrop-filter: keep the glass readable. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .liquid-glass-dark { background: rgb(12 29 34 / 0.96); }
+  .liquid-glass-light { background: rgb(255 255 255 / 0.96); }
+  .dark .liquid-glass-light { background: rgb(18 35 42 / 0.97); }
+}
+
+/* ---------- Phones: the page scrolls inside #root, not the browser window ----------
+ * iPhone Safari shrinks / grows its own toolbar while the WINDOW scrolls, and moves bars fixed to the
+ * bottom with it. When only #root scrolls, the toolbar stays still and the bottom bar cannot move. */
+@media (max-width: 1023.98px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+  #root {
+    position: fixed;
+    inset: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: none;
+  }
+}
+
+/* Bell of the community: rings when there are new notifications. */
+@keyframes bell {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(14deg); }
+  40% { transform: rotate(-12deg); }
+  60% { transform: rotate(8deg); }
+  80% { transform: rotate(-4deg); }
+}
+
+/* ---------- Site background (SiteBackdrop): warm grey + Andalusian ornament ---------- */
+.site-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(70rem 40rem at 50% -10%, rgb(255 255 255 / 0.75), transparent 70%),
+    linear-gradient(180deg, #f2f1ed 0%, #ebe9e3 55%, #e4e1d9 100%);
+}
+.site-backdrop__rosette {
+  position: absolute;
+  top: -34vmin;
+  left: 50%;
+  width: min(118vmin, 1150px);
+  transform: translateX(-50%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 30%, transparent 78%);
+  mask-image: linear-gradient(to bottom, #000 30%, transparent 78%);
+}
+.site-backdrop__hi { stroke: #ffffff; stroke-opacity: 0.95; stroke-width: 0.9; }
+.site-backdrop__lo { stroke: #b9b2a4; stroke-opacity: 0.45; stroke-width: 0.9; }
+.site-backdrop__lattice {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke-linejoin='round'%3E%3Cg stroke='%23b9b2a4' stroke-opacity='0.55' stroke-width='3' transform='translate(1 1.4)'%3E%3Cpath d='M35 35h50v50H35zM60 25l35 35-35 35-35-35zM95 60h25M0 60h25M60 95v25M60 0v25M-25-25h50v50h-50zM95-25h50v50H95zM-25 95h50v50h-50zM95 95h50v50H95z'/%3E%3Ccircle cx='60' cy='60' r='9'/%3E%3C/g%3E%3Cg stroke='%23ffffff' stroke-opacity='0.95' stroke-width='3'%3E%3Cpath d='M35 35h50v50H35zM60 25l35 35-35 35-35-35zM95 60h25M0 60h25M60 95v25M60 0v25M-25-25h50v50h-50zM95-25h50v50H95zM-25 95h50v50h-50zM95 95h50v50H95z'/%3E%3Ccircle cx='60' cy='60' r='9'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-size: 120px 120px;
+  background-position: center bottom;
+  -webkit-mask-image: linear-gradient(to top, #000 0%, rgb(0 0 0 / 0.7) 18%, transparent 52%);
+  mask-image: linear-gradient(to top, #000 0%, rgb(0 0 0 / 0.7) 18%, transparent 52%);
+}
+.site-backdrop__skyline {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  width: 100%;
+  height: 130px;
+  color: rgb(150 140 122 / 0.16);
+}
+.dark .site-backdrop {
+  background:
+    radial-gradient(70rem 40rem at 50% -10%, rgb(47 138 125 / 0.12), transparent 70%),
+    linear-gradient(180deg, #0c191d 0%, #0b171b 60%, #0a1418 100%);
+}
+.dark .site-backdrop__hi { stroke: #8fd3b9; stroke-opacity: 0.07; }
+.dark .site-backdrop__lo { stroke-opacity: 0; }
+.dark .site-backdrop__lattice { opacity: 0.06; filter: invert(1); }
+.dark .site-backdrop__skyline { color: rgb(143 211 185 / 0.05); }
+/* Arch at the bottom of the home hero: same tone as the site background just below it. */
+.home-arch { color: #f0eee9; }
+.dark .home-arch { color: #0c191d; }
+
+/* ---------- Home hero: deep teal with the Andalusian star-and-hexagon lattice (vector, sharp on any screen) ---------- */
+.home-hero {
+  background-color: #193d4b;
+  background-image:
+    radial-gradient(60rem 30rem at 80% 0%, rgb(255 255 255 / 0.06), transparent 70%),
+    radial-gradient(50rem 30rem at 10% 100%, rgb(201 162 78 / 0.08), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170' viewBox='0 0 170 170'%3E%3Cpath d='M0.0 -42.0 L8.4 -20.3 L29.7 -29.7 L20.3 -8.4 L42.0 0.0 L20.3 8.4 L29.7 29.7 L8.4 20.3 L0.0 42.0 L-8.4 20.3 L-29.7 29.7 L-20.3 8.4 L-42.0 0.0 L-20.3 -8.4 L-29.7 -29.7 L-8.4 -20.3Z M0.0 -14.0 L3.4 -8.3 L9.9 -9.9 L8.3 -3.4 L14.0 0.0 L8.3 3.4 L9.9 9.9 L3.4 8.3 L0.0 14.0 L-3.4 8.3 L-9.9 9.9 L-8.3 3.4 L-14.0 0.0 L-8.3 -3.4 L-9.9 -9.9 L-3.4 -8.3Z M170.0 -42.0 L178.4 -20.3 L199.7 -29.7 L190.3 -8.4 L212.0 0.0 L190.3 8.4 L199.7 29.7 L178.4 20.3 L170.0 42.0 L161.6 20.3 L140.3 29.7 L149.7 8.4 L128.0 0.0 L149.7 -8.4 L140.3 -29.7 L161.6 -20.3Z M170.0 -14.0 L173.4 -8.3 L179.9 -9.9 L178.3 -3.4 L184.0 0.0 L178.3 3.4 L179.9 9.9 L173.4 8.3 L170.0 14.0 L166.6 8.3 L160.1 9.9 L161.7 3.4 L156.0 0.0 L161.7 -3.4 L160.1 -9.9 L166.6 -8.3Z M0.0 128.0 L8.4 149.7 L29.7 140.3 L20.3 161.6 L42.0 170.0 L20.3 178.4 L29.7 199.7 L8.4 190.3 L0.0 212.0 L-8.4 190.3 L-29.7 199.7 L-20.3 178.4 L-42.0 170.0 L-20.3 161.6 L-29.7 140.3 L-8.4 149.7Z M0.0 156.0 L3.4 161.7 L9.9 160.1 L8.3 166.6 L14.0 170.0 L8.3 173.4 L9.9 179.9 L3.4 178.3 L0.0 184.0 L-3.4 178.3 L-9.9 179.9 L-8.3 173.4 L-14.0 170.0 L-8.3 166.6 L-9.9 160.1 L-3.4 161.7Z M170.0 128.0 L178.4 149.7 L199.7 140.3 L190.3 161.6 L212.0 170.0 L190.3 178.4 L199.7 199.7 L178.4 190.3 L170.0 212.0 L161.6 190.3 L140.3 199.7 L149.7 178.4 L128.0 170.0 L149.7 161.6 L140.3 140.3 L161.6 149.7Z M170.0 156.0 L173.4 161.7 L179.9 160.1 L178.3 166.6 L184.0 170.0 L178.3 173.4 L179.9 179.9 L173.4 178.3 L170.0 184.0 L166.6 178.3 L160.1 179.9 L161.7 173.4 L156.0 170.0 L161.7 166.6 L160.1 160.1 L166.6 161.7Z M47.0 0.0 L64.1 -15.0 L105.9 -15.0 L123.0 0.0 L105.9 15.0 L64.1 15.0Z M47.0 170.0 L64.1 155.0 L105.9 155.0 L123.0 170.0 L105.9 185.0 L64.1 185.0Z M0.0 47.0 L-15.0 64.1 L-15.0 105.9 L0.0 123.0 L15.0 105.9 L15.0 64.1Z M170.0 47.0 L155.0 64.1 L155.0 105.9 L170.0 123.0 L185.0 105.9 L185.0 64.1Z M71.0 85.0 L64.0 97.1 L50.0 97.1 L43.0 85.0 L50.0 72.9 L64.0 72.9Z M127.0 85.0 L120.0 97.1 L106.0 97.1 L99.0 85.0 L106.0 72.9 L120.0 72.9Z M97.1 64.0 L85.0 71.0 L72.9 64.0 L72.9 50.0 L85.0 43.0 L97.1 50.0Z M97.1 120.0 L85.0 127.0 L72.9 120.0 L72.9 106.0 L85.0 99.0 L97.1 106.0Z M29.7 29.7 L71.0 71.0 M99.0 99.0 L140.3 140.3 M140.3 29.7 L99.0 71.0 M71.0 99.0 L29.7 140.3 M54 0 L54 54 L0 54 M116 0 L116 54 L170 54 M54 170 L54 116 L0 116 M116 170 L116 116 L170 116' fill='none' stroke='%232f5768' stroke-width='3.2' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-size: auto, auto, 170px 170px;
+}
+
+/* Community background: golden mosque skyline photo under a soft veil (cards stay readable). */
+.community-photo {
+  position: fixed;
+  inset: 0;
+  z-index: -5;
+  pointer-events: none;
+  background-color: #c9a46a;
+  background-size: cover;
+  background-position: 35% 40%;
+  background-repeat: no-repeat;
+}
+.community-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgb(255 246 230 / 0.12) 0%, rgb(255 246 230 / 0.3) 100%);
+}
+.dark .community-photo::after { background: linear-gradient(180deg, rgb(8 16 18 / 0.72) 0%, rgb(8 16 18 / 0.86) 100%); }
+
+/* ---------- Each section has its own identity (App: data-section) ---------- */
+[data-section] { --section: #193d4b; --section-2: #c9a24e; }
+[data-section='imams'] { --section: #1d6b78; --section-2: #4fb3c0; }
+[data-section='mosques'] { --section: #1e5a48; --section-2: #2f9a73; }
+[data-section='community'] { --section: #a9843a; --section-2: #e4c67f; }
+[data-section='account'] { --section: #0c1d22; --section-2: #d6ae5c; }
+.section-line {
+  position: sticky;
+  top: calc(4rem + env(safe-area-inset-top));
+  z-index: 39;
+  height: 3px;
+  background: linear-gradient(90deg, var(--section-2), var(--section), var(--section-2));
+}
+@media (min-width: 640px) { .section-line { top: calc(4.5rem + env(safe-area-inset-top)); } }
+/* the backdrop takes a light tint of the section */
+[data-section='imams'] .site-backdrop {
+  background:
+    radial-gradient(70rem 40rem at 50% -10%, rgb(255 255 255 / 0.7), transparent 70%),
+    linear-gradient(180deg, #eaf3f4 0%, #dfecee 55%, #d4e5e8 100%);
+}
+[data-section='mosques'] .site-backdrop {
+  background:
+    radial-gradient(70rem 40rem at 50% -10%, rgb(255 255 255 / 0.7), transparent 70%),
+    linear-gradient(180deg, #ecf3ee 0%, #e1ece4 55%, #d6e6da 100%);
+}
+[data-section='account'] .site-backdrop {
+  background:
+    radial-gradient(70rem 40rem at 50% -10%, rgb(255 255 255 / 0.7), transparent 70%),
+    linear-gradient(180deg, #f5f0e4 0%, #eee5d1 55%, #e6dbc2 100%);
+}
+.dark [data-section='imams'] .site-backdrop { background: linear-gradient(180deg, #0b1a1f 0%, #0a1a1e 100%); }
+.dark [data-section='mosques'] .site-backdrop { background: linear-gradient(180deg, #0b1a16 0%, #0a1714 100%); }
+.dark [data-section='account'] .site-backdrop { background: linear-gradient(180deg, #16140d 0%, #12100b 100%); }
+
+/* ---------- Phone bottom bar (MobileNav): golden tabs on the drawn bar ---------- */
+.gold-bar { filter: drop-shadow(0 12px 22px rgb(0 0 0 / 0.55)); }
+.gold-tab { opacity: 0.82; transition: opacity 0.35s ease; }
+.gold-tab svg { transition: filter 0.35s ease, transform 0.35s ease; }
+.gold-tab__label {
+  background: linear-gradient(180deg, #f6dfa0, #c99a4e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.gold-tab:hover { opacity: 1; }
+.gold-tab.is-active { opacity: 1; }
+.gold-tab.is-active svg { filter: drop-shadow(0 0 7px rgb(255 226 150 / 0.75)) brightness(1.15); transform: translateY(-1px) scale(1.07); }
+.gold-tab__glow {
+  position: absolute;
+  inset: 10% 18%;
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, rgb(255 226 150 / 0.3), transparent);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+.gold-tab.is-active .gold-tab__glow { opacity: 1; transform: scale(1); }
+.gold-tab--centre { opacity: 0.95; }
+.gold-tab--centre .gold-tab__glow { inset: 0 -10%; }

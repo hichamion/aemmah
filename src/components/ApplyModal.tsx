@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MosqueJob, ImamProfile } from '../types';
 import { getSafeImamAvatar } from '../utils/helpers';
 import { X, Send, ShieldCheck, Loader2 } from 'lucide-react';
+import { useDialog } from '../lib/useDialog';
 
 interface ApplyModalProps {
   mosque: MosqueJob | null;
@@ -21,6 +22,8 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({ mosque, imam, onClose, o
     if (mosque) setCoverNote(DEFAULT_NOTE);
   }, [mosque?.id]);
 
+  const dialogRef = useDialog(!!mosque && !!imam, onClose);
+
   if (!mosque || !imam) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -31,7 +34,7 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({ mosque, imam, onClose, o
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto" role="dialog" ref={dialogRef} tabIndex={-1} aria-modal="true">
       <div className="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl my-8 text-xs space-y-5">
         <div className="flex justify-between items-center border-b pb-4">
           <div className="flex items-center gap-2">

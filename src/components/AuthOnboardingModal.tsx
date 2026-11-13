@@ -1,22 +1,28 @@
 import React, { useEffect, useState } from 'react';
+import { MosqueIcon } from './MosqueIcon';
 import type { User } from 'firebase/auth';
-import { X, CheckCircle2, Lock, ArrowLeft, Building2, Loader2 } from 'lucide-react';
+import { X, CheckCircle2, Lock, ArrowLeft, Loader2 } from 'lucide-react';
 import { createUserProfile, nowIso } from '../lib/db';
 import { signInWith, signOutUser } from '../lib/auth';
 import { DEFAULT_IMAM_SILHOUETTE_AVATAR } from '../utils/helpers';
+import { LogoMark } from './Logo';
+import { useDialog } from '../lib/useDialog';
+import { EmailPhoneAuth } from './EmailPhoneAuth';
+import { AUTH_METHODS } from '../config';
 
 interface AuthOnboardingModalProps {
   isOpen: boolean;
-  /** Signed in with Google/Facebook but no Mihrab profile yet. */
+  /** Signed in with Google/Facebook but no Aemmah profile yet. */
   needsOnboarding: boolean;
   firebaseUser: User | null;
   onClose: () => void;
   onError: (err: unknown) => void;
+  onInfo: (msg: string) => void;
   onOnboardingComplete: (role: 'imam' | 'mosque') => void;
 }
 
 /**
- * Step 1: sign in with Google or Facebook (real Firebase Auth, no fallback).
+ * Step 1: sign in with Google, Facebook, e-mail or phone (whichever AUTH_METHODS enables).
  * Step 2 (first sign-in only): choose the account type and accept the privacy policy.
  * The admin role cannot be chosen here — it is granted in the Firebase console (see README).
  */
@@ -26,6 +32,7 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
   firebaseUser,
   onClose,
   onError,
+  onInfo,
   onOnboardingComplete,
 }) => {
   const [loading, setLoading] = useState(false);
@@ -39,6 +46,8 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
       setAcceptedPrivacy(false);
     }
   }, [needsOnboarding, firebaseUser?.uid]);
+
+  const dialogRef = useDialog(isOpen, needsOnboarding ? undefined : onClose);
 
   if (!isOpen) return null;
 
@@ -76,7 +85,13 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
         email: firebaseUser.email || '',
         displayName: name.slice(0, 120),
         ...(firebaseUser.photoURL ? { photoURL: firebaseUser.photoURL } : {}),
-        provider: providerId.includes('facebook') ? 'facebook' : 'google',
+        provider: providerId.includes('facebook')
+          ? 'facebook'
+          : providerId === 'password'
+          ? 'password'
+          : providerId === 'phone'
+          ? 'phone'
+          : 'google',
         role: selectedRole,
         verified: false,
         createdAt: nowIso(),
@@ -95,21 +110,19 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
     <div
       className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto"
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
     >
       <div className="bg-white rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl my-6 text-xs">
         <div className="bg-slate-900 text-white p-5 sm:p-6 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <img
-              src={DEFAULT_IMAM_SILHOUETTE_AVATAR}
-              alt=""
-              className="w-11 h-11 rounded-2xl object-cover border border-amber-400/60"
-            />
+            <LogoMark className="w-11 h-11" />
             <div>
               <h3 className="text-lg sm:text-xl font-black font-amiri">
                 {step === 'login' ? 'تسجيل الدخول إلى حسابك' : 'إكمال إنشاء حسابك'}
               </h3>
-              <p className="text-xs text-slate-300">منصة مِحراب للأئمة والمساجد</p>
+              <p className="text-xs text-slate-300">منصة أئمة للأئمة والمساجد</p>
             </div>
           </div>
           <button
@@ -130,12 +143,12 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                   <span>تسجيل الدخول الآمن</span>
                 </p>
                 <p className="text-xs text-slate-600">
-                  سجّل الدخول بحساب جوجل أو فيسبوك. لا نحصل على كلمة مرورك، ونستخدم اسمك وبريدك فقط لإنشاء حسابك في
-                  المنصة.
+                  نستخدم اسمك ووسيلة الدخول فقط لإنشاء حسابك في المنصة، ولا نشاركها مع أحد.
                 </p>
               </div>
 
               <div className="space-y-3">
+                {AUTH_METHODS.google && (
                 <button
                   type="button"
                   disabled={loading}
@@ -154,7 +167,9 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                   )}
                   <span>المتابعة باستخدام حساب جوجل (Google)</span>
                 </button>
+                )}
 
+                {AUTH_METHODS.facebook && (
                 <button
                   type="button"
                   disabled={loading}
@@ -166,7 +181,16 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                   </svg>
                   <span>المتابعة باستخدام فيسبوك (Facebook)</span>
                 </button>
+                )}
               </div>
+
+              <EmailPhoneAuth
+                showEmail={AUTH_METHODS.email}
+                showPhone={AUTH_METHODS.phone}
+                onSignedIn={onClose}
+                onError={onError}
+                onInfo={onInfo}
+              />
             </div>
           ) : (
             <form onSubmit={handleFinishOnboarding} className="space-y-5">
@@ -174,7 +198,7 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                 <div className="flex items-center gap-3 min-w-0">
                   {selectedRole === 'mosque' ? (
                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-sky-500 to-blue-700 text-white flex items-center justify-center shadow shrink-0">
-                      <Building2 className="w-6 h-6" />
+                      <MosqueIcon className="w-6 h-6" />
                     </div>
                   ) : (
                     <img
@@ -241,7 +265,7 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                     }`}
                   >
                     <div className="w-11 h-11 rounded-xl bg-sky-600 text-white flex items-center justify-center shrink-0">
-                      <Building2 className="w-6 h-6" />
+                      <MosqueIcon className="w-6 h-6" />
                     </div>
                     <div>
                       <div className="font-black text-sky-950 text-sm">نحن جمعية / مسجد</div>

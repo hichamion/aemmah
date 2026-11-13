@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AlertTriangle, CheckCircle2, Loader2, X } from 'lucide-react';
 import {
   Application,
@@ -15,6 +15,7 @@ import {
   createReport,
   deleteImam,
   deleteMessage,
+  deleteFeedback,
   deleteMosque,
   deleteMyData,
   describeError,
@@ -26,6 +27,8 @@ import {
   saveImam,
   saveMosque,
   sendMessage,
+  sendFeedback,
+  setFeedbackHandled,
   setApplicationStatus,
   setImamApproval,
   setMosqueActive,
@@ -36,21 +39,38 @@ import {
 } from './lib/db';
 import { Navbar } from './components/Navbar';
 import { HeroSection } from './components/HeroSection';
-import { Dashboard } from './components/Dashboard';
 import { ImamPortal } from './components/ImamPortal';
 import { MosquePortal } from './components/MosquePortal';
-import { AdminPanel } from './components/AdminPanel';
 import { AuthOnboardingModal } from './components/AuthOnboardingModal';
 import { ImamModalForm } from './components/ImamModalForm';
+import { StatsConsent } from './components/StatsConsent';
+import { SettingsPanel } from './components/SettingsPanel';
+import { SiteBackdrop } from './components/SiteBackdrop';
+import { AppErrorBoundary } from './components/AppErrorBoundary';
+import { InstallGuide, isInstalled } from './components/InstallGuide';
+import { trackVisit } from './lib/visits';
+import { useNotifications } from './lib/community';
+import { scrollToTop } from './lib/scroll';
 import { MosqueModalForm } from './components/MosqueModalForm';
 import { ImamFullModal } from './components/ImamFullModal';
+import { MosqueFullModal } from './components/MosqueFullModal';
 import { ApplyModal } from './components/ApplyModal';
 import { InterviewModal, InterviewDetails } from './components/InterviewModal';
 import { ReportModal } from './components/ReportModal';
 import { PrivacyPage } from './components/PrivacyPage';
 import { Footer } from './components/Footer';
+import { MobileNav } from './components/MobileNav';
+import { Intro, shouldShowIntro } from './components/Intro';
+import { MIN_ITEMS_FOR_STATS, SUPPORT_ENABLED } from './config';
+import { ContactPage } from './components/ContactPage';
+import { SupportPage } from './components/SupportPage';
 
-export type View = 'home' | 'dashboard' | 'imam' | 'mosque' | 'admin' | 'privacy';
+// Loaded on demand: the statistics page pulls in the charts library, and the admin panel is for admins only.
+const Dashboard = lazy(() => import('./components/Dashboard').then((m) => ({ default: m.Dashboard })));
+const AdminPanel = lazy(() => import('./components/AdminPanel').then((m) => ({ default: m.AdminPanel })));
+const CommunityPage = lazy(() => import('./components/community/CommunityPage').then((m) => ({ default: m.CommunityPage })));
+
+export type View = 'home' | 'dashboard' | 'imam' | 'mosque' | 'admin' | 'privacy' | 'contact' | 'support' | 'community';
 type ImamTab = 'manage' | 'mosque_ads' | 'applications' | 'inbox';
 type MosqueTab = 'browse' | 'manage_mosques' | 'applications' | 'inbox';
 
@@ -63,12 +83,31 @@ const VIEW_TO_HASH: Record<View, string> = {
   mosque: '#/imams',
   admin: '#/admin',
   privacy: '#/privacy',
+  contact: '#/contact',
+  support: '#/support',
+  community: '#/community',
 };
 
-function parseHash(hash: string): { view: View; imamId?: string } {
+const VIEW_TITLES: Record<View, string> = {
+  home: 'منصة أئمة | جسر تواصل بين الأئمة والمساجد',
+  dashboard: 'إحصائيات المنصة | منصة أئمة',
+  imam: 'إعلانات المساجد | منصة أئمة',
+  mosque: 'الأئمة المتاحون | منصة أئمة',
+  admin: 'لوحة الإدارة | منصة أئمة',
+  privacy: 'سياسة الخصوصية | منصة أئمة',
+  contact: 'راسل الإدارة | منصة أئمة',
+  support: 'ادعم المنصة | منصة أئمة',
+  community: 'ملتقى الأئمة | منصة أئمة',
+};
+
+function parseHash(hash: string): { view: View; imamId?: string; mosqueId?: string } {
   const h = hash || '#/';
   const imamMatch = h.match(/^#\/imams\/([\w-]+)$/);
   if (imamMatch) return { view: 'mosque', imamId: imamMatch[1] };
+  // The community page handles its own sub-pages (#/community/post/<id>, /library…).
+  if (h.startsWith('#/community')) return { view: 'community' };
+  const mosqueMatch = h.match(/^#\/mosques\/([\w-]+)$/);
+  if (mosqueMatch) return { view: 'imam', mosqueId: mosqueMatch[1] };
   const entry = (Object.entries(VIEW_TO_HASH) as [View, string][]).find(([, v]) => v === h);
   return { view: entry ? entry[0] : 'home' };
 }
@@ -81,7 +120,7 @@ export default function App() {
   const uid = firebaseUser?.uid ?? null;
 
   const data = usePlatformData(uid, role);
-  const { imams, mosques, applications, messages, reports } = data;
+  const { imams, mosques, applications, messages, reports, feedback } = data;
 
   // ------------------------------------------------------------------
   // Navigation
@@ -89,28 +128,52 @@ export default function App() {
   const initial = parseHash(window.location.hash);
   const [currentView, setCurrentViewState] = useState<View>(initial.view);
   const [pendingImamLink, setPendingImamLink] = useState<string | undefined>(initial.imamId);
+  const [pendingMosqueLink, setPendingMosqueLink] = useState<string | undefined>(initial.mosqueId);
   // `seq` changes on every request, so asking again for the same tab (e.g. the inbox button)
   // still switches the portal back to it after the user moved to another tab.
   const [imamPortalTab, setImamPortalTabState] = useState<{ tab: ImamTab; seq: number }>({ tab: 'mosque_ads', seq: 0 });
   const [mosquePortalTab, setMosquePortalTabState] = useState<{ tab: MosqueTab; seq: number }>({ tab: 'browse', seq: 0 });
   const setImamPortalTab = useCallback((tab: ImamTab) => setImamPortalTabState((p) => ({ tab, seq: p.seq + 1 })), []);
   const setMosquePortalTab = useCallback((tab: MosqueTab) => setMosquePortalTabState((p) => ({ tab, seq: p.seq + 1 })), []);
+  // Tab really open in each portal (the user can switch tabs inside the portal).
+  const [imamTabOpen, setImamTabOpen] = useState<ImamTab>('mosque_ads');
+  const [mosqueTabOpen, setMosqueTabOpen] = useState<MosqueTab>('browse');
 
   const setCurrentView = useCallback((view: View) => {
     setCurrentViewState(view);
     if (window.location.hash !== VIEW_TO_HASH[view]) window.location.hash = VIEW_TO_HASH[view];
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
+
+  // Back to the top AFTER the new page is drawn (scrolling before it, the browser kept the old
+  // position and showed the bottom of the shorter page).
+  useEffect(() => {
+    requestAnimationFrame(() => scrollToTop(false));
+  }, [currentView]);
 
   useEffect(() => {
     const onHash = () => {
       const parsed = parseHash(window.location.hash);
       setCurrentViewState(parsed.view);
       if (parsed.imamId) setPendingImamLink(parsed.imamId);
+      if (parsed.mosqueId) setPendingMosqueLink(parsed.mosqueId);
     };
     window.addEventListener('hashchange', onHash);
     return () => window.removeEventListener('hashchange', onHash);
   }, []);
+
+  useEffect(() => {
+    document.title = VIEW_TITLES[currentView];
+  }, [currentView]);
+
+  // Anonymous visit counter (see src/lib/visits.ts) — once per opening of the site.
+  useEffect(() => {
+    void trackVisit();
+  }, []);
+
+  // The support page exists only once a payment method is configured (src/config.ts).
+  useEffect(() => {
+    if (currentView === 'support' && !SUPPORT_ENABLED) setCurrentView('home');
+  }, [currentView, setCurrentView]);
 
   // The admin view is only for admins.
   useEffect(() => {
@@ -120,6 +183,9 @@ export default function App() {
   // ------------------------------------------------------------------
   // Toasts
   // ------------------------------------------------------------------
+  // Opening screen, once per session, when landing on the home page.
+  const [showIntro, setShowIntro] = useState(shouldShowIntro);
+
   const [toast, setToast] = useState<Toast>(null);
   const showToast = useCallback((msg: string, kind: 'success' | 'error' = 'success') => {
     setToast({ msg, kind });
@@ -131,8 +197,15 @@ export default function App() {
   }, [showToast]);
 
   useEffect(() => {
-    if (data.error) showToast('تعذر تحميل بعض البيانات. حدّث الصفحة أو تحقق من الاتصال.', 'error');
-  }, [data.error, showToast]);
+    if (!data.error) return;
+    // Admins get the exact source and Firestore error code to make problems diagnosable.
+    showToast(
+      role === 'admin'
+        ? `تعذر تحميل «${data.error.source}» (${data.error.code}). إن كان الرمز permission-denied فانشر قواعد الأمان: npm run deploy:rules`
+        : 'تعذر تحميل بعض البيانات. حدّث الصفحة أو تحقق من الاتصال.',
+      'error'
+    );
+  }, [data.error, role, showToast]);
 
   // ------------------------------------------------------------------
   // Derived data
@@ -156,27 +229,101 @@ export default function App() {
         mosques.filter((m) => m.approvalStatus === 'pending').length
       : 0;
   const isIncoming = (m: { receiverUid: string }) => m.receiverUid === uid || (role === 'admin' && m.receiverUid === 'admin');
+  const showStats = role === 'admin' || approvedImams.length + approvedMosques.length >= MIN_ITEMS_FOR_STATS;
   const totalUnreadMessages = messages.filter((m) => !m.isRead && isIncoming(m)).length;
 
   const displayName =
-    role === 'imam' && myImam ? myImam.name : profile?.displayName || firebaseUser?.displayName || 'مستخدم محراب';
+    role === 'imam' && myImam ? myImam.name : profile?.displayName || firebaseUser?.displayName || 'مستخدم منصة أئمة';
+  // Community notifications everywhere in the site: a red count on «المجتمع / الملتقى»
+  // and a message when a new comment or reply arrives (not for the ones already there when the page opened).
+  const communityNotifications = useNotifications(uid, !!uid && (role === 'imam' || role === 'admin'));
+  const communityUnread = communityNotifications.filter((n) => !n.read).length;
+  // 0 = initial empty list, 1 = first answer from Firestore (baseline, no message), then live.
+  const notifPhase = useRef(0);
+  const seenNotifications = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    notifPhase.current = 0;
+    seenNotifications.current = new Set();
+  }, [uid]);
+  useEffect(() => {
+    if (!uid) return;
+    const phase = notifPhase.current;
+    notifPhase.current = Math.min(2, phase + 1);
+    const fresh = communityNotifications.filter((n) => !n.read && !seenNotifications.current.has(n.id));
+    communityNotifications.forEach((n) => seenNotifications.current.add(n.id));
+    if (phase >= 2 && fresh.length) {
+      const n = fresh[0];
+      showToast(`🔔 ${n.fromName} ${n.type === 'reply' ? 'ردّ على تعليقك في' : 'علّق على منشورك'} «${n.postTitle}»`);
+    }
+  }, [communityNotifications, uid, showToast]);
+
+  // Which part of the site the user is in: each one has its own colours (index.css, [data-section]).
+  const section: 'home' | 'imams' | 'mosques' | 'community' | 'account' | 'other' =
+    (role === 'admin' && currentView === 'admin') ||
+    (role === 'imam' && currentView === 'imam' && imamTabOpen !== 'mosque_ads') ||
+    (role === 'mosque' && currentView === 'mosque' && mosqueTabOpen !== 'browse')
+      ? 'account'
+      : currentView === 'home'
+      ? 'home'
+      : currentView === 'mosque'
+      ? 'imams'
+      : currentView === 'imam'
+      ? 'mosques'
+      : currentView === 'community'
+      ? 'community'
+      : 'other';
+
+  // A short rise-and-fade when the section changes (animated in place: nothing is remounted).
+  const mainRef = useRef<HTMLElement>(null);
+  const firstSection = useRef(true);
+  useEffect(() => {
+    if (firstSection.current) {
+      firstSection.current = false;
+      return;
+    }
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('reduce-motion')) return;
+    mainRef.current?.animate(
+      [
+        { opacity: 0, transform: 'translateY(14px)' },
+        { opacity: 1, transform: 'none' },
+      ],
+      { duration: 380, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)' }
+    );
+  }, [section]);
+
   const canSeeImamContacts = role === 'admin' || (role === 'mosque' && profile?.verified === true);
+  // Same rule as mosqueContacts in firestore.rules: admins and imams whose profile is approved.
+  const canSeeMosqueContacts = role === 'admin' || (role === 'imam' && myImam?.approvalStatus === 'approved');
 
   // ------------------------------------------------------------------
   // Modals
   // ------------------------------------------------------------------
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [installOpen, setInstallOpen] = useState(false);
+  const openInstallAuto = useCallback(() => setInstallOpen(true), []);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isImamModalOpen, setIsImamModalOpen] = useState(false);
   const [editingImam, setEditingImam] = useState<ImamProfile | null>(null);
   const [isMosqueModalOpen, setIsMosqueModalOpen] = useState(false);
   const [editingMosque, setEditingMosque] = useState<MosqueJob | null>(null);
   const [viewingImamFull, setViewingImamFull] = useState<ImamProfile | null>(null);
+  const [viewingMosque, setViewingMosque] = useState<MosqueJob | null>(null);
   const [applyingMosque, setApplyingMosque] = useState<MosqueJob | null>(null);
   const [interviewTarget, setInterviewTarget] = useState<{ application: Application | null; imam: ImamProfile | null } | null>(null);
   const [reportTarget, setReportTarget] = useState<{ type: 'imam' | 'mosque'; id: string; name: string } | null>(null);
 
   // Keep the open profile in sync with live data.
   const liveViewingImam = viewingImamFull ? imams.find((i) => i.id === viewingImamFull.id) ?? viewingImamFull : null;
+
+  const liveViewingMosque = viewingMosque ? mosques.find((m) => m.id === viewingMosque.id) ?? viewingMosque : null;
+
+  // Open a shared mosque link (#/mosques/<id>) once the data is loaded.
+  useEffect(() => {
+    if (!pendingMosqueLink || data.loading) return;
+    const target = mosques.find((m) => m.id === pendingMosqueLink);
+    if (target) setViewingMosque(target);
+    setPendingMosqueLink(undefined);
+  }, [pendingMosqueLink, data.loading, mosques]);
 
   // Open a shared imam link (#/imams/<id>) once the data is loaded.
   useEffect(() => {
@@ -499,6 +646,22 @@ export default function App() {
     }
   };
 
+  // Admin: the same message to many accounts (e.g. all imams), with a single confirmation.
+  const handleBroadcast = async (msgs: NewMessage[]): Promise<boolean> => {
+    let sent = 0;
+    for (const msg of msgs) {
+      try {
+        await sendMessage(msg);
+        sent++;
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    if (sent === msgs.length) showToast(`تم إرسال الرسالة إلى ${sent} حساب.`);
+    else showToast(`أُرسلت الرسالة إلى ${sent} من ${msgs.length}. تعذر الإرسال إلى البقية.`, 'error');
+    return sent > 0;
+  };
+
   const handleMarkAsRead = (id: string) => {
     markMessageRead(id).catch((err) => console.warn(err));
   };
@@ -543,6 +706,22 @@ export default function App() {
     }
   };
 
+  const handleSendFeedback = async (item: Parameters<typeof sendFeedback>[0]): Promise<boolean> => {
+    try {
+      await sendFeedback(item);
+      return true;
+    } catch (err) {
+      showError(err);
+      return false;
+    }
+  };
+
+  const handleFeedbackHandled = (id: string) => setFeedbackHandled(id).catch(showError);
+  const handleDeleteFeedback = async (id: string) => {
+    if (!window.confirm('حذف هذه الرسالة؟')) return;
+    await deleteFeedback(id).catch(showError);
+  };
+
   const handleResolveReport = async (id: string) => {
     try {
       await resolveReport(id);
@@ -564,24 +743,32 @@ export default function App() {
     setCurrentView('imam');
   };
 
+  const goHowItWorks = () => {
+    setCurrentView('home');
+    // Wait for the home view to render before scrolling to the section.
+    window.setTimeout(() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' }), 50);
+  };
+
   const inboxProps = {
     currentUid: uid ?? '',
     messages,
-    recipientImams: approvedImams.filter((i) => i.ownerUid !== uid),
-    recipientMosques: approvedMosques.filter((m) => m.ownerUid !== uid),
+    // Admins can write to every imam and mosque (pending ones too); others only to approved ones.
+    recipientImams: (role === 'admin' ? imams : approvedImams).filter((i) => i.ownerUid !== uid),
+    recipientMosques: (role === 'admin' ? mosques : approvedMosques).filter((m) => m.ownerUid !== uid),
     onSendMessage: handleSendMessage,
     onMarkAsRead: handleMarkAsRead,
     onDeleteMessage: handleDeleteMessage,
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800 font-sans selection:bg-emerald-600 selection:text-white">
+    <div data-section={section} className="relative isolate min-h-screen flex flex-col text-slate-800 font-sans selection:bg-emerald-600 selection:text-white">
+      <SiteBackdrop />
       {toast && (
         <div
           role="status"
           aria-live="polite"
           className={`fixed top-20 left-1/2 -translate-x-1/2 z-[60] px-5 py-3 rounded-2xl shadow-2xl border flex items-center gap-3 text-xs font-bold max-w-md w-[92%] sm:w-auto ${
-            toast.kind === 'error' ? 'bg-red-700 text-white border-red-500' : 'bg-slate-900 text-white border-slate-700'
+            toast.kind === 'error' ? 'bg-red-700/90 backdrop-blur-xl text-white border-red-400/60' : 'liquid-glass-dark text-white'
           }`}
         >
           {toast.kind === 'error' ? (
@@ -600,6 +787,9 @@ export default function App() {
         currentView={currentView}
         setCurrentView={setCurrentView}
         currentRole={role}
+        onOpenSettings={() => setSettingsOpen(true)}
+        onOpenInstall={isInstalled() ? undefined : () => setInstallOpen(true)}
+        communityUnread={communityUnread}
         userName={displayName}
         userEmail={profile?.email || firebaseUser?.email || ''}
         userPhoto={role === 'imam' ? myImam?.photo : firebaseUser?.photoURL || undefined}
@@ -613,6 +803,7 @@ export default function App() {
         mosquesCount={activeMosquesCount}
         pendingCount={pendingApprovalsCount}
         unreadCount={totalUnreadMessages}
+        showStats={showStats}
         onOpenInbox={
           role === 'imam'
             ? () => {
@@ -630,8 +821,19 @@ export default function App() {
         }
       />
 
-      <main className="flex-1 flex flex-col">
-        {data.loading && currentView !== 'home' && currentView !== 'privacy' ? (
+      {/* thin line in the colour of the section, under the header */}
+      <div className="section-line" aria-hidden />
+      <main ref={mainRef} className="flex-1 flex flex-col">
+        <AppErrorBoundary key={currentView}>
+        <Suspense
+          fallback={
+            <div className="flex-1 flex items-center justify-center py-24 text-slate-500 text-sm gap-2">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>جاري التحميل…</span>
+            </div>
+          }
+        >
+        {data.loading && !['home', 'privacy', 'contact', 'support', 'community'].includes(currentView) ? (
           <div className="flex-1 flex items-center justify-center py-24 text-slate-500 text-sm gap-2">
             <Loader2 className="w-5 h-5 animate-spin" />
             <span>جاري تحميل البيانات…</span>
@@ -647,10 +849,16 @@ export default function App() {
                 onOpenDashboard={() => setCurrentView('dashboard')}
                 onOpenAuthModal={() => setIsAuthModalOpen(true)}
                 onOpenAdminPanel={() => setCurrentView('admin')}
+                onOpenMyProfile={handleOpenMyProfile}
+                onOpenCommunity={() => setCurrentView('community')}
+                onOpenSupport={SUPPORT_ENABLED ? () => setCurrentView('support') : undefined}
+                userName={role === 'visitor' ? undefined : displayName}
                 currentRole={role}
                 imamsCount={activeImamsCount}
                 mosquesCount={activeMosquesCount}
                 pendingCount={pendingApprovalsCount}
+                showStats={showStats}
+                onOpenContact={() => setCurrentView('contact')}
               />
             )}
 
@@ -678,8 +886,12 @@ export default function App() {
                 onSaveQuickRamadan={handleSaveQuickRamadan}
                 onApplyToMosque={handleOpenApplyModal}
                 onReportMosque={handleOpenReportMosque}
+                onViewMosque={setViewingMosque}
+                canSeeMosqueContacts={canSeeMosqueContacts}
+                onToast={showToast}
                 inbox={{ ...inboxProps, currentName: myImam?.name || displayName }}
                 initialTab={imamPortalTab.tab}
+                onTabChange={setImamTabOpen}
                 tabRequest={imamPortalTab.seq}
               />
             )}
@@ -706,7 +918,9 @@ export default function App() {
                 onReportImam={handleOpenReportImam}
                 inbox={{ ...inboxProps, currentName: myMosques[0]?.mosqueName || displayName }}
                 initialTab={mosquePortalTab.tab}
+                onTabChange={setMosqueTabOpen}
                 tabRequest={mosquePortalTab.seq}
+                hasOwnImamProfile={!!myImam}
               />
             )}
 
@@ -724,21 +938,76 @@ export default function App() {
                 onDeleteMosque={handleDeleteMosque}
                 onToggleMosqueActive={handleToggleMosqueActive}
                 onResolveReport={handleResolveReport}
+                feedback={feedback}
+                onFeedbackHandled={handleFeedbackHandled}
+                onDeleteFeedback={handleDeleteFeedback}
                 onOpenImamAdd={handleOpenImamAdd}
                 onOpenMosqueAdd={handleOpenMosqueAdd}
-                inbox={{ ...inboxProps, currentName: 'إدارة محراب' }}
+                inbox={{ ...inboxProps, currentName: 'إدارة منصة أئمة', onBroadcast: handleBroadcast }}
+                onToast={showToast}
               />
             )}
 
             {currentView === 'privacy' && <PrivacyPage onBack={() => setCurrentView('home')} />}
+
+            {currentView === 'community' && (
+              <CommunityPage
+                uid={uid}
+                role={role}
+                viewerName={displayName}
+                myImam={myImam}
+                imams={role === 'admin' ? imams : approvedImams}
+                onOpenAuthModal={() => setIsAuthModalOpen(true)}
+                onToast={showToast}
+              />
+            )}
+
+            {currentView === 'contact' && (
+              <ContactPage
+                defaultName={role === 'visitor' ? '' : displayName}
+                defaultEmail={profile?.email || firebaseUser?.email || ''}
+                onBack={() => setCurrentView('home')}
+                onSend={handleSendFeedback}
+              />
+            )}
+
+            {currentView === 'support' && SUPPORT_ENABLED && <SupportPage onBack={() => setCurrentView('home')} />}
           </>
         )}
+      </Suspense>
+        </AppErrorBoundary>
       </main>
 
       <Footer
         onOpenImamsList={goImamsList}
         onOpenMosquesList={goMosquesList}
         onOpenPrivacy={() => setCurrentView('privacy')}
+        onOpenImamAdd={handleOpenImamAdd}
+        onOpenMosqueAdd={handleOpenMosqueAdd}
+        onOpenHowItWorks={goHowItWorks}
+        onOpenContact={() => setCurrentView('contact')}
+        onOpenSupport={SUPPORT_ENABLED ? () => setCurrentView('support') : undefined}
+        hasOwnImamProfile={!!myImam}
+      />
+
+      {showIntro && <Intro onDone={() => setShowIntro(false)} />}
+
+      <StatsConsent onPrivacy={() => setCurrentView('privacy')} />
+      <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} onPrivacy={() => setCurrentView('privacy')} onInstall={isInstalled() ? undefined : () => { setSettingsOpen(false); setInstallOpen(true); }} />
+      <InstallGuide open={installOpen} onClose={() => setInstallOpen(false)} onAutoOpen={openInstallAuto} />
+
+      <MobileNav
+        communityUnread={communityUnread}
+        accountActive={section === 'account'}
+        currentView={currentView}
+        role={role}
+        unreadCount={totalUnreadMessages}
+        onHome={() => setCurrentView('home')}
+        onImams={goImamsList}
+        onMosques={goMosquesList}
+        onCommunity={() => setCurrentView('community')}
+        onAccount={handleOpenMyProfile}
+        onSignIn={() => setIsAuthModalOpen(true)}
       />
 
       {/* ------------------------------ Modals ------------------------------ */}
@@ -749,6 +1018,7 @@ export default function App() {
         firebaseUser={firebaseUser}
         onClose={() => setIsAuthModalOpen(false)}
         onError={showError}
+        onInfo={(msg) => showToast(msg)}
         onOnboardingComplete={handleOnboardingComplete}
       />
 
@@ -757,7 +1027,9 @@ export default function App() {
         onClose={() => setIsImamModalOpen(false)}
         onSave={handleSaveImam}
         initialData={editingImam}
+        liveImam={editingImam ? imams.find((i) => i.id === editingImam.id) ?? null : null}
         onError={(msg) => showToast(msg, 'error')}
+        onInfo={(msg) => showToast(msg)}
       />
 
       <MosqueModalForm
@@ -785,6 +1057,22 @@ export default function App() {
         }}
         onOpenAuthModal={() => setIsAuthModalOpen(true)}
         onCopied={() => showToast('تم نسخ رابط الملف.')}
+        onError={(msg) => showToast(msg, 'error')}
+      />
+
+      <MosqueFullModal
+        mosque={liveViewingMosque}
+        onClose={() => setViewingMosque(null)}
+        currentRole={role}
+        canViewContact={canSeeMosqueContacts || (!!liveViewingMosque && liveViewingMosque.ownerUid === uid)}
+        canEdit={!!liveViewingMosque && (role === 'admin' || liveViewingMosque.ownerUid === uid)}
+        alreadyApplied={!!liveViewingMosque && applications.some((a) => a.mosqueId === liveViewingMosque.id && a.imamUid === uid)}
+        onApply={handleOpenApplyModal}
+        onEdit={handleOpenMosqueEdit}
+        onReport={handleOpenReportMosque}
+        onOpenAuthModal={() => setIsAuthModalOpen(true)}
+        onCopied={() => showToast('تم نسخ رابط الإعلان.')}
+        onError={(msg) => showToast(msg, 'error')}
       />
 
       <ApplyModal

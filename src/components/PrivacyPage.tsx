@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { getStatsConsent, setStatsConsent } from '../lib/visits';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 
 /**
@@ -12,9 +13,10 @@ const OPERATOR = {
   email: '[بريد التواصل الخاص بالخصوصية]',
 };
 
-const LAST_UPDATED = '2026-10-30';
+const LAST_UPDATED = '2026-11-04';
 
 export const PrivacyPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
+  const [consent, setConsent] = useState(getStatsConsent);
   return (
     <section className="flex-1 py-8 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto w-full">
       <button onClick={onBack} className="text-emerald-800 font-bold text-xs flex items-center gap-1 mb-4 cursor-pointer">
@@ -34,7 +36,7 @@ export const PrivacyPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <section className="space-y-2">
           <h2 className="font-black text-slate-900">1. الجهة المسؤولة</h2>
           <p>
-            المسؤول عن معالجة البيانات في منصة «محراب» هو: {OPERATOR.name}، {OPERATOR.address}. للتواصل بخصوص بياناتك:{' '}
+            المسؤول عن معالجة البيانات في منصة «أئمة» هو: {OPERATOR.name}، {OPERATOR.address}. للتواصل بخصوص بياناتك:{' '}
             <span dir="ltr">{OPERATOR.email}</span>.
           </p>
         </section>
@@ -42,11 +44,12 @@ export const PrivacyPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <section className="space-y-2">
           <h2 className="font-black text-slate-900">2. البيانات التي نجمعها</h2>
           <ul className="list-disc pr-5 space-y-1">
-            <li>بيانات الحساب: الاسم، البريد الإلكتروني، والصورة الرمزية التي يرسلها جوجل أو فيسبوك عند تسجيل الدخول.</li>
+            <li>بيانات الحساب: الاسم، والبريد الإلكتروني أو رقم الهاتف المستعمل للدخول، والصورة الرمزية التي يرسلها جوجل أو فيسبوك عند الدخول بهما. كلمات المرور تحفظها خدمة Firebase Authentication مشفّرة، ولا نطّلع عليها.</li>
             <li>ملف الإمام: الاسم، العمر، البلد، المؤهلات، الرواية، اللغات، حالة التأشيرة، السيرة الذاتية، رابط التلاوة، وصورة اختيارية.</li>
             <li>بيانات التواصل: رقم الهاتف، الواتساب، البريد الإلكتروني.</li>
             <li>وثائق اختيارية: نسخة التأشيرة/الإقامة والشواهد العلمية.</li>
             <li>إعلانات المساجد، طلبات الترشح، الرسائل داخل المنصة، والبلاغات.</li>
+            <li>رسائل نموذج «راسل الإدارة» والاقتراحات: الاسم والبريد (اختياريان) ونص الرسالة، ولا تطّلع عليها إلا الإدارة.</li>
           </ul>
         </section>
 
@@ -101,9 +104,26 @@ export const PrivacyPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <section className="space-y-2">
           <h2 className="font-black text-slate-900">8. ملفات تعريف الارتباط والتخزين المحلي</h2>
           <p>
-            تستخدم المنصة فقط التخزين الضروري لتسجيل الدخول (Firebase Authentication). لا نستخدم ملفات تعريف ارتباط
-            إعلانية أو أدوات تتبع.
+            تستخدم المنصة التخزين الضروري لتسجيل الدخول (Firebase Authentication) ولحفظ اختيارك بخصوص الإحصاء. لا نستخدم ملفات
+            تعريف ارتباط إعلانية ولا أدوات تتبع من أطراف ثالثة ولا «بصمة المتصفح».
           </p>
+        </section>
+
+        <section className="space-y-2">
+          <h2 className="font-black text-slate-900">9. إحصاء الزيارات</h2>
+          <p>
+            لمعرفة عدد زوار المنصة نسجّل عند كل فتحة جديدة للموقع سجلاً مجهولاً لا يحتوي إلا على وقت الزيارة (لا عنوان IP، ولا اسم،
+            ولا معرّف للجهاز). لا يُحتسب تحديث الصفحة. لا يطّلع على هذه الأرقام إلا مدير المنصة (المادة 6/1/و من اللائحة العامة لحماية
+            البيانات: مصلحة مشروعة في معرفة مدى استعمال المنصة).
+          </p>
+          <p>
+            بموافقتك فقط (المادة 25 من قانون TDDDG الألماني) نحفظ في متصفحك رقماً عشوائياً لا يدل عليك، لنعرف عدد الزوار المميزين
+            تقريبياً. يمكنك سحب الموافقة في أي وقت بالزر أدناه، فيُحذف الرقم من متصفحك.
+          </p>
+          <button onClick={() => { setStatsConsent(consent === 'yes' ? 'no' : 'yes'); setConsent(getStatsConsent()); }}
+            className="inline-flex items-center gap-1.5 text-xs font-black px-4 py-2 rounded-full border border-emerald-700 text-emerald-800 hover:bg-emerald-50 cursor-pointer">
+            {consent === 'yes' ? 'سحب الموافقة على إحصاء الزوار المميزين' : 'الموافقة على إحصاء الزوار المميزين'}
+          </button>
         </section>
       </article>
     </section>

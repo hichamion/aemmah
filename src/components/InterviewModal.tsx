@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Application, ImamProfile, MosqueJob, MosqueContact } from '../types';
 import { useContact } from '../lib/db';
 import { X, Phone, Mail, MessageSquare, Send, Loader2 } from 'lucide-react';
+import { useDialog } from '../lib/useDialog';
 
 export interface InterviewDetails {
   mosque: MosqueJob;
@@ -72,6 +73,8 @@ export const InterviewModal: React.FC<InterviewModalProps> = ({ target, myMosque
     );
   }, [mosqueContact, contactMethod]);
 
+  const dialogRef = useDialog(!!target, onClose);
+
   if (!target) return null;
 
   const imamFromApp = application ? imams.find((i) => i.id === application.imamId) : null;
@@ -113,7 +116,7 @@ export const InterviewModal: React.FC<InterviewModalProps> = ({ target, myMosque
   );
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto" role="dialog" ref={dialogRef} tabIndex={-1} aria-modal="true">
       <div className="bg-white rounded-3xl max-w-lg w-full p-6 md:p-7 shadow-2xl my-8 text-xs space-y-5">
         <div className="flex justify-between items-center border-b pb-3">
           <div className="flex items-center gap-2.5">

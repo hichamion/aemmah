@@ -1,153 +1,126 @@
 import React from 'react';
-import { ShieldCheck, Globe, Building2, Mic } from 'lucide-react';
+import { MosqueIcon } from './MosqueIcon';
+import { ShieldCheck, Mic, Info, Scale } from 'lucide-react';
+import { LogoMark } from './Logo';
+import { CONTACT_EMAIL } from '../config';
 
 interface FooterProps {
   /** List of imams (for mosques). */
   onOpenImamsList: () => void;
   /** List of mosque ads (for imams). */
   onOpenMosquesList: () => void;
+  onOpenImamAdd: () => void;
+  onOpenMosqueAdd: () => void;
+  onOpenHowItWorks: () => void;
+  onOpenContact: () => void;
+  /** Undefined while no support method is configured. */
+  onOpenSupport?: () => void;
   onOpenPrivacy: () => void;
+  /** The signed-in imam already has a profile. */
+  hasOwnImamProfile?: boolean;
 }
 
-export const Footer: React.FC<FooterProps> = ({ onOpenImamsList, onOpenMosquesList, onOpenPrivacy }) => {
+const linkClass = 'hover:text-amber-300 transition cursor-pointer text-right';
+
+export const Footer: React.FC<FooterProps> = ({
+  onOpenImamsList,
+  onOpenMosquesList,
+  onOpenImamAdd,
+  onOpenMosqueAdd,
+  onOpenHowItWorks,
+  onOpenContact,
+  onOpenSupport,
+  onOpenPrivacy,
+  hasOwnImamProfile = false,
+}) => {
   return (
-    <footer className="bg-slate-950 text-slate-400 border-t border-emerald-900/60 pt-12 pb-8 px-4 sm:px-6 lg:px-8 text-xs">
-      <div className="max-w-7xl mx-auto space-y-10">
-        
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          
-          {/* Brand Info */}
-          <div className="space-y-3 md:col-span-1">
+    <footer className="bg-night text-slate-400 border-t border-emerald-900/60 pt-12 pb-28 lg:pb-8 px-4 sm:px-6 lg:px-8 text-sm">
+      <div className="max-w-7xl mx-auto space-y-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+          {/* Brand */}
+          <div className="space-y-3">
             <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center text-xl font-black">
-                🕌
-              </div>
-              <div>
-                <span className="text-white text-lg font-black font-amiri tracking-wide">
-                  مِحراب <span className="text-amber-400 font-sans text-sm font-bold">Mihrab</span>
-                </span>
-                <p className="text-xs text-emerald-400 font-semibold">منظومة الربط الشرعي والمهني</p>
-              </div>
+              <LogoMark className="w-10 h-10" />
+              <span className="text-white text-lg font-black font-amiri tracking-wide">
+                منصة أئمة <span className="text-amber-400 font-sans text-sm font-bold">Aemmah</span>
+              </span>
             </div>
-            <p className="text-slate-400 leading-relaxed text-xs">
-              المنصة المتخصصة الأولى الموثقة للربط بين الأئمة والقرّاء المجازين والجمعيات والمراكز الإسلامية في أوروبا والعالم، وفق المعايير الشرعية والقانونية.
+            <p className="leading-relaxed">
+              منصة تربط الأئمة والقرّاء بالمساجد والجمعيات الإسلامية في أوروبا.
             </p>
-            <div className="flex items-center gap-2 pt-1 text-xs text-emerald-300">
-              <ShieldCheck className="w-4 h-4 text-amber-400" />
-              <span>مراجعة كل ملف وإعلان من الإدارة قبل نشره</span>
+            <div className="flex items-center gap-2 text-emerald-300">
+              <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>تراجع الإدارة كل ملف وإعلان قبل نشره</span>
             </div>
           </div>
 
-          {/* Quick Links: Imams */}
-          <div className="space-y-3">
-            <h4 className="text-white font-extrabold text-sm flex items-center gap-1.5">
+          {/* Imams */}
+          <nav className="space-y-3" aria-label="للأئمة والقرّاء">
+            <h2 className="text-white font-extrabold flex items-center gap-1.5">
               <Mic className="w-4 h-4 text-emerald-400" />
               <span>للأئمة والقرّاء</span>
-            </h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <button
-                  onClick={onOpenMosquesList}
-                  className="hover:text-amber-300 transition cursor-pointer"
-                >
-                  تسجيل وتوثيق ملف إمام جديد
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={onOpenMosquesList}
-                  className="hover:text-amber-300 transition cursor-pointer"
-                >
-                  تحديث حالة التفرغ (رمضان / دائم)
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={onOpenMosquesList}
-                  className="hover:text-amber-300 transition cursor-pointer"
-                >
-                  تصفح إعلانات المساجد في ألمانيا وفرنسا
-                </button>
-              </li>
-              <li>
-                <span className="text-slate-500">معايير شهادة اللغة الألمانية A2</span>
-              </li>
+            </h2>
+            <ul className="space-y-2">
+              <li><button onClick={onOpenMosquesList} className={linkClass}>تصفح إعلانات المساجد</button></li>
+              <li><button onClick={onOpenImamAdd} className={linkClass}>{hasOwnImamProfile ? 'تعديل ملفي كإمام' : 'أنشئ ملفك كإمام'}</button></li>
             </ul>
-          </div>
+          </nav>
 
-          {/* Quick Links: Mosques */}
-          <div className="space-y-3">
-            <h4 className="text-white font-extrabold text-sm flex items-center gap-1.5">
-              <Building2 className="w-4 h-4 text-amber-400" />
-              <span>للجمعيات والمساجد</span>
-            </h4>
-            <ul className="space-y-2 text-xs">
-              <li>
-                <button
-                  onClick={onOpenImamsList}
-                  className="hover:text-amber-300 transition cursor-pointer"
-                >
-                  نشر إعلان طلب إمام جديد
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={onOpenImamsList}
-                  className="hover:text-amber-300 transition cursor-pointer"
-                >
-                  البحث عن قرّاء التراويح لشهر رمضان
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={onOpenImamsList}
-                  className="hover:text-amber-300 transition cursor-pointer"
-                >
-                  مراجعة الأئمة ذوي الإقامات الأوروبية
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={onOpenImamsList}
-                  className="hover:text-amber-300 transition cursor-pointer"
-                >
-                  إجراءات استقدام الأئمة الرسمية
-                </button>
-              </li>
+          {/* Mosques */}
+          <nav className="space-y-3" aria-label="للمساجد والجمعيات">
+            <h2 className="text-white font-extrabold flex items-center gap-1.5">
+              <MosqueIcon className="w-4 h-4 text-amber-400" />
+              <span>للمساجد والجمعيات</span>
+            </h2>
+            <ul className="space-y-2">
+              <li><button onClick={onOpenImamsList} className={linkClass}>تصفح الأئمة المتاحين</button></li>
+              <li><button onClick={onOpenMosqueAdd} className={linkClass}>انشر إعلان مسجدك</button></li>
             </ul>
-          </div>
+          </nav>
 
-          {/* Charter & Support */}
-          <div className="space-y-3">
-            <h4 className="text-white font-extrabold text-sm flex items-center gap-1.5">
-              <Globe className="w-4 h-4 text-blue-400" />
-              <span>ميثاق الشرف والدعم</span>
-            </h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              تلتزم منصة محراب بالمحافظة على خصوصية الأئمة وإدارات المساجد، وعدم مشاركة الوثائق إلا مع اللجان المعنية بالتوظيف الشرعي.
-            </p>
-            <div className="pt-1">
-              <button
-                onClick={onOpenPrivacy}
-                className="text-xs text-slate-300 hover:text-amber-300 underline cursor-pointer"
-              >
-                سياسة الخصوصية وحماية البيانات
-              </button>
-            </div>
-          </div>
-
+          {/* Platform */}
+          <nav className="space-y-3" aria-label="عن المنصة">
+            <h2 className="text-white font-extrabold flex items-center gap-1.5">
+              <Info className="w-4 h-4 text-sky-400" />
+              <span>عن المنصة</span>
+            </h2>
+            <ul className="space-y-2">
+              <li><button onClick={onOpenHowItWorks} className={linkClass}>كيف تعمل المنصة؟</button></li>
+              <li><button onClick={onOpenContact} className={linkClass}>راسل الإدارة / أرسل اقتراحاً</button></li>
+              {onOpenSupport && (
+                <li><button onClick={onOpenSupport} className={linkClass}>ادعم المنصة</button></li>
+              )}
+              <li><button onClick={onOpenPrivacy} className={linkClass}>سياسة الخصوصية</button></li>
+              {CONTACT_EMAIL && (
+                <li>
+                  <a href={`mailto:${CONTACT_EMAIL}`} className={linkClass}>
+                    تواصل معنا
+                  </a>
+                </li>
+              )}
+            </ul>
+          </nav>
         </div>
 
-        {/* Bottom copyright */}
-        <div className="pt-6 border-t border-slate-900 flex flex-wrap justify-between items-center gap-4 text-xs text-slate-500">
+        {/* Disclaimer: compact, readable, on every page. */}
+        <section aria-labelledby="disclaimer-title" className="liquid-glass rounded-2xl !border-amber-400/20 px-4 py-3.5 sm:px-5 text-xs leading-relaxed text-slate-400">
+          <h2 id="disclaimer-title" className="text-amber-300/90 font-black mb-1.5 flex items-center gap-1.5">
+            <Scale className="w-3.5 h-3.5 shrink-0" />
+            <span>تنبيه وإخلاء مسؤولية</span>
+          </h2>
           <p>
-            جميع الحقوق محفوظة © {new Date().getFullYear()} منصة مِحراب (Mihrab) — لخدمة بيوت الله والأئمة في أوروبا والعالم.
+            منصة أئمة ليست وكالة توظيف أو جهة للهجرة، ولا تتولى إصدار التأشيرات أو تقديم طلباتها أو متابعة إجراءاتها، كما أنها لا تبحث
+            نيابةً عن المستخدمين عن مسجد أو وظيفة، ولا تضمن الحصول على فرصة عمل أو عقد أو تأشيرة.
           </p>
-          <button onClick={onOpenPrivacy} className="hover:text-slate-300 underline cursor-pointer">
-            سياسة الخصوصية
-          </button>
-        </div>
+          <p className="mt-1">
+            يقتصر دور المنصة على أن تكون بوابة للتواصل وجسرًا للتعارف والربط بين الأئمة والمساجد، وتيسير تبادل المعلومات والخبرات بينهم.
+            وتبقى مسؤولية التحقق من المعلومات والبيانات والاتفاقات والإجراءات الرسمية على الأطراف المعنية.
+          </p>
+        </section>
 
+        <div className="pt-6 border-t border-slate-900 text-xs text-slate-500">
+          <p>© {new Date().getFullYear()} منصة أئمة (Aemmah). جميع الحقوق محفوظة.</p>
+        </div>
       </div>
     </footer>
   );

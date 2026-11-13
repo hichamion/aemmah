@@ -1,21 +1,15 @@
-import React from 'react';
-import { ImamProfile, UserRole } from '../types';
-import { getYoutubeEmbedUrl, getRiwayaBadgeStyle, getSafeImamAvatar, safeHttpUrl } from '../utils/helpers';
+import React, { useEffect, useRef, useState } from 'react';
+import { AdminStatStrip, countProfileView, countRecitationPlay } from '../lib/profileStats';
+import { ImamContact, ImamProfile, UserRole } from '../types';
+import { getYoutubeEmbedUrl, safeHttpUrl } from '../utils/helpers';
 import { ContactBlock } from './ContactBlock';
-import {
-  X,
-  ExternalLink,
-  Phone,
-  ShieldCheck,
-  FileCheck,
-  Award,
-  Edit3,
-  Download,
-  Share2,
-  Video,
-  Flag,
-  Lock,
-} from 'lucide-react';
+import { ImamCvSheet, SITE_URL } from './ImamCvSheet';
+import { X, ExternalLink, Phone, Edit3, Share2, Flag, Lock, ImageDown, FileDown, Loader2, Link2 } from 'lucide-react';
+import { useDialog } from '../lib/useDialog';
+import { useContact, useRecitationAudio } from '../lib/db';
+import { RecitationPlayer, recitationLabel, VISIBILITY_OPTIONS } from './Recitation';
+import { cvFileName, downloadPdf, downloadPng, renderNodeToPng, shareImage, needsSecondTap, pdfBlob } from '../lib/cvExport';
+import { ExportReadySheet, ReadyFile } from './ExportReadySheet';
 
 interface ImamFullModalProps {
   imam: ImamProfile | null;
@@ -30,7 +24,10 @@ interface ImamFullModalProps {
   onReport: (imam: ImamProfile) => void;
   onOpenAuthModal: () => void;
   onCopied: () => void;
+  onError?: (msg: string) => void;
 }
+
+type ExportKind = 'png' | 'pdf' | 'share';
 
 export const ImamFullModal: React.FC<ImamFullModalProps> = ({
   imam,
@@ -44,338 +41,258 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
   onReport,
   onOpenAuthModal,
   onCopied,
+  onError,
 }) => {
+  const dialogRef = useDialog(!!imam, onClose);
+  // Contact details go into the exported CV only for viewers allowed to see them (cached, shared with ContactBlock).
+  const { contact } = useContact<ImamContact>('imam', imam?.id, !!imam && canViewContact);
+  // The audio is fetched only when the profile is opened, and never autoplayed.
+  const recitation = useRecitationAudio(imam?.id, !!imam?.recitationMeta, imam?.recitationMeta?.createdAt);
+  const printRef = useRef<HTMLDivElement>(null);
+  const [exporting, setExporting] = useState<ExportKind | null>(null);
+  const [ready, setReady] = useState<ReadyFile | null>(null);
+  // Anonymous view counter (not for the owner or admins).
+  useEffect(() => {
+    if (imam?.id && !canEdit && imam.approvalStatus === 'approved') countProfileView('imam', imam.id);
+  }, [imam?.id, canEdit, imam?.approvalStatus]);
+
   if (!imam) return null;
 
   const embedUrl = getYoutubeEmbedUrl(imam.youtubeUrl);
   const youtubeHref = safeHttpUrl(imam.youtubeUrl);
-  const riwayaStyle = getRiwayaBadgeStyle(imam.riwaya);
-  const isBusyRamadan = imam.availabilityState === 'busy_ramadan';
   const isApproved = imam.approvalStatus === 'approved';
-  const isOwnerOrAdmin = canEdit;
+  const profileUrl = isApproved ? `${window.location.origin}${window.location.pathname}#/imams/${imam.id}` : undefined;
 
   const handleCopyLink = async () => {
-    const url = `${window.location.origin}${window.location.pathname}#/imams/${imam.id}`;
+    if (!profileUrl) return;
     try {
-      await navigator.clipboard.writeText(url);
+      await navigator.clipboard.writeText(profileUrl);
       onCopied();
     } catch {
-      window.prompt('انسخ الرابط:', url);
+      window.prompt('انسخ الرابط:', profileUrl);
     }
   };
 
+  const handleExport = async (kind: ExportKind) => {
+    setExporting(kind);
+    try {
+      // The fixed A4 version is rendered off-screen; give React a frame to mount it.
+      await new Promise((r) => requestAnimationFrame(() => r(null)));
+      const node = printRef.current;
+      if (!node) throw new Error('no node');
+      // The QR code is generated asynchronously; wait for it (up to 3 s) so it is in the image.
+      for (let i = 0; i < 30 && !node.querySelector('img[data-qr]'); i++) await new Promise((r) => setTimeout(r, 100));
+      const png = await renderNodeToPng(node);
+      const name = cvFileName(imam.id);
+      const shareText = `السيرة الذاتية للشيخ ${imam.name} — إمام وقارئ (${imam.riwaya}).\nمنصة أئمة تربط الأئمة والقرّاء بالمساجد في أوروبا:\n${profileUrl || `https://${SITE_URL}/`}`;
+      // Phones: hand the file over with a second tap (a late download is blocked by the browser).
+      if (needsSecondTap()) {
+        setReady(kind === 'pdf' ? { blob: await pdfBlob(png), fileName: `${name}.pdf` } : { blob: png, fileName: `${name}.png`, text: kind === 'share' ? shareText : undefined });
+        return;
+      }
+      if (kind === 'png') downloadPng(png, name);
+      else if (kind === 'pdf') await downloadPdf(png, name);
+      else
+        await shareImage(
+          png,
+          name,
+          `السيرة الذاتية للشيخ ${imam.name} — إمام وقارئ (${imam.riwaya}).\nمنصة أئمة تربط الأئمة والقرّاء بالمساجد في أوروبا:`,
+          profileUrl || `https://${SITE_URL}/`
+        );
+    } catch (err) {
+      console.error(err);
+      onError?.('تعذر إنشاء ملف السيرة الذاتية. حاول مرة أخرى.');
+    } finally {
+      setExporting(null);
+    }
+  };
+
+  const contactSlot = canViewContact ? (
+    <div className="space-y-2">
+      <ContactBlock
+        kind="imam"
+        id={imam.id}
+        canView
+        lockedText="تعذر تحميل بيانات التواصل"
+        emailSubject={`تواصل من إدارة مسجد عبر منصة أئمة - ${imam.name}`}
+      />
+    </div>
+  ) : (
+    <div className="glass rounded-2xl p-3.5 space-y-2 text-sm">
+      <p className="font-black text-amber-300 flex items-center gap-1.5">
+        <Lock className="w-4 h-4" />
+        بيانات التواصل محمية
+      </p>
+      <p className="text-xs text-white/80 leading-relaxed">
+        {isUnverifiedMosque
+          ? 'ستظهر لك أرقام التواصل بعد أن توافق الإدارة على إعلان مسجدك.'
+          : 'لا تظهر أرقام الهاتف والبريد إلا للمساجد التي وثقتها الإدارة.'}
+      </p>
+      {currentRole === 'visitor' && (
+        <button
+          onClick={() => {
+            onClose();
+            onOpenAuthModal();
+          }}
+          className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2 rounded-full text-xs cursor-pointer"
+        >
+          تسجيل الدخول
+        </button>
+      )}
+    </div>
+  );
+
+  const recitationSlot = youtubeHref ? (
+    embedUrl ? (
+      <div className="space-y-2">
+        <div className="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-lg">
+          <iframe
+            className="w-full h-full"
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+            src={embedUrl}
+            title={`تلاوة ${imam.name}`}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          />
+        </div>
+        <a
+          href={youtubeHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sky-700 font-bold text-xs inline-flex items-center gap-1 underline"
+        >
+          فتح في يوتيوب <ExternalLink className="w-3.5 h-3.5" />
+        </a>
+      </div>
+    ) : (
+      <a href={youtubeHref} target="_blank" rel="noopener noreferrer" dir="ltr" className="text-sky-700 font-bold text-sm underline break-all">
+        {youtubeHref}
+      </a>
+    )
+  ) : undefined;
+
+  const meta = imam.recitationMeta;
+  const audioSlot = meta ? (
+    recitation.audio ? (
+      <RecitationPlayer src={recitation.audio} title={recitationLabel(meta)} durationSec={meta.durationSec} date={meta.createdAt} onFirstPlay={canEdit ? undefined : () => countRecitationPlay(imam.id)} />
+    ) : recitation.loading ? (
+      <p className="text-sm text-slate-500">جاري تحميل التسجيل…</p>
+    ) : (
+      <p className="text-sm text-slate-600 bg-slate-100 rounded-xl px-3 py-2.5 flex items-center gap-2">
+        <Lock className="w-4 h-4" />
+        {recitationLabel(meta)} — التسجيل متاح لـ «{VISIBILITY_OPTIONS.find((v) => v.value === meta.visibility)?.label}» حسب اختيار الإمام.
+        {currentRole === 'visitor' && ' سجّل دخولك للاستماع.'}
+      </p>
+    )
+  ) : undefined;
+
+  const btn =
+    'inline-flex items-center gap-1.5 font-black text-xs px-3.5 py-2.5 rounded-full transition cursor-pointer disabled:opacity-60 disabled:cursor-wait';
+
   return (
     <div
-      className="fixed inset-0 bg-black/85 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto"
       role="dialog"
+      ref={dialogRef}
+      tabIndex={-1}
       aria-modal="true"
-      aria-label={`ملف ${imam.name}`}
+      aria-label={`السيرة الذاتية: ${imam.name}`}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl my-4 sm:my-6 max-h-[94vh] flex flex-col text-xs">
-        
-        {/* Header Banner */}
-        <div className="bg-gradient-to-r from-emerald-950 via-emerald-900 to-slate-950 text-white p-4 sm:p-6 flex justify-between items-start gap-3">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="relative shrink-0">
-              <img
-                src={getSafeImamAvatar(imam.photo)}
-                alt={imam.name}
-                className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-amber-400 shadow-md"
-              />
-              {imam.isVerified && (
-                <span className="absolute -bottom-1 -right-1 bg-emerald-500 text-slate-950 text-xs font-black px-2 py-0.5 rounded-full shadow">
-                  ✓ موثق
-                </span>
-              )}
-            </div>
-
-            <div className="space-y-1">
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="bg-amber-500 text-slate-950 text-xs font-black px-2.5 py-0.5 rounded-full">
-                  {isApproved ? 'ملف إمام معتمد' : imam.approvalStatus === 'pending' ? 'قيد المراجعة' : 'غير معتمد'}
-                </span>
-                <span className={`${riwayaStyle.bg} ${riwayaStyle.text} border text-xs font-bold px-2 py-0.5 rounded-full`}>
-                  {imam.riwaya}
-                </span>
-              </div>
-              <h3 className="text-lg sm:text-2xl font-black text-white font-amiri">
-                {imam.name}
-              </h3>
-              <p className="text-xs text-emerald-200/90 flex flex-wrap items-center gap-2">
-                <span>👤 العمر: {imam.age} سنة</span>
-                <span>•</span>
-                <span>📍 {imam.country}</span>
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-1">
-            {isApproved && (
-            <button
-              onClick={handleCopyLink}
-              title="نسخ رابط الملف"
-              aria-label="نسخ رابط الملف"
-              className="text-emerald-300 hover:text-white p-2 rounded-xl hover:bg-emerald-800/60 transition cursor-pointer"
-            >
-              <Share2 className="w-5 h-5" />
+      <div className="bg-[#f7f9fa] rounded-[2rem] max-w-4xl w-full overflow-hidden shadow-2xl my-4 max-h-[94vh] flex flex-col">
+        {/* Glass toolbar */}
+        <div className="glass-card bg-gradient-to-l from-[#4fd1e8] via-[#1aa3bf] to-[#0b5f7a] text-white px-3 sm:px-4 py-3 flex items-center justify-between gap-2 rounded-none">
+          <div className="flex items-center gap-1.5 sm:gap-2 relative z-10">
+            <button onClick={() => handleExport('share')} disabled={!!exporting} className={`${btn} bg-[#25D366] text-white shadow`}>
+              {exporting === 'share' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
+              <span>
+                <span className="hidden sm:inline">مشاركة </span>واتساب
+              </span>
             </button>
+            <button onClick={() => handleExport('png')} disabled={!!exporting} className={`${btn} glass text-white`} aria-label="تحميل كصورة">
+              {exporting === 'png' ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageDown className="w-4 h-4" />}
+              <span className="hidden sm:inline">صورة</span>
+            </button>
+            <button onClick={() => handleExport('pdf')} disabled={!!exporting} className={`${btn} glass text-white`} aria-label="تحميل PDF">
+              {exporting === 'pdf' ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
+              PDF
+            </button>
+            {profileUrl && (
+              <button onClick={handleCopyLink} className={`${btn} glass text-white`} title="نسخ رابط الملف">
+                <Link2 className="w-4 h-4" />
+                <span className="hidden sm:inline">نسخ الرابط</span>
+              </button>
             )}
-            <button
-              onClick={onClose}
-              aria-label="إغلاق"
-              className="text-white/80 hover:text-white p-2 rounded-xl hover:bg-emerald-800/60 transition cursor-pointer"
-            >
-              <X className="w-6 h-6" />
-            </button>
           </div>
+          <button
+            onClick={onClose}
+            aria-label="إغلاق"
+            className="relative z-10 w-10 h-10 shrink-0 rounded-full glass flex items-center justify-center cursor-pointer"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="p-4 sm:p-6 space-y-5 overflow-y-auto">
-          
-          {/* Ramadan & Availability Status Banner */}
-          {imam.availabilityState === 'paused' ? (
-            <div className="bg-slate-100 border border-slate-300 rounded-2xl p-3.5 text-slate-700 font-bold text-xs">
-              ⏸️ الإعلان موقوف مؤقتاً من صاحب الملف
-            </div>
-          ) : isBusyRamadan ? (
-            <div className="bg-amber-50 border-2 border-amber-300/80 rounded-2xl p-4 text-amber-950 flex flex-wrap justify-between items-center gap-3">
-              <div className="space-y-1">
-                <div className="font-extrabold text-sm flex items-center gap-2">
-                  <span>🌙 حالة رمضان: ملتزم في رمضان ومتاح رسمياً بعده</span>
-                </div>
-                {imam.ramadanNote && (
-                  <p className="text-xs text-amber-900">
-                    📌 الالتزام الرمضاني: {imam.ramadanNote}
-                  </p>
-                )}
-                <p className="text-xs text-emerald-800 font-bold">
-                  📅 تاريخ التفرغ للتعاقد الرسمي: {imam.availableAfterDate || 'بعد عيد الفطر مباشرة'}
-                </p>
-              </div>
-              <span className="bg-amber-200/80 text-amber-950 font-bold px-3 py-1 rounded-xl text-xs shrink-0">
-                متاح لعقد رسمي دائم
-              </span>
-            </div>
-          ) : (
-            <div className="bg-emerald-50 border border-emerald-300 rounded-2xl p-3.5 text-emerald-950 font-bold flex flex-wrap justify-between items-center gap-2 text-xs">
-              <span className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-ping"></span>
-                <span>🟢 متاح حالياً (جاهز لصلاة التراويح أو للتعاقد الدائم الفوري)</span>
-              </span>
-              <span className="bg-emerald-200 text-emerald-900 px-3 py-1 rounded-lg text-xs">
-                تفرغ تام
-              </span>
-            </div>
-          )}
-
-          {/* YouTube Recitation Player */}
-          {youtubeHref && (
-          <div className="space-y-2">
-            <div className="flex justify-between items-center">
-              <h4 className="font-extrabold text-slate-900 text-sm flex items-center gap-2">
-                <Video className="w-4 h-4 text-emerald-700" />
-                <span>نموذج التلاوة المرئي من اليوتيوب:</span>
-              </h4>
-              <a
-                href={youtubeHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-700 font-bold flex items-center gap-1 text-xs underline"
-              >
-                <span>فتح مباشرة في يوتيوب</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
-            </div>
-
-            {embedUrl ? (
-              <div className="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-lg border-2 border-slate-800">
-                <iframe
-                  className="w-full h-full"
-                  loading="lazy"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  src={embedUrl}
-                  title={`تلاوة ${imam.name}`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            ) : (
-              <div className="bg-slate-100 p-6 rounded-2xl text-center space-y-2 border border-slate-200">
-                <p className="text-slate-600 font-medium">رابط التلاوة المرفق:</p>
-                <a
-                  href={youtubeHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-emerald-700 font-bold underline inline-flex items-center gap-1.5 break-all"
-                  dir="ltr"
-                >
-                  <span>{youtubeHref}</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            )}
-          </div>
-          )}
-
-          {/* Bio & CV */}
-          <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-2">
-            <h4 className="font-extrabold text-slate-900 text-sm flex items-center gap-2">
-              <Award className="w-4 h-4 text-emerald-700" />
-              <span>السيرة الذاتية والمسيرة العلمية والدعوية:</span>
-            </h4>
-            <p className="text-slate-700 leading-relaxed text-xs whitespace-pre-line">
-              {imam.cvText || '—'}
+        {/* The CV itself */}
+        <div className="overflow-y-auto p-3 sm:p-5">
+          {!isApproved && (
+            <p className="mb-3 text-xs font-bold text-amber-900 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+              {imam.approvalStatus === 'pending' ? 'هذا الملف قيد المراجعة ولا يظهر للعموم بعد.' : 'هذا الملف غير معتمد.'}
             </p>
-          </div>
-
-          {/* Legal Visa & Degrees Documents Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            
-            {/* Visa Card */}
-            <div className="bg-blue-50/80 border border-blue-200 p-4 rounded-2xl space-y-2">
-              <h5 className="font-extrabold text-blue-950 text-xs flex items-center gap-1.5">
-                <FileCheck className="w-4 h-4 text-blue-700" />
-                <span>حالة التأشيرة (شنغن) والإقامة:</span>
-              </h5>
-              <p className="text-blue-900 font-semibold leading-relaxed">
-                {imam.visaDetails}
-              </p>
-              
-              {imam.visaFilePath ? (
-                <div className="pt-1">
-                  <span className="text-xs bg-white text-blue-800 px-3 py-1.5 rounded-xl border border-blue-200 inline-flex items-center gap-1.5 font-bold shadow-sm">
-                    <Download className="w-3.5 h-3.5 text-blue-600" />
-                    <span>
-                      {isOwnerOrAdmin ? `الوثيقة المرفوعة: ${imam.visaFileName}` : 'تم رفع وثيقة التأشيرة للإدارة'}
-                    </span>
-                  </span>
-                </div>
-              ) : imam.hasVisa === 'no' ? (
-                <span className="text-xs text-slate-500">
-                  يحتاج استقدام وتأشيرة عمل من طرف المسجد
-                </span>
-              ) : null}
-            </div>
-
-            {/* Degrees & Languages Card */}
-            <div className="bg-emerald-50/80 border border-emerald-200 p-4 rounded-2xl space-y-2">
-              <h5 className="font-extrabold text-emerald-950 text-xs flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-700" />
-                <span>الشواهد العلمية وإجازات السند:</span>
-              </h5>
-              <p className="text-emerald-900 font-semibold leading-relaxed">
-                {imam.degree}
-              </p>
-              <p className="text-slate-600 text-xs">
-                🗣️ <strong>اللغات:</strong> {imam.languages}
-              </p>
-              {imam.germanLevel && imam.germanLevel !== 'none' && (
-                <p className="text-emerald-800 font-bold text-xs">
-                  🇩🇪 شهادة اللغة الألمانية: مستوى {imam.germanLevel}
-                </p>
-              )}
-
-              {imam.certsFilePath && (
-                <div className="pt-1">
-                  <span className="text-xs bg-white text-emerald-800 px-3 py-1.5 rounded-xl border border-emerald-200 inline-flex items-center gap-1.5 font-bold shadow-sm">
-                    <Download className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>
-                      {isOwnerOrAdmin ? `الشواهد المرفوعة: ${imam.certsFileName}` : 'تم رفع الشواهد للإدارة'}
-                    </span>
-                  </span>
-                </div>
-              )}
-            </div>
-
-          </div>
-
-          {/* Contact details: loaded from the protected imamContacts collection */}
-          {canViewContact ? (
-            <div className="bg-slate-900 text-white p-4 sm:p-5 rounded-2xl space-y-3">
-              <p className="font-black text-amber-400 text-sm">وسائل التواصل المباشر مع الشيخ:</p>
-              <ContactBlock
-                kind="imam"
-                id={imam.id}
-                canView
-                lockedText="تعذر تحميل بيانات التواصل"
-                emailSubject={`تواصل من إدارة مسجد عبر منصة محراب - ${imam.name}`}
-              />
-            </div>
-          ) : (
-            <div className="bg-slate-900 text-white p-4 sm:p-5 rounded-2xl flex flex-wrap justify-between items-center gap-4 border-2 border-amber-500/40">
-              <div className="space-y-1">
-                <p className="font-black text-amber-400 text-sm flex items-center gap-1.5">
-                  <Lock className="w-4 h-4 text-amber-400" />
-                  <span>بيانات الاتصال محمية للمساجد الموثقة فقط</span>
-                </p>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  {isUnverifiedMosque
-                    ? 'ستظهر لك أرقام التواصل بعد أن توافق الإدارة على إعلان مسجدك.'
-                    : 'حفاظاً على خصوصية الأئمة، لا تظهر أرقام الهاتف والبريد إلا لحسابات المساجد التي وثقتها الإدارة.'}
-                </p>
-              </div>
-              {currentRole === 'visitor' && (
-                <button
-                  onClick={() => {
-                    onClose();
-                    onOpenAuthModal();
-                  }}
-                  className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs shadow transition cursor-pointer shrink-0"
-                >
-                  🔐 تسجيل الدخول
-                </button>
-              )}
-            </div>
           )}
-
+          <div className="shadow-xl rounded-3xl">
+            <ImamCvSheet
+              imam={imam}
+              contact={canViewContact ? contact : null}
+              layout="screen"
+              profileUrl={profileUrl}
+              contactSlot={contactSlot}
+              recitationSlot={recitationSlot}
+              audioSlot={audioSlot}
+            />
+          </div>
+          {canEdit && (imam.visaFileName || imam.certsFileName) && (
+            <p className="mt-3 text-xs text-slate-500">
+              الوثائق المرفوعة (لا يراها غيرك والإدارة): {[imam.visaFileName, imam.certsFileName].filter(Boolean).join('، ')}
+            </p>
+          )}
         </div>
 
-        {/* Modal Bottom Action Bar */}
-        <div className="p-4 sm:p-5 bg-slate-50 border-t border-slate-200 flex flex-wrap justify-between items-center gap-3">
-          <div className="flex items-center gap-3">
+        {/* Actions */}
+        <div className="px-4 py-3 bg-white border-t border-slate-200 flex flex-wrap justify-between items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {currentRole === 'admin' && <AdminStatStrip kind="imam" id={imam.id} showPlays={!!imam.recitationMeta} />}
             {canEdit && (
               <button
                 onClick={() => {
                   onClose();
                   onEdit(imam);
                 }}
-                className="text-amber-800 hover:text-amber-900 font-extrabold flex items-center gap-1 cursor-pointer text-xs"
+                className={`${btn} bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100`}
               >
-                <Edit3 className="w-3.5 h-3.5" />
-                <span>تعديل الملف</span>
+                <Edit3 className="w-4 h-4" />
+                تعديل الملف
               </button>
             )}
-
             {currentRole !== 'admin' && !canEdit && (
               <button
                 onClick={() => {
                   onClose();
                   onReport(imam);
                 }}
-                className="text-red-600 hover:text-red-700 font-bold flex items-center gap-1 cursor-pointer text-xs border border-red-200 bg-red-50 hover:bg-red-100 px-2.5 py-1.5 rounded-lg transition"
+                className={`${btn} bg-red-50 text-red-700 border border-red-200 hover:bg-red-100`}
               >
-                <Flag className="w-3.5 h-3.5 text-red-500" />
-                <span>إبلاغ الإدارة</span>
+                <Flag className="w-4 h-4" />
+                إبلاغ الإدارة
               </button>
             )}
           </div>
-
           <div className="flex items-center gap-2">
-            <button
-              onClick={onClose}
-              className="px-4 py-2.5 border border-slate-300 rounded-xl font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer"
-            >
-              إغلاق
-            </button>
             {currentRole === 'mosque' && isApproved && (
-              <button
-                onClick={() => onRequestInterview(imam)}
-                className="bg-emerald-700 hover:bg-emerald-600 text-white font-black px-5 py-2.5 rounded-xl shadow-lg transition cursor-pointer flex items-center gap-2"
-              >
+              <button onClick={() => onRequestInterview(imam)} className={`${btn} bg-[#0b3a4f] text-white hover:bg-[#0e4d64] shadow`}>
                 <Phone className="w-4 h-4" />
-                <span>إرسال طلب تواصل للشيخ</span>
+                إرسال طلب تواصل للشيخ
               </button>
             )}
             {currentRole === 'visitor' && (
@@ -384,16 +301,32 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
                   onClose();
                   onOpenAuthModal();
                 }}
-                className="bg-emerald-700 hover:bg-emerald-600 text-white font-black px-5 py-2.5 rounded-xl shadow-lg transition cursor-pointer flex items-center gap-2"
+                className={`${btn} bg-amber-400 text-slate-950 hover:bg-amber-300 shadow`}
               >
                 <Lock className="w-4 h-4" />
-                <span>تسجيل الدخول للتواصل</span>
+                تسجيل الدخول للتواصل
               </button>
             )}
+            <button onClick={onClose} className={`${btn} border border-slate-300 text-slate-600 hover:bg-slate-100`}>
+              إغلاق
+            </button>
           </div>
         </div>
-
       </div>
+
+      {/* Off-screen A4 version, mounted only while exporting */}
+      {exporting && (
+        <div style={{ position: 'fixed', left: -10000, top: 0 }} aria-hidden>
+          <ImamCvSheet
+            ref={printRef}
+            imam={imam}
+            contact={canViewContact ? contact : null}
+            layout="print"
+            profileUrl={profileUrl}
+          />
+        </div>
+      )}
+      <ExportReadySheet file={ready} onClose={() => setReady(null)} />
     </div>
   );
 };

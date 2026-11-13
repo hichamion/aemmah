@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { MosqueContact, MosqueJob } from '../types';
 import type { MosqueEditableFields } from '../lib/db';
 import { useContact } from '../lib/db';
-import { isValidEmail, isValidPhone } from '../utils/helpers';
-import { X, Loader2 } from 'lucide-react';
+import { DEFAULT_MOSQUE_IMAGE, getSafeMosquePhoto, isValidEmail, isValidPhone } from '../utils/helpers';
+import { compressImage } from '../lib/image';
+import { X, Loader2, Upload, RotateCcw } from 'lucide-react';
+import { useDialog } from '../lib/useDialog';
 
 interface MosqueModalFormProps {
   isOpen: boolean;
@@ -38,6 +40,7 @@ const EMPTY_FIELDS: MosqueEditableFields = {
   details: '',
   salaryAndBenefits: '',
   housingProvided: false,
+  photo: '',
 };
 
 const EMPTY_CONTACT = { contactPerson: '', phone: '', whatsapp: '', email: '' };
@@ -55,7 +58,7 @@ export const MosqueModalForm: React.FC<MosqueModalFormProps> = ({ isOpen, onClos
     setFormError(null);
     setContact(EMPTY_CONTACT);
     if (initialData) {
-      const { mosqueName, legalName, country, city, fullAddress, lookingType, riwayaRequired, activeState, requirements, details, salaryAndBenefits, housingProvided } = initialData;
+      const { mosqueName, legalName, country, city, fullAddress, lookingType, riwayaRequired, activeState, requirements, details, salaryAndBenefits, housingProvided, photo } = initialData;
       setFormData({
         mosqueName, legalName, country, city,
         fullAddress: fullAddress || '',
@@ -64,6 +67,7 @@ export const MosqueModalForm: React.FC<MosqueModalFormProps> = ({ isOpen, onClos
         details: details || '',
         salaryAndBenefits: salaryAndBenefits || '',
         housingProvided: !!housingProvided,
+        photo: photo || '',
       });
     } else {
       setFormData(EMPTY_FIELDS);
@@ -81,6 +85,8 @@ export const MosqueModalForm: React.FC<MosqueModalFormProps> = ({ isOpen, onClos
     }
   }, [existingContact, isOpen, initialData]);
 
+  const dialogRef = useDialog(isOpen, onClose);
+
   if (!isOpen) return null;
 
   const handleToggleRequirement = (req: string) => {
@@ -91,6 +97,20 @@ export const MosqueModalForm: React.FC<MosqueModalFormProps> = ({ isOpen, onClos
         : [...prev.requirements, req],
     }));
   };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const dataUrl = await compressImage(file);
+      setFormData((prev) => ({ ...prev, photo: dataUrl }));
+    } catch (err) {
+      setFormError((err as Error).message);
+    }
+  };
+
+  const shownPhoto = getSafeMosquePhoto(formData.photo);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,7 +155,7 @@ export const MosqueModalForm: React.FC<MosqueModalFormProps> = ({ isOpen, onClos
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto" role="dialog" ref={dialogRef} tabIndex={-1} aria-modal="true">
       <div className="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 shadow-2xl my-8 max-h-[92vh] overflow-y-auto text-xs space-y-6">
         
         {/* Modal Header */}
@@ -165,6 +185,30 @@ export const MosqueModalForm: React.FC<MosqueModalFormProps> = ({ isOpen, onClos
               <span className="w-5 h-5 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs">1</span>
               <span>معلومات المسجد والعنوان القانوني:</span>
             </h4>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <img src={shownPhoto} alt="" className="w-20 h-20 rounded-2xl object-cover border-2 border-emerald-600 shadow-sm" />
+              <div className="space-y-2 flex-1">
+                <p className="font-bold text-slate-700 text-xs">صورة المسجد (اختيارية): واجهة المسجد أو المحراب أو شعار الجمعية.</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <label className="bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl cursor-pointer text-xs transition flex items-center gap-1.5">
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>رفع صورة من جهازك</span>
+                    <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoUpload} className="hidden" />
+                  </label>
+                  {shownPhoto !== DEFAULT_MOSQUE_IMAGE && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData((prev) => ({ ...prev, photo: '' }))}
+                      className="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3 py-2 rounded-xl text-xs transition flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>حذف الصورة</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
@@ -295,7 +339,10 @@ export const MosqueModalForm: React.FC<MosqueModalFormProps> = ({ isOpen, onClos
                   className="w-full border border-amber-300 rounded-xl px-3 py-2 bg-white font-bold text-slate-900 focus:outline-none"
                 >
                   <option value="نبحث عن إمام رسمي بعقد دائم">نبحث عن إمام رسمي بعقد دائم</option>
-                  <option value="نبحث عن إمام لصلاة التراويح وشهر رمضان">نبحث عن إمام لصلاة التراويح وشهر رمضان</option>
+                  <option value="نبحث عن إمام لصلاة التراويح فقط (رمضان)">نبحث عن إمام لصلاة التراويح فقط (رمضان)</option>
+                  {formData.lookingType === 'نبحث عن إمام لصلاة التراويح وشهر رمضان' && (
+                    <option value="نبحث عن إمام لصلاة التراويح وشهر رمضان">نبحث عن إمام لصلاة التراويح وشهر رمضان</option>
+                  )}
                   <option value="نبحث عن إمام يبدأ معنا رسمياً بعد رمضان">نبحث عن إمام يبدأ معنا رسمياً بعد رمضان</option>
                 </select>
               </div>

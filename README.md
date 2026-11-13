@@ -1,6 +1,6 @@
 <div dir="rtl">
 
-# مِحراب | Mihrab
+# منصة أئمة | Aemmah
 
 منصة للربط بين **الأئمة والقرّاء** و**المساجد والجمعيات الإسلامية** في أوروبا.
 الإمام ينشئ ملفاً (السيرة، الرواية، التلاوة، حالة التأشيرة)، والمسجد ينشر إعلاناً، وتراجع الإدارة كل ملف وإعلان قبل نشره.
@@ -32,6 +32,13 @@ npm run build    # بناء نسخة الإنتاج في dist/
 npm run lint     # فحص الأنواع (TypeScript)
 ```
 
+## التجربة المحلية على المحاكي
+
+```bash
+VITE_FIREBASE_EMULATOR=1 npm run dev
+```
+يتصل التطبيق بمحاكيات Firebase (Auth على 9099، وFirestore على 8085) بدل المشروع الحقيقي. شغّل المحاكيات قبلها بـ `firebase emulators:start --only firestore,auth`.
+
 ## إعداد Firebase (مرة واحدة)
 
 إعدادات المشروع موجودة في `src/firebase-applet-config.json`.
@@ -44,12 +51,49 @@ npm run lint     # فحص الأنواع (TypeScript)
 - في **Authentication → Settings → Authorized domains** أضف النطاق الذي ستنشر عليه الموقع.
 
 ### 2. نشر قواعد الأمان (أهم خطوة)
+
+**تلقائياً (مُستحسن):** كل دمج في `main` يغيّر `firestore.rules` يشغّل `.github/workflows/deploy-rules.yml`، فيُنشر الملف على Firebase دون نسخ ولصق.
+يحتاج ذلك إعطاء GitHub إذناً بالنشر **مرة واحدة**. يكفي أحد الخيارين:
+
+**أ) مفتاح حساب خدمة** (الأبسط)
+1. في [Google Cloud Console](https://console.cloud.google.com/iam-admin/serviceaccounts?project=applied-sunspot-701dl) افتح **IAM und Verwaltung ← Dienstkonten ← Dienstkonto erstellen**. سمّه `github-rules`، ثم **Erstellen und fortfahren**.
+2. أضف الأدوار التالية، ثم **Fertig**:
+   - **Firebase Rules Admin**
+   - **Firebase Viewer**
+   - **Service Usage Consumer**
+3. افتح الحساب الجديد ← تبويب **Schlüssel ← Schlüssel hinzufügen ← Neuen Schlüssel erstellen ← JSON ← Erstellen**. يُنزَّل ملف JSON.
+4. في GitHub افتح **Settings ← Secrets and variables ← Actions ← New repository secret**:
+   - الاسم: `FIREBASE_SERVICE_ACCOUNT`
+   - القيمة: محتوى ملف JSON كاملاً.
+
+   احذف الملف من جهازك بعد ذلك.
+5. شغّل النشر أول مرة: **Actions ← Deploy Firestore rules ← Run workflow**.
+
+> إن كان زر إنشاء المفاتيح معطّلاً، فسياسة المؤسسة `iam.disableServiceAccountKeyCreation` مفعّلة. استعمل الخيار (ب)، أو أوقف هذه السياسة للمشروع.
+
+**ج) رمز دخول من حسابك** (إن كان «Dienstkonto erstellen» رمادياً)
+1. ثبّت Node.js من [nodejs.org](https://nodejs.org) (نسخة LTS).
+2. افتح Terminal ونفّذ `npx firebase-tools login:ci`.
+3. سجّل الدخول بحساب Google الخاص بـ Firebase في المتصفح الذي يُفتح.
+4. انسخ الرمز الطويل الذي يظهر في Terminal (يبدأ غالباً بـ `1//`).
+5. أضفه في GitHub ← **Settings ← Secrets and variables ← Actions ← New repository secret**:
+   - الاسم: `FIREBASE_TOKEN`
+   - القيمة: الرمز الذي نسخته.
+
+**ب) Workload Identity (بلا أي مفتاح)**
+أنشئ «Workload Identity Pool» لـ GitHub مرتبطاً بالمستودع `hichamion/mihrab` وحساب الخدمة نفسه. ثم أضف في **Settings ← Secrets and variables ← Actions ← Variables** متغيرين:
+- `WIF_PROVIDER`: الصيغة `projects/<رقم المشروع>/locations/global/workloadIdentityPools/<pool>/providers/<provider>`
+- `WIF_SERVICE_ACCOUNT`: الصيغة `github-rules@applied-sunspot-701dl.iam.gserviceaccount.com`
+
+ما دام لم يُضف أي منهما، تنجح العملية دون نشر، وتكتب في صفحة Actions تنبيهاً بأن القواعد لم تُنشر.
+
+**يدوياً من جهازك:**
 ```bash
 npm install -g firebase-tools
 firebase login
 npm run deploy:rules
 ```
-ينشر هذا الأمر `firestore.rules` على قاعدة البيانات المحددة في `firebase.json`، و`storage.rules` على Storage.
+**أو من المتصفح:** Firebase Console ← Firestore Database ← **Regeln** ← الصق محتوى `firestore.rules` ← **Veröffentlichen**.
 
 > ⚠️ إذا واصلت تعديل التطبيق داخل AI Studio، تأكد أنه لا يستبدل `firestore.rules` بنسخة مفتوحة.
 
@@ -70,9 +114,9 @@ npm run deploy:rules
 
 ## النشر على الإنترنت
 
-**النشر الحالي: GitHub Pages** على `https://hichamion.github.io/mihrab/`.
+**النشر الحالي: GitHub Pages** على `https://hichamion.github.io/mihrab/` (وبعد إعادة تسمية المستودع إلى `aemmah`: `https://hichamion.github.io/aemmah/`).
 كل دفعة (push) إلى `main` تشغّل `.github/workflows/deploy.yml`: فحص الأنواع ثم البناء ثم النشر.
-التطبيق يستخدم روابط `#/...`، و`base: '/mihrab/'` مضبوط في `vite.config.ts`.
+التطبيق يستخدم روابط `#/...`، و`base: './'` (مسار نسبي) في `vite.config.ts`، فيعمل تحت أي اسم للمستودع.
 
 > ملاحظة: ترويسات الأمان في `firebase.json` (مثل `X-Frame-Options`) تُطبَّق على Firebase Hosting فقط، لا على GitHub Pages.
 > إذا نقلت الموقع إلى نطاق آخر، عدّل `og:url` و`og:image` و`canonical` في `index.html` و`start_url` في `public/site.webmanifest`.
@@ -124,8 +168,9 @@ firebase.json             إعدادات النشر
 ## قبل الإطلاق الرسمي
 
 - [ ] املأ بيانات الجهة المسؤولة في `src/components/PrivacyPage.tsx` (المتغير `OPERATOR`).
+- [ ] اضبط بريد التواصل `CONTACT_EMAIL` في `src/config.ts` ليظهر رابط «تواصل معنا» في الفوتر.
 - [ ] راجع سياسة الخصوصية مع مختص قانوني في بلدك. في ألمانيا يلزم أيضاً **Impressum**.
-- [ ] نفّذ `npm run deploy:rules` وتأكد من تطبيق القواعد.
+- [ ] انشر القواعد (تلقائياً عبر GitHub Actions أو `npm run deploy:rules`) وتأكد من تطبيقها.
 - [ ] عيّن حساب المدير، ثم جرّب التسجيل كإمام ثم كمسجد بحسابين مختلفين.
 - [ ] اختر ترخيصاً للمشروع (LICENSE) إن كان المستودع عاماً.
 - [ ] أضف `hichamion.github.io` إلى **Authentication → Settings → Authorized domains**.
