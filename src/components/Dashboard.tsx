@@ -35,8 +35,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
     // Empty charts look broken; show an invitation until there is enough real data.
     return (
       <section className="flex-1 py-16 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto w-full text-center space-y-5">
-        <h1 className="text-3xl font-black text-slate-900 font-amiri">إحصائيات المنصة</h1>
-        <p className="text-slate-600 leading-relaxed">
+        <h1 className="text-3xl font-black text-parchment font-amiri">إحصائيات المنصة</h1>
+        <p className="text-white/75 leading-relaxed">
           المنصة في بدايتها. ستظهر هنا الإحصائيات (الروايات، الدول، التسجيلات الجديدة…) عندما يكتمل عدد كافٍ من
           الملفات والإعلانات المعتمدة.
         </p>

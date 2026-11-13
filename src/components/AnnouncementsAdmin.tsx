@@ -46,8 +46,8 @@ export const AnnouncementsAdmin: React.FC<{ onDone: (m: string) => void; onError
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h3 className="text-lg font-black text-slate-900 flex items-center gap-2"><Megaphone className="w-5 h-5 text-emerald-700" /> إعلانات الواجهة</h3>
-          <p className="text-xs text-slate-500">ما تكتبه هنا يظهر في البانر المتحرك أعلى الصفحة الرئيسية، بالترتيب الذي تختاره.</p>
+          <h3 className="text-lg font-black text-parchment flex items-center gap-2"><Megaphone className="w-5 h-5 text-brass-300" /> إعلانات الواجهة</h3>
+          <p className="text-xs text-white/70">ما تكتبه هنا يظهر في البانر المتحرك أعلى الصفحة الرئيسية، بالترتيب الذي تختاره.</p>
         </div>
         <button onClick={() => setEditing({ id: null, data: { ...EMPTY, order: items.length } })}
           className="inline-flex items-center gap-1.5 bg-emerald-800 hover:bg-emerald-700 text-white font-black px-4 py-2.5 rounded-full text-sm cursor-pointer">

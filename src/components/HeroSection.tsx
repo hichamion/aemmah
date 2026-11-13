@@ -568,7 +568,7 @@ const FAQ = [
 
 const SectionTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="text-center space-y-2">
-    <h2 className="text-3xl sm:text-4xl font-kufi text-cedar-800">{children}</h2>
+    <h2 className="text-3xl sm:text-4xl font-kufi text-parchment drop-shadow-sm">{children}</h2>
     <div className="flex items-center justify-center gap-2 text-brass-500" aria-hidden>
       <span className="h-px w-10 bg-gradient-to-l from-brass-400 to-transparent" />
       <span className="w-2 h-2 rotate-45 bg-brass-400" />
@@ -609,9 +609,9 @@ const HowItWorks: React.FC<{ onOpenContact: () => void }> = ({ onOpenContact }) 
           </details>
         ))}
       </div>
-      <p className="text-center text-sm text-slate-600 pt-2">
+      <p className="text-center text-sm text-white/75 pt-2">
         لم تجد جواب سؤالك؟{' '}
-        <button onClick={onOpenContact} className="text-cedar-700 font-bold underline decoration-brass-400 underline-offset-4 cursor-pointer">
+        <button onClick={onOpenContact} className="text-brass-300 font-bold underline decoration-brass-400 underline-offset-4 cursor-pointer">
           راسل الإدارة أو أرسل اقتراحاً
         </button>
       </p>
