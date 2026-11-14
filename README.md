@@ -114,12 +114,19 @@ npm run deploy:rules
 
 ## النشر على الإنترنت
 
-**النشر الحالي: GitHub Pages** على `https://hichamion.github.io/mihrab/` (وبعد إعادة تسمية المستودع إلى `aemmah`: `https://hichamion.github.io/aemmah/`).
-كل دفعة (push) إلى `main` تشغّل `.github/workflows/deploy.yml`: فحص الأنواع ثم البناء ثم النشر.
-التطبيق يستخدم روابط `#/...`، و`base: './'` (مسار نسبي) في `vite.config.ts`، فيعمل تحت أي اسم للمستودع.
+**النشر: GitHub Pages** على `https://aemmah.com/`. كل دفعة (push) إلى `main` تشغّل `.github/workflows/deploy.yml`: فحص الأنواع ثم البناء ثم النشر. يحتوي `public/CNAME` على النطاق المخصّص كي يبقى مضبوطاً بعد كل نشر.
+
+لربط النطاق لأول مرة:
+1. في إعدادات DNS لدى مسجّل النطاق، أضف سجلات `A` للاسم `@` إلى العناوين `185.199.108.153` و`185.199.109.153` و`185.199.110.153` و`185.199.111.153`.
+2. أضف سجلات `AAAA` للاسم `@` إلى العناوين `2606:50c0:8000::153` و`2606:50c0:8001::153` و`2606:50c0:8002::153` و`2606:50c0:8003::153`.
+3. أضف سجل `CNAME` للاسم `www` يشير إلى `hichamion.github.io` (من دون مسار أو شرطة مائلة).
+4. في المستودع على GitHub افتح **Settings → Pages → Custom domain**، أدخل `aemmah.com` واحفظ. بعد تحقق GitHub من DNS، فعّل **Enforce HTTPS**. إذا كان هناك سجلات `A` أو `AAAA` قديمة للاسم `@`، استبدلها بهذه السجلات.
+5. في Firebase Console افتح **Authentication → Settings → Authorized domains** وأضف `aemmah.com`، وأضف `www.aemmah.com` أيضاً إذا أردت السماح بتسجيل الدخول على العنوان `www`.
+
+تحديث DNS قد يستغرق بعض الوقت. التطبيق يستخدم روابط `#/...` و`base: './'` في `vite.config.ts`، لذلك تستمر الروابط والملفات بالعمل على GitHub Pages وعلى النطاق المخصّص.
 
 > ملاحظة: ترويسات الأمان في `firebase.json` (مثل `X-Frame-Options`) تُطبَّق على Firebase Hosting فقط، لا على GitHub Pages.
-> إذا نقلت الموقع إلى نطاق آخر، عدّل `og:url` و`og:image` و`canonical` في `index.html` و`start_url` في `public/site.webmanifest`.
+> بيانات المشاركة والعنوان الأساسي في `index.html` تستخدم `https://aemmah.com/`، كما أن `public/site.webmanifest` يستخدم مسارات نسبية.
 
 **بديل: Firebase Hosting**
 ```bash
@@ -173,7 +180,7 @@ firebase.json             إعدادات النشر
 - [ ] انشر القواعد (تلقائياً عبر GitHub Actions أو `npm run deploy:rules`) وتأكد من تطبيقها.
 - [ ] عيّن حساب المدير، ثم جرّب التسجيل كإمام ثم كمسجد بحسابين مختلفين.
 - [ ] اختر ترخيصاً للمشروع (LICENSE) إن كان المستودع عاماً.
-- [ ] أضف `hichamion.github.io` إلى **Authentication → Settings → Authorized domains**.
+- [ ] أضف `aemmah.com` إلى **Authentication → Settings → Authorized domains**.
 - [ ] فعّل **Firebase App Check** (reCAPTCHA Enterprise) للحد من الرسائل والبلاغات المزعجة الآلية.
 
 </div>

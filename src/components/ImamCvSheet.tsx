@@ -42,7 +42,7 @@ import { LogoMark } from './Logo';
 export const SITE_URL =
   typeof window !== 'undefined'
     ? `${window.location.host}${window.location.pathname}`.replace(/\/(index\.html)?$/, '')
-    : 'hichamion.github.io/aemmah';
+    : 'aemmah.com';
 
 const AVAILABILITY: Record<ImamProfile['availabilityState'], string> = {
   available_now: 'متاح فوراً لصلاة التراويح أو للتعاقد الدائم',
