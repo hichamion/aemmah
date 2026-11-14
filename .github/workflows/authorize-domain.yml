@@ -1,0 +1,56 @@
+name: Authorize site domain for sign-in
+
+# Adds the site's domain (public/CNAME, plus its www. variant) to
+# Firebase → Authentication → Authorized domains, so Google sign-in works on it.
+# Uses the same FIREBASE_TOKEN secret as "Deploy Firestore rules". Existing domains are kept.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - public/CNAME
+      - .github/workflows/authorize-domain.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PROJECT_ID: applied-sunspot-701dl
+
+jobs:
+  authorize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add domain to Authorized domains
+        env:
+          FB_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "$FB_TOKEN" ]; then
+            echo "### ⚠️ FIREBASE_TOKEN is missing — domain not authorized" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          DOMAIN=$(tr -d ' \r\n' < public/CNAME)
+          # Exchange the firebase-tools refresh token for an access token (public firebase-tools OAuth client).
+          ACCESS=$(curl -sS -X POST https://oauth2.googleapis.com/token \
+            -d client_id=563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com \
+            -d client_secret=j9iVZfS8kkCEFUPaAeJV0sAi \
+            -d grant_type=refresh_token \
+            --data-urlencode refresh_token="$FB_TOKEN" | jq -r .access_token)
+          [ -n "$ACCESS" ] && [ "$ACCESS" != null ] || { echo "Could not get an access token"; exit 1; }
+          echo "::add-mask::$ACCESS"
+          API="https://identitytoolkit.googleapis.com/admin/v2/projects/$PROJECT_ID/config"
+          H=(-H "Authorization: Bearer $ACCESS" -H "x-goog-user-project: $PROJECT_ID" -H "Content-Type: application/json")
+          CURRENT=$(curl -sS --fail-with-body "${H[@]}" "$API")
+          NEW=$(echo "$CURRENT" | jq -c --arg d "$DOMAIN" '{authorizedDomains: ((.authorizedDomains // []) + [$d, ("www." + $d)] | unique)}')
+          echo "Authorized domains after update: $NEW"
+          curl -sS --fail-with-body -X PATCH "${H[@]}" "$API?updateMask=authorizedDomains" -d "$NEW" > /dev/null
+          {
+            echo "### ✅ Sign-in allowed on \`$DOMAIN\` and \`www.$DOMAIN\`"
+            echo "$NEW" | jq -r '.authorizedDomains[] | "- " + .'
+          } >> "$GITHUB_STEP_SUMMARY"

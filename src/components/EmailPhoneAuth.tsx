@@ -21,7 +21,7 @@ const field =
 const primary =
   'w-full bg-emerald-700 hover:bg-emerald-800 disabled:opacity-60 text-white font-black py-3 rounded-xl text-sm flex items-center justify-center gap-2 cursor-pointer';
 
-/** E-mail/password and phone (SMS) sign-in, shown under the Google/Facebook buttons. */
+/** E-mail/password and phone (SMS) sign-in, shown under the Google button. */
 export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSignedIn, onError, onInfo }) => {
   const [mode, setMode] = useState<Mode | null>(null);
   const [emailStep, setEmailStep] = useState<EmailStep>('signin');
@@ -96,7 +96,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
         <span className="h-px bg-slate-200 flex-1" />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div className={`grid grid-cols-1 gap-2 ${showEmail && showPhone ? 'sm:grid-cols-2' : ''}`}>
         {showEmail && (
           <button
             type="button"
@@ -107,7 +107,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
             }`}
           >
             <Mail className="w-5 h-5" />
-            <span>البريد الإلكتروني</span>
+            <span>{showPhone ? 'البريد الإلكتروني' : 'الدخول أو إنشاء حساب بالبريد الإلكتروني'}</span>
           </button>
         )}
         {showPhone && (

@@ -42,7 +42,8 @@ export const SUPPORT_ENABLED = Boolean(SUPPORT.paypalUrl || SUPPORT.bank.iban);
  */
 export const AUTH_METHODS = {
   google: true,
-  facebook: true,
+  // Off until a Facebook app (App ID + secret) is configured in Firebase → Authentication → Sign-in method.
+  facebook: false,
   email: true,
   phone: false,
 };
