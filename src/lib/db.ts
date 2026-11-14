@@ -792,7 +792,8 @@ export function describeError(err: unknown): string {
   if (code.includes('popup-blocked')) return 'المتصفح منع نافذة تسجيل الدخول. اسمح بالنوافذ المنبثقة لهذا الموقع.';
   if (code.includes('account-exists-with-different-credential'))
     return 'هذا البريد مسجل مسبقاً بطريقة دخول أخرى. جرّب الدخول بجوجل.';
-  if (code.includes('unauthorized-domain')) return 'هذا النطاق غير مصرح به في إعدادات Firebase Authentication.';
+  if (code.includes('unauthorized-domain'))
+    return 'الدخول بجوجل غير متاح على هذا العنوان بعد. استعمل «الدخول أو إنشاء حساب بالبريد الإلكتروني» في الأسفل.';
   if (code.includes('operation-not-allowed')) return 'طريقة تسجيل الدخول هذه غير مفعلة في إعدادات Firebase.';
   if (code.includes('storage/')) return 'تعذر رفع الملف. تحقق من حجمه ونوعه ثم أعد المحاولة.';
   if (code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found'))
