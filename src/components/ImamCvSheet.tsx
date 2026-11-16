@@ -28,6 +28,9 @@ import {
   MARITAL_LABELS,
   safeHttpUrl,
   visaStatusText,
+  isKhateeb,
+  khateebArea,
+  KHATEEB_TERM_LABELS,
 } from '../utils/helpers';
 import { LogoMark } from './Logo';
 
@@ -188,7 +191,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
       >
         {/* ---------------- Side column ---------------- */}
         <aside
-          className={`relative z-10 bg-gradient-to-b from-[#0e4d64] via-[#0b3a4f] to-[#082a3a] text-white px-6 py-8 space-y-7 shrink-0 ${
+          className={`relative z-10 bg-gradient-to-b ${isKhateeb(imam) ? 'from-[#8a2a4c] via-[#6e1d3b] to-[#4f1029]' : 'from-[#0e4d64] via-[#0b3a4f] to-[#082a3a]'} text-white px-6 py-8 space-y-7 shrink-0 ${
             print ? 'w-[290px] rounded-bl-[2.5rem]' : 'w-full md:w-[290px] md:rounded-bl-[2.5rem]'
           }`}
         >
@@ -198,7 +201,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
               <img
                 src={getSafeImamAvatar(imam.photo)}
                 alt={imam.name}
-                className="w-40 h-40 rounded-full object-cover border-4 border-[#0b3a4f] bg-white"
+                className={`w-40 h-40 rounded-full object-cover border-4 bg-white ${isKhateeb(imam) ? 'border-[#4f1029]' : 'border-[#0b3a4f]'}`}
               />
               {imam.isVerified && (
                 <span className="absolute bottom-2 right-2 bg-emerald-500 text-white text-xs font-black px-2 py-0.5 rounded-full ring-2 ring-[#0b3a4f]">
@@ -391,6 +394,17 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
               <Row label="متاح للتعاقد ابتداءً من" value={imam.availableAfterDate} />
             </div>
           </section>
+
+          {isKhateeb(imam) && imam.khateeb && (
+            <section className="space-y-3">
+              <Ribbon icon={<Mic className="w-5 h-5" />}>خطيب جمعة</Ribbon>
+              <div className="space-y-2 pr-2">
+                <Row label="نوع الخطابة" value={KHATEEB_TERM_LABELS[imam.khateeb.term]} />
+                <Row label="مكان الخطابة" value={khateebArea(imam.khateeb, imam.country)} />
+                <Row label="السيارة" value={imam.khateeb.hasCar ? 'عنده سيارة' : 'ليس عنده سيارة'} />
+              </div>
+            </section>
+          )}
 
           {audioSlot && (
             <section className="space-y-3">

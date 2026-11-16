@@ -487,3 +487,20 @@
 
 /* The soft arch under the home hero melts into the dark site backdrop. */
 .home-arch { color: #0d1520; }
+
+/* Friday preachers (خطيب جمعة): wine-red identity, distinct from the teal imam cards. */
+.khateeb-card { border-color: rgb(138 42 76 / 0.35); box-shadow: 0 0 0 2px rgb(138 42 76 / 0.18), 0 10px 25px -12px rgb(79 16 41 / 0.45); }
+.khateeb-panel { background: linear-gradient(135deg, #fbf1f4, #f6e6ec); border: 2px solid rgb(138 42 76 / 0.3); }
+.dark .khateeb-panel { background: linear-gradient(135deg, #2a1420, #1f0f18); }
+.dark .khateeb-box { background: #2a1420; }
+.dark .khateeb-box p { color: #f3dbe4; }
+
+/* iPhone zooms into text fields smaller than 16px and, in the home-screen app, stays zoomed:
+ * the page then no longer fits the screen. 16px fields prevent that zoom. */
+@media (max-width: 1023.98px) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']),
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}

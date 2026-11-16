@@ -344,6 +344,8 @@ export const MosqueModalForm: React.FC<MosqueModalFormProps> = ({ isOpen, onClos
                     <option value="نبحث عن إمام لصلاة التراويح وشهر رمضان">نبحث عن إمام لصلاة التراويح وشهر رمضان</option>
                   )}
                   <option value="نبحث عن إمام يبدأ معنا رسمياً بعد رمضان">نبحث عن إمام يبدأ معنا رسمياً بعد رمضان</option>
+                  <option value="نبحث عن خطيب جمعة مؤقت">نبحث عن خطيب جمعة مؤقت</option>
+                  <option value="نبحث عن خطيب جمعة دائم">نبحث عن خطيب جمعة دائم</option>
                 </select>
               </div>
 

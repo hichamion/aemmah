@@ -79,7 +79,8 @@ export const Intro: React.FC<{ onDone: () => void }> = ({ onDone }) => {
 
       <button
         onClick={close}
-        className="absolute top-5 left-5 text-white/70 hover:text-white text-sm font-bold px-4 py-2 rounded-full border border-white/20 hover:bg-white/10 cursor-pointer"
+        style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1.25rem)', left: 'calc(env(safe-area-inset-left, 0px) + 1.25rem)' }}
+        className="absolute z-10 text-white text-sm font-bold px-4 py-2 rounded-full border border-white/30 bg-white/10 hover:bg-white/10 cursor-pointer"
       >
         تخطّي
       </button>

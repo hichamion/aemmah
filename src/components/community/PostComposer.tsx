@@ -102,6 +102,7 @@ export const PostComposer: React.FC<Props> = ({ open, initialType, existing, set
     if ((title.trim() || body.trim()) && !window.confirm('سيُستبدل العنوان والنص الحاليان بالنموذج. متابعة؟')) return;
     setTitle(tpl.title);
     setBody(tpl.body);
+    if (type === 'poll' && tpl.pollOptions?.length) setPollOptions(tpl.pollOptions.slice(0, 6));
   };
 
   const onImages = async (e: React.ChangeEvent<HTMLInputElement>) => {

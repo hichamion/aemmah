@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ImamContact, ImamFormFiles, ImamProfile } from '../types';
+import { ImamContact, ImamFormFiles, ImamProfile, KhateebInfo } from '../types';
 import type { ImamEditableFields } from '../lib/db';
 import { describeError, openPrivateDocument, useContact, useRecitationAudio, validateDocumentFile } from '../lib/db';
 import { RecitationManager } from './Recitation';
@@ -12,12 +12,13 @@ import {
   isValidPhone,
   safeHttpUrl,
   IMAM_TITLE_OPTIONS,
+  KHATEEB_TERM_LABELS,
   imamLanguages,
   MARITAL_LABELS,
   splitList,
 } from '../utils/helpers';
 import { CertificateEditor, ExperienceEditor, LanguagesEditor, PreferredLocationsEditor } from './ImamCvEditor';
-import { X, Upload, Video, CheckCircle2, RotateCcw, Loader2 } from 'lucide-react';
+import { X, Upload, Video, CheckCircle2, RotateCcw, Loader2, Mic } from 'lucide-react';
 import { useDialog } from '../lib/useDialog';
 
 interface ImamModalFormProps {
@@ -47,6 +48,7 @@ const EMPTY_FIELDS: ImamEditableFields = {
   preferredLocations: [],
   languageList: [],
   maritalStatus: '',
+  khateeb: null,
   livesInEurope: false,
   hasVisa: 'no',
   visaDetails: '',
@@ -61,6 +63,8 @@ const EMPTY_FIELDS: ImamEditableFields = {
   ramadanNote: '',
   availableAfterDate: '',
 };
+
+const EMPTY_KHATEEB: KhateebInfo = { term: 'both', mode: 'regions', regions: '', radiusKm: 30, hasCar: false };
 
 const EMPTY_CONTACT = { phone: '', whatsapp: '', email: '' };
 
@@ -115,6 +119,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
         // Older profiles only had a free-text list (and a German level): turn it into rows.
         languageList: imamLanguages(d).map((l) => ({ name: l.name, level: l.level || 'good' })),
         maritalStatus: d.maritalStatus || '',
+        khateeb: d.khateeb ? { ...EMPTY_KHATEEB, ...d.khateeb } : null,
         livesInEurope: !!d.livesInEurope,
         languages: languages || '',
         germanLevel: germanLevel || 'none',
@@ -186,6 +191,12 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
     if (contact.whatsapp && !isValidPhone(contact.whatsapp)) return 'رقم الواتساب غير صحيح.';
     if (!isValidEmail(contact.email)) return 'البريد الإلكتروني غير صحيح.';
     if (fields.youtubeUrl && !safeHttpUrl(fields.youtubeUrl)) return 'رابط اليوتيوب غير صحيح.';
+    // Checked only once the imam filled the khateeb section (older «خطيب» profiles can still be saved as before).
+    if (allTitles().includes('خطيب') && fields.khateeb) {
+      const k = fields.khateeb;
+      if (k.mode === 'regions' && !k.regions.trim()) return 'اكتب المدن أو المناطق التي يمكنك أن تخطب فيها الجمعة.';
+      if (k.mode === 'radius' && !(Number(k.radiusKm) > 0 && Number(k.radiusKm) <= 500)) return 'اكتب المسافة بالكيلومتر (من 1 إلى 500).';
+    }
     return null;
   };
 
@@ -206,6 +217,14 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
           country: fields.country.trim(),
           nationality: (fields.nationality || '').trim().slice(0, 80),
           titles: allTitles(),
+          // The khateeb details are kept only while «خطيب» is ticked and the section was filled in.
+          khateeb: allTitles().includes('خطيب') && fields.khateeb
+            ? {
+                ...khateeb,
+                regions: khateeb.mode === 'regions' ? khateeb.regions.trim().slice(0, 300) : '',
+                radiusKm: Math.min(500, Math.max(0, Math.round(Number(khateeb.radiusKm) || 0))),
+              }
+            : null,
           age: Math.round(Number(fields.age || 0)) || 0,
           currentJob: (fields.currentJob || '').trim().slice(0, 150),
           experiences: (fields.experiences || [])
@@ -248,6 +267,9 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
   const knownTitles = (fields.titles || []).filter((t) => IMAM_TITLE_OPTIONS.includes(t));
   const toggleTitle = (t: string) =>
     set('titles', knownTitles.includes(t) ? knownTitles.filter((x) => x !== t) : [...knownTitles, t]);
+  const isKhateebOn = knownTitles.includes('خطيب');
+  const khateeb: KhateebInfo = fields.khateeb || EMPTY_KHATEEB;
+  const setKhateeb = (patch: Partial<KhateebInfo>) => set('khateeb', { ...khateeb, ...patch });
 
   const inputCls = 'w-full border border-slate-300 rounded-xl px-3 py-2 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500';
 
@@ -324,6 +346,74 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
                 placeholder="صفة أخرى (اختياري)، مثل: مؤذن، واعظ، مدرّس تجويد — افصل بينها بفاصلة"
                 aria-label="صفات أخرى" className={inputCls} />
             </fieldset>
+
+            {isKhateebOn && (
+              <fieldset className="khateeb-panel rounded-2xl p-4 space-y-3" aria-label="الترشح كخطيب جمعة">
+                <legend className="sr-only">الترشح كخطيب جمعة</legend>
+                <p className="font-black text-[#6e1d3b] flex items-center gap-2">
+                  <Mic className="w-4 h-4" /> أرشّح نفسي خطيباً للجمعة
+                </p>
+                <p className="text-xs text-slate-600 -mt-1">تظهر هذه المعلومات في ملفك للمساجد التي تبحث عن خطيب.</p>
+
+                <div>
+                  <span className="block font-bold text-slate-700 mb-1">نوع الخطابة</span>
+                  <div className="flex flex-wrap gap-2">
+                    {(['temporary', 'permanent', 'both'] as const).map((t) => (
+                      <button key={t} type="button" aria-pressed={khateeb.term === t} onClick={() => setKhateeb({ term: t })}
+                        className={`px-3.5 py-2 rounded-full border-2 font-bold text-xs cursor-pointer transition ${khateeb.term === t ? 'border-[#8a2a4c] bg-[#8a2a4c] text-white' : 'border-slate-200 bg-white text-slate-600 hover:border-[#8a2a4c]/60'}`}>
+                        {KHATEEB_TERM_LABELS[t]}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <span className="block font-bold text-slate-700 mb-1">أين يمكنك أن تخطب الجمعة؟</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {([['regions', 'في مدن أو مناطق أحددها'], ['radius', 'قرب مكان سكني (بالكيلومتر)']] as const).map(([m, label]) => (
+                      <label key={m} className={`flex items-center gap-2 rounded-xl border-2 px-3 py-2.5 cursor-pointer font-bold text-xs ${khateeb.mode === m ? 'border-[#8a2a4c] bg-white text-[#6e1d3b]' : 'border-slate-200 bg-white/70 text-slate-600'}`}>
+                        <input type="radio" name="khateeb-mode" checked={khateeb.mode === m} onChange={() => setKhateeb({ mode: m })} className="accent-[#8a2a4c]" />
+                        {label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {khateeb.mode === 'regions' ? (
+                  <div>
+                    <label htmlFor="kh-regions" className="block font-bold text-slate-700 mb-1">المدن أو المناطق</label>
+                    <input id="kh-regions" type="text" maxLength={300} value={khateeb.regions}
+                      onChange={(e) => setKhateeb({ regions: e.target.value })}
+                      placeholder="مثال: كولونيا، بون، دوسلدورف — أو: ولاية شمال الراين"
+                      className={inputCls} />
+                  </div>
+                ) : (
+                  <div>
+                    <label htmlFor="kh-km" className="block font-bold text-slate-700 mb-1">
+                      المسافة التي يمكنك قطعها من مكان سكنك{fields.country.trim() ? ` (${fields.country.trim()})` : ''}
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <input id="kh-km" type="number" inputMode="numeric" min={0} max={500} value={khateeb.radiusKm || ''}
+                        onChange={(e) => setKhateeb({ radiusKm: Number(e.target.value) })}
+                        className={`${inputCls} max-w-32`} dir="ltr" />
+                      <span className="font-bold text-slate-600">كيلومتر تقريباً</span>
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <span className="block font-bold text-slate-700 mb-1">هل عندك سيارة؟</span>
+                  <div className="flex gap-2">
+                    {([[true, 'نعم، عندي سيارة'], [false, 'لا']] as const).map(([v, label]) => (
+                      <button key={label} type="button" aria-pressed={khateeb.hasCar === v} onClick={() => setKhateeb({ hasCar: v })}
+                        className={`px-4 py-2 rounded-full border-2 font-bold text-xs cursor-pointer ${khateeb.hasCar === v ? 'border-[#8a2a4c] bg-[#8a2a4c] text-white' : 'border-slate-200 bg-white text-slate-600'}`}>
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </fieldset>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>

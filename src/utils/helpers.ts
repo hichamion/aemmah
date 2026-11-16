@@ -1,3 +1,4 @@
+import type { ImamProfile, KhateebInfo } from '../types';
 // Default picture for imams without a photo (public/default-imam.jpg).
 export const DEFAULT_IMAM_SILHOUETTE_AVATAR = `${import.meta.env.BASE_URL}default-imam.jpg`;
 
@@ -114,6 +115,23 @@ export const splitList = (v: string) =>
 export function imamTitle(titles?: string[]): string {
   const t = (titles || []).map((x) => x.trim()).filter(Boolean);
   return t.length ? t.join(' • ') : 'إمام وقارئ';
+}
+
+/** True when the imam registered as a Friday preacher (ticked «خطيب» and filled the khateeb section). */
+export function isKhateeb(imam: Pick<ImamProfile, 'khateeb' | 'titles'>): boolean {
+  return !!imam.khateeb && (imam.titles || []).includes('خطيب');
+}
+
+export const KHATEEB_TERM_LABELS: Record<KhateebInfo['term'], string> = {
+  temporary: 'خطيب مؤقت (بديل أو لجُمَع محددة)',
+  permanent: 'خطيب دائم',
+  both: 'مؤقت أو دائم',
+};
+
+/** Where the khateeb can preach, in one line. */
+export function khateebArea(k: KhateebInfo, residence?: string): string {
+  if (k.mode === 'radius') return `في حدود ${k.radiusKm || 0} كم من مكان سكنه${residence ? ` (${residence})` : ''}`;
+  return k.regions.trim() || 'لم تُحدَّد المناطق';
 }
 
 /** European countries offered as "preferred countries" (the imam can also type another one). */
