@@ -31,7 +31,7 @@ export const SettingsPanel: React.FC<{ open: boolean; onClose: () => void; onPri
         aria-labelledby="settings-title"
         tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
-        className="settings-sheet w-full sm:max-w-md bg-white text-slate-800 rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl max-h-[92vh] overflow-y-auto"
+        className="settings-sheet w-full sm:max-w-md bg-white text-slate-800 rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl max-h-[92dvh] overflow-y-auto"
       >
         <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-slate-100">
           <h2 id="settings-title" className="text-lg font-black text-slate-900">الإعدادات</h2>

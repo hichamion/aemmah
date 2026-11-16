@@ -156,7 +156,7 @@ const Editor: React.FC<{
   return (
     <div className="fixed inset-0 z-[70] bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4" onClick={onCancel}>
       <div role="dialog" aria-modal="true" aria-label={isNew ? 'إعلان جديد' : 'تعديل الإعلان'} onClick={(e) => e.stopPropagation()}
-        className="w-full sm:max-w-xl bg-white rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl max-h-[92vh] overflow-y-auto">
+        className="w-full sm:max-w-xl bg-white rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl max-h-[92dvh] overflow-y-auto">
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100">
           <h2 className="font-black text-lg">{isNew ? 'إعلان جديد في الواجهة' : 'تعديل الإعلان'}</h2>
           <button onClick={onCancel} aria-label="إغلاق" className="w-9 h-9 rounded-full hover:bg-slate-100 flex items-center justify-center cursor-pointer"><X className="w-5 h-5" /></button>

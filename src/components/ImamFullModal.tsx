@@ -189,10 +189,12 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
 
   const btn =
     'inline-flex items-center gap-1.5 font-black text-xs px-3.5 py-2.5 rounded-full transition cursor-pointer disabled:opacity-60 disabled:cursor-wait';
+  // Toolbar buttons are tighter on phones so WhatsApp, image, PDF, link and close fit on one row (even at 320 px).
+  const tbtn = btn.replace('px-3.5', 'px-2.5 sm:px-3.5');
 
   return (
     <div
-      className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-stretch sm:items-center justify-center z-50 p-0 sm:p-4 overflow-hidden sm:overflow-y-auto"
       role="dialog"
       ref={dialogRef}
       tabIndex={-1}
@@ -200,26 +202,26 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
       aria-label={`السيرة الذاتية: ${imam.name}`}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-[#f7f9fa] rounded-[2rem] max-w-4xl w-full overflow-hidden shadow-2xl my-4 max-h-[94vh] flex flex-col">
+      <div className="bg-[#f7f9fa] rounded-none sm:rounded-[2rem] max-w-4xl w-full overflow-hidden shadow-2xl h-[100dvh] sm:h-auto sm:my-4 max-h-[100dvh] sm:max-h-[94dvh] flex flex-col">
         {/* Glass toolbar */}
-        <div className="glass-card bg-gradient-to-l from-[#4fd1e8] via-[#1aa3bf] to-[#0b5f7a] text-white px-3 sm:px-4 py-3 flex items-center justify-between gap-2 rounded-none">
-          <div className="flex items-center gap-1.5 sm:gap-2 relative z-10">
-            <button onClick={() => handleExport('share')} disabled={!!exporting} className={`${btn} bg-[#25D366] text-white shadow`}>
+        <div className="glass-card bg-gradient-to-l from-[#4fd1e8] via-[#1aa3bf] to-[#0b5f7a] text-white px-3 sm:px-4 py-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:pt-3 flex items-center justify-between gap-2 rounded-none shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 relative z-10 min-w-0">
+            <button onClick={() => handleExport('share')} disabled={!!exporting} className={`${tbtn} bg-[#25D366] text-white shadow`}>
               {exporting === 'share' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
               <span>
-                <span className="hidden sm:inline">مشاركة </span>واتساب
+                <span className="hidden sm:inline">مشاركة </span><span className="max-[359px]:sr-only">واتساب</span>
               </span>
             </button>
-            <button onClick={() => handleExport('png')} disabled={!!exporting} className={`${btn} glass text-white`} aria-label="تحميل كصورة">
+            <button onClick={() => handleExport('png')} disabled={!!exporting} className={`${tbtn} glass text-white`} aria-label="تحميل كصورة">
               {exporting === 'png' ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageDown className="w-4 h-4" />}
               <span className="hidden sm:inline">صورة</span>
             </button>
-            <button onClick={() => handleExport('pdf')} disabled={!!exporting} className={`${btn} glass text-white`} aria-label="تحميل PDF">
+            <button onClick={() => handleExport('pdf')} disabled={!!exporting} className={`${tbtn} glass text-white`} aria-label="تحميل PDF">
               {exporting === 'pdf' ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
               PDF
             </button>
             {profileUrl && (
-              <button onClick={handleCopyLink} className={`${btn} glass text-white`} title="نسخ رابط الملف">
+              <button onClick={handleCopyLink} className={`${tbtn} glass text-white`} title="نسخ رابط الملف">
                 <Link2 className="w-4 h-4" />
                 <span className="hidden sm:inline">نسخ الرابط</span>
               </button>
@@ -228,14 +230,14 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
           <button
             onClick={onClose}
             aria-label="إغلاق"
-            className="relative z-10 w-10 h-10 shrink-0 rounded-full glass flex items-center justify-center cursor-pointer"
+            className="relative z-10 w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full glass flex items-center justify-center cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* The CV itself */}
-        <div className="overflow-y-auto p-3 sm:p-5">
+        <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 sm:p-5">
           {!isApproved && (
             <p className="mb-3 text-xs font-bold text-amber-900 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
               {imam.approvalStatus === 'pending' ? 'هذا الملف قيد المراجعة ولا يظهر للعموم بعد.' : 'هذا الملف غير معتمد.'}
@@ -260,7 +262,7 @@ export const ImamFullModal: React.FC<ImamFullModalProps> = ({
         </div>
 
         {/* Actions */}
-        <div className="px-4 py-3 bg-white border-t border-slate-200 flex flex-wrap justify-between items-center gap-2">
+        <div className="px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:pb-3 bg-white border-t border-slate-200 flex flex-wrap justify-between items-center gap-2 shrink-0">
           <div className="flex flex-wrap items-center gap-2">
             {currentRole === 'admin' && <AdminStatStrip kind="imam" id={imam.id} showPlays={!!imam.recitationMeta} />}
             {canEdit && (

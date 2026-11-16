@@ -108,7 +108,7 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-start sm:items-center justify-center z-50 p-3 sm:p-4 pt-[max(1rem,env(safe-area-inset-top))] overflow-y-auto"
       role="dialog"
       ref={dialogRef}
       tabIndex={-1}

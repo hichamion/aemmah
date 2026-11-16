@@ -162,7 +162,7 @@ export const PostComposer: React.FC<Props> = ({ open, initialType, existing, set
           <button onClick={onClose} aria-label="إغلاق" className="p-2 rounded-full hover:bg-slate-100 cursor-pointer"><X className="w-5 h-5" /></button>
         </div>
 
-        <div className="p-5 space-y-4 max-h-[75vh] overflow-y-auto">
+        <div className="p-5 space-y-4 max-h-[75dvh] overflow-y-auto">
           <PostTypeGrid value={type} onPick={setType} />
 
           {tpl && (
