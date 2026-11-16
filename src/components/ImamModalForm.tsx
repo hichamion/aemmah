@@ -275,13 +275,13 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
 
   return (
     <div
-      className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-start sm:items-center justify-center z-50 p-3 sm:p-4 pt-[max(0.75rem,env(safe-area-inset-top))] overflow-y-auto"
       role="dialog"
       ref={dialogRef}
       tabIndex={-1}
       aria-modal="true"
     >
-      <div className="bg-white rounded-3xl max-w-3xl w-full p-5 sm:p-8 shadow-2xl my-6 max-h-[92vh] overflow-y-auto text-xs space-y-6">
+      <div className="bg-white rounded-3xl max-w-3xl w-full p-5 sm:p-8 shadow-2xl my-6 max-h-[92dvh] overflow-y-auto text-xs space-y-6">
         <div className="flex justify-between items-center border-b pb-4">
           <div>
             <span className="text-emerald-800 font-bold text-xs">

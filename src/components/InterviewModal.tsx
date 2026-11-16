@@ -116,7 +116,7 @@ export const InterviewModal: React.FC<InterviewModalProps> = ({ target, myMosque
   );
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto" role="dialog" ref={dialogRef} tabIndex={-1} aria-modal="true">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start sm:items-center justify-center z-50 p-4 pt-[max(1rem,env(safe-area-inset-top))] overflow-y-auto" role="dialog" ref={dialogRef} tabIndex={-1} aria-modal="true">
       <div className="bg-white rounded-3xl max-w-lg w-full p-6 md:p-7 shadow-2xl my-8 text-xs space-y-5">
         <div className="flex justify-between items-center border-b pb-3">
           <div className="flex items-center gap-2.5">

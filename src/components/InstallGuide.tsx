@@ -113,7 +113,7 @@ export const InstallGuide: React.FC<{ open: boolean; onClose: () => void; onAuto
   return (
     <div className="fixed inset-0 z-[75] bg-black/60 flex items-end sm:items-center justify-center" onClick={() => close(false)}>
       <div role="dialog" aria-modal="true" aria-label="ثبّت منصة أئمة على هاتفك" onClick={(e) => e.stopPropagation()}
-        className="w-full sm:max-w-md bg-white text-slate-800 rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl max-h-[92vh] overflow-y-auto pb-[env(safe-area-inset-bottom)]">
+        className="w-full sm:max-w-md bg-white text-slate-800 rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl max-h-[92dvh] overflow-y-auto pb-[env(safe-area-inset-bottom)]">
         <div className="relative home-hero text-white px-6 pt-6 pb-5 rounded-t-[2rem]">
           <button onClick={() => close(false)} aria-label="إغلاق" className="absolute top-4 left-4 w-9 h-9 rounded-full liquid-glass flex items-center justify-center cursor-pointer"><X className="w-5 h-5" /></button>
           <div className="flex items-center gap-3">

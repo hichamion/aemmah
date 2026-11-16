@@ -223,7 +223,7 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
                       {notifications.length > 0 && <button onClick={() => clearNotifications(viewer.uid)} className="text-xs font-bold text-emerald-800 hover:underline cursor-pointer">مسح الكل</button>}
                     </div>
                     {notifications.length === 0 && <p className="text-sm text-slate-500 px-4 py-8 text-center">لا توجد إشعارات بعد.</p>}
-                    <ul className="max-h-[60vh] overflow-y-auto p-1.5">
+                    <ul className="max-h-[60dvh] overflow-y-auto p-1.5">
                       {notifications.map((n) => (
                         <li key={n.id}>
                           <button onClick={() => { setShowBell(false); go(`/post/${n.postId}`); }}

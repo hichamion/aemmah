@@ -492,7 +492,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
 
       {/* Compose Message Modal */}
       {isComposing && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start sm:items-center justify-center z-50 p-4 pt-[max(1rem,env(safe-area-inset-top))] overflow-y-auto">
           <div className="bg-white rounded-3xl max-w-xl w-full p-6 md:p-7 shadow-2xl my-8 text-xs space-y-5 animate-fadeIn">
             
             <div className="flex justify-between items-center border-b pb-3">

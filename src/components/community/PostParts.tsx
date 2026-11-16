@@ -65,7 +65,7 @@ export const ImageGrid: React.FC<{ ids: string[]; /** Edge to edge, no rounding 
         <div className="fixed inset-0 z-[60] bg-black/90 flex items-center justify-center p-4" onClick={() => setOpen(null)} role="dialog" aria-label="عرض الصورة">
           <div className="max-w-5xl max-h-full flex gap-2 overflow-x-auto" onClick={(e) => e.stopPropagation()}>
             {ids.map((id) => (
-              <div key={id} className="shrink-0 max-h-[85vh]">
+              <div key={id} className="shrink-0 max-h-[85dvh]">
                 <MediaImgFull id={id} />
               </div>
             ))}
@@ -78,7 +78,7 @@ export const ImageGrid: React.FC<{ ids: string[]; /** Edge to edge, no rounding 
 
 const MediaImgFull: React.FC<{ id: string }> = ({ id }) => {
   const src = useMediaImage(id);
-  return src ? <img src={src} alt="" className="max-h-[85vh] w-auto rounded-xl" /> : null;
+  return src ? <img src={src} alt="" className="max-h-[85dvh] w-auto rounded-xl" /> : null;
 };
 
 /** Poll with anonymous totals. One vote per member; clicking your choice again withdraws it. */
