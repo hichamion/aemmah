@@ -117,6 +117,12 @@ export function imamTitle(titles?: string[]): string {
   return t.length ? t.join(' • ') : 'إمام وقارئ';
 }
 
+/** Country part of a residence written as «المدينة، البلد» (or the whole text when there is no comma). */
+export function residenceCountry(place: string): string {
+  const parts = (place || '').split(/[،,]/).map((x) => x.trim()).filter(Boolean);
+  return parts.length ? parts[parts.length - 1] : '';
+}
+
 /** True when the imam registered as a Friday preacher (ticked «خطيب» and filled the khateeb section). */
 export function isKhateeb(imam: Pick<ImamProfile, 'khateeb' | 'titles'>): boolean {
   return !!imam.khateeb && (imam.titles || []).includes('خطيب');

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { ImamProfile, MosqueJob, Application, UserRole, ApplicationStatus } from '../types';
-import { formatDate, getSafeImamAvatar, isKhateeb } from '../utils/helpers';
+import { formatDate, getSafeImamAvatar, isKhateeb, residenceCountry } from '../utils/helpers';
 import { PageBanner, bannerTab } from './PageBanner';
 import { PublishCard } from './PublishCard';
 import { InboxCenter, InboxProps } from './InboxCenter';
 import { ContactBlock } from './ContactBlock';
 import { ImamMiniCard } from './MiniCards';
-import { Search, Trash2, Plus, UserCheck, Lock, Clock, ShieldAlert, Users, UserRound } from 'lucide-react';
+import { Search, Trash2, Plus, UserCheck, Lock, Clock, ShieldAlert, Users, UserRound, SlidersHorizontal, X } from 'lucide-react';
 
 type Tab = 'browse' | 'manage_mosques' | 'applications' | 'inbox';
 
@@ -87,6 +87,20 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
   const [availFilter, setAvailFilter] = useState('all');
   const [visaFilter, setVisaFilter] = useState('all');
   const [riwayaFilter, setRiwayaFilter] = useState('all');
+  const [countryFilter, setCountryFilter] = useState('all');
+  const [areaFilter, setAreaFilter] = useState('');
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const activeFilters = [availFilter !== 'all', visaFilter !== 'all', riwayaFilter !== 'all', countryFilter !== 'all', !!areaFilter.trim()].filter(Boolean).length;
+  const clearFilters = () => {
+    setAvailFilter('all');
+    setVisaFilter('all');
+    setRiwayaFilter('all');
+    setCountryFilter('all');
+    setAreaFilter('');
+  };
+  // Countries an imam lives in or would like to serve in («ليون، فرنسا» → «فرنسا»).
+  const countriesOf = (imam: ImamProfile) => [residenceCountry(imam.country), ...(imam.preferredLocations || []).map((l) => l.country.trim())].filter(Boolean);
+  const countryOptions = Array.from(new Set(imams.filter((i) => i.availabilityState !== 'paused').flatMap(countriesOf))).sort((a, b) => a.localeCompare(b, 'ar'));
 
   // `imams` contains approved profiles only; hide paused ones.
   const availableImamsCount = imams.filter((imam) => imam.availabilityState !== 'paused').length;
@@ -108,8 +122,17 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
     const inEurope = imam.hasVisa === 'yes' || imam.livesInEurope ? 'yes' : 'no';
     const matchesVisa = visaFilter === 'all' || inEurope === visaFilter;
     const matchesRiwaya = riwayaFilter === 'all' || imam.riwaya.includes(riwayaFilter);
-    return matchesSearch && matchesAvail && matchesVisa && matchesRiwaya;
+    const matchesCountry = countryFilter === 'all' || countriesOf(imam).includes(countryFilter);
+    const area = areaFilter.trim().toLowerCase();
+    const matchesArea =
+      !area ||
+      imam.country.toLowerCase().includes(area) ||
+      (imam.preferredLocations || []).some((l) => l.area.toLowerCase().includes(area)) ||
+      (!!imam.khateeb && imam.khateeb.regions.toLowerCase().includes(area));
+    return matchesSearch && matchesAvail && matchesVisa && matchesRiwaya && matchesCountry && matchesArea;
   });
+
+  const selCls = 'w-full border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold bg-white';
 
   const unreadForMe = inbox.messages.filter((m) => !m.isRead && m.receiverUid === inbox.currentUid).length;
 
@@ -181,55 +204,96 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
       {/* TAB: BROWSE IMAMS */}
       {activeTab === 'browse' && (
         <div className="space-y-6">
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-            <div className="relative">
-              <input
-                type="search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="ابحث بالاسم أو الجنسية أو مكان الإقامة أو الصفة..."
-                aria-label="بحث"
-                className="w-full border border-slate-300 rounded-xl px-3 py-2.5 pr-9 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
-              <Search className="w-4 h-4 text-slate-400 absolute right-3 top-3" />
+          <div className="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 text-xs space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1 min-w-0">
+                <input
+                  type="search"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="ابحث بالاسم أو الجنسية أو المدينة أو الصفة..."
+                  aria-label="بحث"
+                  className="w-full border border-slate-300 rounded-xl px-3 py-2.5 pr-9 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <Search className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2" />
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAdvanced((v) => !v)}
+                aria-expanded={showAdvanced}
+                aria-controls="imam-advanced-search"
+                className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-2.5 rounded-xl border font-black cursor-pointer transition ${
+                  showAdvanced || activeFilters ? 'bg-[#0b3a4f] border-[#0b3a4f] text-white' : 'bg-white border-slate-300 text-slate-700 hover:border-[#0b3a4f]'
+                }`}
+              >
+                <SlidersHorizontal className="w-4 h-4" />
+                <span>بحث متقدم</span>
+                {activeFilters > 0 && <span className="min-w-5 h-5 px-1 rounded-full bg-amber-400 text-slate-950 text-[11px] flex items-center justify-center">{activeFilters}</span>}
+              </button>
             </div>
 
-            <select
-              value={availFilter}
-              onChange={(e) => setAvailFilter(e.target.value)}
-              aria-label="حالة التفرغ"
-              className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold bg-white"
-            >
-              <option value="all">جميع حالات التفرغ</option>
-              <option value="available_now">متاح فوراً (رمضان أو عقد دائم)</option>
-              <option value="ramadan_only">متاح لرمضان فقط (التراويح)</option>
-              <option value="busy_ramadan">ملتزم في رمضان ومتاح بعده</option>
-              <option value="khateeb">خطباء الجمعة فقط</option>
-            </select>
+            {showAdvanced && (
+              <div id="imam-advanced-search" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-3 border-t border-slate-100">
+                <select
+                  value={availFilter}
+                  onChange={(e) => setAvailFilter(e.target.value)}
+                  aria-label="حالة التفرغ"
+                  className={selCls}
+                >
+                  <option value="all">جميع حالات التفرغ</option>
+                  <option value="available_now">متاح فوراً (رمضان أو عقد دائم)</option>
+                  <option value="ramadan_only">متاح لرمضان فقط (التراويح)</option>
+                  <option value="busy_ramadan">ملتزم في رمضان ومتاح بعده</option>
+                  <option value="khateeb">خطباء الجمعة فقط</option>
+                </select>
 
-            <select
-              value={visaFilter}
-              onChange={(e) => setVisaFilter(e.target.value)}
-              aria-label="حالة التأشيرة"
-              className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold bg-white"
-            >
-              <option value="all">جميع حالات التأشيرة</option>
-              <option value="yes">مقيم في أوروبا أو لديه فيزا / إقامة</option>
-              <option value="no">يحتاج إجراءات استقدام إلى أوروبا</option>
-            </select>
+                <select
+                  value={visaFilter}
+                  onChange={(e) => setVisaFilter(e.target.value)}
+                  aria-label="حالة التأشيرة"
+                  className={selCls}
+                >
+                  <option value="all">جميع حالات التأشيرة</option>
+                  <option value="yes">مقيم في أوروبا أو لديه فيزا / إقامة</option>
+                  <option value="no">يحتاج إجراءات استقدام إلى أوروبا</option>
+                </select>
 
-            <select
-              value={riwayaFilter}
-              onChange={(e) => setRiwayaFilter(e.target.value)}
-              aria-label="الرواية"
-              className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold bg-white"
-            >
-              <option value="all">جميع الروايات القرآنية</option>
-              <option value="ورش">رواية ورش عن نافع</option>
-              <option value="حفص">رواية حفص عن عاصم</option>
-              <option value="قالون">رواية قالون عن نافع</option>
-              <option value="العشر">القراءات العشر</option>
-            </select>
+                <select
+                  value={riwayaFilter}
+                  onChange={(e) => setRiwayaFilter(e.target.value)}
+                  aria-label="الرواية"
+                  className={selCls}
+                >
+                  <option value="all">جميع الروايات القرآنية</option>
+                  <option value="ورش">رواية ورش عن نافع</option>
+                  <option value="حفص">رواية حفص عن عاصم</option>
+                  <option value="قالون">رواية قالون عن نافع</option>
+                  <option value="العشر">القراءات العشر</option>
+                </select>
+
+                <select value={countryFilter} onChange={(e) => setCountryFilter(e.target.value)} aria-label="الدولة" className={selCls}>
+                  <option value="all">جميع الدول (الإقامة أو الدول المفضلة)</option>
+                  {countryOptions.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+
+                <input
+                  type="text"
+                  value={areaFilter}
+                  onChange={(e) => setAreaFilter(e.target.value)}
+                  placeholder="المدينة أو المنطقة (مثل: كولونيا، ليون…)"
+                  aria-label="المدينة أو المنطقة"
+                  className="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+
+                {activeFilters > 0 && (
+                  <button type="button" onClick={clearFilters} className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-red-200 bg-red-50 text-red-700 font-black cursor-pointer">
+                    <X className="w-4 h-4" /> مسح الفلاتر
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           {visibleImams.length === 0 && (
