@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowRight, Loader2, MessageSquare, Send } from 'lucide-react';
 import { FeedbackKind } from '../types';
 import { isValidEmail } from '../utils/helpers';
+import { CONTACT_EMAIL } from '../config';
 
 const KINDS: { value: FeedbackKind; label: string }[] = [
   { value: 'message', label: 'رسالة إلى الإدارة' },
@@ -59,6 +60,10 @@ export const ContactPage: React.FC<ContactPageProps> = ({ defaultName, defaultEm
           </h1>
           <p className="text-sm text-slate-600">
             رسالتك تصل إلى إدارة منصة أئمة فقط. اترك بريدك إن أردت أن نرد عليك.
+          </p>
+          <p className="text-sm text-slate-600">
+            أو راسلنا عبر البريد الإلكتروني:{' '}
+            <a href={`mailto:${CONTACT_EMAIL}`} dir="ltr" className="text-emerald-700 underline">{CONTACT_EMAIL}</a>
           </p>
         </header>
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { getStatsConsent, setStatsConsent } from '../lib/visits';
 import { ArrowRight, ShieldCheck } from 'lucide-react';
+import { CONTACT_EMAIL } from '../config';
 
 /**
  * Privacy policy (GDPR / DSGVO oriented).
@@ -10,10 +11,9 @@ import { ArrowRight, ShieldCheck } from 'lucide-react';
 const OPERATOR = {
   name: '[اسم المسؤول عن المنصة أو الجمعية]',
   address: '[العنوان البريدي الكامل]',
-  email: '[بريد التواصل الخاص بالخصوصية]',
 };
 
-const LAST_UPDATED = '2026-11-04';
+const LAST_UPDATED = '2026-11-16';
 
 export const PrivacyPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [consent, setConsent] = useState(getStatsConsent);
@@ -37,7 +37,7 @@ export const PrivacyPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           <h2 className="font-black text-slate-900">1. الجهة المسؤولة</h2>
           <p>
             المسؤول عن معالجة البيانات في منصة «أئمة» هو: {OPERATOR.name}، {OPERATOR.address}. للتواصل بخصوص بياناتك:{' '}
-            <span dir="ltr">{OPERATOR.email}</span>.
+            <a href={`mailto:${CONTACT_EMAIL}`} dir="ltr" className="text-emerald-700 underline">{CONTACT_EMAIL}</a>.
           </p>
         </section>
 

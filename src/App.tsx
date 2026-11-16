@@ -58,6 +58,7 @@ import { ApplyModal } from './components/ApplyModal';
 import { InterviewModal, InterviewDetails } from './components/InterviewModal';
 import { ReportModal } from './components/ReportModal';
 import { PrivacyPage } from './components/PrivacyPage';
+import { TermsPage } from './components/TermsPage';
 import { Footer } from './components/Footer';
 import { MobileNav } from './components/MobileNav';
 import { Intro, shouldShowIntro } from './components/Intro';
@@ -70,7 +71,7 @@ const Dashboard = lazy(() => import('./components/Dashboard').then((m) => ({ def
 const AdminPanel = lazy(() => import('./components/AdminPanel').then((m) => ({ default: m.AdminPanel })));
 const CommunityPage = lazy(() => import('./components/community/CommunityPage').then((m) => ({ default: m.CommunityPage })));
 
-export type View = 'home' | 'dashboard' | 'imam' | 'mosque' | 'admin' | 'privacy' | 'contact' | 'support' | 'community';
+export type View = 'home' | 'dashboard' | 'imam' | 'mosque' | 'admin' | 'privacy' | 'terms' | 'contact' | 'support' | 'community';
 type ImamTab = 'manage' | 'mosque_ads' | 'applications' | 'inbox';
 type MosqueTab = 'browse' | 'manage_mosques' | 'applications' | 'inbox';
 
@@ -83,6 +84,7 @@ const VIEW_TO_HASH: Record<View, string> = {
   mosque: '#/imams',
   admin: '#/admin',
   privacy: '#/privacy',
+  terms: '#/terms',
   contact: '#/contact',
   support: '#/support',
   community: '#/community',
@@ -95,6 +97,7 @@ const VIEW_TITLES: Record<View, string> = {
   mosque: 'الأئمة المتاحون | منصة أئمة',
   admin: 'لوحة الإدارة | منصة أئمة',
   privacy: 'سياسة الخصوصية | منصة أئمة',
+  terms: 'شروط الاستخدام | منصة أئمة',
   contact: 'راسل الإدارة | منصة أئمة',
   support: 'ادعم المنصة | منصة أئمة',
   community: 'ملتقى الأئمة | منصة أئمة',
@@ -833,7 +836,7 @@ export default function App() {
             </div>
           }
         >
-        {data.loading && !['home', 'privacy', 'contact', 'support', 'community'].includes(currentView) ? (
+        {data.loading && !['home', 'privacy', 'terms', 'contact', 'support', 'community'].includes(currentView) ? (
           <div className="flex-1 flex items-center justify-center py-24 text-slate-500 text-sm gap-2">
             <Loader2 className="w-5 h-5 animate-spin" />
             <span>جاري تحميل البيانات…</span>
@@ -949,6 +952,7 @@ export default function App() {
             )}
 
             {currentView === 'privacy' && <PrivacyPage onBack={() => setCurrentView('home')} />}
+            {currentView === 'terms' && <TermsPage onBack={() => setCurrentView('home')} />}
 
             {currentView === 'community' && (
               <CommunityPage
@@ -982,6 +986,7 @@ export default function App() {
         onOpenImamsList={goImamsList}
         onOpenMosquesList={goMosquesList}
         onOpenPrivacy={() => setCurrentView('privacy')}
+        onOpenTerms={() => setCurrentView('terms')}
         onOpenImamAdd={handleOpenImamAdd}
         onOpenMosqueAdd={handleOpenMosqueAdd}
         onOpenHowItWorks={goHowItWorks}
@@ -1012,8 +1017,8 @@ export default function App() {
 
       {/* ------------------------------ Modals ------------------------------ */}
       <AuthOnboardingModal
-        // Hidden on the privacy page so it can be read before accepting it during sign-up.
-        isOpen={(isAuthModalOpen || authState.needsOnboarding) && currentView !== 'privacy'}
+        // Legal pages remain readable during sign-up.
+        isOpen={(isAuthModalOpen || authState.needsOnboarding) && currentView !== 'privacy' && currentView !== 'terms'}
         needsOnboarding={authState.needsOnboarding}
         firebaseUser={firebaseUser}
         onClose={() => setIsAuthModalOpen(false)}

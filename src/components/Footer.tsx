@@ -16,6 +16,7 @@ interface FooterProps {
   /** Undefined while no support method is configured. */
   onOpenSupport?: () => void;
   onOpenPrivacy: () => void;
+  onOpenTerms: () => void;
   /** The signed-in imam already has a profile. */
   hasOwnImamProfile?: boolean;
 }
@@ -31,6 +32,7 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenContact,
   onOpenSupport,
   onOpenPrivacy,
+  onOpenTerms,
   hasOwnImamProfile = false,
 }) => {
   return (
@@ -91,6 +93,7 @@ export const Footer: React.FC<FooterProps> = ({
                 <li><button onClick={onOpenSupport} className={linkClass}>ادعم المنصة</button></li>
               )}
               <li><button onClick={onOpenPrivacy} className={linkClass}>سياسة الخصوصية</button></li>
+              <li><button onClick={onOpenTerms} className={linkClass}>شروط الاستخدام</button></li>
               {CONTACT_EMAIL && (
                 <li>
                   <a href={`mailto:${CONTACT_EMAIL}`} className={linkClass}>
