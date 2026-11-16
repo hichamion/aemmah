@@ -19,6 +19,7 @@ import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { auth, db, facebookProvider, googleProvider } from '../firebase';
 import { UserProfile, UserRole } from '../types';
 import { clearContactCache } from './db';
+import { ADMIN_EMAIL } from '../config';
 
 export interface AuthState {
   /** Firebase Auth user (null = signed out). */
@@ -33,6 +34,20 @@ export interface AuthState {
   ready: boolean;
   /** Signed in but no profile yet and not an admin → onboarding must be completed. */
   needsOnboarding: boolean;
+}
+
+/**
+ * The admin mailbox (ADMIN_EMAIL) is an admin once its address is confirmed. The security rules read
+ * «email_verified» from the ID token, so the token is refreshed after the confirmation link was used.
+ */
+async function isAdminMailbox(user: User): Promise<boolean> {
+  if ((user.email || '').trim().toLowerCase() !== ADMIN_EMAIL) return false;
+  if (!user.emailVerified) {
+    await user.reload().catch(() => {});
+    if (!(auth.currentUser?.emailVerified ?? user.emailVerified)) return false;
+  }
+  await user.getIdToken(true).catch(() => {});
+  return true;
 }
 
 export function useAuthState(): AuthState {
@@ -71,14 +86,20 @@ export function useAuthState(): AuthState {
     );
 
     let cancelled = false;
-    getDoc(doc(db, 'admins', currentUid))
-      .then((snap) => !cancelled && setAdminState({ uid: currentUid, isAdmin: snap.exists() }))
+    const user = firebaseUser;
+    (async () => {
+      if (user && (await isAdminMailbox(user))) return true;
+      const snap = await getDoc(doc(db, 'admins', currentUid));
+      return snap.exists();
+    })()
+      .then((isAdmin) => !cancelled && setAdminState({ uid: currentUid, isAdmin }))
       .catch(() => !cancelled && setAdminState({ uid: currentUid, isAdmin: false }));
 
     return () => {
       cancelled = true;
       unsub();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the user object only changes together with its uid
   }, [currentUid]);
 
   const profileReady = !currentUid || profileState.uid === currentUid;

@@ -387,6 +387,7 @@ export type ImamEditableFields = Pick<
   | 'preferredLocations'
   | 'languageList'
   | 'maritalStatus'
+  | 'khateeb'
   | 'livesInEurope'
   | 'hasVisa'
   | 'visaDetails'

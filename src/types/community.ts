@@ -68,6 +68,8 @@ export interface CommunityNotification {
 export interface PostTemplate {
   title: string;
   body: string;
+  /** Ready-made choices for a poll template. */
+  pollOptions?: string[];
 }
 
 /** Firestore: communitySettings/main (admins only write it). */

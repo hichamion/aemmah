@@ -127,6 +127,19 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
       onClick: currentRole === 'imam' ? onOpenMyProfile : onOpenImamList,
       icon: <AudioLines className="w-16 h-16 sm:w-20 sm:h-20" strokeWidth={1.2} />,
     },
+    {
+      key: 'khateeb',
+      chip: 'إعلان للخطباء',
+      title: (
+        <>
+          أيها الخطباء: <span className="brass-text">سجّلوا للخطابة</span>
+        </>
+      ),
+      text: 'مساجد تبحث عن خطيب جمعة مؤقت أو دائم. اختر صفة «خطيب» في ملفك، وحدّد مناطقك أو المسافة، وهل عندك سيارة.',
+      cta: currentRole === 'imam' ? 'رشّح نفسك كخطيب' : 'سجّل كخطيب',
+      onClick: currentRole === 'imam' ? onOpenMyProfile : onOpenImamAddModal,
+      icon: <Mic className="w-16 h-16 sm:w-20 sm:h-20" strokeWidth={1.2} />,
+    },
   ];
 
   // Announcements written by the admin come first; the built-in slides follow unless the admin hid them.
@@ -152,7 +165,9 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
       onClick: x.target === 'url' ? () => window.open(x.url, '_blank', 'noopener') : go[x.target] ?? (() => {}),
       image: x.image || undefined,
     }));
-  const allSlides = adminSlides.length && !showDefaults ? adminSlides : [...adminSlides, ...slides];
+  // The call to Friday preachers is for imams and visitors, not for mosque accounts.
+  const ownSlides = slides.filter((x) => !(x.key === 'khateeb' && currentRole === 'mosque'));
+  const allSlides = adminSlides.length && !showDefaults ? adminSlides : [...adminSlides, ...ownSlides];
 
   const services: Service[] = [
     { key: 'khutab', label: 'خطب ودروس', icon: <Mic />, onClick: onOpenCommunity },

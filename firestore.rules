@@ -18,8 +18,12 @@ service cloud.firestore {
     // ---------- helpers ----------
     function signedIn() { return request.auth != null; }
     function me() { return request.auth.uid; }
+    // Admin = a document admins/{uid}, or the site's admin mailbox once its address is verified
+    // (keep in sync with ADMIN_EMAIL in src/config.ts).
     function isAdmin() {
-      return signedIn() && exists(/databases/$(database)/documents/admins/$(me()));
+      return signedIn() && (
+        (request.auth.token.get('email', '') == 'admin@aemmah.com' && request.auth.token.get('email_verified', false) == true)
+        || exists(/databases/$(database)/documents/admins/$(me())));
     }
     function hasProfile() {
       return signedIn() && exists(/databases/$(database)/documents/users/$(me()));
@@ -63,9 +67,20 @@ service cloud.firestore {
     }
 
     // ---------- imams ----------
+    // Friday-preacher details of an imam (optional).
+    function validKhateeb(k) {
+      return k is map
+        && k.keys().hasOnly(['term', 'mode', 'regions', 'radiusKm', 'hasCar'])
+        && k.get('term', 'both') in ['temporary', 'permanent', 'both']
+        && k.get('mode', 'regions') in ['regions', 'radius']
+        && str(k.get('regions', ''), 300)
+        && k.get('radiusKm', 0) is number && k.get('radiusKm', 0) >= 0 && k.get('radiusKm', 0) <= 500
+        && k.get('hasCar', false) is bool;
+    }
+
     function validImam(d) {
       return d.keys().hasOnly(['ownerUid', 'name', 'age', 'country', 'nationality', 'titles', 'currentJob', 'experiences',
-                               'certificates', 'preferredLocations', 'languageList', 'maritalStatus', 'livesInEurope', 'recitationMeta', 'hasVisa', 'visaDetails', 'hasCerts', 'degree',
+                               'certificates', 'preferredLocations', 'languageList', 'maritalStatus', 'khateeb', 'livesInEurope', 'recitationMeta', 'hasVisa', 'visaDetails', 'hasCerts', 'degree',
                                'riwaya', 'languages', 'germanLevel', 'youtubeUrl', 'cvText', 'availabilityState',
                                'ramadanNote', 'availableAfterDate', 'photo', 'visaFilePath', 'visaFileName',
                                'certsFilePath', 'certsFileName', 'approvalStatus', 'isVerified', 'createdAt', 'updatedAt'])
@@ -83,6 +98,7 @@ service cloud.firestore {
         && d.get('languageList', []) is list && d.get('languageList', []).size() <= 20
         && d.get('maritalStatus', '') in ['', 'single', 'married', 'married_children']
         && d.get('livesInEurope', false) is bool
+        && (d.get('khateeb', null) == null || validKhateeb(d.khateeb))
         && (d.get('recitationMeta', null) == null || d.recitationMeta is map)
         && d.get('hasVisa', 'no') in ['yes', 'no']
         && d.get('hasCerts', 'no') in ['yes', 'no']

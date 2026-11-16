@@ -1,7 +1,7 @@
 import React from 'react';
-import { BookOpen, Briefcase, Flag, FileText, Globe2, Home, Languages, MapPin, Plane, Send, Check, Star, Users } from 'lucide-react';
+import { BookOpen, Briefcase, Car, Flag, FileText, Globe2, Home, Languages, MapPin, Mic, Plane, Send, Check, Star, Users } from 'lucide-react';
 import { ImamProfile, MosqueJob } from '../types';
-import { formatPreferredLocations, getSafeImamAvatar, getSafeMosquePhoto, imamLanguages, imamTitle, visaStatusText } from '../utils/helpers';
+import { formatPreferredLocations, getSafeImamAvatar, getSafeMosquePhoto, imamLanguages, imamTitle, isKhateeb, khateebArea, KHATEEB_TERM_LABELS, visaStatusText } from '../utils/helpers';
 
 /*
  * Short, CV-looking cards for the imam and mosque lists. Clicking the card opens the full CV / ad
@@ -48,17 +48,32 @@ interface ImamMiniCardProps {
 export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, onOpen, onReport }) => {
   const busy = imam.availabilityState === 'busy_ramadan' || imam.availabilityState === 'ramadan_only';
   const languages = imamLanguages(imam).map((l) => l.name).join('، ');
+  const kh = isKhateeb(imam) ? imam.khateeb! : null;
 
   return (
-    <article {...openOnCard(onOpen)} aria-label={`السيرة الذاتية: ${imam.name}`} className={cardCls}>
-      {/* Header band in the CV colours, photo in a gold ring */}
-      <div className="relative bg-gradient-to-l from-[#1aa3bf] via-[#0e4d64] to-[#0b3a4f] px-5 pt-5 pb-4 flex items-center gap-4">
+    <article
+      {...openOnCard(onOpen)}
+      aria-label={`السيرة الذاتية: ${imam.name}`}
+      data-khateeb={kh ? '' : undefined}
+      className={`${cardCls} ${kh ? 'khateeb-card' : ''}`}
+    >
+      {/* Header band in the CV colours (wine red for Friday preachers), photo in a gold ring */}
+      <div
+        className={`relative bg-gradient-to-l px-5 pt-5 pb-4 flex items-center gap-4 ${
+          kh ? 'from-[#b23a62] via-[#7a1f43] to-[#4f1029]' : 'from-[#1aa3bf] via-[#0e4d64] to-[#0b3a4f]'
+        }`}
+      >
+        {kh && (
+          <span className="absolute top-3 left-3 inline-flex items-center gap-1 text-[11px] font-black bg-amber-300 text-[#4f1029] px-2.5 py-1 rounded-full shadow">
+            <Mic className="w-3.5 h-3.5" /> خطيب جمعة
+          </span>
+        )}
         <div className="p-1 rounded-full bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 shrink-0 shadow-lg">
           <img
             src={getSafeImamAvatar(imam.photo)}
             alt=""
             loading="lazy"
-            className="w-20 h-20 rounded-full object-cover border-[3px] border-[#0b3a4f] bg-white"
+            className={`w-20 h-20 rounded-full object-cover border-[3px] bg-white ${kh ? 'border-[#4f1029]' : 'border-[#0b3a4f]'}`}
           />
         </div>
         <div className="min-w-0 text-white">
@@ -80,6 +95,14 @@ export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, 
           <Info icon={<Plane className="w-3.5 h-3.5" />} label="الإقامة في أوروبا" value={visaStatusText(imam)} />
         </div>
 
+        {kh && (
+          <div className="khateeb-box rounded-xl border border-[#8a2a4c]/25 bg-[#fbf1f4] px-3 py-2.5 space-y-1 text-xs">
+            <p className="font-black text-[#6e1d3b] flex items-center gap-1.5"><Mic className="w-3.5 h-3.5" /> {KHATEEB_TERM_LABELS[kh.term]}</p>
+            <p className="text-slate-700 flex items-start gap-1.5"><MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#8a2a4c]" /> <span className="line-clamp-2">{khateebArea(kh, imam.country)}</span></p>
+            <p className="text-slate-700 flex items-center gap-1.5"><Car className="w-3.5 h-3.5 text-[#8a2a4c]" /> {kh.hasCar ? 'عنده سيارة' : 'ليس عنده سيارة'}</p>
+          </div>
+        )}
+
         <p
           className={`px-3 py-2 rounded-xl text-xs font-bold ${
             busy ? 'bg-amber-50 text-amber-900 border border-amber-200' : 'bg-emerald-50 text-emerald-900 border border-emerald-200'
@@ -100,7 +123,7 @@ export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, 
       <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 flex items-center gap-2">
         <button
           onClick={onOpen}
-          className="flex-1 bg-[#0b3a4f] hover:bg-[#0e4d64] text-white font-black py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs cursor-pointer"
+          className={`flex-1 text-white font-black py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs cursor-pointer ${kh ? 'bg-[#6e1d3b] hover:bg-[#8a2a4c]' : 'bg-[#0b3a4f] hover:bg-[#0e4d64]'}`}
         >
           <FileText className="w-4 h-4" />
           السيرة الكاملة والتلاوة

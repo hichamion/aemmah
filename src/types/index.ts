@@ -69,6 +69,19 @@ export interface Recitation extends RecitationMeta {
   audio: string;
 }
 
+/** Friday preacher (خطيب جمعة) details. Only set when the imam ticked «خطيب»; null otherwise. */
+export interface KhateebInfo {
+  /** What kind of Friday-preacher post the imam accepts. */
+  term: 'temporary' | 'permanent' | 'both';
+  /** «regions» = named cities / areas; «radius» = anywhere within radiusKm of where they live. */
+  mode: 'regions' | 'radius';
+  /** Cities or areas where the imam can preach (mode «regions»). */
+  regions: string;
+  /** Distance from the place of residence in km (mode «radius»). */
+  radiusKm: number;
+  hasCar: boolean;
+}
+
 export type MaritalStatus = '' | 'single' | 'married' | 'married_children';
 
 /** Firestore: imams/{id}. For self-registered imams the id equals the owner's uid (one profile per account). */
@@ -94,6 +107,8 @@ export interface ImamProfile {
   /** Languages with a level. The older free-text `languages` field is kept in sync for search. */
   languageList?: ImamLanguage[];
   maritalStatus?: MaritalStatus;
+  /** Friday-preacher details, present only for imams registered as «خطيب». */
+  khateeb?: KhateebInfo | null;
   /** Already lives in a European country (so no immigration procedure is needed). */
   livesInEurope?: boolean;
   /** Public summary of the recitation sample; the audio itself is in recitations/{imamId}. */

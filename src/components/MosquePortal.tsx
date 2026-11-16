@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ImamProfile, MosqueJob, Application, UserRole, ApplicationStatus } from '../types';
-import { formatDate, getSafeImamAvatar } from '../utils/helpers';
+import { formatDate, getSafeImamAvatar, isKhateeb } from '../utils/helpers';
 import { PageBanner, bannerTab } from './PageBanner';
 import { PublishCard } from './PublishCard';
 import { InboxCenter, InboxProps } from './InboxCenter';
@@ -102,7 +102,8 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
       (imam.preferredLocations || []).some((l) => `${l.country} ${l.area}`.toLowerCase().includes(q)) ||
       imam.degree.toLowerCase().includes(q) ||
       imam.languages.toLowerCase().includes(q);
-    const matchesAvail = availFilter === 'all' || imam.availabilityState === availFilter;
+    const matchesAvail =
+      availFilter === 'all' || (availFilter === 'khateeb' ? isKhateeb(imam) : imam.availabilityState === availFilter);
     // Living in Europe counts as "no immigration procedure needed", like having a visa.
     const inEurope = imam.hasVisa === 'yes' || imam.livesInEurope ? 'yes' : 'no';
     const matchesVisa = visaFilter === 'all' || inEurope === visaFilter;
@@ -203,6 +204,7 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
               <option value="available_now">متاح فوراً (رمضان أو عقد دائم)</option>
               <option value="ramadan_only">متاح لرمضان فقط (التراويح)</option>
               <option value="busy_ramadan">ملتزم في رمضان ومتاح بعده</option>
+              <option value="khateeb">خطباء الجمعة فقط</option>
             </select>
 
             <select

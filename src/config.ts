@@ -36,6 +36,12 @@ export const SUPPORT = {
 export const SUPPORT_ENABLED = Boolean(SUPPORT.paypalUrl || SUPPORT.bank.iban);
 
 /**
+ * The site's admin mailbox: whoever signs in with it (after confirming the address) is an admin.
+ * Keep in sync with isAdmin() in firestore.rules. More admins can still be added as admins/{uid} documents.
+ */
+export const ADMIN_EMAIL = 'admin@aemmah.com';
+
+/**
  * Sign-in methods shown in the login window. Each one must ALSO be enabled in
  * Firebase Console → Authentication → Sign-in method, otherwise sign-in fails.
  * Phone (SMS) requires the Blaze (pay-as-you-go) plan and costs per SMS.
