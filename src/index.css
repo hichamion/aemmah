@@ -409,11 +409,11 @@
   filter: blur(120px);
   transition: background 0.5s ease;
 }
-/* ---------- Home hero: green background with a mosque skyline (public/bg-skyline.jpg, set inline) ---------- */
+/* ---------- Home hero: blue patterned background (public/bg-pattern.jpg, set inline) ---------- */
 .home-hero {
-  background-color: #1f5c4b;
+  background-color: #12506a;
   background-size: cover;
-  background-position: center 85%;
+  background-position: center;
 }
 /* Featured «ملتقى الأئمة» banner: the same skyline picture. */
 .community-banner {

@@ -156,7 +156,7 @@ export const MosqueModalForm: React.FC<MosqueModalFormProps> = ({ isOpen, onClos
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start sm:items-center justify-center z-50 p-4 pt-[max(1rem,env(safe-area-inset-top))] overflow-y-auto" role="dialog" ref={dialogRef} tabIndex={-1} aria-modal="true">
-      <div className="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 shadow-2xl my-8 max-h-[92dvh] overflow-y-auto text-xs space-y-6">
+      <div className="bg-white rounded-3xl max-w-3xl w-full p-6 md:p-8 shadow-2xl my-8 max-h-[92dvh] overflow-y-auto text-sm sm:text-[15px] leading-relaxed space-y-6">
         
         {/* Modal Header */}
         <div className="flex justify-between items-center border-b pb-4">
@@ -181,7 +181,7 @@ export const MosqueModalForm: React.FC<MosqueModalFormProps> = ({ isOpen, onClos
           
           {/* SECTION 1: Mosque Details & Address */}
           <div className="bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200 space-y-4">
-            <h4 className="font-extrabold text-emerald-950 text-sm flex items-center gap-2">
+            <h4 className="font-extrabold text-emerald-950 text-base flex items-center gap-2">
               <span className="w-5 h-5 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs">1</span>
               <span>معلومات المسجد والعنوان القانوني:</span>
             </h4>
@@ -325,7 +325,7 @@ export const MosqueModalForm: React.FC<MosqueModalFormProps> = ({ isOpen, onClos
 
           {/* SECTION 2: Need Type & Riwaya */}
           <div className="bg-amber-50/70 p-4 md:p-5 rounded-2xl border border-amber-200 space-y-4">
-            <h4 className="font-extrabold text-amber-950 text-sm flex items-center gap-2">
+            <h4 className="font-extrabold text-amber-950 text-base flex items-center gap-2">
               <span className="w-5 h-5 rounded-full bg-amber-600 text-white flex items-center justify-center text-xs">2</span>
               <span>نوع الاحتياج، الرواية القرآنية، وحالة الإعلان:</span>
             </h4>
@@ -379,7 +379,7 @@ export const MosqueModalForm: React.FC<MosqueModalFormProps> = ({ isOpen, onClos
 
           {/* SECTION 3: Requirements Checkboxes & Benefits */}
           <div className="bg-emerald-50/70 p-4 md:p-5 rounded-2xl border border-emerald-200 space-y-4">
-            <h4 className="font-extrabold text-emerald-950 text-sm flex items-center gap-2">
+            <h4 className="font-extrabold text-emerald-950 text-base flex items-center gap-2">
               <span className="w-5 h-5 rounded-full bg-emerald-700 text-white flex items-center justify-center text-xs">3</span>
               <span>الشروط الواجب توفرها في الإمام:</span>
             </h4>

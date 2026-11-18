@@ -185,7 +185,7 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
   return (
     <>
       {/* ---------------- Hero ---------------- */}
-      <section className="home-hero relative overflow-hidden text-white" style={{ backgroundImage: `url(${asset('bg-skyline.jpg')})` }}>
+      <section className="home-hero relative overflow-hidden text-white" style={{ backgroundImage: `url(${asset('bg-pattern.jpg')})` }}>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-12 pb-[5.5rem] sm:pb-32 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-3 sm:gap-8 lg:gap-12 items-center">
           {/* Welcome (larger screens only: on phones the banner and the two cards come first) */}

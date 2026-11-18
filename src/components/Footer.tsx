@@ -37,8 +37,8 @@ export const Footer: React.FC<FooterProps> = ({
 }) => {
   return (
     <footer
-      style={{ backgroundImage: `linear-gradient(rgb(5 20 32 / 0.35), rgb(5 20 32 / 0.55)), url(${import.meta.env.BASE_URL}bg-footer.jpg)` }}
-      className="site-footer bg-night bg-cover bg-center text-slate-200 border-t border-sky-900/60 pt-12 pb-28 lg:pb-8 px-4 sm:px-6 lg:px-8 text-sm">
+      style={{ backgroundImage: `linear-gradient(rgb(8 32 26 / 0.5), rgb(8 32 26 / 0.7)), url(${import.meta.env.BASE_URL}bg-skyline.jpg)` }}
+      className="site-footer bg-night bg-cover bg-bottom text-slate-200 border-t border-emerald-900/60 pt-12 pb-28 lg:pb-8 px-4 sm:px-6 lg:px-8 text-sm">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
@@ -123,7 +123,7 @@ export const Footer: React.FC<FooterProps> = ({
           </p>
         </section>
 
-        <div className="pt-6 border-t border-slate-900 text-xs text-slate-500">
+        <div className="pt-6 border-t border-white/15 text-xs text-slate-200 [text-shadow:0_1px_4px_rgb(0_0_0/0.6)]">
           <p>© {new Date().getFullYear()} منصة أئمة (Aemmah). جميع الحقوق محفوظة.</p>
         </div>
       </div>
