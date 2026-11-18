@@ -281,7 +281,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
       tabIndex={-1}
       aria-modal="true"
     >
-      <div className="bg-white rounded-3xl max-w-3xl w-full p-5 sm:p-8 shadow-2xl my-6 max-h-[92dvh] overflow-y-auto text-xs space-y-6">
+      <div className="bg-white rounded-3xl max-w-3xl w-full p-5 sm:p-8 shadow-2xl my-6 max-h-[92dvh] overflow-y-auto text-sm sm:text-[15px] leading-relaxed space-y-6">
         <div className="flex justify-between items-center border-b pb-4">
           <div>
             <span className="text-emerald-800 font-bold text-xs">
@@ -299,7 +299,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           {/* SECTION 1 */}
           <div className="bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200 space-y-4">
-            <h4 className="font-extrabold text-emerald-950 text-sm">01. المعلومات الشخصية والصورة</h4>
+            <h4 className="font-extrabold text-emerald-950 text-base">01. المعلومات الشخصية والصورة</h4>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
@@ -327,6 +327,18 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
               <input id="im-country" type="text" maxLength={120} value={fields.country}
                 onChange={(e) => set('country', e.target.value)} placeholder="مثال: فاس، المغرب — أو: كولونيا، ألمانيا"
                 className={`${inputCls} font-semibold`} />
+            </div>
+
+            <div className="rounded-2xl border-2 border-emerald-200 bg-emerald-50/60 p-3 sm:p-4">
+              <label htmlFor="im-av" className="block font-bold text-slate-700 mb-1">حالة التفرغ *</label>
+              <select id="im-av" value={fields.availabilityState}
+                onChange={(e) => set('availabilityState', e.target.value as ImamEditableFields['availabilityState'])}
+                className="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white font-bold text-slate-900">
+                <option value="available_now">متاح حالياً (لرمضان أو للإمامة الدائمة)</option>
+                <option value="ramadan_only">متاح لرمضان فقط (صلاة التراويح)</option>
+                <option value="busy_ramadan">ملتزم في رمضان — ومتاح للتعاقد بعده</option>
+                <option value="paused">إيقاف الإعلان مؤقتاً (إخفاء الملف)</option>
+              </select>
             </div>
 
             <fieldset className="space-y-2">
@@ -488,7 +500,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
 
           {/* SECTION 2 */}
           <div className="bg-sky-50/70 p-4 md:p-5 rounded-2xl border border-sky-200 space-y-4">
-            <h4 className="font-extrabold text-sky-950 text-sm">02. التأشيرة (الفيزا) والقدوم إلى أوروبا</h4>
+            <h4 className="font-extrabold text-sky-950 text-base">02. التأشيرة (الفيزا) والقدوم إلى أوروبا</h4>
             <label className="flex items-center gap-2.5 bg-white border border-sky-200 rounded-xl p-3 cursor-pointer">
               <input type="checkbox" checked={!!fields.livesInEurope} onChange={(e) => set('livesInEurope', e.target.checked)}
                 className="w-4 h-4 accent-sky-700" />
@@ -537,7 +549,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
 
           {/* SECTION 3 */}
           <div className="bg-emerald-50/70 p-4 md:p-5 rounded-2xl border border-emerald-200 space-y-4">
-            <h4 className="font-extrabold text-emerald-950 text-sm">03. الشواهد العلمية، الرواية، واللغات</h4>
+            <h4 className="font-extrabold text-emerald-950 text-base">03. الشواهد العلمية، الرواية، واللغات</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
                 <label htmlFor="im-certs" className="block font-bold text-emerald-900 mb-1">توفر الشواهد والإجازات</label>
@@ -600,38 +612,27 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
 
           {/* SECTION: positions held */}
           <div className="bg-amber-50/60 p-4 md:p-5 rounded-2xl border border-amber-200 space-y-3">
-            <h4 className="font-extrabold text-amber-950 text-sm">الخبرات والوظائف السابقة</h4>
+            <h4 className="font-extrabold text-amber-950 text-base">الخبرات والوظائف السابقة</h4>
             <p className="text-xs text-slate-600">أضف كل وظيفة أو مهمة زاولتها، مع سنة البداية وسنة النهاية (أو «حتى الآن»). اختياري.</p>
             <ExperienceEditor value={fields.experiences || []} onChange={(v) => set('experiences', v)} />
           </div>
 
           {/* SECTION: preferred countries and places */}
           <div className="bg-sky-50/60 p-4 md:p-5 rounded-2xl border border-sky-200 space-y-3">
-            <h4 className="font-extrabold text-sky-950 text-sm">الدول والأماكن المفضلة للإمامة</h4>
+            <h4 className="font-extrabold text-sky-950 text-base">الدول والأماكن المفضلة للإمامة</h4>
             <p className="text-xs text-slate-600">اختر دولة أو أكثر، واكتب بجانب كل دولة المدينة أو المنطقة إن أردت، أو اتركها فارغة. اختياري.</p>
             <PreferredLocationsEditor value={fields.preferredLocations || []} onChange={(v) => set('preferredLocations', v)} />
           </div>
 
           {/* SECTION 4 */}
           <div className="bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200 space-y-4">
-            <h4 className="font-extrabold text-slate-900 text-sm">04. فيديو التلاوة، حالة التفرغ، والسيرة الذاتية</h4>
+            <h4 className="font-extrabold text-slate-900 text-base">04. فيديو التلاوة والسيرة الذاتية</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label htmlFor="im-yt" className="block font-bold text-slate-700 mb-1">رابط فيديو تلاوتك على يوتيوب (مستحسن)</label>
                 <input id="im-yt" type="url" maxLength={300} value={fields.youtubeUrl}
                   onChange={(e) => set('youtubeUrl', e.target.value)} placeholder="https://www.youtube.com/watch?v=..."
                   className={inputCls} dir="ltr" />
-              </div>
-              <div>
-                <label htmlFor="im-av" className="block font-bold text-slate-700 mb-1">حالة التفرغ *</label>
-                <select id="im-av" value={fields.availabilityState}
-                  onChange={(e) => set('availabilityState', e.target.value as ImamEditableFields['availabilityState'])}
-                  className="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white font-bold text-slate-900">
-                  <option value="available_now">متاح حالياً (لرمضان أو للإمامة الدائمة)</option>
-                  <option value="ramadan_only">متاح لرمضان فقط (صلاة التراويح)</option>
-                  <option value="busy_ramadan">ملتزم في رمضان — ومتاح للتعاقد بعده</option>
-                  <option value="paused">إيقاف الإعلان مؤقتاً (إخفاء الملف)</option>
-                </select>
               </div>
             </div>
 

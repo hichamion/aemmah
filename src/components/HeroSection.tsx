@@ -185,8 +185,7 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
   return (
     <>
       {/* ---------------- Hero ---------------- */}
-      <section className="home-hero relative overflow-hidden text-white">
-        <div className="khatam-pattern absolute inset-0 pointer-events-none" aria-hidden />
+      <section className="home-hero relative overflow-hidden text-white" style={{ backgroundImage: `url(${asset('bg-pattern.jpg')})` }}>
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-12 pb-[5.5rem] sm:pb-32 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-3 sm:gap-8 lg:gap-12 items-center">
           {/* Welcome (larger screens only: on phones the banner and the two cards come first) */}
@@ -526,8 +525,8 @@ const QuickServices: React.FC<{ services: Service[]; onCommunity: () => void }> 
   <nav aria-label="خدمات سريعة" className="liquid-glass-light rounded-[2rem] px-3 sm:px-6 py-5 sm:py-6 space-y-5">
     {/* Featured: the imams' community (its own colours and shape, not one more circle) */}
     <button onClick={onCommunity}
-      className="group relative w-full overflow-hidden rounded-[1.6rem] text-right cursor-pointer bg-gradient-to-l from-[#0f3127] via-cedar-700 to-[#2f7a63] text-white px-4 sm:px-6 py-4 flex items-center gap-4 shadow-[0_14px_30px_-14px_rgba(15,49,39,0.8)] ring-2 ring-brass-400/70 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus-visible:ring-4 focus-visible:ring-brass-300">
-      <span className="absolute inset-0 khatam-pattern opacity-70" aria-hidden />
+      style={{ backgroundImage: `url(${asset('bg-skyline.jpg')})` }}
+      className="community-banner group relative w-full overflow-hidden rounded-[1.6rem] text-right cursor-pointer text-white px-4 sm:px-6 py-4 flex items-center gap-4 shadow-[0_14px_30px_-14px_rgba(15,49,39,0.8)] ring-2 ring-brass-400/70 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus-visible:ring-4 focus-visible:ring-brass-300">
       <span className="absolute -left-10 -top-12 w-40 h-40 rounded-full bg-brass-300/20 blur-2xl" aria-hidden />
       <span className="relative w-14 h-14 shrink-0 rounded-2xl bg-gradient-to-br from-brass-200 via-brass-400 to-brass-600 text-ink flex items-center justify-center shadow-lg">
         <UsersRound className="w-7 h-7" />
