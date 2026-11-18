@@ -14,6 +14,7 @@ export const MIN_ITEMS_FOR_STATS = 5;
 export const HERO_PHOTOS = {
   imams: 'hero-imams.jpg', // a worshipper raising hands in du'a
   mosques: 'hero-mosques.jpg', // a decorated mihrab
+  khateeb: 'hero-khateeb.jpg', // a preacher on the minbar (Friday sermon)
 };
 
 /**
