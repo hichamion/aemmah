@@ -36,7 +36,9 @@ export const Footer: React.FC<FooterProps> = ({
   hasOwnImamProfile = false,
 }) => {
   return (
-    <footer className="bg-night text-slate-400 border-t border-emerald-900/60 pt-12 pb-28 lg:pb-8 px-4 sm:px-6 lg:px-8 text-sm">
+    <footer
+      style={{ backgroundImage: `linear-gradient(rgb(5 20 32 / 0.35), rgb(5 20 32 / 0.55)), url(${import.meta.env.BASE_URL}bg-footer.jpg)` }}
+      className="site-footer bg-night bg-cover bg-center text-slate-200 border-t border-sky-900/60 pt-12 pb-28 lg:pb-8 px-4 sm:px-6 lg:px-8 text-sm">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {/* Brand */}
