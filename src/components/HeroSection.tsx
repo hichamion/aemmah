@@ -99,7 +99,7 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
       text: 'خطب ودروس ومقالات ونقاشات وتجارب ميدانية بين الأئمة المعتمدين.',
       cta: 'ادخل الملتقى',
       onClick: onOpenCommunity,
-      photo: HERO_PHOTOS.imams,
+      photo: HERO_PHOTOS.community,
     },
     {
       key: 'mosques',
@@ -112,7 +112,7 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
       text: 'انشر إعلان مسجدك بالشروط والمدينة، واستقبل طلبات الأئمة المعتمدين.',
       cta: currentRole === 'imam' ? 'تصفح المساجد' : 'انشر إعلانك',
       onClick: currentRole === 'imam' ? onOpenMosqueList : onOpenMosqueAddModal,
-      icon: <MosqueIcon className="w-16 h-16 sm:w-20 sm:h-20" strokeWidth={1.2} />,
+      photo: HERO_PHOTOS.tarawih,
     },
     {
       key: 'recitation',
@@ -125,7 +125,8 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
       text: 'سجّل الفاتحة أو سورة قصيرة (دقيقة واحدة) وأضفها إلى ملفك.',
       cta: currentRole === 'imam' ? 'أضف تلاوتك' : 'استمع إلى الأئمة',
       onClick: currentRole === 'imam' ? onOpenMyProfile : onOpenImamList,
-      icon: <AudioLines className="w-16 h-16 sm:w-20 sm:h-20" strokeWidth={1.2} />,
+      photo: HERO_PHOTOS.recitation,
+      textLeft: true,
     },
     {
       key: 'khateeb',
@@ -312,6 +313,8 @@ type Slide = {
   /** Full image URL (announcements of the admin). */
   image?: string;
   icon?: React.ReactNode;
+  /** Put the text on the LEFT (for photos whose subject is on the right). */
+  textLeft?: boolean;
 };
 
 /** Cross-fading banner: auto-advances, pauses on hover / focus, swipe on touch, dots and arrows. */
@@ -363,27 +366,27 @@ const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
               className={`absolute inset-0 transition-opacity duration-700 ${on ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none'}`}
             >
               {s.image ? (
-                <img src={s.image} alt="" className={`absolute inset-0 w-full h-full object-cover opacity-80 ${on ? 'kenburns' : ''}`} />
+                <img src={s.image} alt="" className={`absolute inset-0 w-full h-full object-cover ${on ? 'kenburns' : ''}`} />
               ) : s.photo ? (
-                <img src={asset(s.photo)} alt="" className={`absolute inset-0 w-full h-full object-cover opacity-55 ${on ? 'kenburns' : ''}`} />
+                <img src={asset(s.photo)} alt="" className={`absolute inset-0 w-full h-full object-cover ${on ? 'kenburns' : ''}`} />
               ) : (
                 <div className="absolute inset-0 khatam-pattern bg-gradient-to-br from-lagoon-700 via-ink-soft to-cedar-900" />
               )}
-              <div className="absolute inset-0 bg-gradient-to-l from-ink/95 via-ink/70 to-ink/10" />
+              <div className={`absolute inset-0 ${s.textLeft ? 'bg-gradient-to-r' : 'bg-gradient-to-l'} from-ink/80 via-ink/40 to-transparent`} />
               {s.icon && (
                 <div className="absolute left-4 sm:left-10 top-1/2 -translate-y-1/2 w-20 h-20 sm:w-40 sm:h-40 [&>svg]:w-10 [&>svg]:h-10 sm:[&>svg]:w-20 sm:[&>svg]:h-20 rounded-full border border-brass-400/30 bg-white/5 text-brass-300 flex items-center justify-center" aria-hidden>
                   {s.icon}
                 </div>
               )}
               {on && (
-                <div className="slide-copy relative h-full flex flex-col justify-center items-start gap-1.5 sm:gap-3 px-4 sm:px-10 max-w-[74%] sm:max-w-[70%]">
+                <div className={`slide-copy relative h-full flex flex-col justify-center gap-1.5 sm:gap-3 px-4 sm:px-10 max-w-[74%] sm:max-w-[62%] [text-shadow:0_2px_10px_rgb(0_0_0/0.6)] ${s.textLeft ? 'mr-auto items-end text-left' : 'items-start'}`}>
                   {s.chip && (
                     <span className="liquid-glass inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-bold text-brass-200">
                       {s.chip}
                     </span>
                   )}
                   <h2 className="text-lg min-[400px]:text-xl sm:text-[2.1rem] font-kufi leading-snug text-white">{s.title}</h2>
-                  <p className="hidden sm:block text-sm text-slate-200/90 leading-relaxed">{s.text}</p>
+                  <p className="hidden sm:block text-sm text-white/95 leading-relaxed">{s.text}</p>
                   {s.cta && <button
                     onClick={s.onClick}
                     className="mt-1 inline-flex items-center gap-1.5 sm:gap-2 bg-gradient-to-l from-brass-300 to-brass-500 text-ink text-xs sm:text-sm font-black px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-lg shadow-black/30 hover:brightness-105 transition cursor-pointer"

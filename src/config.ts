@@ -15,6 +15,9 @@ export const HERO_PHOTOS = {
   imams: 'hero-imams.jpg', // a worshipper raising hands in du'a
   mosques: 'hero-mosques.jpg', // a decorated mihrab
   khateeb: 'hero-khateeb.jpg', // a preacher on the minbar (Friday sermon)
+  tarawih: 'hero-tarawih.jpg', // an imam leading the prayer
+  community: 'hero-community.jpg', // imams studying together
+  recitation: 'hero-recitation.jpg', // a microphone and a mushaf in a mosque
 };
 
 /**
