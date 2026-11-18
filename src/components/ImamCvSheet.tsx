@@ -28,6 +28,7 @@ import {
   MARITAL_LABELS,
   safeHttpUrl,
   visaStatusText,
+  imamRoleArt,
   isKhateeb,
   khateebArea,
   KHATEEB_TERM_LABELS,
@@ -191,12 +192,19 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
       >
         {/* ---------------- Side column ---------------- */}
         <aside
-          className={`relative z-10 bg-gradient-to-b ${isKhateeb(imam) ? 'from-[#8a2a4c] via-[#6e1d3b] to-[#4f1029]' : 'from-[#0e4d64] via-[#0b3a4f] to-[#082a3a]'} text-white px-6 py-8 space-y-7 shrink-0 ${
+          className={`cv-side relative z-10 overflow-hidden bg-gradient-to-b ${isKhateeb(imam) ? 'from-[#8a2a4c] via-[#6e1d3b] to-[#4f1029]' : 'from-[#0e4d64] via-[#0b3a4f] to-[#082a3a]'} text-white px-6 py-8 space-y-7 shrink-0 ${
             print ? 'w-[290px] rounded-bl-[2.5rem]' : 'w-full md:w-[290px] md:rounded-bl-[2.5rem]'
           }`}
         >
+          {/* Role picture (minbar / lantern / mihrab) as a transparent background of the side column */}
+          <img
+            src={imamRoleArt(imam).src}
+            alt=""
+            aria-hidden
+            className="role-art-cv absolute bottom-4 left-1/2 -translate-x-1/2 w-[72%] max-w-[220px] pointer-events-none select-none"
+          />
           {/* Photo in a gold ring */}
-          <div className="flex justify-center">
+          <div className="relative flex justify-center">
             <div className="relative p-1.5 rounded-full bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 shadow-xl">
               <img
                 src={getSafeImamAvatar(imam.photo)}

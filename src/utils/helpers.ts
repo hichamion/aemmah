@@ -140,6 +140,17 @@ export function khateebArea(k: KhateebInfo, residence?: string): string {
   return k.regions.trim() || 'لم تُحدَّد المناطق';
 }
 
+/**
+ * Transparent background picture of a profile: the minbar for Friday preachers, the lantern and crescent
+ * for Ramadan / tarawih imams, the mihrab for every other imam.
+ */
+export function imamRoleArt(imam: Pick<ImamProfile, 'khateeb' | 'titles' | 'availabilityState'>): { src: string; label: string } {
+  const base = import.meta.env.BASE_URL;
+  if (isKhateeb(imam)) return { src: `${base}art-minbar.webp`, label: 'خطيب جمعة' };
+  if (imam.availabilityState === 'ramadan_only') return { src: `${base}art-lantern.webp`, label: 'إمام تراويح لرمضان' };
+  return { src: `${base}art-mihrab.webp`, label: 'إمام' };
+}
+
 /** European countries offered as "preferred countries" (the imam can also type another one). */
 export const EUROPEAN_COUNTRIES = [
   'ألمانيا', 'فرنسا', 'بلجيكا', 'هولندا', 'إسبانيا', 'إيطاليا', 'المملكة المتحدة', 'سويسرا', 'النمسا',
