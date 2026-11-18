@@ -416,10 +416,14 @@
   background-position: center;
 }
 /* Featured «ملتقى الأئمة» banner: the same skyline picture. */
+/* Featured «ملتقى الأئمة» banner: the blue pattern, partly see-through over a soft teal. */
 .community-banner {
-  background-color: #1f5c4b;
+  background: linear-gradient(to left, rgb(14 74 92 / 0.85), rgb(31 92 75 / 0.75));
+}
+.community-banner__pattern {
   background-size: cover;
-  background-position: center 70%;
+  background-position: center;
+  opacity: 0.55;
 }
 
 /* Community background: golden mosque skyline photo under a soft veil (cards stay readable). */
