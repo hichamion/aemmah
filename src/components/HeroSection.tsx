@@ -525,8 +525,9 @@ const QuickServices: React.FC<{ services: Service[]; onCommunity: () => void }> 
   <nav aria-label="خدمات سريعة" className="liquid-glass-light rounded-[2rem] px-3 sm:px-6 py-5 sm:py-6 space-y-5">
     {/* Featured: the imams' community (its own colours and shape, not one more circle) */}
     <button onClick={onCommunity}
-      style={{ backgroundImage: `url(${asset('bg-skyline.jpg')})` }}
       className="community-banner group relative w-full overflow-hidden rounded-[1.6rem] text-right cursor-pointer text-white px-4 sm:px-6 py-4 flex items-center gap-4 shadow-[0_14px_30px_-14px_rgba(15,49,39,0.8)] ring-2 ring-brass-400/70 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus-visible:ring-4 focus-visible:ring-brass-300">
+      {/* Blue pattern (same as the top of the home page), partly transparent over the banner colour */}
+      <span className="community-banner__pattern absolute inset-0" style={{ backgroundImage: `url(${asset('bg-pattern.jpg')})` }} aria-hidden />
       <span className="absolute -left-10 -top-12 w-40 h-40 rounded-full bg-brass-300/20 blur-2xl" aria-hidden />
       <span className="relative w-14 h-14 shrink-0 rounded-2xl bg-gradient-to-br from-brass-200 via-brass-400 to-brass-600 text-ink flex items-center justify-center shadow-lg">
         <UsersRound className="w-7 h-7" />
