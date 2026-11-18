@@ -506,6 +506,9 @@
 }
 
 /* Role pictures (minbar / mihrab / lantern) cut from the reference image, used as transparent backgrounds. */
-.role-art { opacity: 0.9; filter: drop-shadow(0 6px 12px rgb(0 0 0 / 0.35)); }
-.role-art-cv { opacity: 0.2; }
+.role-art { opacity: 0.5; filter: drop-shadow(0 6px 12px rgb(0 0 0 / 0.35)); }
+.role-art-cv { opacity: 0.25; }
 .cv-side > :not(.role-art-cv) { position: relative; }
+
+/* Tarawih / Ramadan-only imams: royal gold leaning to orange. */
+.tarawih-card { border-color: rgb(201 118 18 / 0.4); box-shadow: 0 0 0 2px rgb(217 130 31 / 0.22), 0 10px 25px -12px rgb(127 60 8 / 0.45); }

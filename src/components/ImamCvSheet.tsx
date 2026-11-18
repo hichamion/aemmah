@@ -29,6 +29,8 @@ import {
   safeHttpUrl,
   visaStatusText,
   imamRoleArt,
+  imamTone,
+  IMAM_TONES,
   isKhateeb,
   khateebArea,
   KHATEEB_TERM_LABELS,
@@ -192,7 +194,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
       >
         {/* ---------------- Side column ---------------- */}
         <aside
-          className={`cv-side relative z-10 overflow-hidden bg-gradient-to-b ${isKhateeb(imam) ? 'from-[#8a2a4c] via-[#6e1d3b] to-[#4f1029]' : 'from-[#0e4d64] via-[#0b3a4f] to-[#082a3a]'} text-white px-6 py-8 space-y-7 shrink-0 ${
+          className={`cv-side relative z-10 overflow-hidden bg-gradient-to-b ${IMAM_TONES[imamTone(imam)].side} text-white px-6 py-8 space-y-7 shrink-0 ${
             print ? 'w-[290px] rounded-bl-[2.5rem]' : 'w-full md:w-[290px] md:rounded-bl-[2.5rem]'
           }`}
         >
@@ -209,7 +211,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
               <img
                 src={getSafeImamAvatar(imam.photo)}
                 alt={imam.name}
-                className={`w-40 h-40 rounded-full object-cover border-4 bg-white ${isKhateeb(imam) ? 'border-[#4f1029]' : 'border-[#0b3a4f]'}`}
+                className={`w-40 h-40 rounded-full object-cover border-4 bg-white ${IMAM_TONES[imamTone(imam)].ring}`}
               />
               {imam.isVerified && (
                 <span className="absolute bottom-2 right-2 bg-emerald-500 text-white text-xs font-black px-2 py-0.5 rounded-full ring-2 ring-[#0b3a4f]">
