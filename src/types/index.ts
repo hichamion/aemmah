@@ -28,6 +28,10 @@ export interface UserProfile {
   verified?: boolean;
   createdAt: string;
   privacyAcceptedAt: string;
+  /** Set when the user asked to delete the account: it is removed for good ACCOUNT_DELETION_GRACE_DAYS later. */
+  deletionRequestedAt?: string;
+  /** What was hidden when the deletion was requested, to put it back if the user restores the account. */
+  deletionRestore?: { imamAvailability: AvailabilityState | null; activeMosqueIds: string[] };
 }
 
 export interface ImamExperience {

@@ -355,7 +355,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           className="w-full flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl text-slate-500 hover:text-red-700 hover:bg-red-50 font-bold transition cursor-pointer text-xs"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
-                          <span>حذف حسابي وبياناتي نهائياً</span>
+                          <span>حذف حسابي وبياناتي</span>
                         </button>
                       )}
                     </div>
