@@ -42,6 +42,12 @@ export const SUPPORT_ENABLED = Boolean(SUPPORT.paypalUrl || SUPPORT.bank.iban);
 export const ADMIN_EMAIL = 'admin@aemmah.com';
 
 /**
+ * Days between «delete my account» and the final deletion. Meanwhile the profile and ads are hidden and the
+ * user can restore everything by signing in. Keep in sync with GRACE_DAYS in .github/workflows/purge-deleted-accounts.yml.
+ */
+export const ACCOUNT_DELETION_GRACE_DAYS = 7;
+
+/**
  * Sign-in methods shown in the login window. Each one must ALSO be enabled in
  * Firebase Console → Authentication → Sign-in method, otherwise sign-in fails.
  * Phone (SMS) requires the Blaze (pay-as-you-go) plan and costs per SMS.

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   collection,
   deleteDoc,
+  deleteField,
   doc,
   DocumentReference,
   getDoc,
@@ -18,6 +19,7 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import { compressImage } from './image';
+import { ACCOUNT_DELETION_GRACE_DAYS } from '../config';
 import {
   ADMIN_INBOX,
   Application,
@@ -477,7 +479,8 @@ export async function deleteImam(imam: ImamProfile) {
   const batch = writeBatch(db);
   batch.delete(doc(db, 'imams', imam.id));
   batch.delete(doc(db, 'imamContacts', imam.id));
-  batch.delete(doc(db, 'recitations', imam.id));
+  // Only when there is a sample: most imams never recorded one (older rules refused deleting a missing document).
+  if (imam.recitationMeta) batch.delete(doc(db, 'recitations', imam.id));
   await batch.commit();
   contactCache.delete(`imam:${imam.id}`);
   await deletePrivateDocument(imam.visaFilePath);
@@ -741,6 +744,44 @@ export async function deleteFeedback(id: string) {
 // ---------------------------------------------------------------------------
 // Account deletion (GDPR "right to erasure")
 // ---------------------------------------------------------------------------
+
+/** Date on which an account whose deletion was requested is removed for good. */
+export function accountDeletionDate(requestedAt: string): Date {
+  return new Date(new Date(requestedAt).getTime() + ACCOUNT_DELETION_GRACE_DAYS * 24 * 3600 * 1000);
+}
+
+/**
+ * «Delete my account», step 1: hide the imam profile and the mosque ads at once and note the date.
+ * Everything is deleted for good ACCOUNT_DELETION_GRACE_DAYS later (daily GitHub job, or «delete now»),
+ * unless the user signs in and restores the account first.
+ */
+export async function requestAccountDeletion(uid: string) {
+  const restore: NonNullable<UserProfile['deletionRestore']> = { imamAvailability: null, activeMosqueIds: [] };
+  const imamSnap = await getDoc(doc(db, 'imams', uid)).catch(() => null);
+  if (imamSnap?.exists()) {
+    const state = (imamSnap.data() as ImamProfile).availabilityState;
+    if (state !== 'paused') {
+      restore.imamAvailability = state || 'available_now';
+      await updateImamAvailability(uid, 'paused');
+    }
+  }
+  const myMosques = await getDocs(query(collection(db, 'mosques'), where('ownerUid', '==', uid)));
+  for (const m of myMosques.docs) {
+    if ((m.data() as MosqueJob).activeState !== 'closed') {
+      restore.activeMosqueIds.push(m.id);
+      await setMosqueActive(m.id, 'closed');
+    }
+  }
+  await updateDoc(doc(db, 'users', uid), { deletionRequestedAt: nowIso(), deletionRestore: restore });
+}
+
+/** «Restore my account»: cancels the planned deletion and shows the profile / ads again as they were. */
+export async function cancelAccountDeletion(uid: string, profile: UserProfile) {
+  const r = profile.deletionRestore;
+  if (r?.imamAvailability) await updateImamAvailability(uid, r.imamAvailability).catch(() => {});
+  for (const id of r?.activeMosqueIds ?? []) await setMosqueActive(id, 'active').catch(() => {});
+  await updateDoc(doc(db, 'users', uid), { deletionRequestedAt: deleteField(), deletionRestore: deleteField() });
+}
 
 export async function deleteMyData(uid: string) {
   // Imam profile (id === uid for self-registered imams)

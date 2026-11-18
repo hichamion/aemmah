@@ -10,6 +10,7 @@ import {
   MosqueContact,
 } from './types';
 import { useAuthState, signOutUser, reauthenticate } from './lib/auth';
+import { DeletionPendingModal, formatDeletionDate } from './components/DeletionPendingModal';
 import {
   applyToMosque,
   createReport,
@@ -18,6 +19,9 @@ import {
   deleteFeedback,
   deleteMosque,
   deleteMyData,
+  requestAccountDeletion,
+  cancelAccountDeletion,
+  accountDeletionDate,
   describeError,
   ImamEditableFields,
   markMessageRead,
@@ -62,7 +66,7 @@ import { TermsPage } from './components/TermsPage';
 import { Footer } from './components/Footer';
 import { MobileNav } from './components/MobileNav';
 import { Intro, shouldShowIntro } from './components/Intro';
-import { MIN_ITEMS_FOR_STATS, SUPPORT_ENABLED } from './config';
+import { ACCOUNT_DELETION_GRACE_DAYS, MIN_ITEMS_FOR_STATS, SUPPORT_ENABLED } from './config';
 import { ContactPage } from './components/ContactPage';
 import { SupportPage } from './components/SupportPage';
 
@@ -364,12 +368,38 @@ export default function App() {
     }
   };
 
+  // «Delete my account»: hidden at once, deleted for good after ACCOUNT_DELETION_GRACE_DAYS (restorable until then).
   const handleDeleteAccount = async () => {
     if (!uid) return;
+    const due = formatDeletionDate(accountDeletionDate(new Date().toISOString()));
     const ok = window.confirm(
-      'سيتم حذف حسابك وملفك وإعلاناتك ورسائلك نهائياً ولا يمكن التراجع عن ذلك.\nهل أنت متأكد؟'
+      `سيُخفى ملفك وإعلاناتك فوراً، ويُحذف حسابك وكل بياناته نهائياً بعد ${ACCOUNT_DELETION_GRACE_DAYS} أيام (${due}).\n` +
+        'إن غيّرت رأيك قبل ذلك، فسجّل الدخول واضغط «استرجاع حسابي».\n\nهل تريد حذف حسابك؟'
     );
     if (!ok) return;
+    try {
+      await requestAccountDeletion(uid);
+      await signOutUser();
+      setCurrentView('home');
+      showToast(`سيُحذف حسابك نهائياً يوم ${due}. يمكنك استرجاعه بتسجيل الدخول قبل ذلك.`);
+    } catch (err) {
+      showError(err);
+    }
+  };
+
+  const handleRestoreAccount = async () => {
+    if (!uid || !profile) return;
+    try {
+      await cancelAccountDeletion(uid, profile);
+      showToast('تم استرجاع حسابك. أهلاً بعودتك!');
+    } catch (err) {
+      showError(err);
+    }
+  };
+
+  const handleDeleteAccountNow = async () => {
+    if (!uid) return;
+    if (!window.confirm('سيُحذف حسابك وكل بياناته الآن نهائياً ولا يمكن التراجع. متابعة؟')) return;
     try {
       // Sign-in confirmation first: if it fails or is cancelled, nothing has been deleted yet.
       await reauthenticate();
@@ -1016,6 +1046,9 @@ export default function App() {
       />
 
       {/* ------------------------------ Modals ------------------------------ */}
+      {profile?.deletionRequestedAt && role !== 'admin' && (
+        <DeletionPendingModal profile={profile} onRestore={handleRestoreAccount} onDeleteNow={handleDeleteAccountNow} onSignOut={handleLogout} />
+      )}
       <AuthOnboardingModal
         // Legal pages remain readable during sign-up.
         isOpen={(isAuthModalOpen || authState.needsOnboarding) && currentView !== 'privacy' && currentView !== 'terms'}

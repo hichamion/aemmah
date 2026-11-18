@@ -1,0 +1,67 @@
+name: Delete accounts after the grace week
+
+# «حذف حسابي» hides the account at once; this job deletes it for good GRACE_DAYS later
+# (unless the user signed in and pressed «استرجاع حسابي»). Runs every day; can also be run by hand.
+# Uses the same FIREBASE_TOKEN secret as "Deploy Firestore rules".
+
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Only list what would be deleted'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: purge-deleted-accounts
+  cancel-in-progress: false
+
+env:
+  PROJECT_ID: applied-sunspot-701dl
+  DATABASE_ID: ai-studio-mihrab-c46bc70f-faae-41ff-93c4-7abfe9c33fc3
+  GRACE_DAYS: '7'
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Get an access token
+        id: token
+        env:
+          FB_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "$FB_TOKEN" ]; then
+            echo "### ⚠️ FIREBASE_TOKEN is missing — no account was deleted" >> "$GITHUB_STEP_SUMMARY"
+            echo "skip=1" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Exchange the firebase-tools refresh token for an access token (public firebase-tools OAuth client).
+          ACCESS=$(curl -sS -X POST https://oauth2.googleapis.com/token \
+            -d client_id=563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com \
+            -d client_secret=j9iVZfS8kkCEFUPaAeJV0sAi \
+            -d grant_type=refresh_token \
+            --data-urlencode refresh_token="$FB_TOKEN" | jq -r .access_token)
+          [ -n "$ACCESS" ] && [ "$ACCESS" != null ] || { echo "Could not get an access token"; exit 1; }
+          echo "::add-mask::$ACCESS"
+          echo "access=$ACCESS" >> "$GITHUB_OUTPUT"
+
+      - name: Delete accounts older than the grace period
+        if: steps.token.outputs.skip != '1'
+        env:
+          ACCESS_TOKEN: ${{ steps.token.outputs.access }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+        run: node scripts/purge-deleted-accounts.mjs

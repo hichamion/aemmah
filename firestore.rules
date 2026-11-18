@@ -62,7 +62,10 @@ service cloud.firestore {
         || (signedIn() && me() == userId
             && !changedKeys().hasAny(['uid', 'role', 'createdAt'])
             && (!changedKeys().hasAny(['verified']) || incoming().verified == false)
-            && nonEmpty(incoming().displayName, 120));
+            && nonEmpty(incoming().displayName, 120)
+            // «Delete my account» (restorable for a week): a date and what to show again on restore.
+            && str(incoming().get('deletionRequestedAt', ''), 40)
+            && (incoming().get('deletionRestore', null) == null || incoming().deletionRestore is map));
       allow delete: if isAdmin() || (signedIn() && me() == userId);
     }
 
@@ -155,7 +158,7 @@ service cloud.firestore {
         && (isAdmin()
             || (incoming().ownerUid == me()
                 && getAfter(/databases/$(database)/documents/imams/$(imamId)).data.ownerUid == me()));
-      allow delete: if isAdmin() || (signedIn() && resource.data.ownerUid == me());
+      allow delete: if isAdmin() || (signedIn() && (resource == null || resource.data.ownerUid == me()));
     }
 
     // ---------- private documents of an imam (visa, certificates) ----------
@@ -176,7 +179,7 @@ service cloud.firestore {
                 && (resource == null || resource.data.ownerUid == me())
                 && (incoming().imamId == me()
                     || get(/databases/$(database)/documents/imams/$(incoming().imamId)).data.ownerUid == me())));
-      allow delete: if signedIn() && (resource.data.ownerUid == me() || isAdmin());
+      allow delete: if signedIn() && (resource == null || resource.data.ownerUid == me() || isAdmin());
 
       match /chunks/{n} {
         allow get: if signedIn() && (get(/databases/$(database)/documents/privateDocs/$(docId)).data.ownerUid == me() || isAdmin());
@@ -187,7 +190,8 @@ service cloud.firestore {
           && incoming().data is string && incoming().data.size() <= 700000
           && (isAdmin() || getAfter(/databases/$(database)/documents/privateDocs/$(docId)).data.ownerUid == me());
         allow delete: if signedIn()
-          && (isAdmin() || get(/databases/$(database)/documents/privateDocs/$(docId)).data.ownerUid == me());
+          && (isAdmin() || resource == null
+              || get(/databases/$(database)/documents/privateDocs/$(docId)).data.ownerUid == me());
       }
     }
 
@@ -220,7 +224,7 @@ service cloud.firestore {
         && (isAdmin()
             || (incoming().ownerUid == me()
                 && get(/databases/$(database)/documents/imams/$(imamId)).data.ownerUid == me()));
-      allow delete: if isAdmin() || (signedIn() && resource.data.ownerUid == me());
+      allow delete: if isAdmin() || (signedIn() && (resource == null || resource.data.ownerUid == me()));
     }
 
     // ---------- mosques ----------
@@ -281,7 +285,7 @@ service cloud.firestore {
         && (isAdmin()
             || (incoming().ownerUid == me()
                 && getAfter(/databases/$(database)/documents/mosques/$(mosqueId)).data.ownerUid == me()));
-      allow delete: if isAdmin() || (signedIn() && resource.data.ownerUid == me());
+      allow delete: if isAdmin() || (signedIn() && (resource == null || resource.data.ownerUid == me()));
     }
 
     // ---------- applications ----------
