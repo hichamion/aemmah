@@ -140,6 +140,67 @@ export function khateebArea(k: KhateebInfo, residence?: string): string {
   return k.regions.trim() || 'لم تُحدَّد المناطق';
 }
 
+export type ImamTone = 'imam' | 'khateeb' | 'tarawih' | 'khateeb_tarawih';
+
+/** Profile kind used for its colours and picture: Friday preacher, Ramadan / tarawih only, both, or a regular imam. */
+export function imamTone(imam: Pick<ImamProfile, 'khateeb' | 'titles' | 'availabilityState'>): ImamTone {
+  const kh = isKhateeb(imam);
+  const tar = imam.availabilityState === 'ramadan_only';
+  return kh && tar ? 'khateeb_tarawih' : kh ? 'khateeb' : tar ? 'tarawih' : 'imam';
+}
+
+/**
+ * Colours of each profile kind (Tailwind classes written out in full so they are generated):
+ * teal for imams, wine red for preachers, royal gold / orange for tarawih imams, wine to gold for both.
+ */
+export const IMAM_TONES: Record<ImamTone, { band: string; side: string; ring: string; button: string; title: string; card: string }> = {
+  imam: {
+    band: 'from-[#1aa3bf] via-[#0e4d64] to-[#0b3a4f]',
+    side: 'from-[#0e4d64] via-[#0b3a4f] to-[#082a3a]',
+    ring: 'border-[#0b3a4f]',
+    button: 'bg-[#0b3a4f] hover:bg-[#0e4d64]',
+    title: 'text-amber-300',
+    card: '',
+  },
+  khateeb: {
+    band: 'from-[#b23a62] via-[#7a1f43] to-[#4f1029]',
+    side: 'from-[#8a2a4c] via-[#6e1d3b] to-[#4f1029]',
+    ring: 'border-[#4f1029]',
+    button: 'bg-[#6e1d3b] hover:bg-[#8a2a4c]',
+    title: 'text-amber-300',
+    card: 'khateeb-card',
+  },
+  tarawih: {
+    band: 'from-[#f2b631] via-[#d9821f] to-[#a24f0c]',
+    side: 'from-[#d9921f] via-[#b9650f] to-[#7f3c08]',
+    ring: 'border-[#8a4309]',
+    button: 'bg-[#a8560c] hover:bg-[#c26a12]',
+    title: 'text-[#fff1c7]',
+    card: 'tarawih-card',
+  },
+  khateeb_tarawih: {
+    band: 'from-[#e3a02a] via-[#9c3448] to-[#4f1029]',
+    side: 'from-[#c98420] via-[#7a1f43] to-[#4f1029]',
+    ring: 'border-[#4f1029]',
+    button: 'bg-[#7a1f43] hover:bg-[#9c3448]',
+    title: 'text-[#ffe4a3]',
+    card: 'khateeb-card',
+  },
+};
+
+/**
+ * Transparent picture of each profile kind, cut from the reference image: minbar (preacher), lantern and
+ * crescent (tarawih), mosque with crescent (preacher and tarawih), mihrab (every other imam).
+ */
+export function imamRoleArt(imam: Pick<ImamProfile, 'khateeb' | 'titles' | 'availabilityState'>): { src: string; label: string } {
+  const base = import.meta.env.BASE_URL;
+  const t = imamTone(imam);
+  if (t === 'khateeb_tarawih') return { src: `${base}art-mosque.webp`, label: 'خطيب جمعة وإمام تراويح' };
+  if (t === 'khateeb') return { src: `${base}art-minbar.webp`, label: 'خطيب جمعة' };
+  if (t === 'tarawih') return { src: `${base}art-lantern.webp`, label: 'إمام تراويح لرمضان' };
+  return { src: `${base}art-mihrab.webp`, label: 'إمام' };
+}
+
 /** European countries offered as "preferred countries" (the imam can also type another one). */
 export const EUROPEAN_COUNTRIES = [
   'ألمانيا', 'فرنسا', 'بلجيكا', 'هولندا', 'إسبانيا', 'إيطاليا', 'المملكة المتحدة', 'سويسرا', 'النمسا',

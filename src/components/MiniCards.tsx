@@ -1,7 +1,7 @@
 import React from 'react';
 import { BookOpen, Briefcase, Car, Flag, FileText, Globe2, Home, Languages, MapPin, Mic, Plane, Send, Check, Star, Users } from 'lucide-react';
 import { ImamProfile, MosqueJob } from '../types';
-import { formatPreferredLocations, getSafeImamAvatar, getSafeMosquePhoto, imamLanguages, imamTitle, isKhateeb, khateebArea, KHATEEB_TERM_LABELS, visaStatusText } from '../utils/helpers';
+import { formatPreferredLocations, getSafeImamAvatar, getSafeMosquePhoto, imamLanguages, imamTitle, imamRoleArt, imamTone, IMAM_TONES, isKhateeb, khateebArea, KHATEEB_TERM_LABELS, visaStatusText } from '../utils/helpers';
 
 /*
  * Short, CV-looking cards for the imam and mosque lists. Clicking the card opens the full CV / ad
@@ -49,36 +49,46 @@ export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, 
   const busy = imam.availabilityState === 'busy_ramadan' || imam.availabilityState === 'ramadan_only';
   const languages = imamLanguages(imam).map((l) => l.name).join('، ');
   const kh = isKhateeb(imam) ? imam.khateeb! : null;
+  const tone = IMAM_TONES[imamTone(imam)];
 
   return (
     <article
       {...openOnCard(onOpen)}
       aria-label={`السيرة الذاتية: ${imam.name}`}
       data-khateeb={kh ? '' : undefined}
-      className={`${cardCls} ${kh ? 'khateeb-card' : ''}`}
+      data-tone={imamTone(imam)}
+      className={`${cardCls} ${tone.card}`}
     >
       {/* Header band in the CV colours (wine red for Friday preachers), photo in a gold ring */}
       <div
-        className={`relative bg-gradient-to-l px-5 pt-5 pb-4 flex items-center gap-4 ${
-          kh ? 'from-[#b23a62] via-[#7a1f43] to-[#4f1029]' : 'from-[#1aa3bf] via-[#0e4d64] to-[#0b3a4f]'
+        className={`relative bg-gradient-to-l pr-5 pl-[31%] pt-5 pb-4 flex items-center gap-4 ${
+          tone.band
         }`}
       >
-        {kh && (
-          <span className="absolute top-3 left-3 inline-flex items-center gap-1 text-[11px] font-black bg-amber-300 text-[#4f1029] px-2.5 py-1 rounded-full shadow">
-            <Mic className="w-3.5 h-3.5" /> خطيب جمعة
-          </span>
-        )}
-        <div className="p-1 rounded-full bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 shrink-0 shadow-lg">
+        {/* Role picture (minbar / lantern / mihrab), transparent, on the free side of the band */}
+        <img
+          src={imamRoleArt(imam).src}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          className="role-art absolute left-2 bottom-1 h-[90%] w-auto max-w-[30%] object-contain object-bottom pointer-events-none select-none"
+        />
+        <div className="relative z-10 p-1 rounded-full bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 shrink-0 shadow-lg">
           <img
             src={getSafeImamAvatar(imam.photo)}
             alt=""
             loading="lazy"
-            className={`w-20 h-20 rounded-full object-cover border-[3px] bg-white ${kh ? 'border-[#4f1029]' : 'border-[#0b3a4f]'}`}
+            className={`w-20 h-20 rounded-full object-cover border-[3px] bg-white ${tone.ring}`}
           />
         </div>
-        <div className="min-w-0 text-white">
+        <div className="relative z-10 min-w-0 text-white">
           <h3 className="font-black text-2xl sm:text-[1.7rem] font-amiri leading-snug line-clamp-2">{imam.name}</h3>
-          <p className="text-amber-300 text-sm font-black">{imamTitle(imam.titles)}</p>
+          <p className={`${tone.title} text-sm font-black`}>{imamTitle(imam.titles)}</p>
+          {kh && (
+            <span className="inline-flex items-center gap-1 mt-1 ml-1 text-[11px] font-black bg-amber-300 text-[#4f1029] px-2 py-0.5 rounded-full">
+              <Mic className="w-3 h-3" /> خطيب جمعة
+            </span>
+          )}
           {imam.isVerified && <span className="inline-block mt-1 text-[11px] font-black bg-emerald-500/90 px-2 py-0.5 rounded-full">✓ موثق</span>}
           {imam.recitationMeta && <span className="inline-block mt-1 mr-1 text-[11px] font-black bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full">🎧 عيّنة تلاوة</span>}
         </div>
@@ -123,7 +133,7 @@ export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, 
       <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 flex items-center gap-2">
         <button
           onClick={onOpen}
-          className={`flex-1 text-white font-black py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs cursor-pointer ${kh ? 'bg-[#6e1d3b] hover:bg-[#8a2a4c]' : 'bg-[#0b3a4f] hover:bg-[#0e4d64]'}`}
+          className={`flex-1 text-white font-black py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs cursor-pointer ${tone.button}`}
         >
           <FileText className="w-4 h-4" />
           السيرة الكاملة والتلاوة
