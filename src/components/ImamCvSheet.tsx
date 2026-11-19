@@ -146,7 +146,7 @@ export function useQrCode(target: string, dark = '#0b3a4f') {
 }
 
 export const Row: React.FC<{ label: string; value: string }> = ({ label, value }) =>
-  value.trim() ? (
+  (value || '').trim() ? (
     <div className="flex gap-3 text-sm leading-relaxed">
       <span className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0" />
       <span className="font-black text-slate-800 shrink-0">{label}:</span>
@@ -155,7 +155,7 @@ export const Row: React.FC<{ label: string; value: string }> = ({ label, value }
   ) : null;
 
 export const ContactLine: React.FC<{ icon: React.ReactNode; value: string; ltr?: boolean }> = ({ icon, value, ltr }) =>
-  value.trim() ? (
+  (value || '').trim() ? (
     <div className="flex items-center gap-3 text-sm">
       <span className="w-8 h-8 rounded-full bg-white/10 ring-1 ring-white/20 flex items-center justify-center text-amber-300 shrink-0">
         {icon}
@@ -294,7 +294,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
                     <span className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0" />
                     <span>
                       {l.country}
-                      {l.area.trim() && <span className="text-white/75"> — {l.area}</span>}
+                      {(l.area || '').trim() && <span className="text-white/75"> — {l.area}</span>}
                     </span>
                   </li>
                 ))}
@@ -322,7 +322,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
             </div>
           </header>
 
-          {imam.cvText.trim() && (
+          {(imam.cvText || '').trim() && (
             <blockquote className="relative px-8 text-slate-700 text-sm leading-loose whitespace-pre-line">
               <span className="absolute -top-3 right-0 text-5xl leading-none text-amber-500 font-serif" aria-hidden>
                 “
