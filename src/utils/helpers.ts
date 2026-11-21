@@ -140,18 +140,25 @@ export function khateebArea(k: KhateebInfo, residence?: string): string {
   return k.regions.trim() || 'لم تُحدَّد المناطق';
 }
 
-export type ImamTone = 'imam' | 'khateeb' | 'tarawih' | 'khateeb_tarawih';
+export type ImamTone = 'imam' | 'khateeb' | 'imam_khateeb' | 'tarawih' | 'khateeb_tarawih';
 
-/** Profile kind used for its colours and picture: Friday preacher, Ramadan / tarawih only, both, or a regular imam. */
+/**
+ * Profile kind used for its colours and picture: Friday preacher, imam who is also a Friday preacher,
+ * Ramadan / tarawih only, preacher and tarawih, or a regular imam.
+ */
 export function imamTone(imam: Pick<ImamProfile, 'khateeb' | 'titles' | 'availabilityState'>): ImamTone {
   const kh = isKhateeb(imam);
   const tar = imam.availabilityState === 'ramadan_only';
-  return kh && tar ? 'khateeb_tarawih' : kh ? 'khateeb' : tar ? 'tarawih' : 'imam';
+  if (kh && tar) return 'khateeb_tarawih';
+  // Ticked both «إمام» and «خطيب»: an imam who also preaches, not a preacher only.
+  if (kh) return (imam.titles || []).map((x) => x.trim()).includes('إمام') ? 'imam_khateeb' : 'khateeb';
+  return tar ? 'tarawih' : 'imam';
 }
 
 /**
  * Colours of each profile kind (Tailwind classes written out in full so they are generated):
- * teal for imams, wine red for preachers, royal gold / orange for tarawih imams, wine to gold for both.
+ * teal for imams, wine red for preachers, teal to wine for imams who also preach,
+ * royal gold / orange for tarawih imams, wine to gold for preacher and tarawih.
  */
 export const IMAM_TONES: Record<ImamTone, { band: string; side: string; ring: string; button: string; title: string; card: string }> = {
   imam: {
@@ -169,6 +176,14 @@ export const IMAM_TONES: Record<ImamTone, { band: string; side: string; ring: st
     button: 'bg-[#6e1d3b] hover:bg-[#8a2a4c]',
     title: 'text-amber-300',
     card: 'khateeb-card',
+  },
+  imam_khateeb: {
+    band: 'from-[#1aa3bf] via-[#0e4d64] to-[#7a1f43]',
+    side: 'from-[#0e4d64] via-[#0b3a4f] to-[#6e1d3b]',
+    ring: 'border-[#0b3a4f]',
+    button: 'bg-[#0b3a4f] hover:bg-[#0e4d64]',
+    title: 'text-amber-300',
+    card: '',
   },
   tarawih: {
     band: 'from-[#f2b631] via-[#d9821f] to-[#a24f0c]',
@@ -190,12 +205,14 @@ export const IMAM_TONES: Record<ImamTone, { band: string; side: string; ring: st
 
 /**
  * Transparent picture of each profile kind, cut from the reference image: minbar (preacher), lantern and
- * crescent (tarawih), mosque with crescent (preacher and tarawih), mihrab (every other imam).
+ * crescent (tarawih), mosque with crescent (preacher and tarawih), mihrab (every other imam, including
+ * imams who also preach).
  */
 export function imamRoleArt(imam: Pick<ImamProfile, 'khateeb' | 'titles' | 'availabilityState'>): { src: string; label: string } {
   const base = import.meta.env.BASE_URL;
   const t = imamTone(imam);
   if (t === 'khateeb_tarawih') return { src: `${base}art-mosque.webp`, label: 'خطيب جمعة وإمام تراويح' };
+  if (t === 'imam_khateeb') return { src: `${base}art-mihrab.webp`, label: 'إمام وخطيب جمعة' };
   if (t === 'khateeb') return { src: `${base}art-minbar.webp`, label: 'خطيب جمعة' };
   if (t === 'tarawih') return { src: `${base}art-lantern.webp`, label: 'إمام تراويح لرمضان' };
   return { src: `${base}art-mihrab.webp`, label: 'إمام' };
