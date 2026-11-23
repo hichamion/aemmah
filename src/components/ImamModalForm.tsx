@@ -12,6 +12,9 @@ import {
   isValidPhone,
   safeHttpUrl,
   IMAM_TITLE_OPTIONS,
+  normalizeTitles,
+  TITLE_IMAM,
+  TITLE_KHATEEB,
   KHATEEB_TERM_LABELS,
   imamLanguages,
   MARITAL_LABELS,
@@ -41,7 +44,7 @@ const EMPTY_FIELDS: ImamEditableFields = {
   age: 0,
   country: '',
   nationality: '',
-  titles: ['إمام'],
+  titles: [TITLE_IMAM],
   currentJob: '',
   experiences: [],
   certificates: [],
@@ -111,7 +114,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
         degree: degree || '',
         riwaya: riwaya || '',
         nationality: nationality || '',
-        titles: titles?.length ? titles : ['إمام'],
+        titles: titles?.length ? normalizeTitles(titles) : [TITLE_IMAM],
         currentJob: d.currentJob || '',
         experiences: d.experiences || [],
         certificates: d.certificates || [],
@@ -130,7 +133,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
         availableAfterDate: availableAfterDate || '',
       });
       setPhotoPreview(initialData.photo || '');
-      setCustomTitles((titles || []).filter((t) => !IMAM_TITLE_OPTIONS.includes(t)).join('، '));
+      setCustomTitles(normalizeTitles(titles).filter((t) => !IMAM_TITLE_OPTIONS.includes(t)).join('، '));
     } else {
       setFields(EMPTY_FIELDS);
       setCustomTitles('');
@@ -191,8 +194,8 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
     if (contact.whatsapp && !isValidPhone(contact.whatsapp)) return 'رقم الواتساب غير صحيح.';
     if (!isValidEmail(contact.email)) return 'البريد الإلكتروني غير صحيح.';
     if (fields.youtubeUrl && !safeHttpUrl(fields.youtubeUrl)) return 'رابط اليوتيوب غير صحيح.';
-    // Checked only once the imam filled the khateeb section (older «خطيب» profiles can still be saved as before).
-    if (allTitles().includes('خطيب') && fields.khateeb) {
+    // Checked only once the imam filled the khateeb section (older profiles can still be saved as before).
+    if (allTitles().includes(TITLE_KHATEEB) && fields.livesInEurope && fields.khateeb) {
       const k = fields.khateeb;
       if (k.mode === 'regions' && !k.regions.trim()) return 'اكتب المدن أو المناطق التي يمكنك أن تخطب فيها الجمعة.';
       if (k.mode === 'radius' && !(Number(k.radiusKm) > 0 && Number(k.radiusKm) <= 500)) return 'اكتب المسافة بالكيلومتر (من 1 إلى 500).';
@@ -217,8 +220,8 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
           country: fields.country.trim(),
           nationality: (fields.nationality || '').trim().slice(0, 80),
           titles: allTitles(),
-          // The khateeb details are kept only while «خطيب» is ticked and the section was filled in.
-          khateeb: allTitles().includes('خطيب') && fields.khateeb
+          // The khateeb details are kept only for «خطيب فقط» living in Europe who filled the section in.
+          khateeb: allTitles().includes(TITLE_KHATEEB) && fields.livesInEurope && fields.khateeb
             ? {
                 ...khateeb,
                 regions: khateeb.mode === 'regions' ? khateeb.regions.trim().slice(0, 300) : '',
@@ -265,9 +268,22 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
   const shownPhoto = getSafeImamAvatar(photoPreview);
   // Ticked titles / languages are kept in fields; what the imam types is kept apart and merged on save.
   const knownTitles = (fields.titles || []).filter((t) => IMAM_TITLE_OPTIONS.includes(t));
-  const toggleTitle = (t: string) =>
-    set('titles', knownTitles.includes(t) ? knownTitles.filter((x) => x !== t) : [...knownTitles, t]);
-  const isKhateebOn = knownTitles.includes('خطيب');
+  // «إمام وخطيب» and «خطيب فقط» exclude each other; «خطيب فقط» needs residence in Europe.
+  const toggleTitle = (t: string) => {
+    if (t === TITLE_KHATEEB && !fields.livesInEurope && !knownTitles.includes(t)) return;
+    const other = t === TITLE_IMAM ? TITLE_KHATEEB : t === TITLE_KHATEEB ? TITLE_IMAM : null;
+    const next = knownTitles.includes(t) ? knownTitles.filter((x) => x !== t) : [...knownTitles.filter((x) => x !== other), t];
+    set('titles', next);
+  };
+  const setLivesInEurope = (v: boolean) => {
+    setFields((prev) => ({
+      ...prev,
+      livesInEurope: v,
+      // Outside Europe: no Friday-preacher-only role.
+      titles: v ? prev.titles : (prev.titles || []).map((x) => (x === TITLE_KHATEEB ? TITLE_IMAM : x)),
+    }));
+  };
+  const isKhateebOn = knownTitles.includes(TITLE_KHATEEB) && !!fields.livesInEurope;
   const khateeb: KhateebInfo = fields.khateeb || EMPTY_KHATEEB;
   const setKhateeb = (patch: Partial<KhateebInfo>) => set('khateeb', { ...khateeb, ...patch });
 
@@ -299,7 +315,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           {/* SECTION 1 */}
           <div className="bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200 space-y-4">
-            <h4 className="font-extrabold text-emerald-950 text-base">01. المعلومات الشخصية والصورة</h4>
+            <h4 className="font-extrabold text-emerald-950 text-base">01. المعلومات الشخصية</h4>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
@@ -329,7 +345,61 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
                 className={`${inputCls} font-semibold`} />
             </div>
 
-            <div className="rounded-2xl border-2 border-emerald-200 bg-emerald-50/60 p-3 sm:p-4">
+          </div>
+
+          {/* SECTION 2 */}
+          <div className="bg-sky-50/70 p-4 md:p-5 rounded-2xl border border-sky-200 space-y-4">
+            <h4 className="font-extrabold text-sky-950 text-base">02. الإقامة في أوروبا والتأشيرة</h4>
+            <label className="flex items-center gap-2.5 bg-white border border-sky-200 rounded-xl p-3 cursor-pointer">
+              <input type="checkbox" checked={!!fields.livesInEurope} onChange={(e) => setLivesInEurope(e.target.checked)}
+                className="w-4 h-4 accent-sky-700" />
+              <span className="font-bold text-sky-950">أنا مقيم حالياً في دولة أوروبية (لا أحتاج إجراءات استقدام)</span>
+            </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label htmlFor="im-visa" className="block font-bold text-sky-900 mb-1">هل لديك فيزا شنغن أو إقامة أوروبية حالياً؟</label>
+                <select id="im-visa" value={fields.hasVisa} onChange={(e) => set('hasVisa', e.target.value as 'yes' | 'no')}
+                  className="w-full border border-sky-300 rounded-xl px-3 py-2 bg-white font-bold text-sky-950">
+                  <option value="no">لا — ليس لدي فيزا حالياً</option>
+                  <option value="yes">نعم — لدي فيزا شنغن سارية أو إقامة أوروبية</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="im-visa-d" className="block font-bold text-sky-900 mb-1">توضيح حالة التأشيرة أو الجواز</label>
+                <input id="im-visa-d" type="text" maxLength={500} value={fields.visaDetails}
+                  onChange={(e) => set('visaDetails', e.target.value)}
+                  placeholder="مثال: تأشيرة شنغن صالحة حتى 2027 / جواز سفر جاهز"
+                  className="w-full border border-sky-300 rounded-xl px-3 py-2 bg-white" />
+              </div>
+            </div>
+
+            {fields.hasVisa === 'yes' && (
+              <div className="bg-white p-3.5 rounded-xl border border-sky-200 space-y-2">
+                <label htmlFor="im-visa-file" className="block font-bold text-sky-900">
+                  رفع نسخة الفيزا / الإقامة (PDF أو صورة، 5MB كحد أقصى) — تراها الإدارة فقط:
+                </label>
+                <input id="im-visa-file" type="file" accept=".pdf,image/jpeg,image/png,image/webp" onChange={pickDocument(setVisaFile)}
+                  className="w-full border border-slate-200 rounded-lg p-1.5 bg-slate-50 text-xs" />
+                {(visaFile || initialData?.visaFileName) && (
+                  <p className="text-xs text-sky-700 font-bold flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-sky-600" />
+                    <span>{visaFile ? `سيتم رفع: ${visaFile.name}` : `الملف الحالي: ${initialData?.visaFileName}`}</span>
+                    {!visaFile && initialData?.visaFilePath?.startsWith('privateDocs/') && (
+                      <button type="button" className="underline text-sky-800 mr-1 cursor-pointer"
+                        onClick={() => openPrivateDocument(initialData.visaFilePath!).catch((e) => onError(e instanceof Error ? e.message : 'تعذر فتح الملف.'))}>
+                        عرض
+                      </button>
+                    )}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* SECTION 3: availability and title */}
+          <div className="bg-emerald-50/50 p-4 md:p-5 rounded-2xl border border-emerald-200 space-y-4">
+            <h4 className="font-extrabold text-emerald-950 text-base">03. حالة التفرغ والصفة</h4>
+            <div>
               <label htmlFor="im-av" className="block font-bold text-slate-700 mb-1">حالة التفرغ *</label>
               <select id="im-av" value={fields.availabilityState}
                 onChange={(e) => set('availabilityState', e.target.value as ImamEditableFields['availabilityState'])}
@@ -342,18 +412,24 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
             </div>
 
             <fieldset className="space-y-2">
-              <legend className="block font-bold text-slate-700 mb-1">الصفة (يمكن اختيار أكثر من واحدة)</legend>
+              <legend className="block font-bold text-slate-700 mb-1">الصفة</legend>
               <div className="flex flex-wrap gap-2">
                 {IMAM_TITLE_OPTIONS.map((t) => {
                   const on = knownTitles.includes(t);
+                  const locked = t === TITLE_KHATEEB && !fields.livesInEurope;
                   return (
-                    <button key={t} type="button" aria-pressed={on} onClick={() => toggleTitle(t)}
-                      className={`px-3.5 py-2 rounded-full border-2 font-bold text-xs transition cursor-pointer ${on ? 'border-emerald-600 bg-emerald-50 text-emerald-900' : 'border-slate-200 bg-white text-slate-600 hover:border-emerald-400'}`}>
+                    <button key={t} type="button" aria-pressed={on} onClick={() => toggleTitle(t)} disabled={locked}
+                      title={locked ? 'متاح للمقيمين في أوروبا فقط' : undefined}
+                      className={`px-3.5 py-2 rounded-full border-2 font-bold text-xs transition ${locked ? 'border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed' : on ? 'border-emerald-600 bg-emerald-50 text-emerald-900 cursor-pointer' : 'border-slate-200 bg-white text-slate-600 hover:border-emerald-400 cursor-pointer'}`}>
                       {on ? '✓ ' : ''}{t}
                     </button>
                   );
                 })}
               </div>
+              <p className="text-xs text-slate-500 leading-relaxed">
+                «إمام وخطيب»: يؤمّ الناس ويخطب الجمعة في المسجد نفسه. «خطيب فقط»: يخطب الجمعة في مساجد مختلفة
+                {fields.livesInEurope ? '، وتظهر له خانات مناطق الخطابة والسيارة.' : ' — متاح للمقيمين في أوروبا فقط (اختر ذلك في القسم 02).'}
+              </p>
               <input type="text" maxLength={120} value={customTitles} onChange={(e) => setCustomTitles(e.target.value)}
                 placeholder="صفة أخرى (اختياري)، مثل: مؤذن، واعظ، مدرّس تجويد — افصل بينها بفاصلة"
                 aria-label="صفات أخرى" className={inputCls} />
@@ -427,6 +503,12 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
               </fieldset>
             )}
 
+          </div>
+
+          {/* SECTION 4: work, photo and contact */}
+          <div className="bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200 space-y-4">
+            <h4 className="font-extrabold text-emerald-950 text-base">04. العمل، الصورة، وبيانات التواصل</h4>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label htmlFor="im-job" className="block font-bold text-slate-700 mb-1">الوظيفة / المهنة الحالية</label>
@@ -498,58 +580,9 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
             </div>
           </div>
 
-          {/* SECTION 2 */}
-          <div className="bg-sky-50/70 p-4 md:p-5 rounded-2xl border border-sky-200 space-y-4">
-            <h4 className="font-extrabold text-sky-950 text-base">02. التأشيرة (الفيزا) والقدوم إلى أوروبا</h4>
-            <label className="flex items-center gap-2.5 bg-white border border-sky-200 rounded-xl p-3 cursor-pointer">
-              <input type="checkbox" checked={!!fields.livesInEurope} onChange={(e) => set('livesInEurope', e.target.checked)}
-                className="w-4 h-4 accent-sky-700" />
-              <span className="font-bold text-sky-950">أنا مقيم حالياً في دولة أوروبية (لا أحتاج إجراءات استقدام)</span>
-            </label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <label htmlFor="im-visa" className="block font-bold text-sky-900 mb-1">هل لديك فيزا شنغن أو إقامة أوروبية حالياً؟</label>
-                <select id="im-visa" value={fields.hasVisa} onChange={(e) => set('hasVisa', e.target.value as 'yes' | 'no')}
-                  className="w-full border border-sky-300 rounded-xl px-3 py-2 bg-white font-bold text-sky-950">
-                  <option value="no">لا — ليس لدي فيزا حالياً</option>
-                  <option value="yes">نعم — لدي فيزا شنغن سارية أو إقامة أوروبية</option>
-                </select>
-              </div>
-              <div>
-                <label htmlFor="im-visa-d" className="block font-bold text-sky-900 mb-1">توضيح حالة التأشيرة أو الجواز</label>
-                <input id="im-visa-d" type="text" maxLength={500} value={fields.visaDetails}
-                  onChange={(e) => set('visaDetails', e.target.value)}
-                  placeholder="مثال: تأشيرة شنغن صالحة حتى 2027 / جواز سفر جاهز"
-                  className="w-full border border-sky-300 rounded-xl px-3 py-2 bg-white" />
-              </div>
-            </div>
-
-            {fields.hasVisa === 'yes' && (
-              <div className="bg-white p-3.5 rounded-xl border border-sky-200 space-y-2">
-                <label htmlFor="im-visa-file" className="block font-bold text-sky-900">
-                  رفع نسخة الفيزا / الإقامة (PDF أو صورة، 5MB كحد أقصى) — تراها الإدارة فقط:
-                </label>
-                <input id="im-visa-file" type="file" accept=".pdf,image/jpeg,image/png,image/webp" onChange={pickDocument(setVisaFile)}
-                  className="w-full border border-slate-200 rounded-lg p-1.5 bg-slate-50 text-xs" />
-                {(visaFile || initialData?.visaFileName) && (
-                  <p className="text-xs text-sky-700 font-bold flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-sky-600" />
-                    <span>{visaFile ? `سيتم رفع: ${visaFile.name}` : `الملف الحالي: ${initialData?.visaFileName}`}</span>
-                    {!visaFile && initialData?.visaFilePath?.startsWith('privateDocs/') && (
-                      <button type="button" className="underline text-sky-800 mr-1 cursor-pointer"
-                        onClick={() => openPrivateDocument(initialData.visaFilePath!).catch((e) => onError(e instanceof Error ? e.message : 'تعذر فتح الملف.'))}>
-                        عرض
-                      </button>
-                    )}
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* SECTION 3 */}
+          {/* SECTION 5 */}
           <div className="bg-emerald-50/70 p-4 md:p-5 rounded-2xl border border-emerald-200 space-y-4">
-            <h4 className="font-extrabold text-emerald-950 text-base">03. الشواهد العلمية، الرواية، واللغات</h4>
+            <h4 className="font-extrabold text-emerald-950 text-base">05. الشواهد العلمية، الرواية، واللغات</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
                 <label htmlFor="im-certs" className="block font-bold text-emerald-900 mb-1">توفر الشواهد والإجازات</label>
@@ -626,7 +659,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
 
           {/* SECTION 4 */}
           <div className="bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200 space-y-4">
-            <h4 className="font-extrabold text-slate-900 text-base">04. فيديو التلاوة والسيرة الذاتية</h4>
+            <h4 className="font-extrabold text-slate-900 text-base">06. فيديو التلاوة والسيرة الذاتية</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label htmlFor="im-yt" className="block font-bold text-slate-700 mb-1">رابط فيديو تلاوتك على يوتيوب (مستحسن)</label>
