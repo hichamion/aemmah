@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AlertTriangle, X, Flag, Loader2 } from 'lucide-react';
 import { useDialog } from '../lib/useDialog';
+import { t } from '../i18n';
 
 interface ReportModalProps {
   target: { type: 'imam' | 'mosque'; id: string; name: string } | null;
@@ -63,12 +64,12 @@ export const ReportModal: React.FC<ReportModalProps> = ({ target, onClose, onCon
             </div>
             <div>
               <h4 className="text-base font-black text-slate-900 font-amiri">
-                {isImam ? `الإبلاغ عن ملف: ${target.name}` : `الإبلاغ عن إعلان: ${target.name}`}
+                {isImam ? t('الإبلاغ عن ملف: {name}', { name: target.name }) : t('الإبلاغ عن إعلان: {name}', { name: target.name })}
               </h4>
-              <p className="text-xs text-slate-500">يُرسل البلاغ إلى الإدارة للمراجعة</p>
+              <p className="text-xs text-slate-500">{t('يُرسل البلاغ إلى الإدارة للمراجعة')}</p>
             </div>
           </div>
-          <button onClick={onClose} aria-label="إغلاق" className="text-slate-400 hover:text-slate-700 cursor-pointer">
+          <button onClick={onClose} aria-label={t('إغلاق')} className="text-slate-400 hover:text-slate-700 cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -76,11 +77,11 @@ export const ReportModal: React.FC<ReportModalProps> = ({ target, onClose, onCon
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="bg-amber-50 border border-amber-200 p-3.5 rounded-2xl text-xs text-amber-900 flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-            <p>يتم التعامل مع البلاغات بسرية، ولا يظهر اسمك لصاحب الملف.</p>
+            <p>{t('يتم التعامل مع البلاغات بسرية، ولا يظهر اسمك لصاحب الملف.')}</p>
           </div>
 
           <fieldset>
-            <legend className="block font-bold text-slate-700 mb-1.5">سبب الإبلاغ *</legend>
+            <legend className="block font-bold text-slate-700 mb-1.5">{t('سبب الإبلاغ *')}</legend>
             <div className="space-y-2">
               {reasons.map((reason) => (
                 <label
@@ -98,7 +99,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ target, onClose, onCon
                     onChange={() => setSelectedReason(reason)}
                     className="text-red-600 focus:ring-red-500"
                   />
-                  <span>{reason}</span>
+                  <span>{t(reason)}</span>
                 </label>
               ))}
             </div>
@@ -106,13 +107,13 @@ export const ReportModal: React.FC<ReportModalProps> = ({ target, onClose, onCon
 
           <div>
             <label htmlFor="rep-details" className="block font-bold text-slate-700 mb-1">
-              تفاصيل إضافية {selectedReason === 'سبب آخر' ? '*' : '(اختياري)'}:
+              {t('تفاصيل إضافية')} {selectedReason === 'سبب آخر' ? '*' : t('(اختياري)')}:
             </label>
             <textarea
               id="rep-details"
               rows={3}
               maxLength={2000}
-              required={selectedReason === 'سبب آخر'}
+              required={selectedReason === t('سبب آخر')}
               value={details}
               onChange={(e) => setDetails(e.target.value)}
               className="w-full border border-slate-300 rounded-xl p-3 bg-white text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-red-400"
@@ -121,7 +122,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ target, onClose, onCon
 
           <div className="flex justify-end items-center gap-2 pt-2 border-t border-slate-100">
             <button type="button" onClick={onClose} className="px-4 py-2 border border-slate-300 rounded-xl font-bold text-slate-600 cursor-pointer">
-              إلغاء
+              {t('إلغاء')}
             </button>
             <button
               type="submit"
@@ -129,7 +130,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({ target, onClose, onCon
               className="bg-red-600 hover:bg-red-500 text-white font-black px-6 py-2 rounded-xl shadow cursor-pointer flex items-center gap-1.5 disabled:opacity-60"
             >
               {sending && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-              <span>🚩 إرسال البلاغ</span>
+              <span>{t('🚩 إرسال البلاغ')}</span>
             </button>
           </div>
         </form>

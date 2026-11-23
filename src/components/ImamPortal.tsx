@@ -10,6 +10,7 @@ import { MosqueMiniCard } from './MiniCards';
 import { RecitationManager } from './Recitation';
 import { useRecitationAudio } from '../lib/db';
 import { Edit3, Eye, Trash2, Plus, UserRound } from 'lucide-react';
+import { t } from '../i18n';
 
 type Tab = 'manage' | 'mosque_ads' | 'applications' | 'inbox';
 
@@ -110,8 +111,8 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
     <section className="flex-1 py-6 sm:py-8 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-6">
       <PageBanner
         {...(activeTab === 'mosque_ads'
-          ? { tone: 'mosques' as const, title: 'إعلانات المساجد', count: activeMosques.length, subtitle: 'المساجد والجمعيات التي تبحث عن إمام — تقدّم إليها', icon: <MosqueIcon /> }
-          : { tone: 'account' as const, title: 'حسابي', subtitle: 'ملفك كإمام، وطلباتك، ورسائلك', icon: <UserRound /> })}
+          ? { tone: 'mosques' as const, title: t('إعلانات المساجد'), count: activeMosques.length, subtitle: t('المساجد والجمعيات التي تبحث عن إمام — تقدّم إليها'), icon: <MosqueIcon /> }
+          : { tone: 'account' as const, title: t('حسابي'), subtitle: t('ملفك كإمام، وطلباتك، ورسائلك'), icon: <UserRound /> })}
       >
           {(currentRole === 'mosque' || currentRole === 'admin' || currentRole === 'visitor') && (
             <button
@@ -119,23 +120,23 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
               className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-[11px] sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2.5 rounded-full shadow transition cursor-pointer flex items-center gap-1.5 whitespace-nowrap"
             >
               <Plus className="w-4 h-4" />
-              <span>إضافة إعلان مسجد</span>
+              <span>{t('إضافة إعلان مسجد')}</span>
             </button>
           )}
 
           {isImam && (
             <>
               <button onClick={() => setActiveTab('mosque_ads')} className={tabClass('mosque_ads')}>
-                إعلانات المساجد
+                {t('إعلانات المساجد')}
               </button>
               <button onClick={() => setActiveTab('manage')} className={tabClass('manage')}>
-                ملفي الشخصي كإمام
+                {t('ملفي الشخصي كإمام')}
               </button>
               <button onClick={() => setActiveTab('applications')} className={tabClass('applications')}>
-                طلباتي ({myApplications.length})
+                {t('طلباتي ({n})', { n: myApplications.length })}
               </button>
               <button onClick={() => setActiveTab('inbox')} className={`${tabClass('inbox')} flex items-center gap-1.5`}>
-                <span>علبة الرسائل</span>
+                <span>{t('علبة الرسائل')}</span>
                 {unreadForMe > 0 && (
                   <span className="bg-red-500 text-white text-xs px-1.5 rounded-full font-black">{unreadForMe}</span>
                 )}
@@ -148,27 +149,27 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
       {activeTab === 'manage' && isImam && !myImam && (
         <PublishCard
           state="none"
-          title="انشر ملفك كإمام للمساجد"
-          text="أنشئ سيرتك (الرواية، الخبرات، الشهادات، عيّنة التلاوة) لتراها المساجد والجمعيات بعد مراجعة الإدارة، وتستطيع التقديم على إعلاناتها."
-          action={{ label: 'إنشاء ملفي ونشره', onClick: onCreateOrEditMyProfile }}
+          title={t('انشر ملفك كإمام للمساجد')}
+          text={t('أنشئ سيرتك (الرواية، الخبرات، الشهادات، عيّنة التلاوة) لتراها المساجد والجمعيات بعد مراجعة الإدارة، وتستطيع التقديم على إعلاناتها.')}
+          action={{ label: t('إنشاء ملفي ونشره'), onClick: onCreateOrEditMyProfile }}
         />
       )}
 
       {activeTab === 'manage' && isImam && myImam && (
         <PublishCard
           state={myImam.availabilityState === 'paused' ? 'unpublished' : myImam.approvalStatus === 'approved' ? 'published' : myImam.approvalStatus === 'rejected' ? 'rejected' : 'pending'}
-          title={myImam.availabilityState !== 'paused' && myImam.approvalStatus === 'approved' ? 'ملفك منشور للمساجد' : undefined}
+          title={myImam.availabilityState !== 'paused' && myImam.approvalStatus === 'approved' ? t('ملفك منشور للمساجد') : undefined}
           text={
             myImam.availabilityState === 'paused'
-              ? 'ملفك محفوظ لكنه مخفي عن المساجد. اضغط «نشر ملفي» ليظهر من جديد.'
+              ? t('ملفك محفوظ لكنه مخفي عن المساجد. اضغط «نشر ملفي» ليظهر من جديد.')
               : myImam.approvalStatus === 'approved'
-              ? 'تراه المساجد والجمعيات في قائمة الأئمة المتاحين، ويمكنها التواصل معك.'
+              ? t('تراه المساجد والجمعيات في قائمة الأئمة المتاحين، ويمكنها التواصل معك.')
               : myImam.approvalStatus === 'rejected'
-              ? 'راسل الإدارة لمعرفة السبب، ثم عدّل ملفك.'
-              : 'سيظهر ملفك للمساجد فور موافقة الإدارة عليه.'
+              ? t('راسل الإدارة لمعرفة السبب، ثم عدّل ملفك.')
+              : t('سيظهر ملفك للمساجد فور موافقة الإدارة عليه.')
           }
-          action={myImam.availabilityState === 'paused' ? { label: 'نشر ملفي للمساجد', onClick: () => onUpdateImamStatus(myImam.id, 'available_now') } : undefined}
-          secondary={myImam.availabilityState !== 'paused' ? { label: 'إيقاف النشر مؤقتاً', onClick: () => onUpdateImamStatus(myImam.id, 'paused') } : undefined}
+          action={myImam.availabilityState === 'paused' ? { label: t('نشر ملفي للمساجد'), onClick: () => onUpdateImamStatus(myImam.id, 'available_now') } : undefined}
+          secondary={myImam.availabilityState !== 'paused' ? { label: t('إيقاف النشر مؤقتاً'), onClick: () => onUpdateImamStatus(myImam.id, 'paused') } : undefined}
         />
       )}
 
@@ -176,8 +177,8 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
         <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-8 shadow-2xs space-y-6">
           <div className="flex flex-wrap justify-between items-center gap-4 pb-4 border-b border-slate-100">
             <div>
-              <h3 className="text-lg font-black text-slate-900">ملفي الشخصي كإمام ({myImam.name})</h3>
-              <p className="text-xs text-slate-500">تحكم في بياناتك وسيرتك الذاتية وحالة تفرغك أمام المساجد</p>
+              <h3 className="text-lg font-black text-slate-900">{t('ملفي الشخصي كإمام ({name})', { name: myImam.name })}</h3>
+              <p className="text-xs text-slate-500">{t('تحكم في بياناتك وسيرتك الذاتية وحالة تفرغك أمام المساجد')}</p>
             </div>
           </div>
 
@@ -191,7 +192,7 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
               <div className="space-y-1.5">
                 <h4 className="font-black text-xl text-white font-amiri">{myImam.name}</h4>
                 <p className="text-xs text-slate-300">
-                  {myImam.country} · العمر: {myImam.age} سنة · الرواية: {myImam.riwaya}
+                  {myImam.country} · {t('العمر: {n} سنة', { n: myImam.age })} · {t('الرواية:')} {t(myImam.riwaya)}
                 </p>
                 <p className="text-xs text-emerald-300">{myImam.degree}</p>
               </div>
@@ -203,34 +204,34 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
                 className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer"
               >
                 <Edit3 className="w-3.5 h-3.5" />
-                <span>تعديل بيانات ملفي</span>
+                <span>{t('تعديل بيانات ملفي')}</span>
               </button>
               <button
                 onClick={() => onViewImamFull(myImam)}
                 className="bg-slate-800 hover:bg-slate-700 text-white font-bold px-4 py-2.5 rounded-xl text-xs flex items-center gap-1.5 cursor-pointer"
               >
                 <Eye className="w-3.5 h-3.5" />
-                <span>معاينة الملف</span>
+                <span>{t('معاينة الملف')}</span>
               </button>
             </div>
           </div>
 
           {myImam.availabilityState !== 'paused' && (
             <div className="space-y-2">
-              <p className="text-sm font-black text-slate-800">حالة التفرغ التي تراها المساجد:</p>
+              <p className="text-sm font-black text-slate-800">{t('حالة التفرغ التي تراها المساجد:')}</p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                 {(
                   [
-                    ['available_now', 'متاح حالياً', 'للإمامة الدائمة أو لرمضان', 'border-emerald-600 bg-emerald-50 text-emerald-950'],
-                    ['ramadan_only', 'متاح لرمضان فقط', 'صلاة التراويح وشهر رمضان', 'border-sky-600 bg-sky-50 text-sky-950'],
-                    ['busy_ramadan', 'ملتزم في رمضان ومتاح بعده', 'للتعاقد الرسمي بعد العيد', 'border-amber-500 bg-amber-50 text-amber-950'],
+                    ['available_now', t('متاح حالياً'), t('للإمامة الدائمة أو لرمضان'), 'border-emerald-600 bg-emerald-50 text-emerald-950'],
+                    ['ramadan_only', t('متاح لرمضان فقط'), t('صلاة التراويح وشهر رمضان'), 'border-sky-600 bg-sky-50 text-sky-950'],
+                    ['busy_ramadan', t('ملتزم في رمضان ومتاح بعده'), t('للتعاقد الرسمي بعد العيد'), 'border-amber-500 bg-amber-50 text-amber-950'],
                   ] as [AvailabilityState, string, string, string][]
                 ).map(([state, title, hint, activeCls]) => (
                   <button
                     key={state}
                     onClick={() => onUpdateImamStatus(myImam.id, state)}
                     aria-pressed={myImam.availabilityState === state}
-                    className={`p-4 rounded-2xl border-2 text-right transition cursor-pointer ${
+                    className={`p-4 rounded-2xl border-2 text-start transition cursor-pointer ${
                       myImam.availabilityState === state ? `${activeCls} font-black` : 'border-slate-200 hover:bg-slate-50 text-slate-700'
                     }`}
                   >
@@ -249,8 +250,8 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
                 maxLength={300}
                 value={quickRamadanNote}
                 onChange={(e) => setQuickRamadanNote(e.target.value)}
-                placeholder="أين أنت ملتزم في رمضان؟"
-                aria-label="مكان الالتزام في رمضان"
+                placeholder={t('أين أنت ملتزم في رمضان؟')}
+                aria-label={t('مكان الالتزام في رمضان')}
                 className="sm:col-span-5 border border-amber-300 rounded-xl px-3 py-2 bg-white"
               />
               <input
@@ -258,21 +259,21 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
                 maxLength={100}
                 value={quickAfterDate}
                 onChange={(e) => setQuickAfterDate(e.target.value)}
-                placeholder="تاريخ التفرغ بعد رمضان"
-                aria-label="تاريخ التفرغ بعد رمضان"
+                placeholder={t('تاريخ التفرغ بعد رمضان')}
+                aria-label={t('تاريخ التفرغ بعد رمضان')}
                 className="sm:col-span-4 border border-amber-300 rounded-xl px-3 py-2 bg-white"
               />
               <button
                 onClick={() => onSaveQuickRamadan(myImam.id, quickRamadanNote, quickAfterDate)}
                 className="sm:col-span-3 bg-amber-500 text-slate-950 font-black py-2 px-4 rounded-xl cursor-pointer"
               >
-                حفظ التفاصيل
+                {t('حفظ التفاصيل')}
               </button>
             </div>
           )}
           <div className="pt-3 border-t border-slate-100 flex justify-end">
             <button onClick={() => onDeleteImam(myImam)} className="inline-flex items-center gap-1.5 text-xs font-bold text-red-700 hover:underline cursor-pointer">
-              <Trash2 className="w-3.5 h-3.5" /> حذف ملفي نهائياً
+              <Trash2 className="w-3.5 h-3.5" /> {t('حذف ملفي نهائياً')}
             </button>
           </div>
         </div>
@@ -291,15 +292,15 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
       {activeTab === 'mosque_ads' && (
         <div className="space-y-5">
           <div className="bg-white border border-slate-200 p-4 rounded-2xl flex flex-wrap justify-between items-center gap-3 text-xs">
-            <span className="font-bold text-slate-700">المساجد المتاحة حالياً للتقديم ({filteredMosques.length})</span>
+            <span className="font-bold text-slate-700">{t('المساجد المتاحة حالياً للتقديم ({n})', { n: filteredMosques.length })}</span>
             <label className="flex items-center gap-2">
-              <span className="font-bold text-slate-600">الدولة:</span>
+              <span className="font-bold text-slate-600">{t('الدولة:')}</span>
               <select
                 value={countryFilter}
                 onChange={(e) => setCountryFilter(e.target.value)}
                 className="border border-slate-300 rounded-xl px-3 py-1.5 bg-white font-bold text-slate-800"
               >
-                <option value="all">جميع الدول ({activeMosques.length})</option>
+                <option value="all">{t('جميع الدول ({n})', { n: activeMosques.length })}</option>
                 {countries.map((c) => (
                   <option key={c} value={c}>
                     {c}
@@ -312,8 +313,8 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
           {filteredMosques.length === 0 && (
             <div className="bg-white border border-slate-200 rounded-2xl p-10 text-center text-xs text-slate-500">
               {activeMosques.length === 0
-                ? 'لا توجد إعلانات مساجد منشورة بعد. إن كنت تمثّل مسجداً، انشر أول إعلان.'
-                : 'لا توجد إعلانات في هذه الدولة حالياً.'}
+                ? t('لا توجد إعلانات مساجد منشورة بعد. إن كنت تمثّل مسجداً، انشر أول إعلان.')
+                : t('لا توجد إعلانات في هذه الدولة حالياً.')}
             </div>
           )}
 
@@ -328,9 +329,9 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
                   onReport={() => onReportMosque(m)}
                   apply={
                     isImam
-                      ? { label: alreadyApplied ? 'تم التقديم' : 'التقديم', done: alreadyApplied, onClick: () => onApplyToMosque(m) }
+                      ? { label: alreadyApplied ? t('تم التقديم') : t('التقديم'), done: alreadyApplied, onClick: () => onApplyToMosque(m) }
                       : currentRole === 'visitor'
-                      ? { label: 'سجّل دخولك للتقديم', done: false, onClick: onOpenAuthModal }
+                      ? { label: t('سجّل دخولك للتقديم'), done: false, onClick: onOpenAuthModal }
                       : undefined
                   }
                   contactBlock={
@@ -340,8 +341,8 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
                       canView={canSeeMosqueContacts}
                       lockedText={
                         isLoggedIn
-                          ? 'بيانات تواصل المسجد تظهر للأئمة الذين اعتمدت الإدارة ملفاتهم'
-                          : 'سجّل دخولك كإمام لإظهار بيانات تواصل المسجد'
+                          ? t('بيانات تواصل المسجد تظهر للأئمة الذين اعتمدت الإدارة ملفاتهم')
+                          : t('سجّل دخولك كإمام لإظهار بيانات تواصل المسجد')
                       }
                       onLockedClick={isLoggedIn ? undefined : onOpenAuthModal}
                     />
@@ -356,9 +357,9 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
       {/* TAB: MY APPLICATIONS */}
       {activeTab === 'applications' && isImam && (
         <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4">
-          <h3 className="text-base font-black text-slate-900">طلبات الترشح المرسلة ({myApplications.length})</h3>
+          <h3 className="text-base font-black text-slate-900">{t('طلبات الترشح المرسلة ({n})', { n: myApplications.length })}</h3>
           {myApplications.length === 0 ? (
-            <p className="text-xs text-slate-500 py-6 text-center">لم ترسل أي طلبات ترشح بعد.</p>
+            <p className="text-xs text-slate-500 py-6 text-center">{t('لم ترسل أي طلبات ترشح بعد.')}</p>
           ) : (
             <div className="space-y-3">
               {myApplications.map((app) => (
@@ -370,7 +371,7 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
                     <h4 className="font-bold text-slate-900">{app.mosqueName}</h4>
                     <p className="text-slate-500 text-xs">{formatDate(app.appliedAt)}</p>
                   </div>
-                  <span className="text-emerald-800 font-bold text-xs">{APPLICATION_STATUS_LABEL[app.status]}</span>
+                  <span className="text-emerald-800 font-bold text-xs">{t(APPLICATION_STATUS_LABEL[app.status])}</span>
                 </div>
               ))}
             </div>

@@ -9,6 +9,7 @@ import { useDialog } from '../lib/useDialog';
 import { useContact } from '../lib/db';
 import { downloadPdf, downloadPng, renderNodeToPng, shareImage, needsSecondTap, pdfBlob } from '../lib/cvExport';
 import { ExportReadySheet, ReadyFile } from './ExportReadySheet';
+import { t } from '../i18n';
 
 interface MosqueFullModalProps {
   mosque: MosqueJob | null;
@@ -76,7 +77,7 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
       if (!node) throw new Error('no node');
       for (let i = 0; i < 30 && !node.querySelector('img[data-qr]'); i++) await new Promise((r) => setTimeout(r, 100));
       const png = await renderNodeToPng(node);
-      const shareText = `${mosque.mosqueName} (${mosque.city}) — ${mosque.lookingType}.\nللتقديم عبر منصة أئمة التي تربط الأئمة بالمساجد في أوروبا:\n${shareUrl || `https://${SITE_URL}/`}`;
+      const shareText = `${mosque.mosqueName} (${mosque.city}) — ${t(mosque.lookingType)}.\n${t('للتقديم عبر منصة أئمة التي تربط الأئمة بالمساجد في أوروبا:')}\n${shareUrl || `https://${SITE_URL}/`}`;
       // Phones: hand the file over with a second tap (a late download is blocked by the browser).
       if (needsSecondTap()) {
         setReady(kind === 'pdf' ? { blob: await pdfBlob(png), fileName: `${fileName}.pdf` } : { blob: png, fileName: `${fileName}.png`, text: kind === 'share' ? shareText : undefined });
@@ -88,29 +89,29 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
         await shareImage(
           png,
           fileName,
-          `${mosque.mosqueName} (${mosque.city}) — ${mosque.lookingType}.\nللتقديم عبر منصة أئمة التي تربط الأئمة بالمساجد في أوروبا:`,
+          `${mosque.mosqueName} (${mosque.city}) — ${t(mosque.lookingType)}.\n${t('للتقديم عبر منصة أئمة التي تربط الأئمة بالمساجد في أوروبا:')}`,
           shareUrl || `https://${SITE_URL}/`
         );
     } catch (err) {
       console.error(err);
-      onError?.('تعذر إنشاء ملف الإعلان. حاول مرة أخرى.');
+      onError?.(t('تعذر إنشاء ملف الإعلان. حاول مرة أخرى.'));
     } finally {
       setExporting(null);
     }
   };
 
   const contactSlot = canViewContact ? (
-    <ContactBlock kind="mosque" id={mosque.id} canView lockedText="تعذر تحميل بيانات التواصل" />
+    <ContactBlock kind="mosque" id={mosque.id} canView lockedText={t('تعذر تحميل بيانات التواصل')} />
   ) : (
     <div className="glass rounded-2xl p-3.5 space-y-2 text-sm">
       <p className="font-black text-amber-300 flex items-center gap-1.5">
         <Lock className="w-4 h-4" />
-        بيانات التواصل محمية
+        {t('بيانات التواصل محمية')}
       </p>
       <p className="text-xs text-white/80 leading-relaxed">
         {currentRole === 'imam'
-          ? 'تظهر لك أرقام المسجد ومسؤول التواصل بعد أن توافق الإدارة على ملفك كإمام.'
-          : 'لا تظهر أرقام المسجد ومسؤول التواصل إلا للأئمة الذين اعتمدت الإدارة ملفاتهم.'}
+          ? t('تظهر لك أرقام المسجد ومسؤول التواصل بعد أن توافق الإدارة على ملفك كإمام.')
+          : t('لا تظهر أرقام المسجد ومسؤول التواصل إلا للأئمة الذين اعتمدت الإدارة ملفاتهم.')}
       </p>
       {currentRole === 'visitor' && (
         <button
@@ -120,7 +121,7 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
           }}
           className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black px-4 py-2 rounded-full text-xs cursor-pointer"
         >
-          تسجيل الدخول
+          {t('تسجيل الدخول')}
         </button>
       )}
     </div>
@@ -138,7 +139,7 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
       ref={dialogRef}
       tabIndex={-1}
       aria-modal="true"
-      aria-label={`إعلان ${mosque.mosqueName}`}
+      aria-label={t('إعلان {name}', { name: mosque.mosqueName })}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div className="bg-[#f6faf7] rounded-none sm:rounded-[2rem] max-w-4xl w-full overflow-hidden shadow-2xl h-[100dvh] sm:h-auto sm:my-4 max-h-[100dvh] sm:max-h-[94dvh] flex flex-col">
@@ -148,27 +149,27 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
             <button onClick={() => handleExport('share')} disabled={!!exporting} className={`${tbtn} bg-[#25D366] text-white shadow`}>
               {exporting === 'share' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
               <span>
-                <span className="hidden sm:inline">مشاركة </span><span className="max-[359px]:sr-only">واتساب</span>
+                <span className="hidden sm:inline">{t('مشاركة')} </span><span className="max-[359px]:sr-only">{t('واتساب')}</span>
               </span>
             </button>
-            <button onClick={() => handleExport('png')} disabled={!!exporting} className={`${tbtn} glass text-white`} aria-label="تحميل كصورة">
+            <button onClick={() => handleExport('png')} disabled={!!exporting} className={`${tbtn} glass text-white`} aria-label={t('تحميل كصورة')}>
               {exporting === 'png' ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageDown className="w-4 h-4" />}
-              <span className="hidden sm:inline">صورة</span>
+              <span className="hidden sm:inline">{t('صورة')}</span>
             </button>
-            <button onClick={() => handleExport('pdf')} disabled={!!exporting} className={`${tbtn} glass text-white`} aria-label="تحميل PDF">
+            <button onClick={() => handleExport('pdf')} disabled={!!exporting} className={`${tbtn} glass text-white`} aria-label={t('تحميل PDF')}>
               {exporting === 'pdf' ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
               PDF
             </button>
             {shareUrl && (
-              <button onClick={handleCopyLink} className={`${tbtn} glass text-white`} title="نسخ رابط الإعلان">
+              <button onClick={handleCopyLink} className={`${tbtn} glass text-white`} title={t('نسخ رابط الإعلان')}>
                 <Link2 className="w-4 h-4" />
-                <span className="hidden sm:inline">نسخ الرابط</span>
+                <span className="hidden sm:inline">{t('نسخ الرابط')}</span>
               </button>
             )}
           </div>
           <button
             onClick={onClose}
-            aria-label="إغلاق"
+            aria-label={t('إغلاق')}
             className="relative z-10 w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-full glass flex items-center justify-center cursor-pointer"
           >
             <X className="w-5 h-5" />
@@ -178,7 +179,7 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
         <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3 sm:p-5">
           {!isApproved && (
             <p className="mb-3 text-xs font-bold text-amber-900 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
-              {mosque.approvalStatus === 'pending' ? 'هذا الإعلان قيد المراجعة ولا يظهر للعموم بعد.' : 'هذا الإعلان غير معتمد.'}
+              {mosque.approvalStatus === 'pending' ? t('هذا الإعلان قيد المراجعة ولا يظهر للعموم بعد.') : t('هذا الإعلان غير معتمد.')}
             </p>
           )}
           <div className="shadow-xl rounded-3xl">
@@ -205,7 +206,7 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
                 className={`${btn} bg-amber-50 text-amber-900 border border-amber-200 hover:bg-amber-100`}
               >
                 <Edit3 className="w-4 h-4" />
-                تعديل الإعلان
+                {t('تعديل الإعلان')}
               </button>
             )}
             {currentRole !== 'admin' && !canEdit && (
@@ -217,7 +218,7 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
                 className={`${btn} bg-red-50 text-red-700 border border-red-200 hover:bg-red-100`}
               >
                 <Flag className="w-4 h-4" />
-                إبلاغ الإدارة
+                {t('إبلاغ الإدارة')}
               </button>
             )}
           </div>
@@ -232,7 +233,7 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
                 className={`${btn} ${alreadyApplied ? 'bg-slate-100 text-slate-500' : 'bg-[#0b5e37] text-white hover:bg-[#12804c] shadow'}`}
               >
                 {alreadyApplied ? <Check className="w-4 h-4" /> : <Send className="w-4 h-4" />}
-                {alreadyApplied ? 'تم التقديم' : 'التقديم لهذا المسجد'}
+                {alreadyApplied ? t('تم التقديم') : t('التقديم لهذا المسجد')}
               </button>
             )}
             {currentRole === 'visitor' && (
@@ -244,11 +245,11 @@ export const MosqueFullModal: React.FC<MosqueFullModalProps> = ({
                 className={`${btn} bg-amber-400 text-slate-950 hover:bg-amber-300 shadow`}
               >
                 <Lock className="w-4 h-4" />
-                سجّل دخولك للتقديم
+                {t('سجّل دخولك للتقديم')}
               </button>
             )}
             <button onClick={onClose} className={`${btn} border border-slate-300 text-slate-600 hover:bg-slate-100`}>
-              إغلاق
+              {t('إغلاق')}
             </button>
           </div>
         </div>

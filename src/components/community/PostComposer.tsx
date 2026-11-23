@@ -14,6 +14,7 @@ import {
 import { applyFormat, RichText } from '../../lib/richtext';
 import { PostTypeGrid } from './PostParts';
 import { useDialog } from '../../lib/useDialog';
+import { t } from '../../i18n';
 
 interface Props {
   open: boolean;
@@ -31,7 +32,7 @@ const ExistingThumb: React.FC<{ id: string; onRemove: () => void }> = ({ id, onR
   return (
     <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-slate-100">
       {src && <img src={src} alt="" className="w-full h-full object-cover" />}
-      <button type="button" onClick={onRemove} aria-label="حذف الصورة" className="absolute top-1 left-1 bg-black/60 text-white rounded-full p-1 cursor-pointer">
+      <button type="button" onClick={onRemove} aria-label={t('حذف الصورة')} className="absolute top-1 end-1 bg-black/60 text-white rounded-full p-1 cursor-pointer">
         <X className="w-3.5 h-3.5" />
       </button>
     </div>
@@ -99,7 +100,7 @@ export const PostComposer: React.FC<Props> = ({ open, initialType, existing, set
 
   const useTemplate = () => {
     if (!tpl) return;
-    if ((title.trim() || body.trim()) && !window.confirm('سيُستبدل العنوان والنص الحاليان بالنموذج. متابعة؟')) return;
+    if ((title.trim() || body.trim()) && !window.confirm(t('سيُستبدل العنوان والنص الحاليان بالنموذج. متابعة؟'))) return;
     setTitle(tpl.title);
     setBody(tpl.body);
     if (type === 'poll' && tpl.pollOptions?.length) setPollOptions(tpl.pollOptions.slice(0, 6));
@@ -132,19 +133,19 @@ export const PostComposer: React.FC<Props> = ({ open, initialType, existing, set
 
   const submit = async (status: 'draft' | 'published') => {
     setProblem('');
-    if (!title.trim()) return setProblem('اكتب عنواناً للمنشور.');
-    if (status === 'published' && !body.trim() && imageCount === 0) return setProblem('اكتب نص المنشور أو أرفق صورة.');
-    if (type === 'poll' && pollOptions.filter((o) => o.trim()).length < 2) return setProblem('الاستطلاع يحتاج خيارين على الأقل.');
+    if (!title.trim()) return setProblem(t('اكتب عنواناً للمنشور.'));
+    if (status === 'published' && !body.trim() && imageCount === 0) return setProblem(t('اكتب نص المنشور أو أرفق صورة.'));
+    if (type === 'poll' && pollOptions.filter((o) => o.trim()).length < 2) return setProblem(t('الاستطلاع يحتاج خيارين على الأقل.'));
     setBusy(status);
     try {
       const draft: PostDraft = { type, category, title, body, keepImages, newImages, keepFiles, newFiles, pollOptions };
       const id = await savePost({ existing, draft, status, author });
-      onSaved(status === 'draft' ? 'حُفظت المسودة.' : existing ? 'تم تحديث المنشور.' : 'تم نشر المنشور.', id);
+      onSaved(status === 'draft' ? t('حُفظت المسودة.') : existing ? t('تم تحديث المنشور.') : t('تم نشر المنشور.'), id);
       onClose();
     } catch (err) {
       console.error(err);
       const code = (err as { code?: string }).code || '';
-      onError(code.includes('permission') ? 'لا يمكنك النشر الآن (قد يكون النشر موقوفاً مؤقتاً، أو ملفك غير معتمد بعد).' : 'تعذر حفظ المنشور. حاول مجدداً.');
+      onError(code.includes('permission') ? t('لا يمكنك النشر الآن (قد يكون النشر موقوفاً مؤقتاً، أو ملفك غير معتمد بعد).') : t('تعذر حفظ المنشور. حاول مجدداً.'));
     } finally {
       setBusy('');
     }
@@ -155,11 +156,11 @@ export const PostComposer: React.FC<Props> = ({ open, initialType, existing, set
 
   return (
     <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto"
-      role="dialog" aria-modal="true" aria-label="منشور جديد" ref={dialogRef} tabIndex={-1}>
+      role="dialog" aria-modal="true" aria-label={t('منشور جديد')} ref={dialogRef} tabIndex={-1}>
       <div className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl my-4 overflow-hidden">
         <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 bg-gradient-to-l from-emerald-50 to-white">
-          <h2 className="font-black text-lg text-emerald-950">{existing ? 'تعديل المنشور' : 'منشور جديد في ملتقى الأئمة'}</h2>
-          <button onClick={onClose} aria-label="إغلاق" className="p-2 rounded-full hover:bg-slate-100 cursor-pointer"><X className="w-5 h-5" /></button>
+          <h2 className="font-black text-lg text-emerald-950">{existing ? t('تعديل المنشور') : t('منشور جديد في ملتقى الأئمة')}</h2>
+          <button onClick={onClose} aria-label={t('إغلاق')} className="p-2 rounded-full hover:bg-slate-100 cursor-pointer"><X className="w-5 h-5" /></button>
         </div>
 
         <div className="p-5 space-y-4 max-h-[75dvh] overflow-y-auto">
@@ -167,49 +168,49 @@ export const PostComposer: React.FC<Props> = ({ open, initialType, existing, set
 
           {tpl && (
             <button type="button" onClick={useTemplate} className="inline-flex items-center gap-1.5 text-xs font-black text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full cursor-pointer">
-              <Wand2 className="w-3.5 h-3.5" /> استخدم النموذج الجاهز لهذا النوع
+              <Wand2 className="w-3.5 h-3.5" /> {t('استخدم النموذج الجاهز لهذا النوع')}
             </button>
           )}
 
-          <input className={`${field} w-full font-bold`} maxLength={200} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="عنوان المنشور" aria-label="عنوان المنشور" />
+          <input className={`${field} w-full font-bold`} maxLength={200} value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t('عنوان المنشور')} aria-label={t('عنوان المنشور')} />
 
           <div className="border border-slate-300 rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-emerald-600">
             <div className="flex flex-wrap items-center gap-0.5 px-2 py-1 border-b border-slate-200 bg-slate-50">
-              <button type="button" className={tool} onClick={() => format('h2')} title="عنوان"><Heading2 className="w-4 h-4" /></button>
-              <button type="button" className={tool} onClick={() => format('h3')} title="عنوان فرعي"><Heading3 className="w-4 h-4" /></button>
-              <button type="button" className={tool} onClick={() => format('bold')} title="عريض"><Bold className="w-4 h-4" /></button>
-              <button type="button" className={tool} onClick={() => format('ul')} title="قائمة"><List className="w-4 h-4" /></button>
-              <button type="button" className={tool} onClick={() => format('ol')} title="قائمة مرقمة"><ListOrdered className="w-4 h-4" /></button>
-              <button type="button" className={tool} onClick={() => format('quote')} title="اقتباس"><Quote className="w-4 h-4" /></button>
+              <button type="button" className={tool} onClick={() => format('h2')} title={t('عنوان')}><Heading2 className="w-4 h-4" /></button>
+              <button type="button" className={tool} onClick={() => format('h3')} title={t('عنوان فرعي')}><Heading3 className="w-4 h-4" /></button>
+              <button type="button" className={tool} onClick={() => format('bold')} title={t('عريض')}><Bold className="w-4 h-4" /></button>
+              <button type="button" className={tool} onClick={() => format('ul')} title={t('قائمة')}><List className="w-4 h-4" /></button>
+              <button type="button" className={tool} onClick={() => format('ol')} title={t('قائمة مرقمة')}><ListOrdered className="w-4 h-4" /></button>
+              <button type="button" className={tool} onClick={() => format('quote')} title={t('اقتباس')}><Quote className="w-4 h-4" /></button>
               <span className="flex-1" />
               <button type="button" onClick={() => setPreview((v) => !v)} className="text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-slate-100 cursor-pointer">
-                {preview ? 'تحرير' : 'معاينة'}
+                {preview ? t('تحرير') : t('معاينة')}
               </button>
             </div>
             {preview ? (
               <div className="p-4 min-h-56 bg-white"><RichText text={body || '—'} /></div>
             ) : (
               <textarea ref={bodyRef} value={body} onChange={(e) => setBody(e.target.value)} rows={12} maxLength={60000}
-                placeholder="اكتب هنا… استعمل الأزرار أعلاه للعناوين والقوائم." className="w-full p-4 text-sm leading-loose outline-none resize-y min-h-56" aria-label="نص المنشور" />
+                placeholder={t('اكتب هنا… استعمل الأزرار أعلاه للعناوين والقوائم.')} className="w-full p-4 text-sm leading-loose outline-none resize-y min-h-56" aria-label={t('نص المنشور')} />
             )}
           </div>
 
           {type === 'poll' && (
             <fieldset className="space-y-2 bg-sky-50/60 border border-sky-200 rounded-2xl p-4">
-              <legend className="font-black text-sky-950 text-sm px-1">خيارات الاستطلاع (2–6)</legend>
+              <legend className="font-black text-sky-950 text-sm px-1">{t('خيارات الاستطلاع (2–6)')}</legend>
               {pollOptions.map((o, i) => (
                 <div key={i} className="flex gap-2">
-                  <input className={field} maxLength={120} value={o} placeholder={`الخيار ${i + 1}`}
+                  <input className={field} maxLength={120} value={o} placeholder={t('الخيار {n}', { n: i + 1 })}
                     onChange={(e) => setPollOptions((prev) => prev.map((x, j) => (j === i ? e.target.value : x)))} />
                   {pollOptions.length > 2 && (
-                    <button type="button" onClick={() => setPollOptions((prev) => prev.filter((_, j) => j !== i))} className="p-2 text-red-600 cursor-pointer" aria-label="حذف الخيار">
+                    <button type="button" onClick={() => setPollOptions((prev) => prev.filter((_, j) => j !== i))} className="p-2 text-red-600 cursor-pointer" aria-label={t('حذف الخيار')}>
                       <Trash2 className="w-4 h-4" />
                     </button>
                   )}
                 </div>
               ))}
               {pollOptions.length < 6 && (
-                <button type="button" onClick={() => setPollOptions((p) => [...p, ''])} className="text-xs font-bold text-sky-800 cursor-pointer">+ إضافة خيار</button>
+                <button type="button" onClick={() => setPollOptions((p) => [...p, ''])} className="text-xs font-bold text-sky-800 cursor-pointer">{t('+ إضافة خيار')}</button>
               )}
             </fieldset>
           )}
@@ -218,12 +219,12 @@ export const PostComposer: React.FC<Props> = ({ open, initialType, existing, set
           <div className="flex flex-wrap gap-2">
             <label className={`inline-flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-full border border-slate-300 cursor-pointer ${imageCount >= MAX_POST_IMAGES ? 'opacity-50 pointer-events-none' : 'hover:bg-slate-50'}`}>
               {busy === 'images' ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImagePlus className="w-4 h-4 text-emerald-700" />}
-              صور ({imageCount}/{MAX_POST_IMAGES})
+              {t('صور ({n}/{max})', { n: imageCount, max: MAX_POST_IMAGES })}
               <input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={onImages} className="hidden" />
             </label>
             <label className={`inline-flex items-center gap-1.5 text-sm font-bold px-4 py-2 rounded-full border border-slate-300 cursor-pointer ${keepFiles.length + newFiles.length >= MAX_POST_FILES ? 'opacity-50 pointer-events-none' : 'hover:bg-slate-50'}`}>
               <FileText className="w-4 h-4 text-red-700" />
-              ملفات PDF ({keepFiles.length + newFiles.length}/{MAX_POST_FILES}، حتى 2MB)
+              {t('ملفات PDF ({n}/{max}، حتى 2MB)', { n: keepFiles.length + newFiles.length, max: MAX_POST_FILES })}
               <input type="file" accept="application/pdf,.pdf" multiple onChange={onFiles} className="hidden" />
             </label>
           </div>
@@ -234,7 +235,7 @@ export const PostComposer: React.FC<Props> = ({ open, initialType, existing, set
               {newImages.map((src, i) => (
                 <div key={i} className="relative w-24 h-24 rounded-xl overflow-hidden">
                   <img src={src} alt="" className="w-full h-full object-cover" />
-                  <button type="button" onClick={() => setNewImages((p) => p.filter((_, j) => j !== i))} aria-label="حذف الصورة" className="absolute top-1 left-1 bg-black/60 text-white rounded-full p-1 cursor-pointer">
+                  <button type="button" onClick={() => setNewImages((p) => p.filter((_, j) => j !== i))} aria-label={t('حذف الصورة')} className="absolute top-1 end-1 bg-black/60 text-white rounded-full p-1 cursor-pointer">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -247,13 +248,13 @@ export const PostComposer: React.FC<Props> = ({ open, initialType, existing, set
               {keepFiles.map((f) => (
                 <li key={f.id} className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-2">
                   <FileText className="w-4 h-4 text-red-700" /> <span className="flex-1 truncate">{f.name}</span>
-                  <button type="button" onClick={() => setKeepFiles((p) => p.filter((x) => x.id !== f.id))} className="text-red-600 cursor-pointer" aria-label="حذف الملف"><Trash2 className="w-4 h-4" /></button>
+                  <button type="button" onClick={() => setKeepFiles((p) => p.filter((x) => x.id !== f.id))} className="text-red-600 cursor-pointer" aria-label={t('حذف الملف')}><Trash2 className="w-4 h-4" /></button>
                 </li>
               ))}
               {newFiles.map((f, i) => (
                 <li key={i} className="flex items-center gap-2 bg-slate-50 rounded-xl px-3 py-2">
                   <FileText className="w-4 h-4 text-red-700" /> <span className="flex-1 truncate">{f.name}</span>
-                  <button type="button" onClick={() => setNewFiles((p) => p.filter((_, j) => j !== i))} className="text-red-600 cursor-pointer" aria-label="حذف الملف"><Trash2 className="w-4 h-4" /></button>
+                  <button type="button" onClick={() => setNewFiles((p) => p.filter((_, j) => j !== i))} className="text-red-600 cursor-pointer" aria-label={t('حذف الملف')}><Trash2 className="w-4 h-4" /></button>
                 </li>
               ))}
             </ul>
@@ -265,11 +266,11 @@ export const PostComposer: React.FC<Props> = ({ open, initialType, existing, set
         <div className="flex flex-wrap justify-end gap-2 px-5 py-4 border-t border-slate-100 bg-slate-50">
           <button type="button" onClick={() => submit('draft')} disabled={!!busy}
             className="px-5 py-2.5 rounded-full border border-slate-300 bg-white font-bold text-sm cursor-pointer disabled:opacity-60 inline-flex items-center gap-2">
-            {busy === 'draft' && <Loader2 className="w-4 h-4 animate-spin" />} حفظ كمسودة
+            {busy === 'draft' && <Loader2 className="w-4 h-4 animate-spin" />} {t('حفظ كمسودة')}
           </button>
           <button type="button" onClick={() => submit('published')} disabled={!!busy}
             className="px-6 py-2.5 rounded-full bg-emerald-800 hover:bg-emerald-700 text-white font-black text-sm cursor-pointer disabled:opacity-60 inline-flex items-center gap-2">
-            {busy === 'published' && <Loader2 className="w-4 h-4 animate-spin" />} {existing?.status === 'published' ? 'حفظ التعديلات' : 'نشر'}
+            {busy === 'published' && <Loader2 className="w-4 h-4 animate-spin" />} {existing?.status === 'published' ? t('حفظ التعديلات') : t('نشر')}
           </button>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { t } from '../i18n';
 
 /**
  * Header of the imams / mosques list pages. Deliberately different from the profile cards below it
@@ -47,7 +48,7 @@ export const PageBanner: React.FC<{
   return (
     <header className="liquid-glass-light relative overflow-hidden rounded-2xl sm:rounded-[2rem] px-4 sm:px-8 py-3 sm:py-7">
       {/* accent stripe on the starting (right) edge and a faint lattice */}
-      <span className={`absolute inset-y-0 right-0 w-1.5 bg-gradient-to-b ${t.stripe}`} aria-hidden />
+      <span className={`absolute inset-y-0 start-0 w-1.5 bg-gradient-to-b ${t.stripe}`} aria-hidden />
       <span className="absolute inset-0 khatam-pattern-light opacity-70 pointer-events-none" aria-hidden />
 
       <div className="relative flex flex-wrap items-center justify-between gap-2.5 sm:gap-4">

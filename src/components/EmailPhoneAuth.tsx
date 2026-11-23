@@ -3,6 +3,7 @@ import type { ConfirmationResult } from 'firebase/auth';
 import { Loader2, Mail, Smartphone } from 'lucide-react';
 import { resetPassword, sendPhoneCode, signInWithEmail, signUpWithEmail } from '../lib/auth';
 import { isValidEmail } from '../utils/helpers';
+import { t } from '../i18n';
 
 type Mode = 'email' | 'phone';
 type EmailStep = 'signin' | 'signup' | 'reset';
@@ -51,7 +52,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
     if (emailStep === 'reset') {
       return run(async () => {
         await resetPassword(email);
-        onInfo('أرسلنا رابط إعادة تعيين كلمة المرور إلى بريدك.');
+        onInfo(t('أرسلنا رابط إعادة تعيين كلمة المرور إلى بريدك.'));
         setEmailStep('signin');
       });
     }
@@ -59,7 +60,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
     run(async () => {
       if (emailStep === 'signup') {
         await signUpWithEmail(email, password);
-        onInfo('تم إنشاء حسابك، وأرسلنا رسالة لتأكيد بريدك.');
+        onInfo(t('تم إنشاء حسابك، وأرسلنا رسالة لتأكيد بريدك.'));
       } else {
         await signInWithEmail(email, password);
       }
@@ -76,7 +77,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
       }
       return run(async () => {
         setConfirmation(await sendPhoneCode(normalized, 'recaptcha-container'));
-        onInfo('أرسلنا رمز التحقق برسالة SMS.');
+        onInfo(t('أرسلنا رمز التحقق برسالة SMS.'));
       });
     }
     if (!/^\d{6}$/.test(code.trim())) return setHint('رمز التحقق مكوّن من 6 أرقام.');
@@ -92,7 +93,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
     <div className="space-y-3">
       <div className="flex items-center gap-3 text-xs text-slate-400">
         <span className="h-px bg-slate-200 flex-1" />
-        <span>أو</span>
+        <span>{t('أو')}</span>
         <span className="h-px bg-slate-200 flex-1" />
       </div>
 
@@ -107,7 +108,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
             }`}
           >
             <Mail className="w-5 h-5" />
-            <span>{showPhone ? 'البريد الإلكتروني' : 'الدخول أو إنشاء حساب بالبريد الإلكتروني'}</span>
+            <span>{showPhone ? t('البريد الإلكتروني') : t('الدخول أو إنشاء حساب بالبريد الإلكتروني')}</span>
           </button>
         )}
         {showPhone && (
@@ -120,7 +121,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
             }`}
           >
             <Smartphone className="w-5 h-5" />
-            <span>رقم الهاتف</span>
+            <span>{t('رقم الهاتف')}</span>
           </button>
         )}
       </div>
@@ -128,7 +129,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
       {mode === 'email' && (
         <form onSubmit={handleEmail} className="space-y-3 bg-slate-50 border border-slate-200 rounded-2xl p-4">
           <p className="font-black text-slate-900 text-sm">
-            {emailStep === 'signin' ? 'الدخول بالبريد الإلكتروني' : emailStep === 'signup' ? 'إنشاء حساب بالبريد' : 'استعادة كلمة المرور'}
+            {emailStep === 'signin' ? t('الدخول بالبريد الإلكتروني') : emailStep === 'signup' ? t('إنشاء حساب بالبريد') : t('استعادة كلمة المرور')}
           </p>
           <input
             type="email"
@@ -137,39 +138,39 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
             placeholder="name@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className={`${field} text-left`}
-            aria-label="البريد الإلكتروني"
+            className={`${field} rtl:text-right`}
+            aria-label={t('البريد الإلكتروني')}
           />
           {emailStep !== 'reset' && (
             <input
               type="password"
               dir="ltr"
               autoComplete={emailStep === 'signup' ? 'new-password' : 'current-password'}
-              placeholder={emailStep === 'signup' ? 'كلمة مرور (8 أحرف على الأقل)' : 'كلمة المرور'}
+              placeholder={emailStep === 'signup' ? t('كلمة مرور (8 أحرف على الأقل)') : t('كلمة المرور')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={`${field} text-left`}
-              aria-label="كلمة المرور"
+              className={`${field} rtl:text-right`}
+              aria-label={t('كلمة المرور')}
             />
           )}
           {hint && <p className="text-red-700 text-xs font-bold">{hint}</p>}
           <button type="submit" disabled={busy} className={primary}>
             {busy && <Loader2 className="w-4 h-4 animate-spin" />}
-            <span>{emailStep === 'signin' ? 'دخول' : emailStep === 'signup' ? 'إنشاء الحساب' : 'إرسال رابط الاستعادة'}</span>
+            <span>{emailStep === 'signin' ? t('دخول') : emailStep === 'signup' ? t('إنشاء الحساب') : t('إرسال رابط الاستعادة')}</span>
           </button>
           <div className="flex flex-wrap justify-between gap-2 text-xs font-bold">
             {emailStep === 'signin' ? (
               <>
                 <button type="button" onClick={() => setEmailStep('signup')} className="text-emerald-800 underline cursor-pointer">
-                  ليس لديك حساب؟ أنشئ حساباً
+                  {t('ليس لديك حساب؟ أنشئ حساباً')}
                 </button>
                 <button type="button" onClick={() => setEmailStep('reset')} className="text-slate-500 underline cursor-pointer">
-                  نسيت كلمة المرور؟
+                  {t('نسيت كلمة المرور؟')}
                 </button>
               </>
             ) : (
               <button type="button" onClick={() => setEmailStep('signin')} className="text-emerald-800 underline cursor-pointer">
-                لديك حساب؟ سجّل الدخول
+                {t('لديك حساب؟ سجّل الدخول')}
               </button>
             )}
           </div>
@@ -178,7 +179,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
 
       {mode === 'phone' && (
         <form onSubmit={handlePhone} className="space-y-3 bg-slate-50 border border-slate-200 rounded-2xl p-4">
-          <p className="font-black text-slate-900 text-sm">الدخول برقم الهاتف</p>
+          <p className="font-black text-slate-900 text-sm">{t('الدخول برقم الهاتف')}</p>
           {!confirmation ? (
             <input
               type="tel"
@@ -187,8 +188,8 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
               placeholder="+49 151 2345678"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className={`${field} text-left`}
-              aria-label="رقم الهاتف بالصيغة الدولية"
+              className={`${field} rtl:text-right`}
+              aria-label={t('رقم الهاتف بالصيغة الدولية')}
             />
           ) : (
             <input
@@ -198,14 +199,14 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
               placeholder="123456"
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              className={`${field} text-left tracking-widest`}
-              aria-label="رمز التحقق"
+              className={`${field} text-end tracking-widest`}
+              aria-label={t('رمز التحقق')}
             />
           )}
           {hint && <p className="text-red-700 text-xs font-bold">{hint}</p>}
           <button type="submit" disabled={busy} className={primary}>
             {busy && <Loader2 className="w-4 h-4 animate-spin" />}
-            <span>{confirmation ? 'تأكيد الرمز والدخول' : 'إرسال رمز التحقق'}</span>
+            <span>{confirmation ? t('تأكيد الرمز والدخول') : t('إرسال رمز التحقق')}</span>
           </button>
           {confirmation && (
             <button
@@ -216,7 +217,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
               }}
               className="text-xs font-bold text-slate-500 underline cursor-pointer"
             >
-              تغيير الرقم أو إعادة الإرسال
+              {t('تغيير الرقم أو إعادة الإرسال')}
             </button>
           )}
         </form>

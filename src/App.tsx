@@ -69,6 +69,7 @@ import { Intro, shouldShowIntro } from './components/Intro';
 import { ACCOUNT_DELETION_GRACE_DAYS, MIN_ITEMS_FOR_STATS, SUPPORT_ENABLED } from './config';
 import { ContactPage } from './components/ContactPage';
 import { SupportPage } from './components/SupportPage';
+import { t } from './i18n';
 
 // Loaded on demand: the statistics page pulls in the charts library, and the admin panel is for admins only.
 const Dashboard = lazy(() => import('./components/Dashboard').then((m) => ({ default: m.Dashboard })));
@@ -169,7 +170,7 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    document.title = VIEW_TITLES[currentView];
+    document.title = t(VIEW_TITLES[currentView]);
   }, [currentView]);
 
   // Anonymous visit counter (see src/lib/visits.ts) — once per opening of the site.
@@ -209,7 +210,7 @@ export default function App() {
     showToast(
       role === 'admin'
         ? `تعذر تحميل «${data.error.source}» (${data.error.code}). إن كان الرمز permission-denied فانشر قواعد الأمان: npm run deploy:rules`
-        : 'تعذر تحميل بعض البيانات. حدّث الصفحة أو تحقق من الاتصال.',
+        : t('تعذر تحميل بعض البيانات. حدّث الصفحة أو تحقق من الاتصال.'),
       'error'
     );
   }, [data.error, role, showToast]);
@@ -260,7 +261,7 @@ export default function App() {
     communityNotifications.forEach((n) => seenNotifications.current.add(n.id));
     if (phase >= 2 && fresh.length) {
       const n = fresh[0];
-      showToast(`🔔 ${n.fromName} ${n.type === 'reply' ? 'ردّ على تعليقك في' : 'علّق على منشورك'} «${n.postTitle}»`);
+      showToast(`🔔 ${n.fromName} ${n.type === 'reply' ? t('ردّ على تعليقك في') : t('علّق على منشورك')} «${n.postTitle}»`);
     }
   }, [communityNotifications, uid, showToast]);
 
@@ -373,15 +374,15 @@ export default function App() {
     if (!uid) return;
     const due = formatDeletionDate(accountDeletionDate(new Date().toISOString()));
     const ok = window.confirm(
-      `سيُخفى ملفك وإعلاناتك فوراً، ويُحذف حسابك وكل بياناته نهائياً بعد ${ACCOUNT_DELETION_GRACE_DAYS} أيام (${due}).\n` +
-        'إن غيّرت رأيك قبل ذلك، فسجّل الدخول واضغط «استرجاع حسابي».\n\nهل تريد حذف حسابك؟'
+      t('سيُخفى ملفك وإعلاناتك فوراً، ويُحذف حسابك وكل بياناته نهائياً بعد {n} أيام ({due}).', { n: ACCOUNT_DELETION_GRACE_DAYS, due }) + '\n' +
+        t('إن غيّرت رأيك قبل ذلك، فسجّل الدخول واضغط «استرجاع حسابي».\n\nهل تريد حذف حسابك؟')
     );
     if (!ok) return;
     try {
       await requestAccountDeletion(uid);
       await signOutUser();
       setCurrentView('home');
-      showToast(`سيُحذف حسابك نهائياً يوم ${due}. يمكنك استرجاعه بتسجيل الدخول قبل ذلك.`);
+      showToast(t('سيُحذف حسابك نهائياً يوم {due}. يمكنك استرجاعه بتسجيل الدخول قبل ذلك.', { due }));
     } catch (err) {
       showError(err);
     }
@@ -399,7 +400,7 @@ export default function App() {
 
   const handleDeleteAccountNow = async () => {
     if (!uid) return;
-    if (!window.confirm('سيُحذف حسابك وكل بياناته الآن نهائياً ولا يمكن التراجع. متابعة؟')) return;
+    if (!window.confirm(t('سيُحذف حسابك وكل بياناته الآن نهائياً ولا يمكن التراجع. متابعة؟'))) return;
     try {
       // Sign-in confirmation first: if it fails or is cancelled, nothing has been deleted yet.
       await reauthenticate();
@@ -476,7 +477,7 @@ export default function App() {
       await saveImam({ existing: editingImam, fields, contact, files, actorUid: uid, actorIsAdmin: role === 'admin' });
       setIsImamModalOpen(false);
       if (editingImam) {
-        showToast(`تم حفظ بيانات ${fields.name} بنجاح.`);
+        showToast(t('تم حفظ بيانات {name} بنجاح.', { name: fields.name }));
       } else if (role === 'admin') {
         showToast('تمت إضافة ملف الإمام واعتماده مباشرة.');
       } else {
@@ -495,14 +496,14 @@ export default function App() {
   const handleSetImamApproval = async (id: string, status: 'approved' | 'rejected') => {
     try {
       await setImamApproval(id, status);
-      showToast(status === 'approved' ? 'تمت الموافقة على ملف الإمام ونشره.' : 'تم رفض ملف الإمام.');
+      showToast(status === 'approved' ? t('تمت الموافقة على ملف الإمام ونشره.') : t('تم رفض ملف الإمام.'));
     } catch (err) {
       showError(err);
     }
   };
 
   const handleDeleteImam = async (imam: ImamProfile) => {
-    if (!window.confirm(`حذف ملف "${imam.name}" نهائياً؟`)) return;
+    if (!window.confirm(t('حذف ملف "{name}" نهائياً؟', { name: imam.name }))) return;
     try {
       await deleteImam(imam);
       showToast('تم حذف ملف الإمام.');
@@ -554,7 +555,7 @@ export default function App() {
     try {
       await saveMosque({ existing: editingMosque, fields, contact, actorUid: uid, actorIsAdmin: role === 'admin' });
       setIsMosqueModalOpen(false);
-      if (editingMosque) showToast(`تم حفظ تعديلات (${fields.mosqueName}).`);
+      if (editingMosque) showToast(t('تم حفظ تعديلات ({name}).', { name: fields.mosqueName }));
       else if (role === 'admin') showToast('تمت إضافة المسجد واعتماده مباشرة.');
       else showToast('تم إرسال إعلان المسجد إلى الإدارة للمراجعة.');
       if (role === 'mosque') {
@@ -571,14 +572,14 @@ export default function App() {
     if (!uid) return;
     try {
       await setMosqueApproval(mosque, status, uid);
-      showToast(status === 'approved' ? 'تمت الموافقة على إعلان المسجد ونشره.' : 'تم رفض إعلان المسجد.');
+      showToast(status === 'approved' ? t('تمت الموافقة على إعلان المسجد ونشره.') : t('تم رفض إعلان المسجد.'));
     } catch (err) {
       showError(err);
     }
   };
 
   const handleDeleteMosque = async (mosque: MosqueJob) => {
-    if (!window.confirm(`حذف إعلان "${mosque.mosqueName}" نهائياً؟`)) return;
+    if (!window.confirm(t('حذف إعلان "{name}" نهائياً؟', { name: mosque.mosqueName }))) return;
     try {
       await deleteMosque(mosque);
       showToast('تم حذف إعلان المسجد.');
@@ -621,7 +622,7 @@ export default function App() {
     if (!uid || !myImam || !applyingMosque) return;
     try {
       await applyToMosque(applyingMosque, myImam, uid, note);
-      showToast(`تم إرسال طلب الترشح إلى (${applyingMosque.mosqueName}).`);
+      showToast(t('تم إرسال طلب الترشح إلى ({name}).', { name: applyingMosque.mosqueName }));
       setApplyingMosque(null);
     } catch (err) {
       showError(err);
@@ -661,7 +662,7 @@ export default function App() {
       // Only the application for THIS mosque and THIS imam changes status.
       const app = applications.find((a) => a.mosqueId === mosque.id && a.imamUid === imamUid);
       if (app) await setApplicationStatus(app.id, 'interview_scheduled');
-      showToast(`تم إرسال طلب التواصل إلى (${imamName}).`);
+      showToast(t('تم إرسال طلب التواصل إلى ({name}).', { name: imamName }));
       setInterviewTarget(null);
     } catch (err) {
       showError(err);
@@ -690,8 +691,8 @@ export default function App() {
         console.error(err);
       }
     }
-    if (sent === msgs.length) showToast(`تم إرسال الرسالة إلى ${sent} حساب.`);
-    else showToast(`أُرسلت الرسالة إلى ${sent} من ${msgs.length}. تعذر الإرسال إلى البقية.`, 'error');
+    if (sent === msgs.length) showToast(t('تم إرسال الرسالة إلى {n} حساب.', { n: sent }));
+    else showToast(t('أُرسلت الرسالة إلى {n} من {total}. تعذر الإرسال إلى البقية.', { n: sent, total: msgs.length }), 'error');
     return sent > 0;
   };
 
@@ -700,7 +701,7 @@ export default function App() {
   };
 
   const handleDeleteMessage = async (id: string) => {
-    if (!window.confirm('حذف هذه الرسالة؟')) return;
+    if (!window.confirm(t('حذف هذه الرسالة؟'))) return;
     try {
       await deleteMessage(id);
     } catch (err) {
@@ -732,7 +733,7 @@ export default function App() {
         reporterUid: uid,
         reporterRole: role,
       });
-      showToast(`تم إرسال البلاغ عن (${reportTarget.name}) إلى الإدارة.`);
+      showToast(t('تم إرسال البلاغ عن ({name}) إلى الإدارة.', { name: reportTarget.name }));
       setReportTarget(null);
     } catch (err) {
       showError(err);
@@ -751,7 +752,7 @@ export default function App() {
 
   const handleFeedbackHandled = (id: string) => setFeedbackHandled(id).catch(showError);
   const handleDeleteFeedback = async (id: string) => {
-    if (!window.confirm('حذف هذه الرسالة؟')) return;
+    if (!window.confirm(t('حذف هذه الرسالة؟'))) return;
     await deleteFeedback(id).catch(showError);
   };
 
@@ -810,7 +811,7 @@ export default function App() {
             <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
           )}
           <span className="flex-1">{toast.msg}</span>
-          <button onClick={() => setToast(null)} aria-label="إغلاق" className="text-white/70 hover:text-white cursor-pointer">
+          <button onClick={() => setToast(null)} aria-label={t('إغلاق')} className="text-white/70 hover:text-white cursor-pointer">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -862,14 +863,14 @@ export default function App() {
           fallback={
             <div className="flex-1 flex items-center justify-center py-24 text-slate-500 text-sm gap-2">
               <Loader2 className="w-5 h-5 animate-spin" />
-              <span>جاري التحميل…</span>
+              <span>{t('جاري التحميل…')}</span>
             </div>
           }
         >
         {data.loading && !['home', 'privacy', 'terms', 'contact', 'support', 'community'].includes(currentView) ? (
           <div className="flex-1 flex items-center justify-center py-24 text-slate-500 text-sm gap-2">
             <Loader2 className="w-5 h-5 animate-spin" />
-            <span>جاري تحميل البيانات…</span>
+            <span>{t('جاري تحميل البيانات…')}</span>
           </div>
         ) : (
           <>

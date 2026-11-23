@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 // Turns a recording or an uploaded audio file into a small mono MP3 (data URL) for the recitation sample.
 // Everything runs in the browser; the MP3 encoder is loaded only when needed.
 
@@ -15,28 +16,28 @@ export class AudioError extends Error {}
 /** Checks an uploaded file's type and size (the duration is checked after decoding). */
 export function checkAudioFile(file: File): string | null {
   const typeOk = ALLOWED_AUDIO_TYPES.includes(file.type) || ALLOWED_AUDIO_EXT.test(file.name);
-  if (!typeOk) return 'نوع الملف غير مدعوم. المسموح: MP3 أو M4A أو WAV.';
-  if (file.size > MAX_UPLOAD_BYTES) return 'حجم الملف كبير جداً.';
+  if (!typeOk) return t('نوع الملف غير مدعوم. المسموح: MP3 أو M4A أو WAV.');
+  if (file.size > MAX_UPLOAD_BYTES) return t('حجم الملف كبير جداً.');
   return null;
 }
 
 /** Decodes any supported audio (recording or file) and re-encodes it as mono 22 kHz MP3 at 32 kbps. */
 export async function encodeRecitation(blob: Blob): Promise<{ dataUrl: string; durationSec: number }> {
   const AC: typeof AudioContext = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-  if (!AC) throw new AudioError('متصفحك لا يدعم معالجة الصوت.');
+  if (!AC) throw new AudioError(t('متصفحك لا يدعم معالجة الصوت.'));
   const ctx = new AC();
   let decoded: AudioBuffer;
   try {
     decoded = await ctx.decodeAudioData(await blob.arrayBuffer());
   } catch {
-    throw new AudioError('تعذر قراءة الملف الصوتي. جرّب ملفاً آخر بصيغة MP3 أو M4A أو WAV.');
+    throw new AudioError(t('تعذر قراءة الملف الصوتي. جرّب ملفاً آخر بصيغة MP3 أو M4A أو WAV.'));
   } finally {
     ctx.close().catch(() => {});
   }
   const durationSec = Math.round(decoded.duration * 10) / 10;
-  if (durationSec < 1) throw new AudioError('التسجيل قصير جداً.');
+  if (durationSec < 1) throw new AudioError(t('التسجيل قصير جداً.'));
   if (durationSec > MAX_RECITATION_SECONDS + 0.5) {
-    throw new AudioError(`مدة التسجيل ${Math.round(durationSec)} ثانية. الحد الأقصى ${MAX_RECITATION_SECONDS} ثانية.`);
+    throw new AudioError(t('مدة التسجيل {n} ثانية. الحد الأقصى {max} ثانية.', { n: Math.round(durationSec), max: MAX_RECITATION_SECONDS }));
   }
 
   // Resample to mono 22 kHz.
@@ -68,7 +69,7 @@ export async function encodeRecitation(blob: Blob): Promise<{ dataUrl: string; d
   const dataUrl = await new Promise<string>((resolve, reject) => {
     const r = new FileReader();
     r.onload = () => resolve(String(r.result));
-    r.onerror = () => reject(new AudioError('تعذر تجهيز الملف.'));
+    r.onerror = () => reject(new AudioError(t('تعذر تجهيز الملف.')));
     r.readAsDataURL(mp3);
   });
   return { dataUrl, durationSec };

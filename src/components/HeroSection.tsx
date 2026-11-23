@@ -6,6 +6,7 @@ import { firstNameOf } from '../utils/helpers';
 import { prefersStill, useSettings } from '../lib/settings';
 import { AnnouncementTarget, useAnnouncements } from '../lib/announcements';
 import { ArrowLeft, AudioLines, ChevronLeft, ChevronRight, FileSignature, HandHeart, LogIn, Mail, Mic, PieChart, Plus, HelpCircle, ShieldCheck, Sparkles, UserRound, Users, UsersRound } from 'lucide-react';
+import { isRtl, t } from '../i18n';
 
 interface HeroSectionProps {
   onOpenImamList: () => void;
@@ -59,85 +60,85 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
   // Role-aware main actions of the hero.
   const primary =
     currentRole === 'visitor'
-      ? { label: 'سجّل دخولك أو أنشئ حساباً', icon: <LogIn className="w-4 h-4" />, onClick: onOpenAuthModal }
+      ? { label: t('سجّل دخولك أو أنشئ حساباً'), icon: <LogIn className="w-4 h-4" />, onClick: onOpenAuthModal }
       : currentRole === 'admin'
-      ? { label: `لوحة الإدارة${pendingCount ? ` · ${pendingCount} طلب جديد` : ''}`, icon: <ShieldCheck className="w-4 h-4" />, onClick: onOpenAdminPanel }
+      ? { label: `${t('لوحة الإدارة')}${pendingCount ? ` · ${t('{n} طلب جديد', { n: pendingCount })}` : ''}`, icon: <ShieldCheck className="w-4 h-4" />, onClick: onOpenAdminPanel }
       : currentRole === 'imam'
-      ? { label: 'ملفي الشخصي كإمام', icon: <UserRound className="w-4 h-4" />, onClick: onOpenMyProfile }
-      : { label: 'إعلانات مسجدي', icon: <MosqueIcon className="w-4 h-4" />, onClick: onOpenMyProfile };
+      ? { label: t('ملفي الشخصي كإمام'), icon: <UserRound className="w-4 h-4" />, onClick: onOpenMyProfile }
+      : { label: t('إعلانات مسجدي'), icon: <MosqueIcon className="w-4 h-4" />, onClick: onOpenMyProfile };
   const secondary =
     currentRole === 'imam'
-      ? { label: 'تصفح إعلانات المساجد', onClick: onOpenMosqueList }
+      ? { label: t('تصفح إعلانات المساجد'), onClick: onOpenMosqueList }
       : currentRole === 'mosque'
-      ? { label: 'تصفح الأئمة المتاحين', onClick: onOpenImamList }
+      ? { label: t('تصفح الأئمة المتاحين'), onClick: onOpenImamList }
       : currentRole === 'admin' && showStats
-      ? { label: 'إحصائيات المنصة', onClick: onOpenDashboard }
-      : { label: 'كيف تعمل المنصة؟', onClick: scrollToHow };
+      ? { label: t('إحصائيات المنصة'), onClick: onOpenDashboard }
+      : { label: t('كيف تعمل المنصة؟'), onClick: scrollToHow };
 
   const slides: Slide[] = [
     {
       key: 'tarawih',
-      chip: 'رمضان والعقود الدائمة',
+      chip: t('رمضان والعقود الدائمة'),
       title: (
         <>
-          مساجد تبحث عن <span className="brass-text">أئمة وقرّاء</span>
+          {t('مساجد تبحث عن')} <span className="brass-text">{t('أئمة وقرّاء')}</span>
         </>
       ),
-      text: 'أنشئ ملفك مرة واحدة ليصل إلى المساجد والجمعيات في أوروبا بعد مراجعة الإدارة.',
-      cta: currentRole === 'imam' ? 'تصفح الإعلانات' : currentRole === 'mosque' ? 'انشر إعلان مسجدك' : 'سجّل ملفك كإمام',
+      text: t('أنشئ ملفك مرة واحدة ليصل إلى المساجد والجمعيات في أوروبا بعد مراجعة الإدارة.'),
+      cta: currentRole === 'imam' ? t('تصفح الإعلانات') : currentRole === 'mosque' ? t('انشر إعلان مسجدك') : t('سجّل ملفك كإمام'),
       onClick: currentRole === 'imam' ? onOpenMosqueList : currentRole === 'mosque' ? onOpenMosqueAddModal : onOpenImamAddModal,
       photo: HERO_PHOTOS.mosques,
     },
     {
       key: 'community',
-      chip: 'جديد',
+      chip: t('جديد'),
       title: (
         <>
-          <span className="brass-text">ملتقى الأئمة</span>: علمٌ يُتبادل
+          <span className="brass-text">{t('ملتقى الأئمة')}</span>: {t('علمٌ يُتبادل')}
         </>
       ),
-      text: 'خطب ودروس ومقالات ونقاشات وتجارب ميدانية بين الأئمة المعتمدين.',
-      cta: 'ادخل الملتقى',
+      text: t('خطب ودروس ومقالات ونقاشات وتجارب ميدانية بين الأئمة المعتمدين.'),
+      cta: t('ادخل الملتقى'),
       onClick: onOpenCommunity,
       photo: HERO_PHOTOS.community,
     },
     {
       key: 'mosques',
-      chip: 'للمساجد والجمعيات',
+      chip: t('للمساجد والجمعيات'),
       title: (
         <>
-          ابحث عن <span className="brass-text">إمامك لرمضان</span>
+          {t('ابحث عن')} <span className="brass-text">{t('إمامك لرمضان')}</span>
         </>
       ),
-      text: 'انشر إعلان مسجدك بالشروط والمدينة، واستقبل طلبات الأئمة المعتمدين.',
-      cta: currentRole === 'imam' ? 'تصفح المساجد' : 'انشر إعلانك',
+      text: t('انشر إعلان مسجدك بالشروط والمدينة، واستقبل طلبات الأئمة المعتمدين.'),
+      cta: currentRole === 'imam' ? t('تصفح المساجد') : t('انشر إعلانك'),
       onClick: currentRole === 'imam' ? onOpenMosqueList : onOpenMosqueAddModal,
       photo: HERO_PHOTOS.tarawih,
     },
     {
       key: 'recitation',
-      chip: 'عيّنة التلاوة',
+      chip: t('عيّنة التلاوة'),
       title: (
         <>
-          دع المساجد <span className="brass-text">تسمع تلاوتك</span>
+          {t('دع المساجد')} <span className="brass-text">{t('تسمع تلاوتك')}</span>
         </>
       ),
-      text: 'سجّل الفاتحة أو سورة قصيرة (دقيقة واحدة) وأضفها إلى ملفك.',
-      cta: currentRole === 'imam' ? 'أضف تلاوتك' : 'استمع إلى الأئمة',
+      text: t('سجّل الفاتحة أو سورة قصيرة (دقيقة واحدة) وأضفها إلى ملفك.'),
+      cta: currentRole === 'imam' ? t('أضف تلاوتك') : t('استمع إلى الأئمة'),
       onClick: currentRole === 'imam' ? onOpenMyProfile : onOpenImamList,
       photo: HERO_PHOTOS.recitation,
       textLeft: true,
     },
     {
       key: 'khateeb',
-      chip: 'إعلان للخطباء',
+      chip: t('إعلان للخطباء'),
       title: (
         <>
-          أيها الخطباء: <span className="brass-text">سجّلوا للخطابة</span>
+          {t('أيها الخطباء:')} <span className="brass-text">{t('سجّلوا للخطابة')}</span>
         </>
       ),
-      text: 'مساجد تبحث عن خطيب جمعة مؤقت أو دائم. إن كنت مقيماً في أوروبا فاختر صفة «خطيب فقط» في ملفك، وحدّد مناطقك أو المسافة، وهل عندك سيارة.',
-      cta: currentRole === 'imam' ? 'رشّح نفسك كخطيب' : 'سجّل كخطيب',
+      text: t('مساجد تبحث عن خطيب جمعة مؤقت أو دائم. إن كنت مقيماً في أوروبا فاختر صفة «خطيب فقط» في ملفك، وحدّد مناطقك أو المسافة، وهل عندك سيارة.'),
+      cta: currentRole === 'imam' ? t('رشّح نفسك كخطيب') : t('سجّل كخطيب'),
       onClick: currentRole === 'imam' ? onOpenMyProfile : onOpenImamAddModal,
       photo: HERO_PHOTOS.khateeb,
     },
@@ -171,15 +172,15 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
   const allSlides = adminSlides.length && !showDefaults ? adminSlides : [...adminSlides, ...ownSlides];
 
   const services: Service[] = [
-    { key: 'khutab', label: 'خطب ودروس', icon: <Mic />, onClick: onOpenCommunity },
-    { key: 'recitations', label: currentRole === 'imam' ? 'تلاوتي' : 'تلاوات الأئمة', icon: <AudioLines />, onClick: currentRole === 'imam' ? onOpenMyProfile : onOpenImamList },
+    { key: 'khutab', label: t('خطب ودروس'), icon: <Mic />, onClick: onOpenCommunity },
+    { key: 'recitations', label: currentRole === 'imam' ? t('تلاوتي') : t('تلاوات الأئمة'), icon: <AudioLines />, onClick: currentRole === 'imam' ? onOpenMyProfile : onOpenImamList },
     currentRole === 'imam'
-      ? { key: 'apply', label: 'التقدّم لإمامة', icon: <FileSignature />, onClick: onOpenMosqueList }
-      : { key: 'request', label: 'طلب إمام', icon: <FileSignature />, onClick: onOpenMosqueAddModal },
-    ...(showStats ? [{ key: 'stats', label: 'الإحصائيات', icon: <PieChart />, onClick: onOpenDashboard }] : []),
-    { key: 'how', label: 'كيف تعمل المنصة؟', icon: <HelpCircle />, onClick: scrollToHow },
-    { key: 'contact', label: 'راسل الإدارة', icon: <Mail />, onClick: onOpenContact },
-    ...(onOpenSupport ? [{ key: 'support', label: 'ادعم المنصة', icon: <HandHeart />, onClick: onOpenSupport }] : []),
+      ? { key: 'apply', label: t('التقدّم لإمامة'), icon: <FileSignature />, onClick: onOpenMosqueList }
+      : { key: 'request', label: t('طلب إمام'), icon: <FileSignature />, onClick: onOpenMosqueAddModal },
+    ...(showStats ? [{ key: 'stats', label: t('الإحصائيات'), icon: <PieChart />, onClick: onOpenDashboard }] : []),
+    { key: 'how', label: t('كيف تعمل المنصة؟'), icon: <HelpCircle />, onClick: scrollToHow },
+    { key: 'contact', label: t('راسل الإدارة'), icon: <Mail />, onClick: onOpenContact },
+    ...(onOpenSupport ? [{ key: 'support', label: t('ادعم المنصة'), icon: <HandHeart />, onClick: onOpenSupport }] : []),
   ];
 
   return (
@@ -189,28 +190,34 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-12 pb-[5.5rem] sm:pb-32 grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-3 sm:gap-8 lg:gap-12 items-center">
           {/* Welcome (larger screens only: on phones the banner and the two cards come first) */}
-          <div className="hidden sm:block space-y-5 text-center lg:text-right">
+          <div className="hidden sm:block space-y-5 text-center lg:text-start">
             <p className="hidden sm:inline-flex items-center gap-2 rounded-full border border-brass-400/30 bg-white/5 px-3.5 py-1.5 text-xs font-bold text-brass-200">
               <Sparkles className="w-3.5 h-3.5" />
-              {firstName ? 'السلام عليكم ورحمة الله' : 'جسر تواصل وربط بين الأئمة والمساجد'}
+              {firstName ? t('السلام عليكم ورحمة الله') : t('جسر تواصل وربط بين الأئمة والمساجد')}
             </p>
             {firstName ? (
               <h1 className="text-lg sm:text-5xl font-black leading-tight">
-                مرحباً بك يا <span className="brass-text">{firstName}</span>
-                <span className="sm:block sm:text-3xl text-white/85 font-bold sm:mt-2"> في منصة أئمة</span>
+                {t('مرحباً بك يا')} <span className="brass-text">{firstName}</span>
+                <span className="sm:block sm:text-3xl text-white/85 font-bold sm:mt-2"> {t('في منصة أئمة')}</span>
               </h1>
             ) : (
               <>
                 <h1 className="sm:hidden text-lg font-black">
-                  مرحباً بك في <span className="brass-text">منصة أئمة</span>
+                  {t('مرحباً بك في')} <span className="brass-text">{t('منصة أئمة')}</span>
                 </h1>
                 <p className="hidden sm:block text-7xl font-maghribi leading-none drop-shadow-lg" aria-hidden>
-                  منصة <span className="brass-text">أئمة</span>
+                  {isRtl() ? (
+                    <>
+                      منصة <span className="brass-text">أئمة</span>
+                    </>
+                  ) : (
+                    <span className="brass-text">Aemmah</span>
+                  )}
                 </p>
               </>
             )}
             <p className="hidden sm:block text-slate-300 text-base leading-relaxed max-w-xl mx-auto lg:mx-0">
-              إمام أو قارئ يبحث عن مسجد، أو مسجد يبحث عن إمام لرمضان أو لعقد دائم: ابحث عن إمامك أو مسجدك بخطوات بسيطة.
+              {t('إمام أو قارئ يبحث عن مسجد، أو مسجد يبحث عن إمام لرمضان أو لعقد دائم: ابحث عن إمامك أو مسجدك بخطوات بسيطة.')}
             </p>
 
             <div className="hidden sm:flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-2.5">
@@ -231,8 +238,8 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
             </div>
 
             <dl className="hidden sm:flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-3 pt-1 text-xs">
-              <Stat value={imamsCount} label="إمام متاح" dot="bg-emerald-400" />
-              <Stat value={mosquesCount} label="مسجد يبحث عن إمام" dot="bg-brass-400" />
+              <Stat value={imamsCount} label={t('إمام متاح')} dot="bg-emerald-400" />
+              <Stat value={mosquesCount} label={t('مسجد يبحث عن إمام')} dot="bg-brass-400" />
             </dl>
           </div>
 
@@ -252,26 +259,26 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
           <div className="grid grid-cols-2 gap-3 sm:gap-7">
             <AccessCard
               tone="imams"
-              badge={imamsCount > 0 ? `${imamsCount} إمام متاح` : 'كن أول إمام يسجّل'}
-              title="اختر إماماً لمسجدك"
-              short="الأئمة والقرّاء المتاحون ومؤهلاتهم"
-              text="تصفّح ملفات الأئمة والقرّاء المتاحين: الرواية، والخبرات، والشهادات، وعيّنة التلاوة."
-              cta="تصفّح الأئمة"
+              badge={imamsCount > 0 ? t('{n} إمام متاح', { n: imamsCount }) : t('كن أول إمام يسجّل')}
+              title={t('اختر إماماً لمسجدك')}
+              short={t('الأئمة والقرّاء المتاحون ومؤهلاتهم')}
+              text={t('تصفّح ملفات الأئمة والقرّاء المتاحين: الرواية، والخبرات، والشهادات، وعيّنة التلاوة.')}
+              cta={t('تصفّح الأئمة')}
               onOpen={onOpenImamList}
-              secondary={currentRole === 'mosque' ? undefined : { label: currentRole === 'imam' ? 'تعديل ملفي' : 'التسجيل كإمام', onClick: currentRole === 'imam' ? onOpenMyProfile : onOpenImamAddModal }}
+              secondary={currentRole === 'mosque' ? undefined : { label: currentRole === 'imam' ? t('تعديل ملفي') : t('التسجيل كإمام'), onClick: currentRole === 'imam' ? onOpenMyProfile : onOpenImamAddModal }}
               photo="card-imams.jpg"
               focus="72% 30%"
               icon={<Users className="w-6 h-6" />}
             />
             <AccessCard
               tone="mosques"
-              badge={mosquesCount > 0 ? `${mosquesCount} مسجد يبحث عن إمام` : 'انشر أول إعلان'}
-              title="ابحث عن مسجد مناسب"
-              short="مساجد وجمعيات تبحث عن إمام"
-              text="استعرض المساجد والجمعيات التي تبحث عن إمام، وشروطها، ومدنها، ثم تقدّم إليها."
-              cta="تصفّح المساجد"
+              badge={mosquesCount > 0 ? t('{n} مسجد يبحث عن إمام', { n: mosquesCount }) : t('انشر أول إعلان')}
+              title={t('ابحث عن مسجد مناسب')}
+              short={t('مساجد وجمعيات تبحث عن إمام')}
+              text={t('استعرض المساجد والجمعيات التي تبحث عن إمام، وشروطها، ومدنها، ثم تقدّم إليها.')}
+              cta={t('تصفّح المساجد')}
               onOpen={onOpenMosqueList}
-              secondary={currentRole === 'imam' ? undefined : { label: 'إضافة إعلان مسجد', onClick: onOpenMosqueAddModal }}
+              secondary={currentRole === 'imam' ? undefined : { label: t('إضافة إعلان مسجد'), onClick: onOpenMosqueAddModal }}
               photo="card-mosques.jpg"
               focus="40% 40%"
               icon={<MosqueIcon className="w-6 h-6" />}
@@ -337,7 +344,7 @@ const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
       className="relative"
       role="region"
       aria-roledescription="carousel"
-      aria-label="إعلانات المنصة"
+      aria-label={t('إعلانات المنصة')}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -360,7 +367,7 @@ const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
               key={s.key}
               role="group"
               aria-roledescription="slide"
-              aria-label={`${k + 1} من ${n}`}
+              aria-label={t('{a} من {b}', { a: k + 1, b: n })}
               aria-hidden={!on}
               className={`absolute inset-0 transition-opacity duration-700 ${on ? 'opacity-100 z-10' : 'opacity-0 pointer-events-none'}`}
             >
@@ -373,12 +380,12 @@ const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
               )}
               <div className={`absolute inset-0 ${s.textLeft ? 'bg-gradient-to-r' : 'bg-gradient-to-l'} from-ink/80 via-ink/40 to-transparent`} />
               {s.icon && (
-                <div className="absolute left-4 sm:left-10 top-1/2 -translate-y-1/2 w-20 h-20 sm:w-40 sm:h-40 [&>svg]:w-10 [&>svg]:h-10 sm:[&>svg]:w-20 sm:[&>svg]:h-20 rounded-full border border-brass-400/30 bg-white/5 text-brass-300 flex items-center justify-center" aria-hidden>
+                <div className="absolute end-4 sm:end-10 top-1/2 -translate-y-1/2 w-20 h-20 sm:w-40 sm:h-40 [&>svg]:w-10 [&>svg]:h-10 sm:[&>svg]:w-20 sm:[&>svg]:h-20 rounded-full border border-brass-400/30 bg-white/5 text-brass-300 flex items-center justify-center" aria-hidden>
                   {s.icon}
                 </div>
               )}
               {on && (
-                <div className={`slide-copy relative h-full flex flex-col justify-center gap-1.5 sm:gap-3 px-4 sm:px-10 max-w-[74%] sm:max-w-[62%] [text-shadow:0_2px_10px_rgb(0_0_0/0.6)] ${s.textLeft ? 'mr-auto items-end text-left' : 'items-start'}`}>
+                <div className={`slide-copy relative h-full flex flex-col justify-center gap-1.5 sm:gap-3 px-4 sm:px-10 max-w-[74%] sm:max-w-[62%] [text-shadow:0_2px_10px_rgb(0_0_0/0.6)] ${s.textLeft ? 'mr-auto rtl:items-end rtl:text-left ltr:items-start' : 'ml-auto items-start'}`}>
                   {s.chip && (
                     <span className="liquid-glass inline-flex items-center gap-1.5 rounded-full px-2.5 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-bold text-brass-200">
                       {s.chip}
@@ -399,22 +406,22 @@ const PromoCarousel: React.FC<{ slides: Slide[] }> = ({ slides }) => {
         })}
 
         <div className="absolute z-20 bottom-3 left-3 hidden sm:flex gap-1.5">
-          <button onClick={() => go(-1)} aria-label="الإعلان السابق" className="liquid-glass w-9 h-9 rounded-full hover:brightness-110 flex items-center justify-center cursor-pointer">
+          <button onClick={() => go(-1)} aria-label={t('الإعلان السابق')} className="liquid-glass w-9 h-9 rounded-full hover:brightness-110 flex items-center justify-center cursor-pointer">
             <ChevronRight className="w-4 h-4" />
           </button>
-          <button onClick={() => go(1)} aria-label="الإعلان التالي" className="liquid-glass w-9 h-9 rounded-full hover:brightness-110 flex items-center justify-center cursor-pointer">
+          <button onClick={() => go(1)} aria-label={t('الإعلان التالي')} className="liquid-glass w-9 h-9 rounded-full hover:brightness-110 flex items-center justify-center cursor-pointer">
             <ChevronLeft className="w-4 h-4" />
           </button>
         </div>
       </div>
 
-      <div className="flex justify-center gap-1.5 mt-2.5 sm:mt-4" role="tablist" aria-label="اختر إعلاناً">
+      <div className="flex justify-center gap-1.5 mt-2.5 sm:mt-4" role="tablist" aria-label={t('اختر إعلاناً')}>
         {slides.map((s, k) => (
           <button
             key={s.key}
             role="tab"
             aria-selected={k === i}
-            aria-label={`الإعلان ${k + 1}`}
+            aria-label={t('الإعلان {n}', { n: k + 1 })}
             onClick={() => setI(k)}
             className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${k === i ? 'w-8 bg-brass-400' : 'w-2 bg-white/25 hover:bg-white/45'}`}
           />
@@ -487,11 +494,11 @@ const AccessCard: React.FC<{
           <span className={`w-1.5 h-1.5 rounded-full ${tone === 'imams' ? 'bg-emerald-300' : 'bg-brass-300'}`} aria-hidden /> {badge}
         </span>
       </div>
-      <span className="sm:hidden liquid-glass absolute top-2.5 right-2.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-black tabular-nums">
+      <span className="sm:hidden liquid-glass absolute top-2.5 start-2.5 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-black tabular-nums">
         <span className={`w-1.5 h-1.5 rounded-full ${tone === 'imams' ? 'bg-emerald-300' : 'bg-brass-300'}`} aria-hidden /> {badge}
       </span>
 
-      <div className="space-y-1 sm:space-y-2 text-center sm:text-right [text-shadow:0_2px_12px_rgba(0,0,0,0.65)]">
+      <div className="space-y-1 sm:space-y-2 text-center sm:text-start [text-shadow:0_2px_12px_rgba(0,0,0,0.65)]">
         <h2 className="text-[1.02rem] min-[400px]:text-lg sm:text-[2.6rem] font-kufi leading-snug">{title}</h2>
         <p className="sm:hidden text-[11px] font-bold text-white leading-relaxed">{short}</p>
         <p className="hidden sm:block text-[0.95rem] font-semibold text-white leading-relaxed max-w-md">{text}</p>
@@ -522,22 +529,22 @@ type Service = { key: string; label: string; icon: React.ReactElement; onClick: 
 
 /** Round shortcuts with a brass ring (wraps on phones, one row on wide screens). */
 const QuickServices: React.FC<{ services: Service[]; onCommunity: () => void }> = ({ services, onCommunity }) => (
-  <nav aria-label="خدمات سريعة" className="liquid-glass-light rounded-[2rem] px-3 sm:px-6 py-5 sm:py-6 space-y-5">
+  <nav aria-label={t('خدمات سريعة')} className="liquid-glass-light rounded-[2rem] px-3 sm:px-6 py-5 sm:py-6 space-y-5">
     {/* Featured: the imams' community (its own colours and shape, not one more circle) */}
     <button onClick={onCommunity}
-      className="community-banner group relative w-full overflow-hidden rounded-[1.6rem] text-right cursor-pointer text-white px-4 sm:px-6 py-4 flex items-center gap-4 shadow-[0_14px_30px_-14px_rgba(15,49,39,0.8)] ring-2 ring-brass-400/70 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus-visible:ring-4 focus-visible:ring-brass-300">
+      className="community-banner group relative w-full overflow-hidden rounded-[1.6rem] text-start cursor-pointer text-white px-4 sm:px-6 py-4 flex items-center gap-4 shadow-[0_14px_30px_-14px_rgba(15,49,39,0.8)] ring-2 ring-brass-400/70 transition hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus-visible:ring-4 focus-visible:ring-brass-300">
       {/* Blue pattern (same as the top of the home page), partly transparent over the banner colour */}
       <span className="community-banner__pattern absolute inset-0" style={{ backgroundImage: `url(${asset('bg-pattern.jpg')})` }} aria-hidden />
-      <span className="absolute -left-10 -top-12 w-40 h-40 rounded-full bg-brass-300/20 blur-2xl" aria-hidden />
+      <span className="absolute -end-10 -top-12 w-40 h-40 rounded-full bg-brass-300/20 blur-2xl" aria-hidden />
       <span className="relative w-14 h-14 shrink-0 rounded-2xl bg-gradient-to-br from-brass-200 via-brass-400 to-brass-600 text-ink flex items-center justify-center shadow-lg">
         <UsersRound className="w-7 h-7" />
       </span>
       <span className="relative flex-1 min-w-0">
-        <span className="block font-kufi text-xl sm:text-2xl leading-tight">ملتقى الأئمة</span>
-        <span className="block text-xs sm:text-sm text-white/85 mt-0.5">خطب ودروس ونقاشات وتجارب بين الأئمة المعتمدين</span>
+        <span className="block font-kufi text-xl sm:text-2xl leading-tight">{t('ملتقى الأئمة')}</span>
+        <span className="block text-xs sm:text-sm text-white/85 mt-0.5">{t('خطب ودروس ونقاشات وتجارب بين الأئمة المعتمدين')}</span>
       </span>
       <span className="relative shrink-0 inline-flex items-center gap-1 bg-gradient-to-l from-brass-200 to-brass-400 text-ink text-xs sm:text-sm font-black px-3.5 py-2 rounded-full">
-        ادخل <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+        {t('ادخل')} <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
       </span>
     </button>
 
@@ -598,39 +605,39 @@ const SectionTitle: React.FC<{ children: React.ReactNode }> = ({ children }) => 
 const HowItWorks: React.FC<{ onOpenContact: () => void }> = ({ onOpenContact }) => (
   <div id="how-it-works" className="max-w-6xl mx-auto mt-14 space-y-14 scroll-mt-24">
     <div className="space-y-8">
-      <SectionTitle>كيف تعمل المنصة؟</SectionTitle>
+      <SectionTitle>{t('كيف تعمل المنصة؟')}</SectionTitle>
       <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {STEPS.map((step, i) => (
           <li key={step.title} className="lift relative bg-white rounded-3xl p-6 ring-1 ring-sand shadow-sm hover:shadow-lg hover:shadow-cedar-900/5 overflow-hidden">
             <span className="relative w-10 h-10 rounded-2xl bg-gradient-to-br from-cedar-600 to-cedar-800 text-brass-100 font-black flex items-center justify-center text-sm shadow">
               {i + 1}
             </span>
-            <h3 className="relative font-black text-ink mt-4">{step.title}</h3>
-            <p className="relative text-sm text-slate-600 leading-relaxed mt-1.5">{step.text}</p>
+            <h3 className="relative font-black text-ink mt-4">{t(step.title)}</h3>
+            <p className="relative text-sm text-slate-600 leading-relaxed mt-1.5">{t(step.text)}</p>
           </li>
         ))}
       </ol>
     </div>
 
     <div className="space-y-6 max-w-3xl mx-auto">
-      <SectionTitle>أسئلة شائعة</SectionTitle>
+      <SectionTitle>{t('أسئلة شائعة')}</SectionTitle>
       <div className="space-y-2.5">
         {FAQ.map((item) => (
           <details key={item.q} className="group bg-white rounded-2xl ring-1 ring-sand px-5 py-4 open:shadow-md transition-shadow">
             <summary className="font-bold text-ink cursor-pointer list-none flex justify-between items-center gap-3">
-              <span>{item.q}</span>
+              <span>{t(item.q)}</span>
               <span className="w-7 h-7 shrink-0 rounded-full bg-brass-100 text-brass-700 flex items-center justify-center text-lg transition-transform duration-300 group-open:rotate-45" aria-hidden>
                 +
               </span>
             </summary>
-            <p className="text-sm text-slate-600 leading-relaxed pt-3">{item.a}</p>
+            <p className="text-sm text-slate-600 leading-relaxed pt-3">{t(item.a)}</p>
           </details>
         ))}
       </div>
       <p className="text-center text-sm text-white/75 pt-2">
-        لم تجد جواب سؤالك؟{' '}
+        {t('لم تجد جواب سؤالك؟')}{' '}
         <button onClick={onOpenContact} className="text-brass-300 font-bold underline decoration-brass-400 underline-offset-4 cursor-pointer">
-          راسل الإدارة أو أرسل اقتراحاً
+          {t('راسل الإدارة أو أرسل اقتراحاً')}
         </button>
       </p>
     </div>

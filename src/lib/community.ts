@@ -24,6 +24,7 @@ import {
   PostTemplate,
   PostType,
 } from '../types/community';
+import { t } from '../i18n';
 
 const now = () => new Date().toISOString();
 
@@ -39,7 +40,7 @@ export const POST_TYPES: { value: PostType; label: string; icon: string }[] = [
   { value: 'poll', label: 'استطلاع رأي', icon: '📊' },
   { value: 'event', label: 'إعلان عن نشاط أو دورة', icon: '📣' },
 ];
-export const postTypeLabel = (t: PostType) => POST_TYPES.find((x) => x.value === t)?.label ?? t;
+export const postTypeLabel = (pt: PostType) => t(POST_TYPES.find((x) => x.value === pt)?.label ?? pt);
 export const postTypeIcon = (t: PostType) => POST_TYPES.find((x) => x.value === t)?.icon ?? '•';
 
 export const DEFAULT_CATEGORIES = ['خطب الجمعة', 'دروس وتفسير', 'فقه وفتاوى', 'تجارب دعوية', 'العمل في أوروبا', 'أنشطة ودورات', 'عام'];
@@ -274,8 +275,8 @@ async function uploadImages(dataUrls: string[], uid: string): Promise<string[]> 
 }
 
 export function checkPdf(file: File): string | null {
-  if (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)) return 'الملف يجب أن يكون بصيغة PDF.';
-  if (file.size > MAX_PDF_BYTES) return 'حجم ملف PDF يتجاوز 2 ميغابايت.';
+  if (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)) return t('الملف يجب أن يكون بصيغة PDF.');
+  if (file.size > MAX_PDF_BYTES) return t('حجم ملف PDF يتجاوز 2 ميغابايت.');
   return null;
 }
 

@@ -12,6 +12,7 @@ import {
   X,
   Loader2,
 } from 'lucide-react';
+import { t } from '../i18n';
 
 export interface InboxProps {
   currentUid: string;
@@ -223,10 +224,10 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
   // Which recipient types this role may write to.
   const recipientOptions: { type: RecipientType; label: string }[] =
     currentRole === 'imam'
-      ? [{ type: 'mosque', label: '🕌 إلى مسجد' }, { type: 'admin', label: '🛡️ إدارة منصة أئمة' }]
+      ? [{ type: 'mosque', label: t('🕌 إلى مسجد') }, { type: 'admin', label: t('🛡️ إدارة منصة أئمة') }]
       : currentRole === 'mosque'
-      ? [{ type: 'imam', label: '🎙️ إلى إمام' }, { type: 'admin', label: '🛡️ إدارة منصة أئمة' }]
-      : [{ type: 'imam', label: '🎙️ إلى إمام' }, { type: 'mosque', label: '🕌 إلى مسجد' }];
+      ? [{ type: 'imam', label: t('🎙️ إلى إمام') }, { type: 'admin', label: t('🛡️ إدارة منصة أئمة') }]
+      : [{ type: 'imam', label: t('🎙️ إلى إمام') }, { type: 'mosque', label: t('🕌 إلى مسجد') }];
 
   return (
     <div className="bg-white border border-slate-200 rounded-3xl p-5 md:p-7 shadow-sm space-y-6">
@@ -240,16 +241,16 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-lg font-black text-slate-900 font-amiri">
-                علبة الرسائل والمراسلات الرسمية
+                {t('علبة الرسائل والمراسلات الرسمية')}
               </h3>
               {unreadCount > 0 && (
                 <span className="bg-red-500 text-white text-xs font-black px-2 py-0.5 rounded-full animate-pulse">
-                  {unreadCount} رسائل جديدة
+                  {t('{n} رسائل جديدة', { n: unreadCount })}
                 </span>
               )}
             </div>
             <p className="text-xs text-slate-500">
-              التواصل المباشر بين الأئمة وإدارات المساجد، وإشعارات التوثيق من إدارة منصة أئمة
+              {t('التواصل المباشر بين الأئمة وإدارات المساجد، وإشعارات التوثيق من إدارة منصة أئمة')}
             </p>
           </div>
         </div>
@@ -261,7 +262,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
             className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs shadow flex items-center gap-1.5 transition cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>كتابة رسالة جديدة</span>
+            <span>{t('كتابة رسالة جديدة')}</span>
           </button>
         </div>
       </div>
@@ -276,7 +277,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
               : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
           }`}
         >
-          جميع الرسائل ({userMessages.length})
+          {t('جميع الرسائل ({n})', { n: userMessages.length })}
         </button>
 
         <button
@@ -287,7 +288,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
               : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
           }`}
         >
-          <span>غير المقروءة</span>
+          <span>{t('غير المقروءة')}</span>
           {unreadCount > 0 && (
             <span className="bg-red-200 text-red-950 text-xs px-1.5 py-0.2 rounded-full font-black">
               {unreadCount}
@@ -304,7 +305,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
           }`}
         >
           <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
-          <span>رسائل إدارة منصة أئمة</span>
+          <span>{t('رسائل إدارة منصة أئمة')}</span>
         </button>
 
         <button
@@ -316,7 +317,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
           }`}
         >
           <Calendar className="w-3.5 h-3.5 text-purple-300" />
-          <span>دعوات المقابلات</span>
+          <span>{t('دعوات المقابلات')}</span>
         </button>
       </div>
 
@@ -326,14 +327,14 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
         {/* Left / Message List Column */}
         <div className="lg:col-span-5 border border-slate-200 rounded-2xl overflow-hidden flex flex-col bg-slate-50">
           <div className="p-3 bg-white border-b border-slate-200 text-slate-600 font-bold text-xs flex justify-between items-center">
-            <span>صندوق المحادثات ({filteredMessages.length})</span>
-            <span className="text-xs text-slate-400">مرتبة حسب الأحدث</span>
+            <span>{t('صندوق المحادثات ({n})', { n: filteredMessages.length })}</span>
+            <span className="text-xs text-slate-400">{t('مرتبة حسب الأحدث')}</span>
           </div>
 
           <div className="flex-1 overflow-y-auto max-h-[500px] divide-y divide-slate-200">
             {filteredMessages.length === 0 ? (
               <div className="p-8 text-center text-slate-400 text-xs">
-                لا توجد رسائل في هذا التبويب.
+                {t('لا توجد رسائل في هذا التبويب.')}
               </div>
             ) : (
               filteredMessages.map((msg) => {
@@ -348,7 +349,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                     onClick={() => handleSelectMessage(msg)}
                     className={`p-3.5 cursor-pointer transition text-xs space-y-1.5 ${
                       isSelected
-                        ? 'bg-amber-50/90 border-r-4 border-amber-500'
+                        ? 'bg-amber-50/90 border-s-4 border-amber-500'
                         : isUnread
                         ? 'bg-white font-semibold'
                         : 'bg-slate-50 hover:bg-white text-slate-600'
@@ -359,16 +360,16 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                         {isAdmin ? (
                           <span className="bg-emerald-900 text-amber-300 text-xs px-2 py-0.5 rounded font-black flex items-center gap-1">
                             <ShieldCheck className="w-3 h-3 text-amber-400" />
-                            إدارة منصة أئمة
+                            {t('إدارة منصة أئمة')}
                           </span>
                         ) : sentByMe ? (
                           <span className="bg-blue-100 text-blue-900 text-xs px-2 py-0.5 rounded font-bold">
-                            صادرة منك ← {msg.receiverName}
+                            {t('صادرة منك ←')} {msg.receiverName}
                           </span>
                         ) : (
                           <span className="bg-slate-200 text-slate-800 text-xs px-2 py-0.5 rounded font-bold">
                             {/* The account type is checked by the security rules; the name is free text. */}
-                            من: {msg.senderName} ({msg.senderType === 'mosque' ? 'مسجد' : 'إمام'})
+                            {t('من:')} {msg.senderName} ({msg.senderType === 'mosque' ? t('مسجد') : t('إمام')})
                           </span>
                         )}
                         {isUnread && (
@@ -380,11 +381,11 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                       </span>
                     </div>
 
-                    <h5 className={`font-bold text-slate-900 line-clamp-1 ${isUnread ? 'font-black' : ''}`}>
+                    <h5 dir="auto" className={`font-bold text-slate-900 line-clamp-1 ${isUnread ? 'font-black' : ''}`}>
                       {msg.subject}
                     </h5>
 
-                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                    <p dir="auto" className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
                       {msg.content}
                     </p>
                   </div>
@@ -411,12 +412,12 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                         : 'bg-amber-100 text-amber-900'
                     }`}>
                       {selectedMessage.senderType === 'admin'
-                        ? '🛡️ رسالة رسمية من إدارة منصة أئمة'
+                        ? t('🛡️ رسالة رسمية من إدارة منصة أئمة')
                         : selectedMessage.category === 'interview'
-                        ? '🗓️ دعوة لمقابلة رسمية'
-                        : '💬 استفسار ومراسلة مباشرة'}
+                        ? t('🗓️ دعوة لمقابلة رسمية')
+                        : t('💬 استفسار ومراسلة مباشرة')}
                     </span>
-                    <h4 className="text-base font-black text-slate-900 font-amiri pt-1">
+                    <h4 dir="auto" className="text-base font-black text-slate-900 font-amiri pt-1">
                       {selectedMessage.subject}
                     </h4>
                   </div>
@@ -424,7 +425,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => onDeleteMessage(selectedMessage.id)}
-                      title="حذف الرسالة"
+                      title={t('حذف الرسالة')}
                       className="text-slate-400 hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -434,18 +435,18 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
 
                 <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 flex flex-wrap justify-between items-center gap-2 text-xs text-slate-600">
                   <p>
-                    <strong>المرسل:</strong> {selectedMessage.senderName} ({selectedMessage.senderType === 'admin' ? 'الإدارة' : selectedMessage.senderType === 'imam' ? 'إمام' : 'مسجد'})
+                    <strong>{t('المرسل:')}</strong> {selectedMessage.senderName} ({selectedMessage.senderType === 'admin' ? t('الإدارة') : selectedMessage.senderType === 'imam' ? t('إمام') : t('مسجد')})
                     {' ← '}
-                    <strong>إلى:</strong> {selectedMessage.receiverName}
+                    <strong>{t('إلى:')}</strong> {selectedMessage.receiverName}
                   </p>
                   <p>
-                    <strong>التاريخ:</strong> {formatDate(selectedMessage.sentAt, true)}
+                    <strong>{t('التاريخ:')}</strong> {formatDate(selectedMessage.sentAt, true)}
                   </p>
                 </div>
               </div>
 
               {/* Message Body */}
-              <div className="flex-1 py-2 text-slate-800 text-xs sm:text-sm leading-relaxed space-y-3 whitespace-pre-line">
+              <div dir="auto" className="flex-1 py-2 text-slate-800 text-xs sm:text-sm leading-relaxed space-y-3 whitespace-pre-line">
                 {selectedMessage.content}
               </div>
 
@@ -453,14 +454,14 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
               <div className="pt-4 border-t border-slate-100 space-y-3">
                 <h5 className="font-bold text-slate-800 text-xs flex items-center gap-1.5">
                   <Reply className="w-3.5 h-3.5 text-amber-600" />
-                  <span>الرد السريع على هذه المراسلة:</span>
+                  <span>{t('الرد السريع على هذه المراسلة:')}</span>
                 </h5>
                 <form onSubmit={handleSendReply} className="space-y-2">
                   <textarea
                     rows={3}
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="اكتب ردك هنا..."
+                    placeholder={t('اكتب ردك هنا...')}
                     className="w-full border border-slate-300 rounded-xl p-3 text-xs bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-amber-500 leading-relaxed"
                   ></textarea>
                   <div className="flex justify-end">
@@ -474,7 +475,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                       }`}
                     >
                       {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                      <span>إرسال الرد</span>
+                      <span>{t('إرسال الرد')}</span>
                     </button>
                   </div>
                 </form>
@@ -483,7 +484,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
             </div>
           ) : (
             <div className="h-full flex items-center justify-center text-slate-400 text-xs">
-              حدد رسالة من القائمة لعرض تفاصيلها.
+              {t('حدد رسالة من القائمة لعرض تفاصيلها.')}
             </div>
           )}
         </div>
@@ -501,7 +502,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                   ✉️
                 </span>
                 <h4 className="text-base font-black text-slate-900 font-amiri">
-                  كتابة رسالة جديدة
+                  {t('كتابة رسالة جديدة')}
                 </h4>
               </div>
               <button
@@ -516,7 +517,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
               
               {/* Recipient Selection */}
               <div className="space-y-2">
-                <label className="block font-bold text-slate-700">إلى من تريد إرسال الرسالة؟ *</label>
+                <label className="block font-bold text-slate-700">{t('إلى من تريد إرسال الرسالة؟ *')}</label>
                 <div className="grid grid-cols-2 gap-2">
                   {recipientOptions.map((opt) => (
                     <button
@@ -536,15 +537,15 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
               {/* Recipient Dropdown (if mosque or imam) */}
               {newRecipientType === 'mosque' && (
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">اختر المسجد المستقبل *</label>
+                  <label className="block font-bold text-slate-700 mb-1">{t('اختر المسجد المستقبل *')}</label>
                   <select
                     value={newRecipientId}
                     onChange={(e) => setNewRecipientId(e.target.value)}
                     className="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white font-bold"
                   >
-                    {recipientMosques.length === 0 && <option value="">لا توجد مساجد متاحة</option>}
+                    {recipientMosques.length === 0 && <option value="">{t('لا توجد مساجد متاحة')}</option>}
                     {currentRole === 'admin' && recipientMosques.length > 1 && (
-                      <option value={ALL}>📢 جميع المساجد ({recipientMosques.length})</option>
+                      <option value={ALL}>{t('📢 جميع المساجد ({n})', { n: recipientMosques.length })}</option>
                     )}
                     {recipientMosques.map((m) => (
                       <option key={m.id} value={m.id}>
@@ -557,15 +558,15 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
 
               {newRecipientType === 'imam' && (
                 <div>
-                  <label className="block font-bold text-slate-700 mb-1">اختر الإمام المستقبل *</label>
+                  <label className="block font-bold text-slate-700 mb-1">{t('اختر الإمام المستقبل *')}</label>
                   <select
                     value={newRecipientId}
                     onChange={(e) => setNewRecipientId(e.target.value)}
                     className="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white font-bold"
                   >
-                    {recipientImams.length === 0 && <option value="">لا يوجد أئمة متاحون</option>}
+                    {recipientImams.length === 0 && <option value="">{t('لا يوجد أئمة متاحون')}</option>}
                     {currentRole === 'admin' && recipientImams.length > 1 && (
-                      <option value={ALL}>📢 جميع الأئمة ({recipientImams.length})</option>
+                      <option value={ALL}>{t('📢 جميع الأئمة ({n})', { n: recipientImams.length })}</option>
                     )}
                     {recipientImams.map((im) => (
                       <option key={im.id} value={im.id}>
@@ -578,28 +579,28 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
 
               {/* Subject */}
               <div>
-                <label className="block font-bold text-slate-700 mb-1">موضوع الرسالة *</label>
+                <label className="block font-bold text-slate-700 mb-1">{t('موضوع الرسالة *')}</label>
                 <input
                   type="text"
                   required
                   maxLength={200}
                   value={newSubject}
                   onChange={(e) => setNewSubject(e.target.value)}
-                  placeholder="مثال: استفسار عن موعد المقابلة / طلب أوراق إضافية..."
+                  placeholder={t('مثال: استفسار عن موعد المقابلة / طلب أوراق إضافية...')}
                   className="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white"
                 />
               </div>
 
               {/* Content */}
               <div>
-                <label className="block font-bold text-slate-700 mb-1">نص الرسالة بالتفصيل *</label>
+                <label className="block font-bold text-slate-700 mb-1">{t('نص الرسالة بالتفصيل *')}</label>
                 <textarea
                   required
                   rows={4}
                   maxLength={5000}
                   value={newContent}
                   onChange={(e) => setNewContent(e.target.value)}
-                  placeholder="اكتب رسالتك واستفسارك هنا..."
+                  placeholder={t('اكتب رسالتك واستفسارك هنا...')}
                   className="w-full border border-slate-300 rounded-xl p-3 bg-white leading-relaxed"
                 ></textarea>
               </div>
@@ -611,7 +612,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                   onClick={() => setIsComposing(false)}
                   className="px-4 py-2 border border-slate-300 rounded-xl font-bold text-slate-600 cursor-pointer"
                 >
-                  إلغاء
+                  {t('إلغاء')}
                 </button>
                 <button
                   type="submit"
@@ -619,7 +620,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                   className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-6 py-2 rounded-xl shadow cursor-pointer flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                  <span>إرسال الرسالة الآن</span>
+                  <span>{t('إرسال الرسالة الآن')}</span>
                 </button>
               </div>
 

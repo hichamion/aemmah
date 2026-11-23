@@ -14,6 +14,7 @@ import '@fontsource/ruwudu/700.css';
 // Bold Kufic font for the intro title.
 import '@fontsource/reem-kufi/arabic-700.css';
 import App from './App.tsx';
+import { I18nProvider } from './i18n';
 import { initSettings } from './lib/settings';
 import { reloadForUpdate } from './components/AppErrorBoundary';
 import './index.css';
@@ -30,6 +31,6 @@ window.addEventListener('vite:preloadError', (event) => {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <I18nProvider>{(lang) => <App key={lang} />}</I18nProvider>
   </StrictMode>
 );

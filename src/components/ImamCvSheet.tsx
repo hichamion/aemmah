@@ -36,6 +36,7 @@ import {
   KHATEEB_TERM_LABELS,
 } from '../utils/helpers';
 import { LogoMark } from './Logo';
+import { isRtl, t } from '../i18n';
 
 /*
  * CV-style imam profile: a dark side column (photo in a gold ring, personal info, Qur'an qualifications,
@@ -96,7 +97,7 @@ export const Ribbon: React.FC<{ icon: React.ReactNode; children: React.ReactNode
 }) => (
   <div className="flex items-center gap-3">
     <h3
-      className="inline-flex items-center gap-2 text-white font-black text-sm px-4 py-2 rounded-l-2xl rounded-tr-2xl shadow-sm"
+      className="inline-flex items-center gap-2 text-white font-black text-sm px-4 py-2 rounded-e-2xl rounded-ss-2xl shadow-sm"
       style={{ backgroundColor: tone }}
     >
       <span className="text-amber-300">{icon}</span>
@@ -109,7 +110,7 @@ export const Ribbon: React.FC<{ icon: React.ReactNode; children: React.ReactNode
 
 /** Gold and coloured wave at the bottom of the sheet, with the platform logo and link (discreet promotion). */
 export const CvFooter: React.FC<{ tone?: string }> = ({ tone = '#0b3a4f' }) => (
-  <footer className="absolute bottom-0 inset-x-0 h-28" aria-label="منصة أئمة">
+  <footer className="absolute bottom-0 inset-x-0 h-28" aria-label={t('منصة أئمة')}>
     <svg viewBox="0 0 500 110" preserveAspectRatio="none" className="absolute inset-0 w-full h-full" aria-hidden>
       <path d="M0 40 C 150 95, 330 0, 500 55 L500 110 L0 110 Z" fill="#f2a12c" />
       <path d="M0 58 C 160 110, 330 15, 500 72 L500 110 L0 110 Z" fill={tone} />
@@ -118,8 +119,8 @@ export const CvFooter: React.FC<{ tone?: string }> = ({ tone = '#0b3a4f' }) => (
       <div className="flex items-center gap-2">
         <LogoMark className="w-9 h-9" />
         <div className="leading-tight">
-          <p className="font-black text-sm">منصة أئمة</p>
-          <p className="text-[11px] text-white/80">تربط الأئمة والقرّاء بالمساجد في أوروبا</p>
+          <p className="font-black text-sm">{t('منصة أئمة')}</p>
+          <p className="text-[11px] text-white/80">{t('تربط الأئمة والقرّاء بالمساجد في أوروبا')}</p>
         </div>
       </div>
       <p className="text-xs font-bold text-amber-300" dir="ltr">
@@ -174,19 +175,19 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
 
     const langs = imamLanguages(imam);
     const dotsFor = (level?: string) => LANGUAGE_LEVELS.find((l) => l.value === level)?.dots ?? 0;
-    const yearRange = (from: string, to: string) => (from || to ? `${from || '…'} – ${to || 'حتى الآن'}` : '');
+    const yearRange = (from: string, to: string) => (from || to ? `${from || '…'} – ${to || t('حتى الآن')}` : '');
     const youtube = safeHttpUrl(imam.youtubeUrl);
 
     const qualifications = [
-      `رواية ${imam.riwaya}`,
+      t('رواية {name}', { name: t(imam.riwaya) }),
       ...splitList(imam.degree),
-      imam.hasCerts === 'yes' ? 'حاصل على شواهد / إجازات' : '',
+      imam.hasCerts === 'yes' ? t('حاصل على شواهد / إجازات') : '',
     ].filter(Boolean);
 
     return (
       <div
         ref={ref}
-        dir="rtl"
+        dir={isRtl() ? 'rtl' : 'ltr'}
         className={`keep-light relative bg-[#f7f9fa] text-slate-900 overflow-hidden flex ${
           print ? 'w-[794px] min-h-[1123px] flex-row' : 'w-full flex-col md:flex-row rounded-3xl'
         }`}
@@ -195,7 +196,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
         {/* ---------------- Side column ---------------- */}
         <aside
           className={`cv-side relative z-10 overflow-hidden bg-gradient-to-b ${IMAM_TONES[imamTone(imam)].side} text-white px-6 py-8 space-y-7 shrink-0 ${
-            print ? 'w-[290px] rounded-bl-[2.5rem]' : 'w-full md:w-[290px] md:rounded-bl-[2.5rem]'
+            print ? 'w-[290px] rounded-ee-[2.5rem]' : 'w-full md:w-[290px] md:rounded-ee-[2.5rem]'
           }`}
         >
           {/* Role picture (minbar / lantern / mihrab) as a transparent background of the side column */}
@@ -214,8 +215,8 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
                 className={`w-40 h-40 rounded-full object-cover border-4 bg-white ${IMAM_TONES[imamTone(imam)].ring}`}
               />
               {imam.isVerified && (
-                <span className="absolute bottom-2 right-2 bg-emerald-500 text-white text-xs font-black px-2 py-0.5 rounded-full ring-2 ring-[#0b3a4f]">
-                  ✓ موثق
+                <span className="absolute bottom-2 start-2 bg-emerald-500 text-white text-xs font-black px-2 py-0.5 rounded-full ring-2 ring-[#0b3a4f]">
+                  {t('✓ موثق')}
                 </span>
               )}
             </div>
@@ -224,17 +225,17 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
           {/* Phones: name and title right under the photo (the main column header is hidden there). */}
           {!print && (
             <div className="md:hidden text-center -mt-3 space-y-1">
-              <h1 className="text-3xl font-black leading-tight font-amiri">{imam.name}</h1>
+              <h1 dir="auto" className="text-3xl font-black leading-tight font-amiri">{imam.name}</h1>
               <p className="text-lg font-black text-amber-300">{imamTitle(imam.titles)}</p>
             </div>
           )}
 
           <section className="space-y-3">
-            <SideTitle icon={<User className="w-5 h-5" />}>المعلومات الشخصية</SideTitle>
-            <ContactLine icon={<User className="w-4 h-4" />} value={imam.age ? `${imam.age} سنة` : ''} />
-            <ContactLine icon={<Flag className="w-4 h-4" />} value={imam.nationality ? `الجنسية: ${imam.nationality}` : ''} />
-            <ContactLine icon={<MapPin className="w-4 h-4" />} value={imam.country ? `مقيم في: ${imam.country}` : ''} />
-            <ContactLine icon={<Heart className="w-4 h-4" />} value={imam.maritalStatus ? MARITAL_LABELS[imam.maritalStatus] ?? '' : ''} />
+            <SideTitle icon={<User className="w-5 h-5" />}>{t('المعلومات الشخصية')}</SideTitle>
+            <ContactLine icon={<User className="w-4 h-4" />} value={imam.age ? t('{n} سنة', { n: imam.age }) : ''} />
+            <ContactLine icon={<Flag className="w-4 h-4" />} value={imam.nationality ? t('الجنسية: {v}', { v: imam.nationality }) : ''} />
+            <ContactLine icon={<MapPin className="w-4 h-4" />} value={imam.country ? t('مقيم في: {v}', { v: imam.country }) : ''} />
+            <ContactLine icon={<Heart className="w-4 h-4" />} value={imam.maritalStatus ? t(MARITAL_LABELS[imam.maritalStatus] ?? '') : ''} />
             {contactSlot ?? (
               <>
                 <ContactLine icon={<Phone className="w-4 h-4" />} value={contact?.phone ?? ''} ltr />
@@ -245,7 +246,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
           </section>
 
           <section className="space-y-3">
-            <SideTitle icon={<BookOpen className="w-5 h-5" />}>المؤهلات القرآنية</SideTitle>
+            <SideTitle icon={<BookOpen className="w-5 h-5" />}>{t('المؤهلات القرآنية')}</SideTitle>
             <ul className="space-y-2 text-sm">
               {qualifications.map((q) => (
                 <li key={q} className="flex gap-2.5 leading-relaxed">
@@ -258,7 +259,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
 
           {langs.length > 0 && (
             <section className="space-y-3">
-              <SideTitle icon={<Languages className="w-5 h-5" />}>اللغات</SideTitle>
+              <SideTitle icon={<Languages className="w-5 h-5" />}>{t('اللغات')}</SideTitle>
               <ul className="space-y-2.5 text-sm">
                 {langs.map((l) => {
                   const dots = dotsFor(l.level);
@@ -267,12 +268,12 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
                       <span className="flex gap-2.5 items-center">
                         <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
                         <span>
-                          {l.name}
-                          {l.level === 'native' && <span className="text-white/70 text-xs"> (اللغة الأم)</span>}
+                          {t(l.name)}
+                          {l.level === 'native' && <span className="text-white/70 text-xs"> {t('(اللغة الأم)')}</span>}
                         </span>
                       </span>
                       {dots > 0 && (
-                        <span className="flex gap-1.5 shrink-0" aria-label={`المستوى ${dots} من 5`}>
+                        <span className="flex gap-1.5 shrink-0" aria-label={t('المستوى {n} من 5', { n: dots })}>
                           {[1, 2, 3, 4, 5].map((i) => (
                             <span key={i} className={`w-2.5 h-2.5 rounded-full ${i <= dots ? 'bg-amber-400' : 'bg-white/20'}`} />
                           ))}
@@ -287,7 +288,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
 
           {(imam.preferredLocations?.length ?? 0) > 0 && (
             <section className="space-y-3">
-              <SideTitle icon={<Globe2 className="w-5 h-5" />}>يفضّل الإمامة في</SideTitle>
+              <SideTitle icon={<Globe2 className="w-5 h-5" />}>{t('يفضّل الإمامة في')}</SideTitle>
               <ul className="space-y-2 text-sm">
                 {imam.preferredLocations!.map((l) => (
                   <li key={l.country} className="flex gap-2.5 leading-relaxed">
@@ -304,8 +305,8 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
 
           {qr && (
             <section className="pt-2 flex flex-col items-center gap-2 text-center">
-              <img data-qr src={qr} alt="رمز QR لملف الإمام على منصة أئمة" className="w-28 h-28 rounded-xl bg-white p-1.5" />
-              <p className="text-xs text-white/80 leading-relaxed">امسح الرمز لعرض الملف كاملاً على منصة أئمة</p>
+              <img data-qr src={qr} alt={t('رمز QR لملف الإمام على منصة أئمة')} className="w-28 h-28 rounded-xl bg-white p-1.5" />
+              <p className="text-xs text-white/80 leading-relaxed">{t('امسح الرمز لعرض الملف كاملاً على منصة أئمة')}</p>
             </section>
           )}
         </aside>
@@ -313,7 +314,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
         {/* ---------------- Main column ---------------- */}
         <main className={`relative flex-1 flex flex-col gap-7 px-7 pt-9 ${print ? 'pb-36' : 'pb-32'}`}>
           <header className={`text-center space-y-2 ${print ? '' : 'hidden md:block'}`}>
-            <h1 className="text-4xl font-black text-[#0b3a4f] leading-tight font-amiri">{imam.name}</h1>
+            <h1 dir="auto" className="text-4xl font-black text-[#0b3a4f] leading-tight font-amiri">{imam.name}</h1>
             <p className="text-xl font-black text-amber-600">{imamTitle(imam.titles)}</p>
             <div className="flex items-center justify-center gap-2" aria-hidden>
               <span className="h-0.5 w-16 bg-amber-400 rounded" />
@@ -323,12 +324,12 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
           </header>
 
           {(imam.cvText || '').trim() && (
-            <blockquote className="relative px-8 text-slate-700 text-sm leading-loose whitespace-pre-line">
-              <span className="absolute -top-3 right-0 text-5xl leading-none text-amber-500 font-serif" aria-hidden>
+            <blockquote dir="auto" className="relative px-8 text-slate-700 text-sm leading-loose whitespace-pre-line">
+              <span className="absolute -top-3 start-0 text-5xl leading-none text-amber-500 font-serif" aria-hidden>
                 “
               </span>
               {imam.cvText}
-              <span className="absolute -bottom-6 left-0 text-5xl leading-none text-amber-500 font-serif" aria-hidden>
+              <span className="absolute -bottom-6 end-0 text-5xl leading-none text-amber-500 font-serif" aria-hidden>
                 ”
               </span>
             </blockquote>
@@ -336,15 +337,15 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
 
           {(imam.currentJob?.trim() || (imam.experiences?.length ?? 0) > 0) && (
             <section className="space-y-3">
-              <Ribbon icon={<Briefcase className="w-5 h-5" />}>الخبرات العملية</Ribbon>
-              <div className="space-y-2 pr-2">
-                <Row label="الوظيفة الحالية" value={imam.currentJob || ''} />
+              <Ribbon icon={<Briefcase className="w-5 h-5" />}>{t('الخبرات العملية')}</Ribbon>
+              <div className="space-y-2 ps-2">
+                <Row label={t('الوظيفة الحالية')} value={imam.currentJob || ''} />
               </div>
               {(imam.experiences?.length ?? 0) > 0 && (
-                <ol className="relative border-r-2 border-amber-300 mr-3 pr-5 space-y-3">
+                <ol className="relative border-s-2 border-amber-300 ms-3 ps-5 space-y-3">
                   {imam.experiences!.map((e, i) => (
                     <li key={i} className="relative text-sm leading-relaxed">
-                      <span className="absolute -right-[27px] top-1.5 w-3 h-3 rounded-full bg-amber-400 ring-4 ring-[#f7f9fa]" />
+                      <span className="absolute -start-[27px] top-1.5 w-3 h-3 rounded-full bg-amber-400 ring-4 ring-[#f7f9fa]" />
                       <p className="font-black text-slate-800">
                         {e.title}
                         {e.place && <span className="font-normal text-slate-600"> — {e.place}</span>}
@@ -358,18 +359,18 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
           )}
 
           <section className="space-y-3">
-            <Ribbon icon={<GraduationCap className="w-5 h-5" />}>المؤهل العلمي</Ribbon>
-            <div className="space-y-2 pr-2">
-              <Row label="المؤهل" value={imam.degree} />
-              <Row label="الرواية" value={imam.riwaya} />
-              {!(imam.certificates?.length) && <Row label="الشواهد والإجازات" value={imam.hasCerts === 'yes' ? 'نعم' : 'لا'} />}
+            <Ribbon icon={<GraduationCap className="w-5 h-5" />}>{t('المؤهل العلمي')}</Ribbon>
+            <div className="space-y-2 ps-2">
+              <Row label={t('المؤهل')} value={imam.degree} />
+              <Row label={t('الرواية')} value={t(imam.riwaya)} />
+              {!(imam.certificates?.length) && <Row label={t('الشواهد والإجازات')} value={imam.hasCerts === 'yes' ? t('نعم') : t('لا')} />}
             </div>
           </section>
 
           {(imam.certificates?.length ?? 0) > 0 && (
             <section className="space-y-3">
-              <Ribbon icon={<Award className="w-5 h-5" />}>الشهادات والإجازات</Ribbon>
-              <ul className="space-y-2 pr-2 text-sm">
+              <Ribbon icon={<Award className="w-5 h-5" />}>{t('الشهادات والإجازات')}</Ribbon>
+              <ul className="space-y-2 ps-2 text-sm">
                 {imam.certificates!.map((c, i) => (
                   <li key={i} className="flex gap-3 leading-relaxed">
                     <span className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0" />
@@ -385,47 +386,47 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
           )}
 
           <section className="space-y-3">
-            <Ribbon icon={<Plane className="w-5 h-5" />}>الإقامة والتأشيرة</Ribbon>
-            <div className="space-y-2 pr-2">
+            <Ribbon icon={<Plane className="w-5 h-5" />}>{t('الإقامة والتأشيرة')}</Ribbon>
+            <div className="space-y-2 ps-2">
               <Row
-                label="الوضع"
+                label={t('الوضع')}
                 value={visaStatusText(imam)}
               />
-              <Row label="التفاصيل" value={imam.hasVisa === 'yes' || imam.livesInEurope ? imam.visaDetails : ''} />
-              <Row label="الدول المفضلة" value={formatPreferredLocations(imam.preferredLocations)} />
+              <Row label={t('التفاصيل')} value={imam.hasVisa === 'yes' || imam.livesInEurope ? imam.visaDetails : ''} />
+              <Row label={t('الدول المفضلة')} value={formatPreferredLocations(imam.preferredLocations)} />
             </div>
           </section>
 
           <section className="space-y-3">
-            <Ribbon icon={<CalendarClock className="w-5 h-5" />}>التفرغ</Ribbon>
-            <div className="space-y-2 pr-2">
-              <Row label="الحالة" value={AVAILABILITY[imam.availabilityState] ?? ''} />
-              <Row label="الالتزام في رمضان" value={imam.ramadanNote} />
-              <Row label="متاح للتعاقد ابتداءً من" value={imam.availableAfterDate} />
+            <Ribbon icon={<CalendarClock className="w-5 h-5" />}>{t('التفرغ')}</Ribbon>
+            <div className="space-y-2 ps-2">
+              <Row label={t('الحالة')} value={t(AVAILABILITY[imam.availabilityState] ?? '')} />
+              <Row label={t('الالتزام في رمضان')} value={imam.ramadanNote} />
+              <Row label={t('متاح للتعاقد ابتداءً من')} value={imam.availableAfterDate} />
             </div>
           </section>
 
           {isKhateeb(imam) && imam.khateeb && (
             <section className="space-y-3">
-              <Ribbon icon={<Mic className="w-5 h-5" />}>خطيب جمعة</Ribbon>
-              <div className="space-y-2 pr-2">
-                <Row label="نوع الخطابة" value={KHATEEB_TERM_LABELS[imam.khateeb.term]} />
-                <Row label="مكان الخطابة" value={khateebArea(imam.khateeb, imam.country)} />
-                <Row label="السيارة" value={imam.khateeb.hasCar ? 'عنده سيارة' : 'ليس عنده سيارة'} />
+              <Ribbon icon={<Mic className="w-5 h-5" />}>{t('خطيب جمعة')}</Ribbon>
+              <div className="space-y-2 ps-2">
+                <Row label={t('نوع الخطابة')} value={t(KHATEEB_TERM_LABELS[imam.khateeb.term])} />
+                <Row label={t('مكان الخطابة')} value={khateebArea(imam.khateeb, imam.country)} />
+                <Row label={t('السيارة')} value={imam.khateeb.hasCar ? t('عنده سيارة') : t('ليس عنده سيارة')} />
               </div>
             </section>
           )}
 
           {audioSlot && (
             <section className="space-y-3">
-              <Ribbon icon={<Mic className="w-5 h-5" />}>عيّنة التلاوة</Ribbon>
+              <Ribbon icon={<Mic className="w-5 h-5" />}>{t('عيّنة التلاوة')}</Ribbon>
               {audioSlot}
             </section>
           )}
 
           {(recitationSlot || youtube) && (
             <section className="space-y-3">
-              <Ribbon icon={<Video className="w-5 h-5" />}>نموذج من التلاوة</Ribbon>
+              <Ribbon icon={<Video className="w-5 h-5" />}>{t('نموذج من التلاوة')}</Ribbon>
               {recitationSlot ?? (
                 <p className="text-sm text-slate-700 pr-2 break-all" dir="ltr">
                   {youtube}

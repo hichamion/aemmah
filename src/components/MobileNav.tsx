@@ -2,6 +2,7 @@ import React from 'react';
 import { LogIn } from 'lucide-react';
 import { UserRole } from '../types';
 import type { View } from '../App';
+import { t } from '../i18n';
 
 interface MobileNavProps {
   currentView: View;
@@ -133,12 +134,12 @@ export const MobileNav: React.FC<MobileNavProps> = ({
   const divider = (k: string) => <span key={k} className="w-px self-center h-7 bg-[#d8cbbb]" aria-hidden />;
 
   return (
-    <nav aria-label="التنقل الرئيسي" className="mobile-nav lg:hidden fixed bottom-0 inset-x-0 z-40">
+    <nav aria-label={t('التنقل الرئيسي')} className="mobile-nav lg:hidden fixed bottom-0 inset-x-0 z-40">
       <div className="relative mx-3 mb-2.5 h-14">
         {/* the ivory pill */}
         <div className="ivory-bar absolute inset-0 rounded-full overflow-hidden">
-          <Skyline className="absolute bottom-0 right-2 h-[62%] w-[26%] text-[#cdbfae]/55" />
-          <Skyline className="absolute bottom-0 left-2 h-[62%] w-[26%] text-[#cdbfae]/55" flip />
+          <Skyline className="absolute bottom-0 start-2 h-[62%] w-[26%] text-[#cdbfae]/55" />
+          <Skyline className="absolute bottom-0 end-2 h-[62%] w-[26%] text-[#cdbfae]/55" flip />
           <Skyline className="absolute bottom-0 right-[33%] h-[46%] w-[12%] text-[#cdbfae]/45" flip />
           <Skyline className="absolute bottom-0 left-[33%] h-[46%] w-[12%] text-[#cdbfae]/45" />
           {/* green band under the centre, with a golden edge */}
@@ -164,30 +165,30 @@ export const MobileNav: React.FC<MobileNavProps> = ({
         </div>
 
         <div className="relative h-full flex items-stretch px-3">
-          {tab('home', 'الرئيسية', HomeIcon, currentView === 'home', onHome)}
+          {tab('home', t('الرئيسية'), HomeIcon, currentView === 'home', onHome)}
           {divider('d1')}
-          {tab('imams', 'الأئمة', ImamIcon, currentView === 'mosque' && !accountActive, onImams)}
+          {tab('imams', t('الأئمة'), ImamIcon, currentView === 'mosque' && !accountActive, onImams)}
           <div className="w-[84px] shrink-0" aria-hidden />
-          {tab('mosques', 'المساجد', MosqueIcon, currentView === 'imam' && !accountActive, onMosques)}
+          {tab('mosques', t('المساجد'), MosqueIcon, currentView === 'imam' && !accountActive, onMosques)}
           {divider('d2')}
-          {isVisitor ? tab('signin', 'دخول', SignInIcon, false, onSignIn) : tab('account', 'حسابي', AccountIcon, accountActive, onAccount, unreadCount)}
+          {isVisitor ? tab('signin', t('دخول'), SignInIcon, false, onSignIn) : tab('account', t('حسابي'), AccountIcon, accountActive, onAccount, unreadCount)}
         </div>
 
         {/* round «الملتقى» button: ivory ring, thin gold ring, green inside */}
         <button
           onClick={onCommunity}
-          aria-label={communityUnread ? `ملتقى الأئمة (${communityUnread} إشعار جديد)` : 'ملتقى الأئمة'}
+          aria-label={communityUnread ? t('ملتقى الأئمة ({n} إشعار جديد)', { n: communityUnread }) : t('ملتقى الأئمة')}
           aria-current={communityOn ? 'page' : undefined}
           className={`ivory-centre absolute left-1/2 -translate-x-1/2 -top-[11px] w-[74px] h-[74px] rounded-full p-[5px] cursor-pointer ${communityOn ? 'is-active' : ''}`}
         >
           <span className="ivory-centre__gold block w-full h-full rounded-full p-[1.5px]">
             <span className="ivory-centre__green w-full h-full rounded-full flex flex-col items-center justify-center gap-0">
               <CommunityIcon className="w-[28px] h-[20px]" />
-              <span className="text-[10.5px] font-black leading-tight mt-0.5">الملتقى</span>
+              <span className="text-[10.5px] font-black leading-tight mt-0.5">{t('الملتقى')}</span>
             </span>
           </span>
           {communityUnread > 0 && (
-            <span className="absolute top-0 right-0 bg-red-600 text-white text-[11px] font-black min-w-5 h-5 px-1 rounded-full flex items-center justify-center ring-2 ring-[#fbf6f0]">
+            <span className="absolute top-0 start-0 bg-red-600 text-white text-[11px] font-black min-w-5 h-5 px-1 rounded-full flex items-center justify-center ring-2 ring-[#fbf6f0]">
               {communityUnread}
             </span>
           )}

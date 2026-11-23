@@ -3,10 +3,11 @@ import { Loader2, LogOut, RotateCcw, Trash2 } from 'lucide-react';
 import { UserProfile } from '../types';
 import { accountDeletionDate } from '../lib/db';
 import { useDialog } from '../lib/useDialog';
+import { locale, t } from '../i18n';
 
 /** Arabic date such as «الأربعاء 25 نوفمبر 2026». */
 export const formatDeletionDate = (d: Date) =>
-  d.toLocaleDateString('ar', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  d.toLocaleDateString(locale(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
 
 /**
  * Shown to a user who asked to delete the account and signed in again during the grace week:
@@ -46,19 +47,19 @@ export const DeletionPendingModal: React.FC<{
           <Trash2 className="w-7 h-7" />
         </div>
         <h2 id="del-title" className="text-xl font-black text-center text-slate-900">
-          حسابك في طريقه إلى الحذف
+          {t('حسابك في طريقه إلى الحذف')}
         </h2>
         <p className="text-sm leading-relaxed text-center text-slate-600">
-          طلبت حذف حسابك، فأخفينا ملفك وإعلاناتك عن الجميع.{' '}
+          {t('طلبت حذف حسابك، فأخفينا ملفك وإعلاناتك عن الجميع.')}{' '}
           {overdue ? (
-            <>انتهت مهلة الأسبوع، وسيُحذف الحساب نهائياً قريباً.</>
+            <>{t('انتهت مهلة الأسبوع، وسيُحذف الحساب نهائياً قريباً.')}</>
           ) : (
             <>
-              سيُحذف الحساب وكل بياناته نهائياً يوم <b className="text-slate-900">{formatDeletionDate(due)}</b>.
+              {t('سيُحذف الحساب وكل بياناته نهائياً يوم')} <b className="text-slate-900">{formatDeletionDate(due)}</b>.
             </>
           )}
         </p>
-        <p className="text-sm leading-relaxed text-center text-slate-600">هل غيّرت رأيك؟ يمكنك استرجاع حسابك كما كان.</p>
+        <p className="text-sm leading-relaxed text-center text-slate-600">{t('هل غيّرت رأيك؟ يمكنك استرجاع حسابك كما كان.')}</p>
 
         <div className="space-y-2 pt-1">
           <button
@@ -67,7 +68,7 @@ export const DeletionPendingModal: React.FC<{
             className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-black cursor-pointer disabled:opacity-60"
           >
             {busy === 'restore' ? <Loader2 className="w-5 h-5 animate-spin" /> : <RotateCcw className="w-5 h-5" />}
-            استرجاع حسابي
+            {t('استرجاع حسابي')}
           </button>
           <button
             onClick={() => run('delete', onDeleteNow)}
@@ -75,7 +76,7 @@ export const DeletionPendingModal: React.FC<{
             className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-black cursor-pointer disabled:opacity-60"
           >
             {busy === 'delete' ? <Loader2 className="w-5 h-5 animate-spin" /> : <Trash2 className="w-5 h-5" />}
-            احذفه الآن نهائياً
+            {t('احذفه الآن نهائياً')}
           </button>
           <button
             onClick={onSignOut}
@@ -83,7 +84,7 @@ export const DeletionPendingModal: React.FC<{
             className="w-full flex items-center justify-center gap-2 py-2.5 rounded-2xl text-slate-500 hover:bg-slate-100 font-bold text-sm cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
-            تسجيل الخروج وترك الحذف كما هو
+            {t('تسجيل الخروج وترك الحذف كما هو')}
           </button>
         </div>
       </div>

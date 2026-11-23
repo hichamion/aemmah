@@ -3,6 +3,7 @@ import { ArrowRight, Loader2, MessageSquare, Send } from 'lucide-react';
 import { FeedbackKind } from '../types';
 import { isValidEmail } from '../utils/helpers';
 import { CONTACT_EMAIL } from '../config';
+import { t } from '../i18n';
 
 const KINDS: { value: FeedbackKind; label: string }[] = [
   { value: 'message', label: 'رسالة إلى الإدارة' },
@@ -32,8 +33,8 @@ export const ContactPage: React.FC<ContactPageProps> = ({ defaultName, defaultEm
     e.preventDefault();
     setError('');
     if (website) return; // silently drop bot submissions
-    if (message.trim().length < 10) return setError('اكتب رسالتك في 10 أحرف على الأقل.');
-    if (email.trim() && !isValidEmail(email)) return setError('البريد الإلكتروني غير صحيح.');
+    if (message.trim().length < 10) return setError(t('اكتب رسالتك في 10 أحرف على الأقل.'));
+    if (email.trim() && !isValidEmail(email)) return setError(t('البريد الإلكتروني غير صحيح.'));
     setSending(true);
     const ok = await onSend({ kind, name, email, message });
     setSending(false);
@@ -49,39 +50,39 @@ export const ContactPage: React.FC<ContactPageProps> = ({ defaultName, defaultEm
     <section className="flex-1 py-8 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto w-full space-y-4">
       <button onClick={onBack} className="text-brass-300 hover:text-brass-200 font-bold text-sm flex items-center gap-1 cursor-pointer">
         <ArrowRight className="w-4 h-4" />
-        <span>العودة للرئيسية</span>
+        <span>{t('العودة للرئيسية')}</span>
       </button>
 
       <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 space-y-5">
         <header className="space-y-1">
           <h1 className="text-2xl sm:text-3xl font-black text-slate-900 font-amiri flex items-center gap-2">
             <MessageSquare className="w-6 h-6 text-emerald-700" />
-            راسل الإدارة أو أرسل اقتراحاً
+            {t('راسل الإدارة أو أرسل اقتراحاً')}
           </h1>
           <p className="text-sm text-slate-600">
-            رسالتك تصل إلى إدارة منصة أئمة فقط. اترك بريدك إن أردت أن نرد عليك.
+            {t('رسالتك تصل إلى إدارة منصة أئمة فقط. اترك بريدك إن أردت أن نرد عليك.')}
           </p>
           <p className="text-sm text-slate-600">
-            أو راسلنا عبر البريد الإلكتروني:{' '}
+            {t('أو راسلنا عبر البريد الإلكتروني:')}{' '}
             <a href={`mailto:${CONTACT_EMAIL}`} dir="ltr" className="text-emerald-700 underline">{CONTACT_EMAIL}</a>
           </p>
         </header>
 
         {sent ? (
           <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-5 space-y-3 text-sm text-emerald-900">
-            <p className="font-bold">شكراً لك، وصلت رسالتك إلى الإدارة.</p>
+            <p className="font-bold">{t('شكراً لك، وصلت رسالتك إلى الإدارة.')}</p>
             <button onClick={() => setSent(false)} className="text-emerald-800 underline font-bold cursor-pointer">
-              إرسال رسالة أخرى
+              {t('إرسال رسالة أخرى')}
             </button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4 text-sm">
             <label className="block space-y-1.5">
-              <span className="font-bold text-slate-800">نوع الرسالة</span>
+              <span className="font-bold text-slate-800">{t('نوع الرسالة')}</span>
               <select value={kind} onChange={(e) => setKind(e.target.value as FeedbackKind)} className={field}>
                 {KINDS.map((k) => (
                   <option key={k.value} value={k.value}>
-                    {k.label}
+                    {t(k.label)}
                   </option>
                 ))}
               </select>
@@ -89,24 +90,24 @@ export const ContactPage: React.FC<ContactPageProps> = ({ defaultName, defaultEm
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <label className="block space-y-1.5">
-                <span className="font-bold text-slate-800">الاسم (اختياري)</span>
+                <span className="font-bold text-slate-800">{t('الاسم (اختياري)')}</span>
                 <input value={name} onChange={(e) => setName(e.target.value)} maxLength={120} className={field} />
               </label>
               <label className="block space-y-1.5">
-                <span className="font-bold text-slate-800">البريد الإلكتروني (اختياري، للرد)</span>
+                <span className="font-bold text-slate-800">{t('البريد الإلكتروني (اختياري، للرد)')}</span>
                 <input
                   type="email"
                   dir="ltr"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   maxLength={200}
-                  className={`${field} text-left`}
+                  className={`${field} text-end`}
                 />
               </label>
             </div>
 
             <label className="block space-y-1.5">
-              <span className="font-bold text-slate-800">رسالتك</span>
+              <span className="font-bold text-slate-800">{t('رسالتك')}</span>
               <textarea
                 required
                 value={message}
@@ -115,7 +116,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ defaultName, defaultEm
                 maxLength={3000}
                 className={field}
               />
-              <span className="block text-xs text-slate-400 text-left">{message.length} / 3000</span>
+              <span className="block text-xs text-slate-400 text-end">{message.length} / 3000</span>
             </label>
 
             {/* Honeypot: invisible to people, bots fill it in. */}
@@ -138,7 +139,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ defaultName, defaultEm
               className="bg-emerald-700 hover:bg-emerald-800 disabled:opacity-60 text-white font-black px-6 py-3 rounded-xl flex items-center gap-2 cursor-pointer"
             >
               {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-              <span>إرسال</span>
+              <span>{t('إرسال')}</span>
             </button>
           </form>
         )}
