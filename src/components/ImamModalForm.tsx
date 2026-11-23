@@ -23,6 +23,7 @@ import {
 import { CertificateEditor, ExperienceEditor, LanguagesEditor, PreferredLocationsEditor } from './ImamCvEditor';
 import { X, Upload, Video, CheckCircle2, RotateCcw, Loader2, Mic } from 'lucide-react';
 import { useDialog } from '../lib/useDialog';
+import { t } from '../i18n';
 
 interface ImamModalFormProps {
   isOpen: boolean;
@@ -186,19 +187,19 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
   };
 
   const validate = (): string | null => {
-    if (!fields.name.trim()) return 'الاسم مطلوب.';
+    if (!fields.name.trim()) return t('الاسم مطلوب.');
     // Everything else is optional; the age is checked only when given.
     const age = Number(fields.age || 0);
-    if (age !== 0 && (!Number.isFinite(age) || age < 18 || age > 90)) return 'العمر يجب أن يكون بين 18 و 90 سنة (أو اتركه فارغاً).';
-    if (!isValidPhone(contact.phone)) return 'رقم الهاتف غير صحيح. اكتبه بالصيغة الدولية مثل +212600000000';
-    if (contact.whatsapp && !isValidPhone(contact.whatsapp)) return 'رقم الواتساب غير صحيح.';
-    if (!isValidEmail(contact.email)) return 'البريد الإلكتروني غير صحيح.';
-    if (fields.youtubeUrl && !safeHttpUrl(fields.youtubeUrl)) return 'رابط اليوتيوب غير صحيح.';
+    if (age !== 0 && (!Number.isFinite(age) || age < 18 || age > 90)) return t('العمر يجب أن يكون بين 18 و 90 سنة (أو اتركه فارغاً).');
+    if (!isValidPhone(contact.phone)) return t('رقم الهاتف غير صحيح. اكتبه بالصيغة الدولية مثل +212600000000');
+    if (contact.whatsapp && !isValidPhone(contact.whatsapp)) return t('رقم الواتساب غير صحيح.');
+    if (!isValidEmail(contact.email)) return t('البريد الإلكتروني غير صحيح.');
+    if (fields.youtubeUrl && !safeHttpUrl(fields.youtubeUrl)) return t('رابط اليوتيوب غير صحيح.');
     // Checked only once the imam filled the khateeb section (older profiles can still be saved as before).
     if (allTitles().includes(TITLE_KHATEEB) && fields.livesInEurope && fields.khateeb) {
       const k = fields.khateeb;
-      if (k.mode === 'regions' && !k.regions.trim()) return 'اكتب المدن أو المناطق التي يمكنك أن تخطب فيها الجمعة.';
-      if (k.mode === 'radius' && !(Number(k.radiusKm) > 0 && Number(k.radiusKm) <= 500)) return 'اكتب المسافة بالكيلومتر (من 1 إلى 500).';
+      if (k.mode === 'regions' && !k.regions.trim()) return t('اكتب المدن أو المناطق التي يمكنك أن تخطب فيها الجمعة.');
+      if (k.mode === 'radius' && !(Number(k.radiusKm) > 0 && Number(k.radiusKm) <= 500)) return t('اكتب المسافة بالكيلومتر (من 1 إلى 500).');
     }
     return null;
   };
@@ -258,7 +259,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
       );
     } catch (err) {
       // The parent shows a toast as well; keep the form open and say why here too.
-      setFormError(`لم يتم حفظ الملف: ${describeError(err)}`);
+      setFormError(t('لم يتم حفظ الملف: {e}', { e: describeError(err) }));
     } finally {
       setSaving(false);
     }
@@ -301,13 +302,13 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
         <div className="flex justify-between items-center border-b pb-4">
           <div>
             <span className="text-emerald-800 font-bold text-xs">
-              {initialData ? 'تعديل الملف الحالي' : 'تسجيل ملف إمام جديد'}
+              {initialData ? t('تعديل الملف الحالي') : t('تسجيل ملف إمام جديد')}
             </span>
             <h3 className="text-lg md:text-xl font-black text-slate-900 mt-0.5 font-amiri">
-              {initialData ? `تحرير بيانات: ${initialData.name}` : 'إضافة ملف إمام وقارئ جديد'}
+              {initialData ? t('تحرير بيانات: {name}', { name: initialData.name }) : t('إضافة ملف إمام وقارئ جديد')}
             </h3>
           </div>
-          <button onClick={onClose} aria-label="إغلاق" className="text-slate-400 hover:text-slate-700 p-1 cursor-pointer">
+          <button onClick={onClose} aria-label={t('إغلاق')} className="text-slate-400 hover:text-slate-700 p-1 cursor-pointer">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -315,33 +316,33 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           {/* SECTION 1 */}
           <div className="bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200 space-y-4">
-            <h4 className="font-extrabold text-emerald-950 text-base">01. المعلومات الشخصية</h4>
+            <h4 className="font-extrabold text-emerald-950 text-base">{t('01. المعلومات الشخصية')}</h4>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <label htmlFor="im-name" className="block font-bold text-slate-700 mb-1">الاسم الكامل *</label>
+                <label htmlFor="im-name" className="block font-bold text-slate-700 mb-1">{t('الاسم الكامل *')}</label>
                 <input id="im-name" type="text" required maxLength={120} value={fields.name}
-                  onChange={(e) => set('name', e.target.value)} placeholder="مثال: الشيخ يوسف الإدريسي"
+                  onChange={(e) => set('name', e.target.value)} placeholder={t('مثال: الشيخ يوسف الإدريسي')}
                   className={`${inputCls} font-semibold`} />
               </div>
               <div>
-                <label htmlFor="im-age" className="block font-bold text-slate-700 mb-1">العمر (بالسنوات)</label>
+                <label htmlFor="im-age" className="block font-bold text-slate-700 mb-1">{t('العمر (بالسنوات)')}</label>
                 <input id="im-age" type="number" min={18} max={90} inputMode="numeric"
                   value={fields.age || ''} onChange={(e) => set('age', Number(e.target.value))}
                   className={inputCls} />
               </div>
               <div>
-                <label htmlFor="im-nationality" className="block font-bold text-slate-700 mb-1">الجنسية</label>
+                <label htmlFor="im-nationality" className="block font-bold text-slate-700 mb-1">{t('الجنسية')}</label>
                 <input id="im-nationality" type="text" maxLength={80} value={fields.nationality || ''}
-                  onChange={(e) => set('nationality', e.target.value)} placeholder="مثال: مغربي"
+                  onChange={(e) => set('nationality', e.target.value)} placeholder={t('مثال: مغربي')}
                   className={`${inputCls} font-semibold`} />
               </div>
             </div>
 
             <div>
-              <label htmlFor="im-country" className="block font-bold text-slate-700 mb-1">مكان الإقامة الحالي (المدينة والبلد)</label>
+              <label htmlFor="im-country" className="block font-bold text-slate-700 mb-1">{t('مكان الإقامة الحالي (المدينة والبلد)')}</label>
               <input id="im-country" type="text" maxLength={120} value={fields.country}
-                onChange={(e) => set('country', e.target.value)} placeholder="مثال: فاس، المغرب — أو: كولونيا، ألمانيا"
+                onChange={(e) => set('country', e.target.value)} placeholder={t('مثال: فاس، المغرب — أو: كولونيا، ألمانيا')}
                 className={`${inputCls} font-semibold`} />
             </div>
 
@@ -349,26 +350,26 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
 
           {/* SECTION 2 */}
           <div className="bg-sky-50/70 p-4 md:p-5 rounded-2xl border border-sky-200 space-y-4">
-            <h4 className="font-extrabold text-sky-950 text-base">02. الإقامة في أوروبا والتأشيرة</h4>
+            <h4 className="font-extrabold text-sky-950 text-base">{t('02. الإقامة في أوروبا والتأشيرة')}</h4>
             <label className="flex items-center gap-2.5 bg-white border border-sky-200 rounded-xl p-3 cursor-pointer">
               <input type="checkbox" checked={!!fields.livesInEurope} onChange={(e) => setLivesInEurope(e.target.checked)}
                 className="w-4 h-4 accent-sky-700" />
-              <span className="font-bold text-sky-950">أنا مقيم حالياً في دولة أوروبية (لا أحتاج إجراءات استقدام)</span>
+              <span className="font-bold text-sky-950">{t('أنا مقيم حالياً في دولة أوروبية (لا أحتاج إجراءات استقدام)')}</span>
             </label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="im-visa" className="block font-bold text-sky-900 mb-1">هل لديك فيزا شنغن أو إقامة أوروبية حالياً؟</label>
+                <label htmlFor="im-visa" className="block font-bold text-sky-900 mb-1">{t('هل لديك فيزا شنغن أو إقامة أوروبية حالياً؟')}</label>
                 <select id="im-visa" value={fields.hasVisa} onChange={(e) => set('hasVisa', e.target.value as 'yes' | 'no')}
                   className="w-full border border-sky-300 rounded-xl px-3 py-2 bg-white font-bold text-sky-950">
-                  <option value="no">لا — ليس لدي فيزا حالياً</option>
-                  <option value="yes">نعم — لدي فيزا شنغن سارية أو إقامة أوروبية</option>
+                  <option value="no">{t('لا — ليس لدي فيزا حالياً')}</option>
+                  <option value="yes">{t('نعم — لدي فيزا شنغن سارية أو إقامة أوروبية')}</option>
                 </select>
               </div>
               <div>
-                <label htmlFor="im-visa-d" className="block font-bold text-sky-900 mb-1">توضيح حالة التأشيرة أو الجواز</label>
+                <label htmlFor="im-visa-d" className="block font-bold text-sky-900 mb-1">{t('توضيح حالة التأشيرة أو الجواز')}</label>
                 <input id="im-visa-d" type="text" maxLength={500} value={fields.visaDetails}
                   onChange={(e) => set('visaDetails', e.target.value)}
-                  placeholder="مثال: تأشيرة شنغن صالحة حتى 2027 / جواز سفر جاهز"
+                  placeholder={t('مثال: تأشيرة شنغن صالحة حتى 2027 / جواز سفر جاهز')}
                   className="w-full border border-sky-300 rounded-xl px-3 py-2 bg-white" />
               </div>
             </div>
@@ -376,18 +377,18 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
             {fields.hasVisa === 'yes' && (
               <div className="bg-white p-3.5 rounded-xl border border-sky-200 space-y-2">
                 <label htmlFor="im-visa-file" className="block font-bold text-sky-900">
-                  رفع نسخة الفيزا / الإقامة (PDF أو صورة، 5MB كحد أقصى) — تراها الإدارة فقط:
+                  {t('رفع نسخة الفيزا / الإقامة (PDF أو صورة، 5MB كحد أقصى) — تراها الإدارة فقط:')}
                 </label>
                 <input id="im-visa-file" type="file" accept=".pdf,image/jpeg,image/png,image/webp" onChange={pickDocument(setVisaFile)}
                   className="w-full border border-slate-200 rounded-lg p-1.5 bg-slate-50 text-xs" />
                 {(visaFile || initialData?.visaFileName) && (
                   <p className="text-xs text-sky-700 font-bold flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5 text-sky-600" />
-                    <span>{visaFile ? `سيتم رفع: ${visaFile.name}` : `الملف الحالي: ${initialData?.visaFileName}`}</span>
+                    <span>{visaFile ? t('سيتم رفع: {name}', { name: visaFile.name }) : t('الملف الحالي: {name}', { name: initialData?.visaFileName || '' })}</span>
                     {!visaFile && initialData?.visaFilePath?.startsWith('privateDocs/') && (
                       <button type="button" className="underline text-sky-800 ms-1 cursor-pointer"
-                        onClick={() => openPrivateDocument(initialData.visaFilePath!).catch((e) => onError(e instanceof Error ? e.message : 'تعذر فتح الملف.'))}>
-                        عرض
+                        onClick={() => openPrivateDocument(initialData.visaFilePath!).catch((e) => onError(e instanceof Error ? e.message : t('تعذر فتح الملف.')))}>
+                        {t('عرض')}
                       </button>
                     )}
                   </p>
@@ -398,53 +399,53 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
 
           {/* SECTION 3: availability and title */}
           <div className="bg-emerald-50/50 p-4 md:p-5 rounded-2xl border border-emerald-200 space-y-4">
-            <h4 className="font-extrabold text-emerald-950 text-base">03. حالة التفرغ والصفة</h4>
+            <h4 className="font-extrabold text-emerald-950 text-base">{t('03. حالة التفرغ والصفة')}</h4>
             <div>
-              <label htmlFor="im-av" className="block font-bold text-slate-700 mb-1">حالة التفرغ *</label>
+              <label htmlFor="im-av" className="block font-bold text-slate-700 mb-1">{t('حالة التفرغ *')}</label>
               <select id="im-av" value={fields.availabilityState}
                 onChange={(e) => set('availabilityState', e.target.value as ImamEditableFields['availabilityState'])}
                 className="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white font-bold text-slate-900">
-                <option value="available_now">متاح حالياً (لرمضان أو للإمامة الدائمة)</option>
-                <option value="ramadan_only">متاح لرمضان فقط (صلاة التراويح)</option>
-                <option value="busy_ramadan">ملتزم في رمضان — ومتاح للتعاقد بعده</option>
-                <option value="paused">إيقاف الإعلان مؤقتاً (إخفاء الملف)</option>
+                <option value="available_now">{t('متاح حالياً (لرمضان أو للإمامة الدائمة)')}</option>
+                <option value="ramadan_only">{t('متاح لرمضان فقط (صلاة التراويح)')}</option>
+                <option value="busy_ramadan">{t('ملتزم في رمضان — ومتاح للتعاقد بعده')}</option>
+                <option value="paused">{t('إيقاف الإعلان مؤقتاً (إخفاء الملف)')}</option>
               </select>
             </div>
 
             <fieldset className="space-y-2">
-              <legend className="block font-bold text-slate-700 mb-1">الصفة</legend>
+              <legend className="block font-bold text-slate-700 mb-1">{t('الصفة')}</legend>
               <div className="flex flex-wrap gap-2">
-                {IMAM_TITLE_OPTIONS.map((t) => {
-                  const on = knownTitles.includes(t);
-                  const locked = t === TITLE_KHATEEB && !fields.livesInEurope;
+                {IMAM_TITLE_OPTIONS.map((ti) => {
+                  const on = knownTitles.includes(ti);
+                  const locked = ti === TITLE_KHATEEB && !fields.livesInEurope;
                   return (
-                    <button key={t} type="button" aria-pressed={on} onClick={() => toggleTitle(t)} disabled={locked}
-                      title={locked ? 'متاح للمقيمين في أوروبا فقط' : undefined}
+                    <button key={ti} type="button" aria-pressed={on} onClick={() => toggleTitle(ti)} disabled={locked}
+                      title={locked ? t('متاح للمقيمين في أوروبا فقط') : undefined}
                       className={`px-3.5 py-2 rounded-full border-2 font-bold text-xs transition ${locked ? 'border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed' : on ? 'border-emerald-600 bg-emerald-50 text-emerald-900 cursor-pointer' : 'border-slate-200 bg-white text-slate-600 hover:border-emerald-400 cursor-pointer'}`}>
-                      {on ? '✓ ' : ''}{t}
+                      {on ? '✓ ' : ''}{t(ti)}
                     </button>
                   );
                 })}
               </div>
               <p className="text-xs text-slate-500 leading-relaxed">
-                «إمام وخطيب»: يؤمّ الناس ويخطب الجمعة في المسجد نفسه. «خطيب فقط»: يخطب الجمعة في مساجد مختلفة
-                {fields.livesInEurope ? '، وتظهر له خانات مناطق الخطابة والسيارة.' : ' — متاح للمقيمين في أوروبا فقط (اختر ذلك في القسم 02).'}
+                {t('«إمام وخطيب»: يؤمّ الناس ويخطب الجمعة في المسجد نفسه. «خطيب فقط»: يخطب الجمعة في مساجد مختلفة')}
+                {fields.livesInEurope ? t('، وتظهر له خانات مناطق الخطابة والسيارة.') : t(' — متاح للمقيمين في أوروبا فقط (اختر ذلك في القسم 02).')}
               </p>
               <input type="text" maxLength={120} value={customTitles} onChange={(e) => setCustomTitles(e.target.value)}
-                placeholder="صفة أخرى (اختياري)، مثل: مؤذن، واعظ، مدرّس تجويد — افصل بينها بفاصلة"
-                aria-label="صفات أخرى" className={inputCls} />
+                placeholder={t('صفة أخرى (اختياري)، مثل: مؤذن، واعظ، مدرّس تجويد — افصل بينها بفاصلة')}
+                aria-label={t('صفات أخرى')} className={inputCls} />
             </fieldset>
 
             {isKhateebOn && (
-              <fieldset className="khateeb-panel rounded-2xl p-4 space-y-3" aria-label="الترشح كخطيب جمعة">
-                <legend className="sr-only">الترشح كخطيب جمعة</legend>
+              <fieldset className="khateeb-panel rounded-2xl p-4 space-y-3" aria-label={t('الترشح كخطيب جمعة')}>
+                <legend className="sr-only">{t('الترشح كخطيب جمعة')}</legend>
                 <p className="font-black text-[#6e1d3b] flex items-center gap-2">
-                  <Mic className="w-4 h-4" /> أرشّح نفسي خطيباً للجمعة
+                  <Mic className="w-4 h-4" /> {t('أرشّح نفسي خطيباً للجمعة')}
                 </p>
-                <p className="text-xs text-slate-600 -mt-1">تظهر هذه المعلومات في ملفك للمساجد التي تبحث عن خطيب.</p>
+                <p className="text-xs text-slate-600 -mt-1">{t('تظهر هذه المعلومات في ملفك للمساجد التي تبحث عن خطيب.')}</p>
 
                 <div>
-                  <span className="block font-bold text-slate-700 mb-1">نوع الخطابة</span>
+                  <span className="block font-bold text-slate-700 mb-1">{t('نوع الخطابة')}</span>
                   <div className="flex flex-wrap gap-2">
                     {(['temporary', 'permanent', 'both'] as const).map((t) => (
                       <button key={t} type="button" aria-pressed={khateeb.term === t} onClick={() => setKhateeb({ term: t })}
@@ -456,9 +457,9 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
                 </div>
 
                 <div>
-                  <span className="block font-bold text-slate-700 mb-1">أين يمكنك أن تخطب الجمعة؟</span>
+                  <span className="block font-bold text-slate-700 mb-1">{t('أين يمكنك أن تخطب الجمعة؟')}</span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {([['regions', 'في مدن أو مناطق أحددها'], ['radius', 'قرب مكان سكني (بالكيلومتر)']] as const).map(([m, label]) => (
+                    {([['regions', t('في مدن أو مناطق أحددها')], ['radius', t('قرب مكان سكني (بالكيلومتر)')]] as const).map(([m, label]) => (
                       <label key={m} className={`flex items-center gap-2 rounded-xl border-2 px-3 py-2.5 cursor-pointer font-bold text-xs ${khateeb.mode === m ? 'border-[#8a2a4c] bg-white text-[#6e1d3b]' : 'border-slate-200 bg-white/70 text-slate-600'}`}>
                         <input type="radio" name="khateeb-mode" checked={khateeb.mode === m} onChange={() => setKhateeb({ mode: m })} className="accent-[#8a2a4c]" />
                         {label}
@@ -469,30 +470,30 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
 
                 {khateeb.mode === 'regions' ? (
                   <div>
-                    <label htmlFor="kh-regions" className="block font-bold text-slate-700 mb-1">المدن أو المناطق</label>
+                    <label htmlFor="kh-regions" className="block font-bold text-slate-700 mb-1">{t('المدن أو المناطق')}</label>
                     <input id="kh-regions" type="text" maxLength={300} value={khateeb.regions}
                       onChange={(e) => setKhateeb({ regions: e.target.value })}
-                      placeholder="مثال: كولونيا، بون، دوسلدورف — أو: ولاية شمال الراين"
+                      placeholder={t('مثال: كولونيا، بون، دوسلدورف — أو: ولاية شمال الراين')}
                       className={inputCls} />
                   </div>
                 ) : (
                   <div>
                     <label htmlFor="kh-km" className="block font-bold text-slate-700 mb-1">
-                      المسافة التي يمكنك قطعها من مكان سكنك{fields.country.trim() ? ` (${fields.country.trim()})` : ''}
+                      {t('المسافة التي يمكنك قطعها من مكان سكنك')}{fields.country.trim() ? ` (${fields.country.trim()})` : ''}
                     </label>
                     <div className="flex items-center gap-2">
                       <input id="kh-km" type="number" inputMode="numeric" min={0} max={500} value={khateeb.radiusKm || ''}
                         onChange={(e) => setKhateeb({ radiusKm: Number(e.target.value) })}
                         className={`${inputCls} max-w-32`} dir="ltr" />
-                      <span className="font-bold text-slate-600">كيلومتر تقريباً</span>
+                      <span className="font-bold text-slate-600">{t('كيلومتر تقريباً')}</span>
                     </div>
                   </div>
                 )}
 
                 <div>
-                  <span className="block font-bold text-slate-700 mb-1">هل عندك سيارة؟</span>
+                  <span className="block font-bold text-slate-700 mb-1">{t('هل عندك سيارة؟')}</span>
                   <div className="flex gap-2">
-                    {([[true, 'نعم، عندي سيارة'], [false, 'لا']] as const).map(([v, label]) => (
+                    {([[true, t('نعم، عندي سيارة')], [false, t('لا')]] as const).map(([v, label]) => (
                       <button key={label} type="button" aria-pressed={khateeb.hasCar === v} onClick={() => setKhateeb({ hasCar: v })}
                         className={`px-4 py-2 rounded-full border-2 font-bold text-xs cursor-pointer ${khateeb.hasCar === v ? 'border-[#8a2a4c] bg-[#8a2a4c] text-white' : 'border-slate-200 bg-white text-slate-600'}`}>
                         {label}
@@ -507,37 +508,37 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
 
           {/* SECTION 4: work, photo and contact */}
           <div className="bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200 space-y-4">
-            <h4 className="font-extrabold text-emerald-950 text-base">04. العمل، الصورة، وبيانات التواصل</h4>
+            <h4 className="font-extrabold text-emerald-950 text-base">{t('04. العمل، الصورة، وبيانات التواصل')}</h4>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="im-job" className="block font-bold text-slate-700 mb-1">الوظيفة / المهنة الحالية</label>
+                <label htmlFor="im-job" className="block font-bold text-slate-700 mb-1">{t('الوظيفة / المهنة الحالية')}</label>
                 <input id="im-job" type="text" maxLength={150} value={fields.currentJob || ''}
-                  onChange={(e) => set('currentJob', e.target.value)} placeholder="مثال: إمام وخطيب بمسجد الرحمة، طنجة"
+                  onChange={(e) => set('currentJob', e.target.value)} placeholder={t('مثال: إمام وخطيب بمسجد الرحمة، طنجة')}
                   className={inputCls} />
               </div>
               <div>
-                <label htmlFor="im-marital" className="block font-bold text-slate-700 mb-1">الحالة العائلية</label>
+                <label htmlFor="im-marital" className="block font-bold text-slate-700 mb-1">{t('الحالة العائلية')}</label>
                 <select id="im-marital" value={fields.maritalStatus || ''} className={inputCls}
                   onChange={(e) => set('maritalStatus', e.target.value as ImamEditableFields['maritalStatus'])}>
-                  <option value="">— لا أرغب في ذكرها —</option>
+                  <option value="">{t('— لا أرغب في ذكرها —')}</option>
                   {Object.entries(MARITAL_LABELS).map(([v, label]) => <option key={v} value={v}>{label}</option>)}
                 </select>
               </div>
             </div>
 
             <div className="pt-3 border-t border-slate-200/80">
-              <p className="block font-bold text-slate-700 mb-2">الصورة الشخصية (اختيارية):</p>
+              <p className="block font-bold text-slate-700 mb-2">{t('الصورة الشخصية (اختيارية):')}</p>
               <div className="flex flex-wrap items-center gap-4">
                 <img src={shownPhoto} alt="" className="w-20 h-20 rounded-2xl object-cover border-2 border-emerald-600 shadow-sm" />
                 <div className="space-y-2 flex-1">
                   <p className="text-xs text-slate-600 leading-relaxed">
-                    إذا لم ترفع صورة تظهر صورة رمزية موحدة. تُصغَّر الصورة تلقائياً قبل الحفظ.
+                    {t('إذا لم ترفع صورة تظهر صورة رمزية موحدة. تُصغَّر الصورة تلقائياً قبل الحفظ.')}
                   </p>
                   <div className="flex flex-wrap items-center gap-2">
                     <label className="bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl cursor-pointer text-xs transition flex items-center gap-1.5">
                       <Upload className="w-3.5 h-3.5" />
-                      <span>رفع صورة من جهازك</span>
+                      <span>{t('رفع صورة من جهازك')}</span>
                       <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handlePhotoUpload} className="hidden" />
                     </label>
                     {shownPhoto !== DEFAULT_IMAM_SILHOUETTE_AVATAR && (
@@ -545,7 +546,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
                         onClick={() => { setPhotoPreview(''); setPhotoChanged(true); }}
                         className="bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold px-3 py-2 rounded-xl text-xs transition flex items-center gap-1.5 cursor-pointer">
                         <RotateCcw className="w-3.5 h-3.5" />
-                        <span>استعادة الصورة الرمزية</span>
+                        <span>{t('استعادة الصورة الرمزية')}</span>
                       </button>
                     )}
                   </div>
@@ -555,23 +556,23 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
 
             <div className="bg-emerald-50/70 p-3.5 rounded-xl border border-emerald-200 space-y-2">
               <p className="text-xs font-bold text-emerald-900">
-                بيانات التواصل (محمية: تظهر فقط للمساجد التي وثقتها الإدارة، ولا تظهر للزوار):
+                {t('بيانات التواصل (محمية: تظهر فقط للمساجد التي وثقتها الإدارة، ولا تظهر للزوار):')}
               </p>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div>
-                  <label htmlFor="im-phone" className="block font-bold text-slate-700 mb-1">رقم الهاتف *</label>
+                  <label htmlFor="im-phone" className="block font-bold text-slate-700 mb-1">{t('رقم الهاتف *')}</label>
                   <input id="im-phone" type="tel" required maxLength={40} value={contact.phone}
                     onChange={(e) => setContact((c) => ({ ...c, phone: e.target.value }))}
                     placeholder="+212 600 000000" className={inputCls} dir="ltr" />
                 </div>
                 <div>
-                  <label htmlFor="im-wa" className="block font-bold text-slate-700 mb-1">رقم الواتساب (إن اختلف)</label>
+                  <label htmlFor="im-wa" className="block font-bold text-slate-700 mb-1">{t('رقم الواتساب (إن اختلف)')}</label>
                   <input id="im-wa" type="tel" maxLength={40} value={contact.whatsapp}
                     onChange={(e) => setContact((c) => ({ ...c, whatsapp: e.target.value }))}
                     placeholder="+212600000000" className={inputCls} dir="ltr" />
                 </div>
                 <div>
-                  <label htmlFor="im-email" className="block font-bold text-slate-700 mb-1">البريد الإلكتروني *</label>
+                  <label htmlFor="im-email" className="block font-bold text-slate-700 mb-1">{t('البريد الإلكتروني *')}</label>
                   <input id="im-email" type="email" required maxLength={200} value={contact.email}
                     onChange={(e) => setContact((c) => ({ ...c, email: e.target.value }))}
                     placeholder="imam@example.com" className={inputCls} dir="ltr" />
@@ -582,59 +583,59 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
 
           {/* SECTION 5 */}
           <div className="bg-emerald-50/70 p-4 md:p-5 rounded-2xl border border-emerald-200 space-y-4">
-            <h4 className="font-extrabold text-emerald-950 text-base">05. الشواهد العلمية، الرواية، واللغات</h4>
+            <h4 className="font-extrabold text-emerald-950 text-base">{t('05. الشواهد العلمية، الرواية، واللغات')}</h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <label htmlFor="im-certs" className="block font-bold text-emerald-900 mb-1">توفر الشواهد والإجازات</label>
+                <label htmlFor="im-certs" className="block font-bold text-emerald-900 mb-1">{t('توفر الشواهد والإجازات')}</label>
                 <select id="im-certs" value={fields.hasCerts} onChange={(e) => set('hasCerts', e.target.value as 'yes' | 'no')}
                   className="w-full border border-emerald-300 rounded-xl px-3 py-2 bg-white font-bold">
-                  <option value="no">حافظ لكتاب الله (بدون شهادة)</option>
-                  <option value="yes">نعم — لدي شواهد وإجازات</option>
+                  <option value="no">{t('حافظ لكتاب الله (بدون شهادة)')}</option>
+                  <option value="yes">{t('نعم — لدي شواهد وإجازات')}</option>
                 </select>
               </div>
               <div>
-                <label htmlFor="im-degree" className="block font-bold text-emerald-900 mb-1">المؤهل العلمي الرئيسي</label>
+                <label htmlFor="im-degree" className="block font-bold text-emerald-900 mb-1">{t('المؤهل العلمي الرئيسي')}</label>
                 <input id="im-degree" type="text" maxLength={300} value={fields.degree}
-                  onChange={(e) => set('degree', e.target.value)} placeholder="مثال: إجازة في الدراسات الإسلامية"
+                  onChange={(e) => set('degree', e.target.value)} placeholder={t('مثال: إجازة في الدراسات الإسلامية')}
                   className="w-full border border-emerald-300 rounded-xl px-3 py-2 bg-white font-semibold" />
               </div>
               <div>
-                <label htmlFor="im-riwaya" className="block font-bold text-emerald-900 mb-1">الرواية القرآنية المتقنة</label>
+                <label htmlFor="im-riwaya" className="block font-bold text-emerald-900 mb-1">{t('الرواية القرآنية المتقنة')}</label>
                 <select id="im-riwaya" value={fields.riwaya} onChange={(e) => set('riwaya', e.target.value)}
                   className="w-full border border-emerald-300 rounded-xl px-3 py-2 bg-white font-bold text-emerald-900">
-                  <option value="ورش عن نافع">رواية ورش عن نافع</option>
-                  <option value="حفص عن عاصم">رواية حفص عن عاصم</option>
-                  <option value="قالون عن نافع">رواية قالون عن نافع</option>
-                  <option value="القراءات العشر">القراءات العشر</option>
+                  <option value="ورش عن نافع">{t('رواية ورش عن نافع')}</option>
+                  <option value="حفص عن عاصم">{t('رواية حفص عن عاصم')}</option>
+                  <option value="قالون عن نافع">{t('رواية قالون عن نافع')}</option>
+                  <option value="القراءات العشر">{t('القراءات العشر')}</option>
                 </select>
               </div>
             </div>
 
             <fieldset className="space-y-2">
-              <legend className="block font-bold text-emerald-900 mb-1">الشهادات والإجازات (أضف ما شئت)</legend>
+              <legend className="block font-bold text-emerald-900 mb-1">{t('الشهادات والإجازات (أضف ما شئت)')}</legend>
               <CertificateEditor value={fields.certificates || []} onChange={(v) => set('certificates', v)} />
             </fieldset>
 
             <fieldset className="space-y-2">
-              <legend className="block font-bold text-emerald-900 mb-1">اللغات ومستواك في كل لغة (أضف ما شئت)</legend>
+              <legend className="block font-bold text-emerald-900 mb-1">{t('اللغات ومستواك في كل لغة (أضف ما شئت)')}</legend>
               <LanguagesEditor value={fields.languageList || []} onChange={(v) => set('languageList', v)} />
             </fieldset>
 
             {fields.hasCerts === 'yes' && (
               <div className="bg-white p-3.5 rounded-xl border border-emerald-200 space-y-2">
                 <label htmlFor="im-certs-file" className="block font-bold text-emerald-900">
-                  رفع الشواهد / السند في ملف واحد (PDF أو صورة، 5MB كحد أقصى) — تراها الإدارة فقط:
+                  {t('رفع الشواهد / السند في ملف واحد (PDF أو صورة، 5MB كحد أقصى) — تراها الإدارة فقط:')}
                 </label>
                 <input id="im-certs-file" type="file" accept=".pdf,image/jpeg,image/png,image/webp" onChange={pickDocument(setCertsFile)}
                   className="w-full border border-slate-200 rounded-lg p-1.5 bg-slate-50 text-xs" />
                 {(certsFile || initialData?.certsFileName) && (
                   <p className="text-xs text-emerald-700 font-bold flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>{certsFile ? `سيتم رفع: ${certsFile.name}` : `الملف الحالي: ${initialData?.certsFileName}`}</span>
+                    <span>{certsFile ? t('سيتم رفع: {name}', { name: certsFile.name }) : t('الملف الحالي: {name}', { name: initialData?.certsFileName || '' })}</span>
                     {!certsFile && initialData?.certsFilePath?.startsWith('privateDocs/') && (
                       <button type="button" className="underline text-sky-800 ms-1 cursor-pointer"
-                        onClick={() => openPrivateDocument(initialData.certsFilePath!).catch((e) => onError(e instanceof Error ? e.message : 'تعذر فتح الملف.'))}>
-                        عرض
+                        onClick={() => openPrivateDocument(initialData.certsFilePath!).catch((e) => onError(e instanceof Error ? e.message : t('تعذر فتح الملف.')))}>
+                        {t('عرض')}
                       </button>
                     )}
                   </p>
@@ -645,24 +646,24 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
 
           {/* SECTION: positions held */}
           <div className="bg-amber-50/60 p-4 md:p-5 rounded-2xl border border-amber-200 space-y-3">
-            <h4 className="font-extrabold text-amber-950 text-base">الخبرات والوظائف السابقة</h4>
-            <p className="text-xs text-slate-600">أضف كل وظيفة أو مهمة زاولتها، مع سنة البداية وسنة النهاية (أو «حتى الآن»). اختياري.</p>
+            <h4 className="font-extrabold text-amber-950 text-base">{t('الخبرات والوظائف السابقة')}</h4>
+            <p className="text-xs text-slate-600">{t('أضف كل وظيفة أو مهمة زاولتها، مع سنة البداية وسنة النهاية (أو «حتى الآن»). اختياري.')}</p>
             <ExperienceEditor value={fields.experiences || []} onChange={(v) => set('experiences', v)} />
           </div>
 
           {/* SECTION: preferred countries and places */}
           <div className="bg-sky-50/60 p-4 md:p-5 rounded-2xl border border-sky-200 space-y-3">
-            <h4 className="font-extrabold text-sky-950 text-base">الدول والأماكن المفضلة للإمامة</h4>
-            <p className="text-xs text-slate-600">اختر دولة أو أكثر، واكتب بجانب كل دولة المدينة أو المنطقة إن أردت، أو اتركها فارغة. اختياري.</p>
+            <h4 className="font-extrabold text-sky-950 text-base">{t('الدول والأماكن المفضلة للإمامة')}</h4>
+            <p className="text-xs text-slate-600">{t('اختر دولة أو أكثر، واكتب بجانب كل دولة المدينة أو المنطقة إن أردت، أو اتركها فارغة. اختياري.')}</p>
             <PreferredLocationsEditor value={fields.preferredLocations || []} onChange={(v) => set('preferredLocations', v)} />
           </div>
 
           {/* SECTION 4 */}
           <div className="bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200 space-y-4">
-            <h4 className="font-extrabold text-slate-900 text-base">06. فيديو التلاوة والسيرة الذاتية</h4>
+            <h4 className="font-extrabold text-slate-900 text-base">{t('06. فيديو التلاوة والسيرة الذاتية')}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="im-yt" className="block font-bold text-slate-700 mb-1">رابط فيديو تلاوتك على يوتيوب (مستحسن)</label>
+                <label htmlFor="im-yt" className="block font-bold text-slate-700 mb-1">{t('رابط فيديو تلاوتك على يوتيوب (مستحسن)')}</label>
                 <input id="im-yt" type="url" maxLength={300} value={fields.youtubeUrl}
                   onChange={(e) => set('youtubeUrl', e.target.value)} placeholder="https://www.youtube.com/watch?v=..."
                   className={inputCls} dir="ltr" />
@@ -673,27 +674,27 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
               <div className="bg-slate-900 p-3 rounded-2xl border border-slate-800 text-white space-y-2">
                 <span className="text-xs text-amber-400 font-bold flex items-center gap-1.5">
                   <Video className="w-3.5 h-3.5" />
-                  <span>معاينة فيديو التلاوة:</span>
+                  <span>{t('معاينة فيديو التلاوة:')}</span>
                 </span>
                 <div className="aspect-video w-full max-h-48 rounded-xl overflow-hidden bg-black">
-                  <iframe src={embedPreview} title="معاينة التلاوة" className="w-full h-full" loading="lazy" allowFullScreen />
+                  <iframe src={embedPreview} title={t('معاينة التلاوة')} className="w-full h-full" loading="lazy" allowFullScreen />
                 </div>
               </div>
             )}
 
             <div>
-              <label htmlFor="im-cv" className="block font-bold text-slate-700 mb-1">السيرة الذاتية والمسيرة العلمية</label>
+              <label htmlFor="im-cv" className="block font-bold text-slate-700 mb-1">{t('السيرة الذاتية والمسيرة العلمية')}</label>
               <textarea id="im-cv" rows={4} maxLength={5000} value={fields.cvText}
                 onChange={(e) => set('cvText', e.target.value)}
                 className="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white leading-relaxed" />
-              <p className="text-xs text-slate-400 text-left" dir="ltr">{fields.cvText.length}/5000</p>
+              <p className="text-xs text-slate-400 text-end">{fields.cvText.length}/5000</p>
             </div>
           </div>
 
           {recImam && (
             <div className="space-y-2">
               <p className="text-xs text-slate-500 font-bold">
-                عيّنة التلاوة تُحفظ وحدها فور الضغط على زر حفظها داخل هذا القسم، مستقلةً عن زر «حفظ الملف».
+                {t('عيّنة التلاوة تُحفظ وحدها فور الضغط على زر حفظها داخل هذا القسم، مستقلةً عن زر «حفظ الملف».')}
               </p>
               <RecitationManager
                 imam={recImam}
@@ -713,12 +714,12 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
           <div className="flex justify-end items-center gap-3 pt-4 border-t border-slate-200">
             <button type="button" onClick={onClose}
               className="px-5 py-2.5 border border-slate-300 rounded-xl font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer">
-              إلغاء
+              {t('إلغاء')}
             </button>
             <button type="submit" disabled={saving}
               className="bg-emerald-700 hover:bg-emerald-600 text-white font-black px-8 py-2.5 rounded-xl shadow-md transition cursor-pointer flex items-center gap-2 disabled:opacity-60 disabled:cursor-wait">
               {saving && <Loader2 className="w-4 h-4 animate-spin" />}
-              <span>{saving ? 'جاري الحفظ…' : 'حفظ الملف'}</span>
+              <span>{saving ? t('جاري الحفظ…') : t('حفظ الملف')}</span>
             </button>
           </div>
         </form>

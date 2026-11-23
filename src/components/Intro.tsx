@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getSettings } from '../lib/settings';
+import { t } from '../i18n';
 
 /*
  * Opening screen shown once per browser session on the home page: a golden mihrab arch draws itself
@@ -62,7 +63,7 @@ export const Intro: React.FC<{ onDone: () => void }> = ({ onDone }) => {
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="منصة أئمة"
+      aria-label={t('منصة أئمة')}
       className={`intro fixed inset-0 z-[100] night-sky text-white flex flex-col items-center justify-center px-6 overflow-hidden ${
         leaving ? 'intro-leave' : ''
       }`}
@@ -82,7 +83,7 @@ export const Intro: React.FC<{ onDone: () => void }> = ({ onDone }) => {
         style={{ top: 'calc(env(safe-area-inset-top, 0px) + 1.25rem)', left: 'calc(env(safe-area-inset-left, 0px) + 1.25rem)' }}
         className="absolute z-10 text-white text-sm font-bold px-4 py-2 rounded-full border border-white/30 bg-white/10 hover:bg-white/10 cursor-pointer"
       >
-        تخطّي
+        {t('تخطّي')}
       </button>
 
       {/* Mihrab arch drawing itself, with a lantern */}
@@ -131,10 +132,10 @@ export const Intro: React.FC<{ onDone: () => void }> = ({ onDone }) => {
         </g>
       </svg>
 
-      <h1 className="intro-title font-kufi text-6xl sm:text-8xl leading-tight text-center">منصة أئمة</h1>
+      <h1 className="intro-title font-kufi text-6xl sm:text-8xl leading-tight text-center">{t('منصة أئمة')}</h1>
 
       <p className="intro-sub mt-3 sm:mt-4 text-lg sm:text-2xl text-sky-100 font-bold text-center">
-        جسر تواصل وربط بين الأئمة والمساجد
+        {t('جسر تواصل وربط بين الأئمة والمساجد')}
       </p>
 
       <div className="intro-line my-5 sm:my-7 flex items-center gap-2" aria-hidden>
@@ -144,15 +145,15 @@ export const Intro: React.FC<{ onDone: () => void }> = ({ onDone }) => {
       </div>
 
       <p className="intro-ayah font-amiri text-2xl sm:text-4xl text-amber-200 text-center leading-relaxed">
-        ﴿ وَجَعَلْنَاهُمْ أَئِمَّةً يَهْدُونَ بِأَمْرِنَا ﴾
+        {t('﴿ وَجَعَلْنَاهُمْ أَئِمَّةً يَهْدُونَ بِأَمْرِنَا ﴾')}
       </p>
-      <p className="intro-ayah-ref mt-1 text-sm text-white/60">[الأنبياء: ٧٣]</p>
+      <p className="intro-ayah-ref mt-1 text-sm text-white/60">{t('[الأنبياء: ٧٣]')}</p>
 
       <button
         onClick={close}
         className="intro-enter mt-8 sm:mt-10 glass rounded-full px-8 py-3.5 text-base sm:text-lg font-black cursor-pointer hover:bg-white/20"
       >
-        الدخول إلى المنصة
+        {t('الدخول إلى المنصة')}
       </button>
     </div>
   );

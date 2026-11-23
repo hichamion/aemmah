@@ -9,6 +9,7 @@ import { LogoMark } from './Logo';
 import { useDialog } from '../lib/useDialog';
 import { EmailPhoneAuth } from './EmailPhoneAuth';
 import { AUTH_METHODS } from '../config';
+import { t } from '../i18n';
 
 interface AuthOnboardingModalProps {
   isOpen: boolean;
@@ -120,14 +121,14 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
             <LogoMark className="w-11 h-11" />
             <div>
               <h3 className="text-lg sm:text-xl font-black font-amiri">
-                {step === 'login' ? 'تسجيل الدخول إلى حسابك' : 'إكمال إنشاء حسابك'}
+                {step === 'login' ? t('تسجيل الدخول إلى حسابك') : t('إكمال إنشاء حسابك')}
               </h3>
-              <p className="text-xs text-slate-300">منصة أئمة للأئمة والمساجد</p>
+              <p className="text-xs text-slate-300">{t('منصة أئمة للأئمة والمساجد')}</p>
             </div>
           </div>
           <button
             onClick={step === 'login' ? onClose : handleCancelOnboarding}
-            aria-label="إغلاق"
+            aria-label={t('إغلاق')}
             className="text-white/70 hover:text-white p-1.5 rounded-xl hover:bg-slate-800 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
@@ -140,10 +141,10 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
               <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2 text-slate-700 leading-relaxed">
                 <p className="font-extrabold text-slate-900 flex items-center gap-1.5 text-sm">
                   <Lock className="w-4 h-4 text-emerald-700" />
-                  <span>تسجيل الدخول الآمن</span>
+                  <span>{t('تسجيل الدخول الآمن')}</span>
                 </p>
                 <p className="text-xs text-slate-600">
-                  نستخدم اسمك ووسيلة الدخول فقط لإنشاء حسابك في المنصة، ولا نشاركها مع أحد.
+                  {t('نستخدم اسمك ووسيلة الدخول فقط لإنشاء حسابك في المنصة، ولا نشاركها مع أحد.')}
                 </p>
               </div>
 
@@ -165,7 +166,7 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                       <path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5l-3.7 2.8C3.5 21.4 7.4 24 12 24z" />
                     </svg>
                   )}
-                  <span>المتابعة باستخدام حساب جوجل (Google)</span>
+                  <span>{t('المتابعة باستخدام حساب جوجل (Google)')}</span>
                 </button>
                 )}
 
@@ -179,7 +180,7 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                   <svg className="w-5 h-5 fill-current shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                   </svg>
-                  <span>المتابعة باستخدام فيسبوك (Facebook)</span>
+                  <span>{t('المتابعة باستخدام فيسبوك (Facebook)')}</span>
                 </button>
                 )}
               </div>
@@ -208,8 +209,8 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                     />
                   )}
                   <div className="min-w-0">
-                    <span className="text-xs font-bold text-emerald-700">تم تسجيل الدخول بـ:</span>
-                    <p className="font-black text-slate-900 text-sm truncate">{customName || 'اسم صاحب الحساب'}</p>
+                    <span className="text-xs font-bold text-emerald-700">{t('تم تسجيل الدخول بـ:')}</span>
+                    <p className="font-black text-slate-900 text-sm truncate">{customName || t('اسم صاحب الحساب')}</p>
                     <p className="text-xs text-slate-500 truncate" dir="ltr">
                       {firebaseUser?.email}
                     </p>
@@ -220,7 +221,7 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
 
               <div>
                 <label htmlFor="onb-name" className="block font-bold text-slate-700 mb-1">
-                  الاسم الذي سيظهر في حسابك *
+                  {t('الاسم الذي سيظهر في حسابك *')}
                 </label>
                 <input
                   id="onb-name"
@@ -229,19 +230,19 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                   maxLength={120}
                   value={customName}
                   onChange={(e) => setCustomName(e.target.value)}
-                  placeholder="مثال: الشيخ يوسف / مسجد النور"
+                  placeholder={t('مثال: الشيخ يوسف / مسجد النور')}
                   className="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white font-bold text-slate-900"
                 />
               </div>
 
               <div className="space-y-2.5">
-                <p className="block font-extrabold text-slate-900 text-sm">ما هي صفتك في المنصة؟</p>
+                <p className="block font-extrabold text-slate-900 text-sm">{t('ما هي صفتك في المنصة؟')}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <button
                     type="button"
                     onClick={() => setSelectedRole('imam')}
                     aria-pressed={selectedRole === 'imam'}
-                    className={`p-3.5 rounded-2xl border-2 text-right transition cursor-pointer flex items-center gap-3 ${
+                    className={`p-3.5 rounded-2xl border-2 text-start transition cursor-pointer flex items-center gap-3 ${
                       selectedRole === 'imam'
                         ? 'border-emerald-600 bg-emerald-50/90 shadow-xs'
                         : 'border-slate-200 hover:bg-slate-50'
@@ -249,8 +250,8 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                   >
                     <img src={DEFAULT_IMAM_SILHOUETTE_AVATAR} alt="" className="w-11 h-11 rounded-xl object-cover shrink-0" />
                     <div>
-                      <div className="font-black text-emerald-950 text-sm">أنا إمام / قارئ</div>
-                      <p className="text-xs text-slate-600">إنشاء ملفي والتقديم للمساجد</p>
+                      <div className="font-black text-emerald-950 text-sm">{t('أنا إمام / قارئ')}</div>
+                      <p className="text-xs text-slate-600">{t('إنشاء ملفي والتقديم للمساجد')}</p>
                     </div>
                   </button>
 
@@ -258,7 +259,7 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                     type="button"
                     onClick={() => setSelectedRole('mosque')}
                     aria-pressed={selectedRole === 'mosque'}
-                    className={`p-3.5 rounded-2xl border-2 text-right transition cursor-pointer flex items-center gap-3 ${
+                    className={`p-3.5 rounded-2xl border-2 text-start transition cursor-pointer flex items-center gap-3 ${
                       selectedRole === 'mosque'
                         ? 'border-sky-500 bg-sky-50/90 shadow-xs'
                         : 'border-slate-200 hover:bg-slate-50'
@@ -268,14 +269,13 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                       <MosqueIcon className="w-6 h-6" />
                     </div>
                     <div>
-                      <div className="font-black text-sky-950 text-sm">نحن جمعية / مسجد</div>
-                      <p className="text-xs text-slate-600">نشر إعلان والبحث عن إمام</p>
+                      <div className="font-black text-sky-950 text-sm">{t('نحن جمعية / مسجد')}</div>
+                      <p className="text-xs text-slate-600">{t('نشر إعلان والبحث عن إمام')}</p>
                     </div>
                   </button>
                 </div>
                 <p className="text-xs text-slate-500 leading-relaxed">
-                  لا يمكن تغيير نوع الحساب لاحقاً. حسابات المساجد ترى أرقام تواصل الأئمة بعد موافقة الإدارة على أول
-                  إعلان لها.
+                  {t('لا يمكن تغيير نوع الحساب لاحقاً. حسابات المساجد ترى أرقام تواصل الأئمة بعد موافقة الإدارة على أول إعلان لها.')}
                 </p>
               </div>
 
@@ -288,17 +288,16 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                   className="mt-0.5 rounded text-emerald-600 focus:ring-emerald-500"
                 />
                 <span className="text-xs text-slate-700 leading-relaxed">
-                  قرأت{' '}
+                  {t('قرأت')}{' '}
                   <a
                     href="#/privacy"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-emerald-800 font-bold underline"
                   >
-                    سياسة الخصوصية
+                    {t('سياسة الخصوصية')}
                   </a>{' '}
-                  وأوافق على معالجة بياناتي لغرض الربط بين الأئمة والمساجد، وأعلم أنه يمكنني حذف حسابي وبياناتي في أي
-                  وقت.
+                  {t('وأوافق على معالجة بياناتي لغرض الربط بين الأئمة والمساجد، وأعلم أنه يمكنني حذف حسابي وبياناتي في أي وقت.')}
                 </span>
               </label>
 
@@ -308,7 +307,7 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                   onClick={handleCancelOnboarding}
                   className="px-4 py-2.5 border border-slate-300 rounded-xl font-bold text-slate-600 cursor-pointer"
                 >
-                  إلغاء
+                  {t('إلغاء')}
                 </button>
                 <button
                   type="submit"
@@ -316,7 +315,7 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
                   className="bg-emerald-700 hover:bg-emerald-600 text-white font-black px-6 py-2.5 rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-                  <span>إنشاء الحساب والمتابعة</span>
+                  <span>{t('إنشاء الحساب والمتابعة')}</span>
                   <ArrowLeft className="w-4 h-4" />
                 </button>
               </div>

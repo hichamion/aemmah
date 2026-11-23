@@ -38,6 +38,7 @@ import {
   UserProfile,
   UserRole,
 } from '../types';
+import { t } from '../i18n';
 
 export const nowIso = () => new Date().toISOString();
 
@@ -284,10 +285,10 @@ const ALLOWED_DOC_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/
 export const PRIVATE_DOC_PREFIX = 'privateDocs/';
 
 export function validateDocumentFile(file: File): string | null {
-  if (!ALLOWED_DOC_TYPES.includes(file.type)) return 'نوع الملف غير مدعوم. المسموح: PDF أو JPG أو PNG أو WEBP.';
+  if (!ALLOWED_DOC_TYPES.includes(file.type)) return t('نوع الملف غير مدعوم. المسموح: PDF أو JPG أو PNG أو WEBP.');
   // Photos are shrunk before upload, so only PDFs are limited by their raw size.
-  if (file.type === 'application/pdf' && file.size > MAX_DOC_SIZE) return 'حجم ملف PDF أكبر من 2 ميغابايت. اضغطه أو صوّر الوثيقة بدلاً منه.';
-  if (file.size > 15 * 1024 * 1024) return 'حجم الصورة أكبر من 15 ميغابايت.';
+  if (file.type === 'application/pdf' && file.size > MAX_DOC_SIZE) return t('حجم ملف PDF أكبر من 2 ميغابايت. اضغطه أو صوّر الوثيقة بدلاً منه.');
+  if (file.size > 15 * 1024 * 1024) return t('حجم الصورة أكبر من 15 ميغابايت.');
   return null;
 }
 
@@ -827,27 +828,27 @@ export async function deleteMyData(uid: string) {
 
 export function describeError(err: unknown): string {
   const code = (err as { code?: string })?.code || '';
-  if (code.includes('permission-denied')) return 'ليست لديك صلاحية لتنفيذ هذا الإجراء.';
-  if (code.includes('unavailable') || code.includes('network')) return 'تعذر الاتصال بالخادم. تحقق من اتصالك بالإنترنت.';
-  if (code.includes('requires-recent-login')) return 'لأسباب أمنية، يرجى تسجيل الخروج ثم الدخول مجدداً وإعادة المحاولة.';
-  if (code.includes('popup-closed-by-user') || code.includes('cancelled-popup-request')) return 'تم إغلاق نافذة تسجيل الدخول قبل الإكمال.';
-  if (code.includes('popup-blocked')) return 'المتصفح منع نافذة تسجيل الدخول. اسمح بالنوافذ المنبثقة لهذا الموقع.';
+  if (code.includes('permission-denied')) return t('ليست لديك صلاحية لتنفيذ هذا الإجراء.');
+  if (code.includes('unavailable') || code.includes('network')) return t('تعذر الاتصال بالخادم. تحقق من اتصالك بالإنترنت.');
+  if (code.includes('requires-recent-login')) return t('لأسباب أمنية، يرجى تسجيل الخروج ثم الدخول مجدداً وإعادة المحاولة.');
+  if (code.includes('popup-closed-by-user') || code.includes('cancelled-popup-request')) return t('تم إغلاق نافذة تسجيل الدخول قبل الإكمال.');
+  if (code.includes('popup-blocked')) return t('المتصفح منع نافذة تسجيل الدخول. اسمح بالنوافذ المنبثقة لهذا الموقع.');
   if (code.includes('account-exists-with-different-credential'))
-    return 'هذا البريد مسجل مسبقاً بطريقة دخول أخرى. جرّب الدخول بجوجل.';
+    return t('هذا البريد مسجل مسبقاً بطريقة دخول أخرى. جرّب الدخول بجوجل.');
   if (code.includes('unauthorized-domain'))
-    return 'الدخول بجوجل غير متاح على هذا العنوان بعد. استعمل «الدخول أو إنشاء حساب بالبريد الإلكتروني» في الأسفل.';
-  if (code.includes('operation-not-allowed')) return 'طريقة تسجيل الدخول هذه غير مفعلة في إعدادات Firebase.';
-  if (code.includes('storage/')) return 'تعذر رفع الملف. تحقق من حجمه ونوعه ثم أعد المحاولة.';
+    return t('الدخول بجوجل غير متاح على هذا العنوان بعد. استعمل «الدخول أو إنشاء حساب بالبريد الإلكتروني» في الأسفل.');
+  if (code.includes('operation-not-allowed')) return t('طريقة تسجيل الدخول هذه غير مفعلة في إعدادات Firebase.');
+  if (code.includes('storage/')) return t('تعذر رفع الملف. تحقق من حجمه ونوعه ثم أعد المحاولة.');
   if (code.includes('invalid-credential') || code.includes('wrong-password') || code.includes('user-not-found'))
-    return 'البريد الإلكتروني أو كلمة المرور غير صحيحة.';
-  if (code.includes('email-already-in-use')) return 'هذا البريد مسجّل مسبقاً. سجّل الدخول، أو استعمل «نسيت كلمة المرور».';
-  if (code.includes('weak-password')) return 'كلمة المرور ضعيفة. استعمل 8 أحرف على الأقل.';
-  if (code.includes('invalid-email')) return 'البريد الإلكتروني غير صحيح.';
-  if (code.includes('invalid-phone-number')) return 'رقم الهاتف غير صحيح. اكتبه بالصيغة الدولية، مثل ‎+49 151 2345678';
-  if (code.includes('invalid-verification-code')) return 'رمز التحقق غير صحيح.';
-  if (code.includes('code-expired')) return 'انتهت صلاحية الرمز. اطلب رمزاً جديداً.';
-  if (code.includes('too-many-requests')) return 'محاولات كثيرة. انتظر قليلاً ثم حاول مجدداً.';
+    return t('البريد الإلكتروني أو كلمة المرور غير صحيحة.');
+  if (code.includes('email-already-in-use')) return t('هذا البريد مسجّل مسبقاً. سجّل الدخول، أو استعمل «نسيت كلمة المرور».');
+  if (code.includes('weak-password')) return t('كلمة المرور ضعيفة. استعمل 8 أحرف على الأقل.');
+  if (code.includes('invalid-email')) return t('البريد الإلكتروني غير صحيح.');
+  if (code.includes('invalid-phone-number')) return t('رقم الهاتف غير صحيح. اكتبه بالصيغة الدولية، مثل ‎+49 151 2345678');
+  if (code.includes('invalid-verification-code')) return t('رمز التحقق غير صحيح.');
+  if (code.includes('code-expired')) return t('انتهت صلاحية الرمز. اطلب رمزاً جديداً.');
+  if (code.includes('too-many-requests')) return t('محاولات كثيرة. انتظر قليلاً ثم حاول مجدداً.');
   if (code.includes('billing-not-enabled') || code.includes('quota-exceeded'))
-    return 'الدخول بالهاتف غير متاح حالياً (يتطلب تفعيل الرسائل في Firebase).';
-  return 'حدث خطأ غير متوقع. حاول مرة أخرى.';
+    return t('الدخول بالهاتف غير متاح حالياً (يتطلب تفعيل الرسائل في Firebase).');
+  return t('حدث خطأ غير متوقع. حاول مرة أخرى.');
 }
