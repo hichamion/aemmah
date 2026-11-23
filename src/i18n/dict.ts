@@ -1185,5 +1185,2303 @@ export const DICT: Record<string, Entry> = {
   "fr": "Oui, à tout moment depuis le menu du compte. Votre profil et vos annonces sont masqués immédiatement et tout est supprimé définitivement après sept jours ; vous pouvez restaurer votre compte avant en vous connectant.",
   "de": "Ja, jederzeit über das Kontomenü. Profil und Anzeigen werden sofort ausgeblendet und nach sieben Tagen endgültig gelöscht; bis dahin können Sie Ihr Konto durch Anmelden wiederherstellen.",
   "tr": "Evet, hesap menüsünden istediğiniz zaman. Profiliniz ve ilanlarınız hemen gizlenir, her şey yedi gün sonra kalıcı olarak silinir; o zamana kadar giriş yaparak hesabınızı geri alabilirsiniz."
+ },
+ "السلام عليكم ورحمة الله وبركاته، أتشرف بالتقدم بملفي لشغل هذه الإمامة لدى جمعيتكم الموقرة.": {
+  "en": "Peace be upon you. I am honoured to submit my profile for this imam position at your esteemed association.",
+  "fr": "Que la paix soit sur vous. J'ai l'honneur de présenter mon profil pour ce poste d'imam au sein de votre association.",
+  "de": "Friede sei mit Ihnen. Ich bewerbe mich hiermit mit meinem Profil um diese Imamstelle in Ihrem geschätzten Verein.",
+  "tr": "Esselâmü aleyküm. Derneğinizdeki bu imamlık görevi için profilimle başvurmaktan onur duyarım."
+ },
+ "تأكيد التقديم": {
+  "en": "Confirm application",
+  "fr": "Confirmer la candidature",
+  "de": "Bewerbung bestätigen",
+  "tr": "Başvuruyu onayla"
+ },
+ "إرسال ملفك إلى لجنة المسجد": {
+  "en": "Send your profile to the mosque committee",
+  "fr": "Envoyer votre profil au comité de la mosquée",
+  "de": "Profil an den Moscheevorstand senden",
+  "tr": "Profilinizi cami yönetimine gönderin"
+ },
+ "المسجد والجهة المعلنة:": {
+  "en": "Mosque and advertiser:",
+  "fr": "Mosquée et annonceur :",
+  "de": "Moschee und Anbieter:",
+  "tr": "Cami ve ilan sahibi:"
+ },
+ "نوع الاحتياج:": {
+  "en": "Type of need:",
+  "fr": "Type de besoin :",
+  "de": "Art des Bedarfs:",
+  "tr": "İhtiyaç türü:"
+ },
+ "الرواية:": {
+  "en": "Riwaya:",
+  "fr": "Lecture (riwaya) :",
+  "de": "Lesart:",
+  "tr": "Kıraat:"
+ },
+ "رواية {name}": {
+  "en": "{name} riwaya",
+  "fr": "Lecture {name}",
+  "de": "Lesart {name}",
+  "tr": "{name} kıraati"
+ },
+ "سيطّلع المسجد على ملفك العام (السيرة، التلاوة) وبيانات تواصلك بعد توثيقه.": {
+  "en": "The mosque will see your public profile (CV, recitation) and, once verified, your contact details.",
+  "fr": "La mosquée verra votre profil public (CV, récitation) et, une fois vérifiée, vos coordonnées.",
+  "de": "Die Moschee sieht Ihr öffentliches Profil (Lebenslauf, Rezitation) und nach ihrer Prüfung Ihre Kontaktdaten.",
+  "tr": "Cami herkese açık profilinizi (özgeçmiş, kıraat) ve onaylandıktan sonra iletişim bilgilerinizi görür."
+ },
+ "رسالة إلى لجنة المسجد (اختياري):": {
+  "en": "Message to the mosque committee (optional):",
+  "fr": "Message au comité de la mosquée (facultatif) :",
+  "de": "Nachricht an den Moscheevorstand (optional):",
+  "tr": "Cami yönetimine mesaj (isteğe bağlı):"
+ },
+ "إلغاء": {
+  "en": "Cancel",
+  "fr": "Annuler",
+  "de": "Abbrechen",
+  "tr": "İptal"
+ },
+ "إرسال طلب الترشح": {
+  "en": "Send application",
+  "fr": "Envoyer la candidature",
+  "de": "Bewerbung senden",
+  "tr": "Başvuruyu gönder"
+ },
+ "جاري تحميل بيانات التواصل…": {
+  "en": "Loading contact details…",
+  "fr": "Chargement des coordonnées…",
+  "de": "Kontaktdaten werden geladen…",
+  "tr": "İletişim bilgileri yükleniyor…"
+ },
+ "لم تُضف بيانات تواصل بعد.": {
+  "en": "No contact details added yet.",
+  "fr": "Aucune coordonnée pour l'instant.",
+  "de": "Noch keine Kontaktdaten.",
+  "tr": "Henüz iletişim bilgisi eklenmedi."
+ },
+ "المسؤول:": {
+  "en": "Contact person:",
+  "fr": "Responsable :",
+  "de": "Ansprechpartner:",
+  "tr": "Sorumlu:"
+ },
+ "واتساب": {
+  "en": "WhatsApp",
+  "fr": "WhatsApp",
+  "de": "WhatsApp",
+  "tr": "WhatsApp"
+ },
+ "هاتف": {
+  "en": "Phone",
+  "fr": "Téléphone",
+  "de": "Telefon",
+  "tr": "Telefon"
+ },
+ "إيميل": {
+  "en": "E-mail",
+  "fr": "E-mail",
+  "de": "E-Mail",
+  "tr": "E-posta"
+ },
+ "تعذرت المشاركة. استعمل زر «فتح الملف» ثم احفظه.": {
+  "en": "Sharing failed. Use «Open file» and save it.",
+  "fr": "Le partage a échoué. Utilisez « Ouvrir le fichier » puis enregistrez-le.",
+  "de": "Teilen fehlgeschlagen. Nutzen Sie „Datei öffnen“ und speichern Sie sie.",
+  "tr": "Paylaşılamadı. «Dosyayı aç» düğmesini kullanıp kaydedin."
+ },
+ "الملف جاهز": {
+  "en": "The file is ready",
+  "fr": "Le fichier est prêt",
+  "de": "Die Datei ist fertig",
+  "tr": "Dosya hazır"
+ },
+ "حفظ أو مشاركة": {
+  "en": "Save or share",
+  "fr": "Enregistrer ou partager",
+  "de": "Speichern oder teilen",
+  "tr": "Kaydet veya paylaş"
+ },
+ "فتح ملف PDF": {
+  "en": "Open PDF",
+  "fr": "Ouvrir le PDF",
+  "de": "PDF öffnen",
+  "tr": "PDF'yi aç"
+ },
+ "فتح الصورة": {
+  "en": "Open image",
+  "fr": "Ouvrir l'image",
+  "de": "Bild öffnen",
+  "tr": "Görseli aç"
+ },
+ "اختر «حفظ في الملفات» أو «حفظ الصورة»، أو أرسله مباشرة عبر واتساب.": {
+  "en": "Choose «Save to Files» or «Save image», or send it straight via WhatsApp.",
+  "fr": "Choisissez « Enregistrer dans Fichiers » ou « Enregistrer l'image », ou envoyez-le directement par WhatsApp.",
+  "de": "Wählen Sie „In Dateien sichern“ oder „Bild sichern“ – oder senden Sie es direkt per WhatsApp.",
+  "tr": "«Dosyalara kaydet» ya da «Görseli kaydet»i seçin veya doğrudan WhatsApp ile gönderin."
+ },
+ "يُفتح الملف في صفحة جديدة؛ اضغط زر المشاركة في المتصفح ثم «حفظ».": {
+  "en": "The file opens in a new page; tap the browser's share button, then «Save».",
+  "fr": "Le fichier s'ouvre dans une nouvelle page ; touchez le bouton Partager du navigateur puis « Enregistrer ».",
+  "de": "Die Datei öffnet sich in einer neuen Seite; tippen Sie auf Teilen im Browser und dann auf „Sichern“.",
+  "tr": "Dosya yeni sayfada açılır; tarayıcının paylaş düğmesine, ardından «Kaydet»e dokunun."
+ },
+ "تربط الأئمة والقرّاء بالمساجد في أوروبا": {
+  "en": "Connecting imams and reciters with mosques in Europe",
+  "fr": "Relie imams et récitants aux mosquées en Europe",
+  "de": "Verbindet Imame und Rezitatoren mit Moscheen in Europa",
+  "tr": "İmam ve kurraları Avrupa'daki camilerle buluşturur"
+ },
+ "حتى الآن": {
+  "en": "present",
+  "fr": "aujourd'hui",
+  "de": "heute",
+  "tr": "halen"
+ },
+ "حاصل على شواهد / إجازات": {
+  "en": "Holds certificates / ijazas",
+  "fr": "Titulaire de diplômes / ijazas",
+  "de": "Besitzt Zeugnisse / Idschazas",
+  "tr": "Belge / icazet sahibi"
+ },
+ "✓ موثق": {
+  "en": "✓ Verified",
+  "fr": "✓ Vérifié",
+  "de": "✓ Geprüft",
+  "tr": "✓ Onaylı"
+ },
+ "المعلومات الشخصية": {
+  "en": "Personal details",
+  "fr": "Informations personnelles",
+  "de": "Persönliche Angaben",
+  "tr": "Kişisel bilgiler"
+ },
+ "{n} سنة": {
+  "en": "{n} years",
+  "fr": "{n} ans",
+  "de": "{n} Jahre",
+  "tr": "{n} yaş"
+ },
+ "الجنسية: {v}": {
+  "en": "Nationality: {v}",
+  "fr": "Nationalité : {v}",
+  "de": "Staatsangehörigkeit: {v}",
+  "tr": "Uyruk: {v}"
+ },
+ "مقيم في: {v}": {
+  "en": "Lives in: {v}",
+  "fr": "Réside à : {v}",
+  "de": "Wohnort: {v}",
+  "tr": "İkamet: {v}"
+ },
+ "المؤهلات القرآنية": {
+  "en": "Quranic qualifications",
+  "fr": "Qualifications coraniques",
+  "de": "Koran-Qualifikationen",
+  "tr": "Kur'an nitelikleri"
+ },
+ "اللغات": {
+  "en": "Languages",
+  "fr": "Langues",
+  "de": "Sprachen",
+  "tr": "Diller"
+ },
+ "(اللغة الأم)": {
+  "en": "(mother tongue)",
+  "fr": "(langue maternelle)",
+  "de": "(Muttersprache)",
+  "tr": "(ana dil)"
+ },
+ "المستوى {n} من 5": {
+  "en": "Level {n} of 5",
+  "fr": "Niveau {n} sur 5",
+  "de": "Stufe {n} von 5",
+  "tr": "Seviye {n} / 5"
+ },
+ "يفضّل الإمامة في": {
+  "en": "Would like to serve in",
+  "fr": "Souhaite exercer en",
+  "de": "Möchte tätig sein in",
+  "tr": "Görev yapmak istediği yer"
+ },
+ "رمز QR لملف الإمام على منصة أئمة": {
+  "en": "QR code of the imam's profile on Aemmah",
+  "fr": "Code QR du profil de l'imam sur Aemmah",
+  "de": "QR-Code des Imam-Profils auf Aemmah",
+  "tr": "İmamın Aemmah profilinin QR kodu"
+ },
+ "امسح الرمز لعرض الملف كاملاً على منصة أئمة": {
+  "en": "Scan the code to see the full profile on Aemmah",
+  "fr": "Scannez le code pour voir le profil complet sur Aemmah",
+  "de": "Code scannen, um das ganze Profil auf Aemmah zu sehen",
+  "tr": "Profilin tamamını Aemmah'da görmek için kodu okutun"
+ },
+ "الخبرات العملية": {
+  "en": "Work experience",
+  "fr": "Expérience",
+  "de": "Berufserfahrung",
+  "tr": "İş tecrübesi"
+ },
+ "الوظيفة الحالية": {
+  "en": "Current position",
+  "fr": "Poste actuel",
+  "de": "Aktuelle Tätigkeit",
+  "tr": "Mevcut görev"
+ },
+ "المؤهل العلمي": {
+  "en": "Education",
+  "fr": "Formation",
+  "de": "Ausbildung",
+  "tr": "Eğitim"
+ },
+ "المؤهل": {
+  "en": "Qualification",
+  "fr": "Diplôme",
+  "de": "Abschluss",
+  "tr": "Diploma"
+ },
+ "الرواية": {
+  "en": "Riwaya",
+  "fr": "Lecture (riwaya)",
+  "de": "Lesart",
+  "tr": "Kıraat"
+ },
+ "الشواهد والإجازات": {
+  "en": "Certificates and ijazas",
+  "fr": "Diplômes et ijazas",
+  "de": "Zeugnisse und Idschazas",
+  "tr": "Belgeler ve icazetler"
+ },
+ "نعم": {
+  "en": "Yes",
+  "fr": "Oui",
+  "de": "Ja",
+  "tr": "Evet"
+ },
+ "لا": {
+  "en": "No",
+  "fr": "Non",
+  "de": "Nein",
+  "tr": "Hayır"
+ },
+ "الشهادات والإجازات": {
+  "en": "Certificates and ijazas",
+  "fr": "Diplômes et ijazas",
+  "de": "Zeugnisse und Idschazas",
+  "tr": "Belgeler ve icazetler"
+ },
+ "الإقامة والتأشيرة": {
+  "en": "Residence and visa",
+  "fr": "Séjour et visa",
+  "de": "Aufenthalt und Visum",
+  "tr": "İkamet ve vize"
+ },
+ "الوضع": {
+  "en": "Status",
+  "fr": "Situation",
+  "de": "Status",
+  "tr": "Durum"
+ },
+ "الدول المفضلة": {
+  "en": "Preferred countries",
+  "fr": "Pays souhaités",
+  "de": "Bevorzugte Länder",
+  "tr": "Tercih edilen ülkeler"
+ },
+ "التفرغ": {
+  "en": "Availability",
+  "fr": "Disponibilité",
+  "de": "Verfügbarkeit",
+  "tr": "Müsaitlik"
+ },
+ "الحالة": {
+  "en": "Status",
+  "fr": "Statut",
+  "de": "Status",
+  "tr": "Durum"
+ },
+ "الالتزام في رمضان": {
+  "en": "Ramadan commitment",
+  "fr": "Engagement pendant le Ramadan",
+  "de": "Verpflichtung im Ramadan",
+  "tr": "Ramazan taahhüdü"
+ },
+ "متاح للتعاقد ابتداءً من": {
+  "en": "Available for a contract from",
+  "fr": "Disponible pour un contrat à partir du",
+  "de": "Für einen Vertrag verfügbar ab",
+  "tr": "Sözleşme için müsait olduğu tarih"
+ },
+ "خطيب جمعة": {
+  "en": "Friday preacher",
+  "fr": "Prédicateur du vendredi",
+  "de": "Freitagsprediger",
+  "tr": "Cuma hatibi"
+ },
+ "نوع الخطابة": {
+  "en": "Type of preaching",
+  "fr": "Type de prédication",
+  "de": "Art der Predigttätigkeit",
+  "tr": "Hatiplik türü"
+ },
+ "مكان الخطابة": {
+  "en": "Where he preaches",
+  "fr": "Lieux de prédication",
+  "de": "Predigtorte",
+  "tr": "Hutbe okuyacağı yerler"
+ },
+ "السيارة": {
+  "en": "Car",
+  "fr": "Voiture",
+  "de": "Auto",
+  "tr": "Araba"
+ },
+ "عنده سيارة": {
+  "en": "Has a car",
+  "fr": "Dispose d'une voiture",
+  "de": "Hat ein Auto",
+  "tr": "Arabası var"
+ },
+ "ليس عنده سيارة": {
+  "en": "No car",
+  "fr": "Pas de voiture",
+  "de": "Kein Auto",
+  "tr": "Arabası yok"
+ },
+ "نموذج من التلاوة": {
+  "en": "Recitation sample",
+  "fr": "Exemple de récitation",
+  "de": "Rezitationsbeispiel",
+  "tr": "Kıraat örneği"
+ },
+ "السيرة الذاتية للشيخ {name} — إمام وقارئ ({riwaya}).": {
+  "en": "CV of Sheikh {name} — imam and reciter ({riwaya}).",
+  "fr": "CV de Cheikh {name} — imam et récitant ({riwaya}).",
+  "de": "Lebenslauf von Scheich {name} – Imam und Rezitator ({riwaya}).",
+  "tr": "Şeyh {name} özgeçmişi — imam ve kurra ({riwaya})."
+ },
+ "منصة أئمة تربط الأئمة والقرّاء بالمساجد في أوروبا:": {
+  "en": "Aemmah connects imams and reciters with mosques in Europe:",
+  "fr": "Aemmah relie imams et récitants aux mosquées en Europe :",
+  "de": "Aemmah verbindet Imame und Rezitatoren mit Moscheen in Europa:",
+  "tr": "Aemmah, imam ve kurraları Avrupa'daki camilerle buluşturur:"
+ },
+ "تعذر إنشاء ملف السيرة الذاتية. حاول مرة أخرى.": {
+  "en": "Could not create the CV file. Please try again.",
+  "fr": "Impossible de créer le CV. Réessayez.",
+  "de": "Der Lebenslauf konnte nicht erstellt werden. Bitte erneut versuchen.",
+  "tr": "Özgeçmiş dosyası oluşturulamadı. Lütfen tekrar deneyin."
+ },
+ "تعذر تحميل بيانات التواصل": {
+  "en": "Could not load the contact details",
+  "fr": "Impossible de charger les coordonnées",
+  "de": "Kontaktdaten konnten nicht geladen werden",
+  "tr": "İletişim bilgileri yüklenemedi"
+ },
+ "تواصل من إدارة مسجد عبر منصة أئمة - {name}": {
+  "en": "Contact from a mosque committee via Aemmah - {name}",
+  "fr": "Contact d'une mosquée via Aemmah - {name}",
+  "de": "Kontakt eines Moscheevorstands über Aemmah - {name}",
+  "tr": "Aemmah üzerinden cami yönetiminden iletişim - {name}"
+ },
+ "بيانات التواصل محمية": {
+  "en": "Contact details are protected",
+  "fr": "Coordonnées protégées",
+  "de": "Kontaktdaten sind geschützt",
+  "tr": "İletişim bilgileri korunuyor"
+ },
+ "ستظهر لك أرقام التواصل بعد أن توافق الإدارة على إعلان مسجدك.": {
+  "en": "You will see the contact details once your mosque's ad is approved.",
+  "fr": "Les coordonnées s'afficheront dès que l'annonce de votre mosquée sera validée.",
+  "de": "Die Kontaktdaten erscheinen, sobald die Anzeige Ihrer Moschee freigegeben ist.",
+  "tr": "Caminizin ilanı onaylandığında iletişim bilgilerini göreceksiniz."
+ },
+ "لا تظهر أرقام الهاتف والبريد إلا للمساجد التي وثقتها الإدارة.": {
+  "en": "Phone numbers and e-mails are shown only to mosques verified by us.",
+  "fr": "Les numéros et e-mails ne sont visibles que par les mosquées vérifiées.",
+  "de": "Telefonnummern und E-Mails sehen nur von uns geprüfte Moscheen.",
+  "tr": "Telefon ve e-postalar yalnızca onaylı camilere gösterilir."
+ },
+ "تلاوة {name}": {
+  "en": "Recitation by {name}",
+  "fr": "Récitation de {name}",
+  "de": "Rezitation von {name}",
+  "tr": "{name} kıraati"
+ },
+ "فتح في يوتيوب": {
+  "en": "Open on YouTube",
+  "fr": "Ouvrir sur YouTube",
+  "de": "Auf YouTube öffnen",
+  "tr": "YouTube'da aç"
+ },
+ "جاري تحميل التسجيل…": {
+  "en": "Loading the recording…",
+  "fr": "Chargement de l'enregistrement…",
+  "de": "Aufnahme wird geladen…",
+  "tr": "Kayıt yükleniyor…"
+ },
+ "التسجيل متاح لـ «{who}» حسب اختيار الإمام.": {
+  "en": "The recording is available to «{who}», as chosen by the imam.",
+  "fr": "L'enregistrement est accessible à « {who} », selon le choix de l'imam.",
+  "de": "Die Aufnahme ist laut Wahl des Imams für „{who}“ verfügbar.",
+  "tr": "Kayıt, imamın tercihine göre «{who}» için açık."
+ },
+ " سجّل دخولك للاستماع.": {
+  "en": " Sign in to listen.",
+  "fr": " Connectez-vous pour écouter.",
+  "de": " Melden Sie sich an, um zuzuhören.",
+  "tr": " Dinlemek için giriş yapın."
+ },
+ "السيرة الذاتية: {name}": {
+  "en": "CV: {name}",
+  "fr": "CV : {name}",
+  "de": "Lebenslauf: {name}",
+  "tr": "Özgeçmiş: {name}"
+ },
+ "مشاركة": {
+  "en": "Share",
+  "fr": "Partager",
+  "de": "Teilen",
+  "tr": "Paylaş"
+ },
+ "تحميل كصورة": {
+  "en": "Download as image",
+  "fr": "Télécharger en image",
+  "de": "Als Bild herunterladen",
+  "tr": "Görsel olarak indir"
+ },
+ "صورة": {
+  "en": "Image",
+  "fr": "Image",
+  "de": "Bild",
+  "tr": "Görsel"
+ },
+ "تحميل PDF": {
+  "en": "Download PDF",
+  "fr": "Télécharger le PDF",
+  "de": "PDF herunterladen",
+  "tr": "PDF indir"
+ },
+ "نسخ رابط الملف": {
+  "en": "Copy profile link",
+  "fr": "Copier le lien du profil",
+  "de": "Profil-Link kopieren",
+  "tr": "Profil bağlantısını kopyala"
+ },
+ "نسخ الرابط": {
+  "en": "Copy link",
+  "fr": "Copier le lien",
+  "de": "Link kopieren",
+  "tr": "Bağlantıyı kopyala"
+ },
+ "هذا الملف قيد المراجعة ولا يظهر للعموم بعد.": {
+  "en": "This profile is under review and not public yet.",
+  "fr": "Ce profil est en cours de vérification et n'est pas encore public.",
+  "de": "Dieses Profil wird geprüft und ist noch nicht öffentlich.",
+  "tr": "Bu profil inceleniyor ve henüz herkese açık değil."
+ },
+ "هذا الملف غير معتمد.": {
+  "en": "This profile is not approved.",
+  "fr": "Ce profil n'est pas validé.",
+  "de": "Dieses Profil ist nicht freigegeben.",
+  "tr": "Bu profil onaylanmadı."
+ },
+ "الوثائق المرفوعة (لا يراها غيرك والإدارة):": {
+  "en": "Uploaded documents (only you and our team can see them):",
+  "fr": "Documents envoyés (visibles par vous et l'équipe uniquement) :",
+  "de": "Hochgeladene Dokumente (nur für Sie und das Team sichtbar):",
+  "tr": "Yüklenen belgeler (yalnızca siz ve yönetim görebilir):"
+ },
+ "، ": {
+  "en": ", ",
+  "fr": ", ",
+  "de": ", ",
+  "tr": ", "
+ },
+ "تعديل الملف": {
+  "en": "Edit profile",
+  "fr": "Modifier le profil",
+  "de": "Profil bearbeiten",
+  "tr": "Profili düzenle"
+ },
+ "إبلاغ الإدارة": {
+  "en": "Report to the team",
+  "fr": "Signaler",
+  "de": "Melden",
+  "tr": "Yönetime bildir"
+ },
+ "إرسال طلب تواصل للشيخ": {
+  "en": "Send a contact request to the sheikh",
+  "fr": "Envoyer une demande de contact",
+  "de": "Kontaktanfrage an den Scheich senden",
+  "tr": "Şeyhe iletişim talebi gönder"
+ },
+ "تسجيل الدخول للتواصل": {
+  "en": "Sign in to get in touch",
+  "fr": "Connectez-vous pour contacter",
+  "de": "Zum Kontaktieren anmelden",
+  "tr": "İletişim için giriş yapın"
+ },
+ "المساجد والجمعيات التي تبحث عن إمام — تقدّم إليها": {
+  "en": "Mosques and associations looking for an imam — apply to them",
+  "fr": "Mosquées et associations qui cherchent un imam — postulez",
+  "de": "Moscheen und Vereine, die einen Imam suchen – bewerben Sie sich",
+  "tr": "İmam arayan camiler ve dernekler — başvurun"
+ },
+ "ملفك كإمام، وطلباتك، ورسائلك": {
+  "en": "Your imam profile, your applications and your messages",
+  "fr": "Votre profil d'imam, vos candidatures et vos messages",
+  "de": "Ihr Imam-Profil, Ihre Bewerbungen und Nachrichten",
+  "tr": "İmam profiliniz, başvurularınız ve mesajlarınız"
+ },
+ "طلباتي ({n})": {
+  "en": "My applications ({n})",
+  "fr": "Mes candidatures ({n})",
+  "de": "Meine Bewerbungen ({n})",
+  "tr": "Başvurularım ({n})"
+ },
+ "علبة الرسائل": {
+  "en": "Messages",
+  "fr": "Messages",
+  "de": "Nachrichten",
+  "tr": "Mesajlar"
+ },
+ "انشر ملفك كإمام للمساجد": {
+  "en": "Publish your imam profile for mosques",
+  "fr": "Publiez votre profil d'imam pour les mosquées",
+  "de": "Veröffentlichen Sie Ihr Imam-Profil für Moscheen",
+  "tr": "İmam profilinizi camiler için yayınlayın"
+ },
+ "أنشئ سيرتك (الرواية، الخبرات، الشهادات، عيّنة التلاوة) لتراها المساجد والجمعيات بعد مراجعة الإدارة، وتستطيع التقديم على إعلاناتها.": {
+  "en": "Create your CV (riwaya, experience, certificates, recitation sample) so that mosques and associations can see it after review, and apply to their ads.",
+  "fr": "Créez votre CV (lecture, expérience, diplômes, extrait de récitation) pour que les mosquées et associations le voient après vérification, et postulez à leurs annonces.",
+  "de": "Erstellen Sie Ihren Lebenslauf (Lesart, Erfahrung, Zeugnisse, Rezitationsprobe), damit Moscheen und Vereine ihn nach der Prüfung sehen, und bewerben Sie sich auf ihre Anzeigen.",
+  "tr": "Özgeçmişinizi (kıraat, tecrübe, belgeler, kıraat örneği) oluşturun; inceleme sonrası camiler ve dernekler görsün, ilanlarına başvurun."
+ },
+ "إنشاء ملفي ونشره": {
+  "en": "Create and publish my profile",
+  "fr": "Créer et publier mon profil",
+  "de": "Profil erstellen und veröffentlichen",
+  "tr": "Profilimi oluştur ve yayınla"
+ },
+ "ملفك منشور للمساجد": {
+  "en": "Your profile is published for mosques",
+  "fr": "Votre profil est publié pour les mosquées",
+  "de": "Ihr Profil ist für Moscheen veröffentlicht",
+  "tr": "Profiliniz camiler için yayında"
+ },
+ "ملفك محفوظ لكنه مخفي عن المساجد. اضغط «نشر ملفي» ليظهر من جديد.": {
+  "en": "Your profile is saved but hidden from mosques. Press «Publish my profile» to show it again.",
+  "fr": "Votre profil est enregistré mais masqué. Appuyez sur « Publier mon profil » pour le réafficher.",
+  "de": "Ihr Profil ist gespeichert, aber für Moscheen ausgeblendet. Tippen Sie auf „Profil veröffentlichen“, um es wieder anzuzeigen.",
+  "tr": "Profiliniz kayıtlı ama camilerden gizli. Yeniden göstermek için «Profilimi yayınla»ya basın."
+ },
+ "تراه المساجد والجمعيات في قائمة الأئمة المتاحين، ويمكنها التواصل معك.": {
+  "en": "Mosques and associations see it in the list of available imams and can contact you.",
+  "fr": "Les mosquées et associations le voient dans la liste des imams disponibles et peuvent vous contacter.",
+  "de": "Moscheen und Vereine sehen es in der Liste verfügbarer Imame und können Sie kontaktieren.",
+  "tr": "Camiler ve dernekler onu müsait imamlar listesinde görür ve sizinle iletişime geçebilir."
+ },
+ "راسل الإدارة لمعرفة السبب، ثم عدّل ملفك.": {
+  "en": "Contact the team to find out why, then edit your profile.",
+  "fr": "Contactez l'équipe pour en connaître la raison, puis modifiez votre profil.",
+  "de": "Schreiben Sie dem Team, um den Grund zu erfahren, und bearbeiten Sie dann Ihr Profil.",
+  "tr": "Nedenini öğrenmek için yönetime yazın, ardından profilinizi düzenleyin."
+ },
+ "سيظهر ملفك للمساجد فور موافقة الإدارة عليه.": {
+  "en": "Your profile will be shown to mosques as soon as the team approves it.",
+  "fr": "Votre profil sera visible par les mosquées dès sa validation par l'équipe.",
+  "de": "Ihr Profil wird Moscheen angezeigt, sobald das Team es freigibt.",
+  "tr": "Profiliniz yönetim onaylar onaylamaz camilere gösterilecek."
+ },
+ "نشر ملفي للمساجد": {
+  "en": "Publish my profile",
+  "fr": "Publier mon profil",
+  "de": "Profil veröffentlichen",
+  "tr": "Profilimi yayınla"
+ },
+ "إيقاف النشر مؤقتاً": {
+  "en": "Pause publishing",
+  "fr": "Suspendre la publication",
+  "de": "Veröffentlichung pausieren",
+  "tr": "Yayını duraklat"
+ },
+ "ملفي الشخصي كإمام ({name})": {
+  "en": "My imam profile ({name})",
+  "fr": "Mon profil d'imam ({name})",
+  "de": "Mein Imam-Profil ({name})",
+  "tr": "İmam profilim ({name})"
+ },
+ "تحكم في بياناتك وسيرتك الذاتية وحالة تفرغك أمام المساجد": {
+  "en": "Manage your details, CV and availability shown to mosques",
+  "fr": "Gérez vos informations, votre CV et votre disponibilité visibles par les mosquées",
+  "de": "Verwalten Sie Ihre Daten, Ihren Lebenslauf und Ihre Verfügbarkeit für Moscheen",
+  "tr": "Camilerin gördüğü bilgilerinizi, özgeçmişinizi ve müsaitliğinizi yönetin"
+ },
+ "العمر: {n} سنة": {
+  "en": "Age: {n} years",
+  "fr": "Âge : {n} ans",
+  "de": "Alter: {n} Jahre",
+  "tr": "Yaş: {n}"
+ },
+ "تعديل بيانات ملفي": {
+  "en": "Edit my profile details",
+  "fr": "Modifier mon profil",
+  "de": "Profildaten bearbeiten",
+  "tr": "Profil bilgilerimi düzenle"
+ },
+ "معاينة الملف": {
+  "en": "Preview profile",
+  "fr": "Aperçu du profil",
+  "de": "Profilvorschau",
+  "tr": "Profili önizle"
+ },
+ "حالة التفرغ التي تراها المساجد:": {
+  "en": "Availability shown to mosques:",
+  "fr": "Disponibilité visible par les mosquées :",
+  "de": "Verfügbarkeit, die Moscheen sehen:",
+  "tr": "Camilerin gördüğü müsaitlik:"
+ },
+ "متاح حالياً": {
+  "en": "Available now",
+  "fr": "Disponible maintenant",
+  "de": "Jetzt verfügbar",
+  "tr": "Şu an müsait"
+ },
+ "للإمامة الدائمة أو لرمضان": {
+  "en": "For a permanent post or for Ramadan",
+  "fr": "Pour un poste permanent ou le Ramadan",
+  "de": "Für eine feste Stelle oder den Ramadan",
+  "tr": "Daimi görev veya Ramazan için"
+ },
+ "متاح لرمضان فقط": {
+  "en": "Ramadan only",
+  "fr": "Ramadan uniquement",
+  "de": "Nur für Ramadan",
+  "tr": "Yalnızca Ramazan"
+ },
+ "صلاة التراويح وشهر رمضان": {
+  "en": "Tarawih prayer and the month of Ramadan",
+  "fr": "Prière de Tarawih et mois de Ramadan",
+  "de": "Tarawih-Gebet und Monat Ramadan",
+  "tr": "Teravih namazı ve Ramazan ayı"
+ },
+ "ملتزم في رمضان ومتاح بعده": {
+  "en": "Committed in Ramadan, available afterwards",
+  "fr": "Engagé pendant le Ramadan, disponible ensuite",
+  "de": "Im Ramadan gebunden, danach verfügbar",
+  "tr": "Ramazan'da görevli, sonrasında müsait"
+ },
+ "للتعاقد الرسمي بعد العيد": {
+  "en": "For a formal contract after Eid",
+  "fr": "Pour un contrat après l'Aïd",
+  "de": "Für einen festen Vertrag nach dem Fest",
+  "tr": "Bayramdan sonra resmi sözleşme için"
+ },
+ "أين أنت ملتزم في رمضان؟": {
+  "en": "Where are you committed during Ramadan?",
+  "fr": "Où êtes-vous engagé pendant le Ramadan ?",
+  "de": "Wo sind Sie im Ramadan gebunden?",
+  "tr": "Ramazan'da nerede görevlisiniz?"
+ },
+ "مكان الالتزام في رمضان": {
+  "en": "Ramadan commitment location",
+  "fr": "Lieu de l'engagement pendant le Ramadan",
+  "de": "Ort der Ramadan-Verpflichtung",
+  "tr": "Ramazan görev yeri"
+ },
+ "تاريخ التفرغ بعد رمضان": {
+  "en": "Available from (after Ramadan)",
+  "fr": "Disponible à partir du (après le Ramadan)",
+  "de": "Verfügbar ab (nach Ramadan)",
+  "tr": "Ramazan sonrası müsaitlik tarihi"
+ },
+ "حفظ التفاصيل": {
+  "en": "Save details",
+  "fr": "Enregistrer",
+  "de": "Details speichern",
+  "tr": "Ayrıntıları kaydet"
+ },
+ "حذف ملفي نهائياً": {
+  "en": "Delete my profile permanently",
+  "fr": "Supprimer définitivement mon profil",
+  "de": "Profil endgültig löschen",
+  "tr": "Profilimi kalıcı olarak sil"
+ },
+ "المساجد المتاحة حالياً للتقديم ({n})": {
+  "en": "Mosques currently open for applications ({n})",
+  "fr": "Mosquées ouvertes aux candidatures ({n})",
+  "de": "Moscheen, die aktuell Bewerbungen annehmen ({n})",
+  "tr": "Şu an başvuru alan camiler ({n})"
+ },
+ "الدولة:": {
+  "en": "Country:",
+  "fr": "Pays :",
+  "de": "Land:",
+  "tr": "Ülke:"
+ },
+ "جميع الدول ({n})": {
+  "en": "All countries ({n})",
+  "fr": "Tous les pays ({n})",
+  "de": "Alle Länder ({n})",
+  "tr": "Tüm ülkeler ({n})"
+ },
+ "لا توجد إعلانات مساجد منشورة بعد. إن كنت تمثّل مسجداً، انشر أول إعلان.": {
+  "en": "No mosque ads published yet. If you represent a mosque, publish the first ad.",
+  "fr": "Aucune annonce de mosquée pour l'instant. Si vous représentez une mosquée, publiez la première.",
+  "de": "Noch keine Moschee-Anzeigen. Wenn Sie eine Moschee vertreten, veröffentlichen Sie die erste Anzeige.",
+  "tr": "Henüz cami ilanı yok. Bir camiyi temsil ediyorsanız ilk ilanı siz yayınlayın."
+ },
+ "لا توجد إعلانات في هذه الدولة حالياً.": {
+  "en": "No ads in this country at the moment.",
+  "fr": "Aucune annonce dans ce pays pour le moment.",
+  "de": "Derzeit keine Anzeigen in diesem Land.",
+  "tr": "Bu ülkede şu an ilan yok."
+ },
+ "تم التقديم": {
+  "en": "Applied",
+  "fr": "Candidature envoyée",
+  "de": "Beworben",
+  "tr": "Başvuruldu"
+ },
+ "التقديم": {
+  "en": "Apply",
+  "fr": "Postuler",
+  "de": "Bewerben",
+  "tr": "Başvur"
+ },
+ "سجّل دخولك للتقديم": {
+  "en": "Sign in to apply",
+  "fr": "Connectez-vous pour postuler",
+  "de": "Zum Bewerben anmelden",
+  "tr": "Başvurmak için giriş yapın"
+ },
+ "بيانات تواصل المسجد تظهر للأئمة الذين اعتمدت الإدارة ملفاتهم": {
+  "en": "Mosque contact details are shown to imams whose profiles the team has approved",
+  "fr": "Les coordonnées des mosquées sont visibles par les imams dont le profil est validé",
+  "de": "Kontaktdaten der Moscheen sehen nur Imame mit freigegebenem Profil",
+  "tr": "Cami iletişim bilgileri profili onaylanmış imamlara gösterilir"
+ },
+ "سجّل دخولك كإمام لإظهار بيانات تواصل المسجد": {
+  "en": "Sign in as an imam to see the mosque's contact details",
+  "fr": "Connectez-vous en tant qu'imam pour voir les coordonnées de la mosquée",
+  "de": "Melden Sie sich als Imam an, um die Kontaktdaten der Moschee zu sehen",
+  "tr": "Caminin iletişim bilgilerini görmek için imam olarak giriş yapın"
+ },
+ "طلبات الترشح المرسلة ({n})": {
+  "en": "Applications sent ({n})",
+  "fr": "Candidatures envoyées ({n})",
+  "de": "Gesendete Bewerbungen ({n})",
+  "tr": "Gönderilen başvurular ({n})"
+ },
+ "لم ترسل أي طلبات ترشح بعد.": {
+  "en": "You have not sent any applications yet.",
+  "fr": "Vous n'avez encore envoyé aucune candidature.",
+  "de": "Sie haben noch keine Bewerbungen gesendet.",
+  "tr": "Henüz başvuru göndermediniz."
+ },
+ "طلب تواصل رسمي مع الشيخ": {
+  "en": "Formal contact request to the sheikh",
+  "fr": "Demande de contact officielle au cheikh",
+  "de": "Offizielle Kontaktanfrage an den Scheich",
+  "tr": "Şeyhe resmi iletişim talebi"
+ },
+ "المرشح:": {
+  "en": "Candidate:",
+  "fr": "Candidat :",
+  "de": "Kandidat:",
+  "tr": "Aday:"
+ },
+ "يجب أن يكون لديك إعلان مسجد معتمد من الإدارة لإرسال طلبات التواصل.": {
+  "en": "You need a mosque ad approved by the team to send contact requests.",
+  "fr": "Il faut une annonce de mosquée validée par l'équipe pour envoyer des demandes de contact.",
+  "de": "Für Kontaktanfragen brauchen Sie eine vom Team freigegebene Moschee-Anzeige.",
+  "tr": "İletişim talebi göndermek için yönetimce onaylanmış bir cami ilanınız olmalı."
+ },
+ "باسم أي مسجد؟ *": {
+  "en": "On behalf of which mosque? *",
+  "fr": "Au nom de quelle mosquée ? *",
+  "de": "Im Namen welcher Moschee? *",
+  "tr": "Hangi cami adına? *"
+ },
+ "التاريخ المقترح *": {
+  "en": "Proposed date *",
+  "fr": "Date proposée *",
+  "de": "Vorgeschlagenes Datum *",
+  "tr": "Önerilen tarih *"
+ },
+ "التوقيت المقترح *": {
+  "en": "Proposed time *",
+  "fr": "Heure proposée *",
+  "de": "Vorgeschlagene Uhrzeit *",
+  "tr": "Önerilen saat *"
+ },
+ "وسيلة التواصل المفضلة *": {
+  "en": "Preferred contact method *",
+  "fr": "Moyen de contact préféré *",
+  "de": "Bevorzugter Kontaktweg *",
+  "tr": "Tercih edilen iletişim yolu *"
+ },
+ "بريد المسجد الذي سيتواصل عليه الشيخ *": {
+  "en": "Mosque e-mail the sheikh will use *",
+  "fr": "E-mail de la mosquée pour le cheikh *",
+  "de": "E-Mail der Moschee für den Scheich *",
+  "tr": "Şeyhin yazacağı cami e-postası *"
+ },
+ "رقم المسجد الذي سيتواصل عليه الشيخ *": {
+  "en": "Mosque number the sheikh will call *",
+  "fr": "Numéro de la mosquée pour le cheikh *",
+  "de": "Telefonnummer der Moschee für den Scheich *",
+  "tr": "Şeyhin arayacağı cami numarası *"
+ },
+ "رسالة للإمام": {
+  "en": "Message to the imam",
+  "fr": "Message à l'imam",
+  "de": "Nachricht an den Imam",
+  "tr": "İmama mesaj"
+ },
+ "سيتم إرسال الموعد ووسيلة التواصل إلى علبة رسائل الإمام داخل المنصة.": {
+  "en": "The appointment and contact method will be sent to the imam's inbox on the platform.",
+  "fr": "Le rendez-vous et le moyen de contact seront envoyés dans la messagerie de l'imam sur la plateforme.",
+  "de": "Termin und Kontaktweg werden in das Postfach des Imams auf der Plattform gesendet.",
+  "tr": "Randevu ve iletişim yolu, imamın platformdaki mesaj kutusuna gönderilecek."
+ },
+ "إرسال طلب التواصل": {
+  "en": "Send contact request",
+  "fr": "Envoyer la demande",
+  "de": "Kontaktanfrage senden",
+  "tr": "İletişim talebini gönder"
+ },
+ "🎧 عيّنة تلاوة": {
+  "en": "🎧 Recitation sample",
+  "fr": "🎧 Extrait de récitation",
+  "de": "🎧 Rezitationsprobe",
+  "tr": "🎧 Kıraat örneği"
+ },
+ "الجنسية": {
+  "en": "Nationality",
+  "fr": "Nationalité",
+  "de": "Staatsangehörigkeit",
+  "tr": "Uyruk"
+ },
+ "الإقامة": {
+  "en": "Residence",
+  "fr": "Résidence",
+  "de": "Wohnort",
+  "tr": "İkamet"
+ },
+ "يفضّل": {
+  "en": "Prefers",
+  "fr": "Préfère",
+  "de": "Bevorzugt",
+  "tr": "Tercih"
+ },
+ "الإقامة في أوروبا": {
+  "en": "Lives in Europe",
+  "fr": "Réside en Europe",
+  "de": "Wohnt in Europa",
+  "tr": "Avrupa'da ikamet"
+ },
+ "متاح لرمضان فقط (صلاة التراويح)": {
+  "en": "Ramadan only (Tarawih prayer)",
+  "fr": "Ramadan uniquement (prière de Tarawih)",
+  "de": "Nur für Ramadan (Tarawih-Gebet)",
+  "tr": "Yalnızca Ramazan (Teravih namazı)"
+ },
+ "ملتزم في رمضان — متاح للتعاقد: {date}": {
+  "en": "Committed in Ramadan — available for a contract: {date}",
+  "fr": "Engagé pendant le Ramadan — disponible pour un contrat : {date}",
+  "de": "Im Ramadan gebunden – verfügbar für einen Vertrag: {date}",
+  "tr": "Ramazan'da görevli — sözleşme için müsait: {date}"
+ },
+ "بعد العيد": {
+  "en": "after Eid",
+  "fr": "après l'Aïd",
+  "de": "nach dem Fest",
+  "tr": "bayramdan sonra"
+ },
+ "غير متاح حالياً": {
+  "en": "Not available at the moment",
+  "fr": "Indisponible pour le moment",
+  "de": "Derzeit nicht verfügbar",
+  "tr": "Şu an müsait değil"
+ },
+ "متاح حالياً لصلاة التراويح أو التعاقد الدائم": {
+  "en": "Available now for Tarawih or a permanent contract",
+  "fr": "Disponible pour le Tarawih ou un contrat permanent",
+  "de": "Jetzt verfügbar für Tarawih oder eine feste Stelle",
+  "tr": "Teravih veya daimi sözleşme için şu an müsait"
+ },
+ "السيرة الكاملة والتلاوة": {
+  "en": "Full CV and recitation",
+  "fr": "CV complet et récitation",
+  "de": "Vollständiger Lebenslauf und Rezitation",
+  "tr": "Tam özgeçmiş ve kıraat"
+ },
+ "إبلاغ": {
+  "en": "Report",
+  "fr": "Signaler",
+  "de": "Melden",
+  "tr": "Bildir"
+ },
+ "إعلان {name}": {
+  "en": "Ad: {name}",
+  "fr": "Annonce : {name}",
+  "de": "Anzeige: {name}",
+  "tr": "İlan: {name}"
+ },
+ "الرواية المطلوبة": {
+  "en": "Required riwaya",
+  "fr": "Lecture requise",
+  "de": "Gewünschte Lesart",
+  "tr": "İstenen kıraat"
+ },
+ "السكن": {
+  "en": "Housing",
+  "fr": "Logement",
+  "de": "Unterkunft",
+  "tr": "Konut"
+ },
+ "متوفر": {
+  "en": "Provided",
+  "fr": "Fourni",
+  "de": "Vorhanden",
+  "tr": "Var"
+ },
+ "غير متوفر": {
+  "en": "Not provided",
+  "fr": "Non fourni",
+  "de": "Nicht vorhanden",
+  "tr": "Yok"
+ },
+ "الراتب والمزايا": {
+  "en": "Salary and benefits",
+  "fr": "Salaire et avantages",
+  "de": "Gehalt und Leistungen",
+  "tr": "Maaş ve imkânlar"
+ },
+ "الإعلان الكامل": {
+  "en": "Full ad",
+  "fr": "Annonce complète",
+  "de": "Vollständige Anzeige",
+  "tr": "İlanın tamamı"
+ },
+ "يتوفر سكن للإمام": {
+  "en": "Housing provided for the imam",
+  "fr": "Logement fourni à l'imam",
+  "de": "Unterkunft für den Imam vorhanden",
+  "tr": "İmama konut sağlanıyor"
+ },
+ "✓ معتمد": {
+  "en": "✓ Approved",
+  "fr": "✓ Validé",
+  "de": "✓ Freigegeben",
+  "tr": "✓ Onaylı"
+ },
+ "الإعلان مغلق حالياً": {
+  "en": "This ad is currently closed",
+  "fr": "Cette annonce est actuellement fermée",
+  "de": "Diese Anzeige ist derzeit geschlossen",
+  "tr": "Bu ilan şu an kapalı"
+ },
+ "الموقع": {
+  "en": "Location",
+  "fr": "Lieu",
+  "de": "Ort",
+  "tr": "Konum"
+ },
+ "التواصل": {
+  "en": "Contact",
+  "fr": "Contact",
+  "de": "Kontakt",
+  "tr": "İletişim"
+ },
+ "بيانات التواصل متاحة للأئمة المعتمدين على منصة أئمة.": {
+  "en": "Contact details are available to approved imams on Aemmah.",
+  "fr": "Les coordonnées sont accessibles aux imams validés sur Aemmah.",
+  "de": "Kontaktdaten sind für freigegebene Imame auf Aemmah sichtbar.",
+  "tr": "İletişim bilgileri Aemmah'taki onaylı imamlara açıktır."
+ },
+ "ما يقدمه المسجد": {
+  "en": "What the mosque offers",
+  "fr": "Ce que propose la mosquée",
+  "de": "Was die Moschee bietet",
+  "tr": "Caminin sundukları"
+ },
+ "رمز QR لإعلان المسجد على منصة أئمة": {
+  "en": "QR code of the mosque's ad on Aemmah",
+  "fr": "Code QR de l'annonce de la mosquée sur Aemmah",
+  "de": "QR-Code der Moschee-Anzeige auf Aemmah",
+  "tr": "Caminin Aemmah ilanının QR kodu"
+ },
+ "امسح الرمز للتقديم على الإعلان عبر منصة أئمة": {
+  "en": "Scan the code to apply via Aemmah",
+  "fr": "Scannez le code pour postuler via Aemmah",
+  "de": "Code scannen, um sich über Aemmah zu bewerben",
+  "tr": "Aemmah üzerinden başvurmak için kodu okutun"
+ },
+ "تفاصيل الإعلان": {
+  "en": "Ad details",
+  "fr": "Détails de l'annonce",
+  "de": "Anzeigendetails",
+  "tr": "İlan ayrıntıları"
+ },
+ "المطلوب": {
+  "en": "Required",
+  "fr": "Recherché",
+  "de": "Gesucht",
+  "tr": "Aranan"
+ },
+ "المدينة": {
+  "en": "City",
+  "fr": "Ville",
+  "de": "Stadt",
+  "tr": "Şehir"
+ },
+ "غير متوفر (أو بدل سكن)": {
+  "en": "Not provided (or housing allowance)",
+  "fr": "Non fourni (ou indemnité de logement)",
+  "de": "Nicht vorhanden (oder Wohngeld)",
+  "tr": "Yok (veya konut yardımı)"
+ },
+ "الشروط والمؤهلات المطلوبة": {
+  "en": "Requirements and qualifications",
+  "fr": "Conditions et qualifications",
+  "de": "Anforderungen und Qualifikationen",
+  "tr": "Şartlar ve nitelikler"
+ },
+ "للتقديم عبر منصة أئمة التي تربط الأئمة بالمساجد في أوروبا:": {
+  "en": "Apply via Aemmah, which connects imams with mosques in Europe:",
+  "fr": "Postulez via Aemmah, qui relie les imams aux mosquées en Europe :",
+  "de": "Bewerben über Aemmah, das Imame mit Moscheen in Europa verbindet:",
+  "tr": "İmamları Avrupa'daki camilerle buluşturan Aemmah üzerinden başvurun:"
+ },
+ "تعذر إنشاء ملف الإعلان. حاول مرة أخرى.": {
+  "en": "Could not create the ad file. Please try again.",
+  "fr": "Impossible de créer le fichier de l'annonce. Réessayez.",
+  "de": "Die Anzeigendatei konnte nicht erstellt werden. Bitte erneut versuchen.",
+  "tr": "İlan dosyası oluşturulamadı. Lütfen tekrar deneyin."
+ },
+ "تظهر لك أرقام المسجد ومسؤول التواصل بعد أن توافق الإدارة على ملفك كإمام.": {
+  "en": "You will see the mosque's numbers and contact person once the team approves your imam profile.",
+  "fr": "Les numéros et le responsable de la mosquée s'afficheront dès que votre profil d'imam sera validé.",
+  "de": "Telefonnummern und Ansprechpartner der Moschee sehen Sie, sobald Ihr Imam-Profil freigegeben ist.",
+  "tr": "Caminin numaralarını ve sorumlusunu imam profiliniz onaylandıktan sonra göreceksiniz."
+ },
+ "لا تظهر أرقام المسجد ومسؤول التواصل إلا للأئمة الذين اعتمدت الإدارة ملفاتهم.": {
+  "en": "Mosque numbers and contact persons are shown only to imams with approved profiles.",
+  "fr": "Les numéros et responsables des mosquées ne sont visibles que par les imams validés.",
+  "de": "Nummern und Ansprechpartner der Moscheen sehen nur Imame mit freigegebenem Profil.",
+  "tr": "Cami numaraları ve sorumluları yalnızca profili onaylı imamlara gösterilir."
+ },
+ "نسخ رابط الإعلان": {
+  "en": "Copy ad link",
+  "fr": "Copier le lien de l'annonce",
+  "de": "Anzeigen-Link kopieren",
+  "tr": "İlan bağlantısını kopyala"
+ },
+ "هذا الإعلان قيد المراجعة ولا يظهر للعموم بعد.": {
+  "en": "This ad is under review and not public yet.",
+  "fr": "Cette annonce est en cours de vérification et n'est pas encore publique.",
+  "de": "Diese Anzeige wird geprüft und ist noch nicht öffentlich.",
+  "tr": "Bu ilan inceleniyor ve henüz herkese açık değil."
+ },
+ "هذا الإعلان غير معتمد.": {
+  "en": "This ad is not approved.",
+  "fr": "Cette annonce n'est pas validée.",
+  "de": "Diese Anzeige ist nicht freigegeben.",
+  "tr": "Bu ilan onaylanmadı."
+ },
+ "تعديل الإعلان": {
+  "en": "Edit ad",
+  "fr": "Modifier l'annonce",
+  "de": "Anzeige bearbeiten",
+  "tr": "İlanı düzenle"
+ },
+ "التقديم لهذا المسجد": {
+  "en": "Apply to this mosque",
+  "fr": "Postuler à cette mosquée",
+  "de": "Bei dieser Moschee bewerben",
+  "tr": "Bu camiye başvur"
+ },
+ "الأئمة والقرّاء المتاحون — استمع لتلاواتهم واطّلع على سيرهم": {
+  "en": "Available imams and reciters — listen to their recitations and read their CVs",
+  "fr": "Imams et récitants disponibles — écoutez leurs récitations et consultez leurs CV",
+  "de": "Verfügbare Imame und Rezitatoren – hören Sie ihre Rezitationen und lesen Sie ihre Lebensläufe",
+  "tr": "Müsait imam ve kurralar — kıraatlerini dinleyin, özgeçmişlerini inceleyin"
+ },
+ "إعلانات مسجدك، وطلبات الأئمة، ورسائلك": {
+  "en": "Your mosque's ads, imam applications and your messages",
+  "fr": "Les annonces de votre mosquée, les candidatures et vos messages",
+  "de": "Anzeigen Ihrer Moschee, Bewerbungen von Imamen und Ihre Nachrichten",
+  "tr": "Caminizin ilanları, imam başvuruları ve mesajlarınız"
+ },
+ "إضافة إمام": {
+  "en": "Add an imam",
+  "fr": "Ajouter un imam",
+  "de": "Imam hinzufügen",
+  "tr": "İmam ekle"
+ },
+ "إعلاناتي ({n})": {
+  "en": "My ads ({n})",
+  "fr": "Mes annonces ({n})",
+  "de": "Meine Anzeigen ({n})",
+  "tr": "İlanlarım ({n})"
+ },
+ "طلبات الترشيح ({n})": {
+  "en": "Applications ({n})",
+  "fr": "Candidatures ({n})",
+  "de": "Bewerbungen ({n})",
+  "tr": "Başvurular ({n})"
+ },
+ "أرقام هواتف الأئمة وبريدهم تظهر فقط لحسابات المساجد الموثقة من الإدارة.": {
+  "en": "Imams' phone numbers and e-mails are shown only to mosque accounts verified by the team.",
+  "fr": "Les numéros et e-mails des imams ne sont visibles que par les comptes de mosquée vérifiés.",
+  "de": "Telefonnummern und E-Mails der Imame sehen nur vom Team geprüfte Moschee-Konten.",
+  "tr": "İmamların telefon ve e-postaları yalnızca yönetimce doğrulanmış cami hesaplarına gösterilir."
+ },
+ "ابحث بالاسم أو الجنسية أو المدينة أو الصفة...": {
+  "en": "Search by name, nationality, city or title...",
+  "fr": "Rechercher par nom, nationalité, ville ou titre...",
+  "de": "Suche nach Name, Nationalität, Stadt oder Titel...",
+  "tr": "Ad, uyruk, şehir veya unvana göre ara..."
+ },
+ "بحث": {
+  "en": "Search",
+  "fr": "Rechercher",
+  "de": "Suchen",
+  "tr": "Ara"
+ },
+ "بحث متقدم": {
+  "en": "Advanced search",
+  "fr": "Recherche avancée",
+  "de": "Erweiterte Suche",
+  "tr": "Gelişmiş arama"
+ },
+ "حالة التفرغ": {
+  "en": "Availability",
+  "fr": "Disponibilité",
+  "de": "Verfügbarkeit",
+  "tr": "Müsaitlik"
+ },
+ "جميع حالات التفرغ": {
+  "en": "All availability states",
+  "fr": "Toutes les disponibilités",
+  "de": "Alle Verfügbarkeiten",
+  "tr": "Tüm müsaitlik durumları"
+ },
+ "متاح فوراً (رمضان أو عقد دائم)": {
+  "en": "Available now (Ramadan or permanent contract)",
+  "fr": "Disponible maintenant (Ramadan ou contrat permanent)",
+  "de": "Sofort verfügbar (Ramadan oder feste Stelle)",
+  "tr": "Hemen müsait (Ramazan veya daimi sözleşme)"
+ },
+ "متاح لرمضان فقط (التراويح)": {
+  "en": "Ramadan only (Tarawih)",
+  "fr": "Ramadan uniquement (Tarawih)",
+  "de": "Nur Ramadan (Tarawih)",
+  "tr": "Yalnızca Ramazan (Teravih)"
+ },
+ "خطباء الجمعة فقط": {
+  "en": "Friday preachers only",
+  "fr": "Prédicateurs du vendredi uniquement",
+  "de": "Nur Freitagsprediger",
+  "tr": "Yalnızca Cuma hatipleri"
+ },
+ "حالة التأشيرة": {
+  "en": "Visa status",
+  "fr": "Situation de visa",
+  "de": "Visumstatus",
+  "tr": "Vize durumu"
+ },
+ "جميع حالات التأشيرة": {
+  "en": "All visa states",
+  "fr": "Toutes les situations de visa",
+  "de": "Alle Visumstatus",
+  "tr": "Tüm vize durumları"
+ },
+ "مقيم في أوروبا أو لديه فيزا / إقامة": {
+  "en": "Lives in Europe or has a visa / residence permit",
+  "fr": "Réside en Europe ou a un visa / titre de séjour",
+  "de": "Wohnt in Europa oder hat Visum / Aufenthaltstitel",
+  "tr": "Avrupa'da ikamet ediyor veya vizesi / oturumu var"
+ },
+ "يحتاج إجراءات استقدام إلى أوروبا": {
+  "en": "Needs to be brought to Europe (visa process)",
+  "fr": "Doit être fait venir en Europe (démarches de visa)",
+  "de": "Muss nach Europa geholt werden (Visumverfahren)",
+  "tr": "Avrupa'ya getirilmesi gerekiyor (vize işlemleri)"
+ },
+ "جميع الروايات القرآنية": {
+  "en": "All Quranic riwayas",
+  "fr": "Toutes les lectures coraniques",
+  "de": "Alle Koran-Lesarten",
+  "tr": "Tüm kıraatler"
+ },
+ "رواية ورش عن نافع": {
+  "en": "Warsh from Nafi'",
+  "fr": "Warsh d'après Nâfi'",
+  "de": "Warsch nach Nafi'",
+  "tr": "Nâfi' kıraati, Verş rivayeti"
+ },
+ "رواية حفص عن عاصم": {
+  "en": "Hafs from 'Asim",
+  "fr": "Hafs d'après 'Âsim",
+  "de": "Hafs nach 'Asim",
+  "tr": "Âsım kıraati, Hafs rivayeti"
+ },
+ "رواية قالون عن نافع": {
+  "en": "Qalun from Nafi'",
+  "fr": "Qâloun d'après Nâfi'",
+  "de": "Qalun nach Nafi'",
+  "tr": "Nâfi' kıraati, Kālûn rivayeti"
+ },
+ "القراءات العشر": {
+  "en": "The ten qira'at",
+  "fr": "Les dix lectures",
+  "de": "Die zehn Lesarten",
+  "tr": "Kıraat-i aşere (on kıraat)"
+ },
+ "الدولة": {
+  "en": "Country",
+  "fr": "Pays",
+  "de": "Land",
+  "tr": "Ülke"
+ },
+ "جميع الدول (الإقامة أو الدول المفضلة)": {
+  "en": "All countries (residence or preferred)",
+  "fr": "Tous les pays (résidence ou souhaités)",
+  "de": "Alle Länder (Wohnort oder bevorzugt)",
+  "tr": "Tüm ülkeler (ikamet veya tercih)"
+ },
+ "المدينة أو المنطقة (مثل: كولونيا، ليون…)": {
+  "en": "City or region (e.g. Cologne, Lyon…)",
+  "fr": "Ville ou région (ex. Cologne, Lyon…)",
+  "de": "Stadt oder Region (z. B. Köln, Lyon…)",
+  "tr": "Şehir veya bölge (ör. Köln, Lyon…)"
+ },
+ "المدينة أو المنطقة": {
+  "en": "City or region",
+  "fr": "Ville ou région",
+  "de": "Stadt oder Region",
+  "tr": "Şehir veya bölge"
+ },
+ "مسح الفلاتر": {
+  "en": "Clear filters",
+  "fr": "Effacer les filtres",
+  "de": "Filter zurücksetzen",
+  "tr": "Filtreleri temizle"
+ },
+ "لا توجد ملفات أئمة منشورة بعد. سجّل ملفك ليكون من أوائل الأئمة على المنصة.": {
+  "en": "No imam profiles published yet. Register yours to be among the first imams on the platform.",
+  "fr": "Aucun profil d'imam pour l'instant. Inscrivez-vous pour être parmi les premiers.",
+  "de": "Noch keine Imam-Profile. Legen Sie Ihres an und seien Sie unter den Ersten.",
+  "tr": "Henüz imam profili yok. Platformdaki ilk imamlardan olmak için kaydolun."
+ },
+ "لا يوجد أئمة مطابقون لهذا البحث. جرّب تغيير عوامل التصفية.": {
+  "en": "No imams match this search. Try changing the filters.",
+  "fr": "Aucun imam ne correspond à cette recherche. Modifiez les filtres.",
+  "de": "Keine passenden Imame. Ändern Sie die Filter.",
+  "tr": "Bu aramaya uyan imam yok. Filtreleri değiştirmeyi deneyin."
+ },
+ "تظهر الأرقام بعد توثيق حسابك": {
+  "en": "Numbers appear once your account is verified",
+  "fr": "Les numéros s'affichent une fois votre compte vérifié",
+  "de": "Nummern erscheinen nach Prüfung Ihres Kontos",
+  "tr": "Numaralar hesabınız doğrulandıktan sonra görünür"
+ },
+ "أرقام التواصل للمساجد الموثقة فقط": {
+  "en": "Contact numbers for verified mosques only",
+  "fr": "Numéros réservés aux mosquées vérifiées",
+  "de": "Kontaktnummern nur für geprüfte Moscheen",
+  "tr": "İletişim numaraları yalnızca doğrulanmış camiler için"
+ },
+ "إعلانات مسجدي ({n})": {
+  "en": "My mosque's ads ({n})",
+  "fr": "Les annonces de ma mosquée ({n})",
+  "de": "Anzeigen meiner Moschee ({n})",
+  "tr": "Camimin ilanları ({n})"
+ },
+ "راجع الأئمة المتقدمين لكل إعلان أو أضف إعلاناً جديداً": {
+  "en": "Review the imams who applied to each ad, or add a new ad",
+  "fr": "Consultez les imams candidats pour chaque annonce, ou ajoutez-en une",
+  "de": "Sehen Sie die Bewerber je Anzeige oder fügen Sie eine neue Anzeige hinzu",
+  "tr": "Her ilana başvuran imamları inceleyin veya yeni ilan ekleyin"
+ },
+ "إضافة إعلان جديد": {
+  "en": "Add a new ad",
+  "fr": "Ajouter une annonce",
+  "de": "Neue Anzeige hinzufügen",
+  "tr": "Yeni ilan ekle"
+ },
+ "انشر ملف مسجدك للأئمة": {
+  "en": "Publish your mosque's profile for imams",
+  "fr": "Publiez le profil de votre mosquée pour les imams",
+  "de": "Veröffentlichen Sie das Profil Ihrer Moschee für Imame",
+  "tr": "Caminizin ilanını imamlar için yayınlayın"
+ },
+ "مسجد شاغر يبحث عن إمام دائم، أو عن إمام لصلاة التراويح فقط؟ انشر إعلانك ليراه الأئمة المعتمدون ويتقدموا إليه بعد مراجعة الإدارة.": {
+  "en": "Vacant mosque looking for a permanent imam, or an imam for Tarawih only? Publish your ad so approved imams can see it and apply after review by the team.",
+  "fr": "Mosquée sans imam permanent, ou besoin d'un imam pour le Tarawih seulement ? Publiez votre annonce : après vérification, les imams validés pourront la voir et postuler.",
+  "de": "Moschee sucht einen festen Imam oder nur einen Imam für Tarawih? Veröffentlichen Sie Ihre Anzeige – nach Prüfung durch das Team sehen freigegebene Imame sie und können sich bewerben.",
+  "tr": "Daimi imam ya da yalnızca Teravih için imam mı arıyorsunuz? İlanınızı yayınlayın; yönetim incelemesinden sonra onaylı imamlar görüp başvurabilir."
+ },
+ "نشر إعلان مسجدي": {
+  "en": "Publish my mosque's ad",
+  "fr": "Publier l'annonce de ma mosquée",
+  "de": "Anzeige meiner Moschee veröffentlichen",
+  "tr": "Cami ilanımı yayınla"
+ },
+ "غير منشور — لا يراه الأئمة": {
+  "en": "Not published — imams cannot see it",
+  "fr": "Non publiée — invisible pour les imams",
+  "de": "Nicht veröffentlicht – für Imame unsichtbar",
+  "tr": "Yayında değil — imamlar göremez"
+ },
+ "الأئمة المتقدمون ({n}):": {
+  "en": "Imams who applied ({n}):",
+  "fr": "Imams candidats ({n}) :",
+  "de": "Bewerbende Imame ({n}):",
+  "tr": "Başvuran imamlar ({n}):"
+ },
+ "لم يتقدم أئمة بعد لهذا الإعلان.": {
+  "en": "No imams have applied to this ad yet.",
+  "fr": "Aucun imam n'a encore postulé à cette annonce.",
+  "de": "Noch keine Bewerbungen auf diese Anzeige.",
+  "tr": "Bu ilana henüz başvuran imam yok."
+ },
+ "الملف": {
+  "en": "Profile",
+  "fr": "Profil",
+  "de": "Profil",
+  "tr": "Profil"
+ },
+ "تواصل": {
+  "en": "Contact",
+  "fr": "Contacter",
+  "de": "Kontakt",
+  "tr": "İletişim"
+ },
+ "تعديل": {
+  "en": "Edit",
+  "fr": "Modifier",
+  "de": "Bearbeiten",
+  "tr": "Düzenle"
+ },
+ "📢 نشر الإعلان للأئمة": {
+  "en": "📢 Publish the ad for imams",
+  "fr": "📢 Publier l'annonce pour les imams",
+  "de": "📢 Anzeige für Imame veröffentlichen",
+  "tr": "📢 İlanı imamlar için yayınla"
+ },
+ "إيقاف النشر": {
+  "en": "Unpublish",
+  "fr": "Dépublier",
+  "de": "Veröffentlichung beenden",
+  "tr": "Yayından kaldır"
+ },
+ "حذف الإعلان": {
+  "en": "Delete ad",
+  "fr": "Supprimer l'annonce",
+  "de": "Anzeige löschen",
+  "tr": "İlanı sil"
+ },
+ "طلبات الترشيح الواردة ({n})": {
+  "en": "Incoming applications ({n})",
+  "fr": "Candidatures reçues ({n})",
+  "de": "Eingegangene Bewerbungen ({n})",
+  "tr": "Gelen başvurular ({n})"
+ },
+ "لا توجد طلبات بعد.": {
+  "en": "No applications yet.",
+  "fr": "Aucune candidature pour l'instant.",
+  "de": "Noch keine Bewerbungen.",
+  "tr": "Henüz başvuru yok."
+ },
+ "متقدم إلى:": {
+  "en": "Applied to:",
+  "fr": "Candidature pour :",
+  "de": "Beworben auf:",
+  "tr": "Başvurduğu ilan:"
+ },
+ "حالة الطلب": {
+  "en": "Application status",
+  "fr": "Statut de la candidature",
+  "de": "Bewerbungsstatus",
+  "tr": "Başvuru durumu"
+ },
+ "عرض الملف": {
+  "en": "View profile",
+  "fr": "Voir le profil",
+  "de": "Profil ansehen",
+  "tr": "Profili gör"
+ },
+ "تواصل مباشر": {
+  "en": "Direct contact",
+  "fr": "Contact direct",
+  "de": "Direkter Kontakt",
+  "tr": "Doğrudan iletişim"
+ },
+ "ملف الإمام غير منشور حالياً (موقوف أو محذوف).": {
+  "en": "This imam's profile is not published at the moment (paused or deleted).",
+  "fr": "Le profil de cet imam n'est pas publié actuellement (suspendu ou supprimé).",
+  "de": "Das Profil dieses Imams ist derzeit nicht veröffentlicht (pausiert oder gelöscht).",
+  "tr": "Bu imamın profili şu an yayında değil (durdurulmuş veya silinmiş)."
+ },
+ "إيقاف مؤقت": {
+  "en": "Pause",
+  "fr": "Pause",
+  "de": "Pause",
+  "tr": "Duraklat"
+ },
+ "تشغيل التلاوة": {
+  "en": "Play recitation",
+  "fr": "Écouter la récitation",
+  "de": "Rezitation abspielen",
+  "tr": "Kıraati oynat"
+ },
+ "موضع التلاوة": {
+  "en": "Recitation position",
+  "fr": "Position dans la récitation",
+  "de": "Wiedergabeposition",
+  "tr": "Kıraat konumu"
+ },
+ "أُضيفت في {date}": {
+  "en": "Added on {date}",
+  "fr": "Ajoutée le {date}",
+  "de": "Hinzugefügt am {date}",
+  "tr": "{date} tarihinde eklendi"
+ },
+ "تعذر معالجة التسجيل.": {
+  "en": "Could not process the recording.",
+  "fr": "Impossible de traiter l'enregistrement.",
+  "de": "Die Aufnahme konnte nicht verarbeitet werden.",
+  "tr": "Kayıt işlenemedi."
+ },
+ "التسجيل المباشر غير مدعوم في هذا المتصفح. يمكنك رفع ملف صوتي بدلاً منه.": {
+  "en": "Live recording is not supported in this browser. You can upload an audio file instead.",
+  "fr": "L'enregistrement direct n'est pas pris en charge par ce navigateur. Vous pouvez envoyer un fichier audio.",
+  "de": "Direktaufnahme wird in diesem Browser nicht unterstützt. Sie können stattdessen eine Audiodatei hochladen.",
+  "tr": "Bu tarayıcı doğrudan kaydı desteklemiyor. Bunun yerine ses dosyası yükleyebilirsiniz."
+ },
+ "لم يُسمح باستعمال الميكروفون. اسمح به من إعدادات المتصفح ثم أعد المحاولة.": {
+  "en": "Microphone access was denied. Allow it in the browser settings and try again.",
+  "fr": "L'accès au micro a été refusé. Autorisez-le dans les réglages du navigateur et réessayez.",
+  "de": "Mikrofonzugriff wurde verweigert. Erlauben Sie ihn in den Browser-Einstellungen und versuchen Sie es erneut.",
+  "tr": "Mikrofon izni verilmedi. Tarayıcı ayarlarından izin verip tekrar deneyin."
+ },
+ "لم يُعثر على ميكروفون في هذا الجهاز. يمكنك رفع ملف صوتي بدلاً منه.": {
+  "en": "No microphone found on this device. You can upload an audio file instead.",
+  "fr": "Aucun micro trouvé sur cet appareil. Vous pouvez envoyer un fichier audio.",
+  "de": "Kein Mikrofon auf diesem Gerät gefunden. Sie können eine Audiodatei hochladen.",
+  "tr": "Bu cihazda mikrofon bulunamadı. Bunun yerine ses dosyası yükleyebilirsiniz."
+ },
+ "تعذر بدء التسجيل. أعد المحاولة أو ارفع ملفاً صوتياً.": {
+  "en": "Could not start recording. Try again or upload an audio file.",
+  "fr": "Impossible de démarrer l'enregistrement. Réessayez ou envoyez un fichier audio.",
+  "de": "Aufnahme konnte nicht gestartet werden. Erneut versuchen oder Audiodatei hochladen.",
+  "tr": "Kayıt başlatılamadı. Tekrar deneyin veya ses dosyası yükleyin."
+ },
+ "اكتب اسم السورة أو المقطع.": {
+  "en": "Enter the surah or passage name.",
+  "fr": "Indiquez la sourate ou le passage.",
+  "de": "Geben Sie die Sure oder den Abschnitt an.",
+  "tr": "Sure veya bölüm adını yazın."
+ },
+ "سورة الفاتحة": {
+  "en": "Surah Al-Fatiha",
+  "fr": "Sourate Al-Fatiha",
+  "de": "Sure Al-Fatiha",
+  "tr": "Fâtiha Suresi"
+ },
+ "تم حفظ عيّنة التلاوة.": {
+  "en": "Recitation sample saved.",
+  "fr": "Extrait de récitation enregistré.",
+  "de": "Rezitationsprobe gespeichert.",
+  "tr": "Kıraat örneği kaydedildi."
+ },
+ "تعذر حفظ التسجيل. تأكد من الاتصال وحاول مجدداً.": {
+  "en": "Could not save the recording. Check your connection and try again.",
+  "fr": "Impossible d'enregistrer. Vérifiez votre connexion et réessayez.",
+  "de": "Aufnahme konnte nicht gespeichert werden. Prüfen Sie die Verbindung und versuchen Sie es erneut.",
+  "tr": "Kayıt kaydedilemedi. Bağlantınızı kontrol edip tekrar deneyin."
+ },
+ "حذف عيّنة التلاوة الحالية؟": {
+  "en": "Delete the current recitation sample?",
+  "fr": "Supprimer l'extrait de récitation actuel ?",
+  "de": "Aktuelle Rezitationsprobe löschen?",
+  "tr": "Mevcut kıraat örneği silinsin mi?"
+ },
+ "تم حذف عيّنة التلاوة.": {
+  "en": "Recitation sample deleted.",
+  "fr": "Extrait de récitation supprimé.",
+  "de": "Rezitationsprobe gelöscht.",
+  "tr": "Kıraat örneği silindi."
+ },
+ "تعذر حذف التسجيل.": {
+  "en": "Could not delete the recording.",
+  "fr": "Impossible de supprimer l'enregistrement.",
+  "de": "Aufnahme konnte nicht gelöscht werden.",
+  "tr": "Kayıt silinemedi."
+ },
+ "تم تحديث من يستطيع سماع التلاوة.": {
+  "en": "Updated who can listen to the recitation.",
+  "fr": "Visibilité de la récitation mise à jour.",
+  "de": "Wer die Rezitation hören darf, wurde aktualisiert.",
+  "tr": "Kıraati kimlerin dinleyebileceği güncellendi."
+ },
+ "تعذر تحديث الخصوصية.": {
+  "en": "Could not update privacy.",
+  "fr": "Impossible de mettre à jour la confidentialité.",
+  "de": "Datenschutz konnte nicht aktualisiert werden.",
+  "tr": "Gizlilik güncellenemedi."
+ },
+ "(اختيارية)": {
+  "en": "(optional)",
+  "fr": "(facultatif)",
+  "de": "(optional)",
+  "tr": "(isteğe bağlı)"
+ },
+ "سجّل أو ارفع مقطعاً قصيراً من تلاوتك ({n} ثانية كحد أقصى) لتستمع إليه المساجد عند فتح ملفك.": {
+  "en": "Record or upload a short clip of your recitation ({n} seconds max) for mosques to hear when they open your profile.",
+  "fr": "Enregistrez ou envoyez un court extrait de votre récitation ({n} secondes max.) que les mosquées écouteront sur votre profil.",
+  "de": "Nehmen Sie einen kurzen Ausschnitt Ihrer Rezitation auf oder laden Sie ihn hoch (max. {n} Sekunden), den Moscheen in Ihrem Profil hören können.",
+  "tr": "Camilerin profilinizi açtığında dinleyeceği kısa bir kıraat kaydı yapın veya yükleyin (en fazla {n} saniye)."
+ },
+ "العيّنة الحالية:": {
+  "en": "Current sample:",
+  "fr": "Extrait actuel :",
+  "de": "Aktuelle Probe:",
+  "tr": "Mevcut örnek:"
+ },
+ "حذف العيّنة الحالية": {
+  "en": "Delete current sample",
+  "fr": "Supprimer l'extrait actuel",
+  "de": "Aktuelle Probe löschen",
+  "tr": "Mevcut örneği sil"
+ },
+ "ما الذي تتلوه؟": {
+  "en": "What are you reciting?",
+  "fr": "Que récitez-vous ?",
+  "de": "Was rezitieren Sie?",
+  "tr": "Ne okuyorsunuz?"
+ },
+ "العنوان (اختياري)": {
+  "en": "Title (optional)",
+  "fr": "Titre (facultatif)",
+  "de": "Titel (optional)",
+  "tr": "Başlık (isteğe bağlı)"
+ },
+ "اسم السورة أو المقطع": {
+  "en": "Surah or passage name",
+  "fr": "Sourate ou passage",
+  "de": "Sure oder Abschnitt",
+  "tr": "Sure veya bölüm adı"
+ },
+ "مثال: سورة الإخلاص": {
+  "en": "e.g. Surah Al-Ikhlas",
+  "fr": "ex. Sourate Al-Ikhlas",
+  "de": "z. B. Sure Al-Ikhlas",
+  "tr": "ör. İhlâs Suresi"
+ },
+ "مثال: البقرة 1–5": {
+  "en": "e.g. Al-Baqara 1–5",
+  "fr": "ex. Al-Baqara 1–5",
+  "de": "z. B. Al-Baqara 1–5",
+  "tr": "ör. Bakara 1–5"
+ },
+ "من يستطيع السماع؟": {
+  "en": "Who can listen?",
+  "fr": "Qui peut écouter ?",
+  "de": "Wer darf zuhören?",
+  "tr": "Kimler dinleyebilir?"
+ },
+ "تسجيل جديد": {
+  "en": "New recording",
+  "fr": "Nouvel enregistrement",
+  "de": "Neue Aufnahme",
+  "tr": "Yeni kayıt"
+ },
+ "ابدأ التسجيل": {
+  "en": "Start recording",
+  "fr": "Démarrer l'enregistrement",
+  "de": "Aufnahme starten",
+  "tr": "Kaydı başlat"
+ },
+ "متابعة": {
+  "en": "Resume",
+  "fr": "Reprendre",
+  "de": "Fortsetzen",
+  "tr": "Devam et"
+ },
+ "إنهاء ومراجعة": {
+  "en": "Finish and review",
+  "fr": "Terminer et réécouter",
+  "de": "Beenden und prüfen",
+  "tr": "Bitir ve dinle"
+ },
+ "جاري التجهيز…": {
+  "en": "Preparing…",
+  "fr": "Préparation…",
+  "de": "Wird vorbereitet…",
+  "tr": "Hazırlanıyor…"
+ },
+ "رفع ملف (MP3 / M4A / WAV)": {
+  "en": "Upload a file (MP3 / M4A / WAV)",
+  "fr": "Envoyer un fichier (MP3 / M4A / WAV)",
+  "de": "Datei hochladen (MP3 / M4A / WAV)",
+  "tr": "Dosya yükle (MP3 / M4A / WAV)"
+ },
+ "استمع إلى التسجيل قبل حفظه:": {
+  "en": "Listen to the recording before saving:",
+  "fr": "Écoutez l'enregistrement avant de l'enregistrer :",
+  "de": "Hören Sie die Aufnahme vor dem Speichern an:",
+  "tr": "Kaydetmeden önce kaydı dinleyin:"
+ },
+ "استبدال العيّنة الحالية": {
+  "en": "Replace the current sample",
+  "fr": "Remplacer l'extrait actuel",
+  "de": "Aktuelle Probe ersetzen",
+  "tr": "Mevcut örneği değiştir"
+ },
+ "حفظ ونشر في ملفي": {
+  "en": "Save and publish on my profile",
+  "fr": "Enregistrer et publier sur mon profil",
+  "de": "Speichern und im Profil veröffentlichen",
+  "tr": "Kaydet ve profilimde yayınla"
+ },
+ "إعادة التسجيل": {
+  "en": "Record again",
+  "fr": "Recommencer",
+  "de": "Neu aufnehmen",
+  "tr": "Yeniden kaydet"
+ },
+ "الإبلاغ عن ملف: {name}": {
+  "en": "Report profile: {name}",
+  "fr": "Signaler le profil : {name}",
+  "de": "Profil melden: {name}",
+  "tr": "Profili bildir: {name}"
+ },
+ "الإبلاغ عن إعلان: {name}": {
+  "en": "Report ad: {name}",
+  "fr": "Signaler l'annonce : {name}",
+  "de": "Anzeige melden: {name}",
+  "tr": "İlanı bildir: {name}"
+ },
+ "يُرسل البلاغ إلى الإدارة للمراجعة": {
+  "en": "The report is sent to the team for review",
+  "fr": "Le signalement est envoyé à l'équipe pour examen",
+  "de": "Die Meldung wird dem Team zur Prüfung gesendet",
+  "tr": "Bildirim incelenmek üzere yönetime gönderilir"
+ },
+ "يتم التعامل مع البلاغات بسرية، ولا يظهر اسمك لصاحب الملف.": {
+  "en": "Reports are handled confidentially; your name is not shown to the owner.",
+  "fr": "Les signalements sont traités confidentiellement ; votre nom n'est pas communiqué.",
+  "de": "Meldungen werden vertraulich behandelt; Ihr Name wird dem Inhaber nicht angezeigt.",
+  "tr": "Bildirimler gizli tutulur; adınız profil sahibine gösterilmez."
+ },
+ "سبب الإبلاغ *": {
+  "en": "Reason for the report *",
+  "fr": "Motif du signalement *",
+  "de": "Grund der Meldung *",
+  "tr": "Bildirim sebebi *"
+ },
+ "تفاصيل إضافية": {
+  "en": "Additional details",
+  "fr": "Détails supplémentaires",
+  "de": "Weitere Details",
+  "tr": "Ek ayrıntılar"
+ },
+ "(اختياري)": {
+  "en": "(optional)",
+  "fr": "(facultatif)",
+  "de": "(optional)",
+  "tr": "(isteğe bağlı)"
+ },
+ "سبب آخر": {
+  "en": "Other reason",
+  "fr": "Autre motif",
+  "de": "Anderer Grund",
+  "tr": "Diğer sebep"
+ },
+ "🚩 إرسال البلاغ": {
+  "en": "🚩 Send report",
+  "fr": "🚩 Envoyer le signalement",
+  "de": "🚩 Meldung senden",
+  "tr": "🚩 Bildirimi gönder"
+ },
+ "إمام وقارئ": {
+  "en": "Imam and reciter",
+  "fr": "Imam et récitant",
+  "de": "Imam und Rezitator",
+  "tr": "İmam ve kurra"
+ },
+ "في حدود {n} كم من مكان سكنه": {
+  "en": "within {n} km of where he lives",
+  "fr": "dans un rayon de {n} km de son domicile",
+  "de": "im Umkreis von {n} km um seinen Wohnort",
+  "tr": "ikamet yerine {n} km mesafe içinde"
+ },
+ "لم تُحدَّد المناطق": {
+  "en": "No areas specified",
+  "fr": "Aucune zone indiquée",
+  "de": "Keine Gebiete angegeben",
+  "tr": "Bölge belirtilmedi"
+ },
+ "خطيب جمعة وإمام تراويح": {
+  "en": "Friday preacher and Tarawih imam",
+  "fr": "Prédicateur du vendredi et imam de Tarawih",
+  "de": "Freitagsprediger und Tarawih-Imam",
+  "tr": "Cuma hatibi ve Teravih imamı"
+ },
+ "إمام وخطيب جمعة": {
+  "en": "Imam and Friday preacher",
+  "fr": "Imam et prédicateur du vendredi",
+  "de": "Imam und Freitagsprediger",
+  "tr": "İmam ve Cuma hatibi"
+ },
+ "إمام تراويح لرمضان": {
+  "en": "Tarawih imam for Ramadan",
+  "fr": "Imam de Tarawih pour le Ramadan",
+  "de": "Tarawih-Imam für Ramadan",
+  "tr": "Ramazan için Teravih imamı"
+ },
+ "إمام": {
+  "en": "Imam",
+  "fr": "Imam",
+  "de": "Imam",
+  "tr": "İmam"
+ },
+ "مقيم في أوروبا (لا يحتاج إجراءات استقدام)": {
+  "en": "Lives in Europe (no visa process needed)",
+  "fr": "Réside en Europe (aucune démarche de visa)",
+  "de": "Wohnt in Europa (kein Visumverfahren nötig)",
+  "tr": "Avrupa'da ikamet ediyor (vize işlemi gerekmez)"
+ },
+ "لديه تأشيرة شنغن / إقامة أوروبية": {
+  "en": "Has a Schengen visa / European residence permit",
+  "fr": "A un visa Schengen / titre de séjour européen",
+  "de": "Hat ein Schengen-Visum / europäischen Aufenthaltstitel",
+  "tr": "Schengen vizesi / Avrupa oturumu var"
+ },
+ "⏳ بانتظار موافقة الإدارة": {
+  "en": "⏳ Awaiting approval",
+  "fr": "⏳ En attente de validation",
+  "de": "⏳ Wartet auf Freigabe",
+  "tr": "⏳ Onay bekleniyor"
+ },
+ "✅ معتمد ومنشور": {
+  "en": "✅ Approved and published",
+  "fr": "✅ Validé et publié",
+  "de": "✅ Freigegeben und veröffentlicht",
+  "tr": "✅ Onaylandı ve yayında"
+ },
+ "✖ مرفوض": {
+  "en": "✖ Rejected",
+  "fr": "✖ Refusé",
+  "de": "✖ Abgelehnt",
+  "tr": "✖ Reddedildi"
+ },
+ "مقبول": {
+  "en": "Accepted",
+  "fr": "Accepté",
+  "de": "Angenommen",
+  "tr": "Kabul edildi"
+ },
+ "تم طلب التواصل": {
+  "en": "Contact requested",
+  "fr": "Contact demandé",
+  "de": "Kontakt angefragt",
+  "tr": "İletişim istendi"
+ },
+ "غير مقبول": {
+  "en": "Not accepted",
+  "fr": "Non retenu",
+  "de": "Nicht angenommen",
+  "tr": "Kabul edilmedi"
+ },
+ "قيد المراجعة": {
+  "en": "Under review",
+  "fr": "En cours d'examen",
+  "de": "In Prüfung",
+  "tr": "İnceleniyor"
+ },
+ "تم القبول": {
+  "en": "Accepted",
+  "fr": "Accepté",
+  "de": "Angenommen",
+  "tr": "Kabul edildi"
+ },
+ "تم طلب التواصل المباشر": {
+  "en": "Direct contact requested",
+  "fr": "Contact direct demandé",
+  "de": "Direktkontakt angefragt",
+  "tr": "Doğrudan iletişim istendi"
+ },
+ "لم يتم القبول": {
+  "en": "Not accepted",
+  "fr": "Non retenu",
+  "de": "Nicht angenommen",
+  "tr": "Kabul edilmedi"
+ },
+ "متاح فوراً لصلاة التراويح أو للتعاقد الدائم": {
+  "en": "Available now for Tarawih or a permanent contract",
+  "fr": "Disponible immédiatement pour le Tarawih ou un contrat permanent",
+  "de": "Sofort verfügbar für Tarawih oder eine feste Stelle",
+  "tr": "Teravih veya daimi sözleşme için hemen müsait"
+ },
+ "ملتزم في رمضان، ومتاح للتعاقد بعده": {
+  "en": "Committed in Ramadan, available for a contract afterwards",
+  "fr": "Engagé pendant le Ramadan, disponible pour un contrat ensuite",
+  "de": "Im Ramadan gebunden, danach für einen Vertrag verfügbar",
+  "tr": "Ramazan'da görevli, sonrasında sözleşmeye müsait"
+ },
+ "غير منشور حالياً": {
+  "en": "Not published at the moment",
+  "fr": "Non publié actuellement",
+  "de": "Derzeit nicht veröffentlicht",
+  "tr": "Şu an yayında değil"
+ },
+ "أُرسل للنشر — بانتظار موافقة الإدارة": {
+  "en": "Submitted — awaiting approval",
+  "fr": "Envoyé — en attente de validation",
+  "de": "Eingereicht – wartet auf Freigabe",
+  "tr": "Gönderildi — onay bekleniyor"
+ },
+ "منشور": {
+  "en": "Published",
+  "fr": "Publié",
+  "de": "Veröffentlicht",
+  "tr": "Yayında"
+ },
+ "لم توافق الإدارة على النشر": {
+  "en": "Publication not approved",
+  "fr": "Publication non validée",
+  "de": "Veröffentlichung nicht freigegeben",
+  "tr": "Yayın onaylanmadı"
+ },
+ "سورة قصيرة": {
+  "en": "A short surah",
+  "fr": "Une courte sourate",
+  "de": "Eine kurze Sure",
+  "tr": "Kısa bir sure"
+ },
+ "مقطع قرآني أختاره": {
+  "en": "A passage of my choice",
+  "fr": "Un passage de mon choix",
+  "de": "Ein Abschnitt meiner Wahl",
+  "tr": "Seçtiğim bir bölüm"
+ },
+ "الجميع": {
+  "en": "Everyone",
+  "fr": "Tout le monde",
+  "de": "Alle",
+  "tr": "Herkes"
+ },
+ "المسجلون فقط": {
+  "en": "Registered users only",
+  "fr": "Utilisateurs inscrits uniquement",
+  "de": "Nur registrierte Nutzer",
+  "tr": "Yalnızca kayıtlı kullanıcılar"
+ },
+ "المساجد الموثقة فقط": {
+  "en": "Verified mosques only",
+  "fr": "Mosquées vérifiées uniquement",
+  "de": "Nur geprüfte Moscheen",
+  "tr": "Yalnızca doğrulanmış camiler"
+ },
+ "كل زوار المنصة": {
+  "en": "All visitors of the platform",
+  "fr": "Tous les visiteurs de la plateforme",
+  "de": "Alle Besucher der Plattform",
+  "tr": "Platformun tüm ziyaretçileri"
+ },
+ "الأئمة والمساجد المسجلون": {
+  "en": "Registered imams and mosques",
+  "fr": "Imams et mosquées inscrits",
+  "de": "Registrierte Imame und Moscheen",
+  "tr": "Kayıtlı imamlar ve camiler"
+ },
+ "المساجد التي وثقتها الإدارة": {
+  "en": "Mosques verified by the team",
+  "fr": "Mosquées vérifiées par l'équipe",
+  "de": "Vom Team geprüfte Moscheen",
+  "tr": "Yönetimce doğrulanmış camiler"
+ },
+ "الواتساب (WhatsApp)": {
+  "en": "WhatsApp",
+  "fr": "WhatsApp",
+  "de": "WhatsApp",
+  "tr": "WhatsApp"
+ },
+ "الاتصال الهاتفي": {
+  "en": "Phone call",
+  "fr": "Appel téléphonique",
+  "de": "Telefonanruf",
+  "tr": "Telefon araması"
+ },
+ "البريد الإلكتروني": {
+  "en": "E-mail",
+  "fr": "E-mail",
+  "de": "E-Mail",
+  "tr": "E-posta"
+ },
+ "خطيب مؤقت (بديل أو لجُمَع محددة)": {
+  "en": "Temporary preacher (substitute or specific Fridays)",
+  "fr": "Prédicateur temporaire (remplaçant ou vendredis précis)",
+  "de": "Vertretungsprediger (Ersatz oder bestimmte Freitage)",
+  "tr": "Geçici hatip (vekâlet veya belirli Cumalar)"
+ },
+ "خطيب دائم": {
+  "en": "Permanent preacher",
+  "fr": "Prédicateur permanent",
+  "de": "Fester Prediger",
+  "tr": "Daimi hatip"
+ },
+ "مؤقت أو دائم": {
+  "en": "Temporary or permanent",
+  "fr": "Temporaire ou permanent",
+  "de": "Vertretung oder fest",
+  "tr": "Geçici veya daimi"
+ },
+ "اللغة الأم": {
+  "en": "Mother tongue",
+  "fr": "Langue maternelle",
+  "de": "Muttersprache",
+  "tr": "Ana dil"
+ },
+ "ممتاز": {
+  "en": "Excellent",
+  "fr": "Excellent",
+  "de": "Sehr gut",
+  "tr": "Mükemmel"
+ },
+ "جيد جداً": {
+  "en": "Very good",
+  "fr": "Très bon",
+  "de": "Gut",
+  "tr": "Çok iyi"
+ },
+ "جيد": {
+  "en": "Good",
+  "fr": "Bon",
+  "de": "Befriedigend",
+  "tr": "İyi"
+ },
+ "مبتدئ": {
+  "en": "Beginner",
+  "fr": "Débutant",
+  "de": "Anfänger",
+  "tr": "Başlangıç"
+ },
+ "أعزب": {
+  "en": "Single",
+  "fr": "Célibataire",
+  "de": "Ledig",
+  "tr": "Bekâr"
+ },
+ "متزوج": {
+  "en": "Married",
+  "fr": "Marié",
+  "de": "Verheiratet",
+  "tr": "Evli"
+ },
+ "متزوج وله أطفال": {
+  "en": "Married with children",
+  "fr": "Marié avec enfants",
+  "de": "Verheiratet mit Kindern",
+  "tr": "Evli ve çocuklu"
+ },
+ "الشيخ لم يعد متاحاً (وجد مسجداً أو عملاً)": {
+  "en": "The sheikh is no longer available (found a mosque or job)",
+  "fr": "Le cheikh n'est plus disponible (a trouvé une mosquée ou un emploi)",
+  "de": "Der Scheich ist nicht mehr verfügbar (hat eine Moschee oder Arbeit gefunden)",
+  "tr": "Şeyh artık müsait değil (cami veya iş buldu)"
+ },
+ "معلومات الملف أو الشواهد غير دقيقة أو مضللة": {
+  "en": "Profile information or certificates are inaccurate or misleading",
+  "fr": "Informations ou diplômes inexacts ou trompeurs",
+  "de": "Profilangaben oder Nachweise sind ungenau oder irreführend",
+  "tr": "Profil bilgileri veya belgeler yanlış ya da yanıltıcı"
+ },
+ "تعذر التواصل / رقم الهاتف لا يعمل": {
+  "en": "Cannot be reached / phone number not working",
+  "fr": "Injoignable / numéro ne fonctionne pas",
+  "de": "Nicht erreichbar / Telefonnummer funktioniert nicht",
+  "tr": "Ulaşılamıyor / telefon numarası çalışmıyor"
+ },
+ "المسجد تعاقد بالفعل مع إمام والإعلان لم يعد متاحاً": {
+  "en": "The mosque has already hired an imam and the ad is no longer valid",
+  "fr": "La mosquée a déjà recruté un imam et l'annonce n'est plus valable",
+  "de": "Die Moschee hat bereits einen Imam eingestellt, die Anzeige gilt nicht mehr",
+  "tr": "Cami zaten bir imamla anlaştı, ilan artık geçerli değil"
+ },
+ "شروط العقد أو السكن لا تطابق ما هو معلن": {
+  "en": "Contract or housing terms do not match the ad",
+  "fr": "Les conditions du contrat ou du logement ne correspondent pas à l'annonce",
+  "de": "Vertrags- oder Wohnbedingungen entsprechen nicht der Anzeige",
+  "tr": "Sözleşme veya konut şartları ilanla uyuşmuyor"
+ },
+ "إدارة المسجد لا ترد على المتقدمين": {
+  "en": "The mosque committee does not reply to applicants",
+  "fr": "Le comité de la mosquée ne répond pas aux candidats",
+  "de": "Der Moscheevorstand antwortet Bewerbern nicht",
+  "tr": "Cami yönetimi başvuranlara cevap vermiyor"
+ },
+ "نبحث عن إمام رسمي بعقد دائم": {
+  "en": "Looking for a permanent imam with a contract",
+  "fr": "Recherche un imam permanent sous contrat",
+  "de": "Suchen einen festen Imam mit Vertrag",
+  "tr": "Sözleşmeli daimi imam aranıyor"
+ },
+ "نبحث عن إمام لصلاة التراويح فقط (رمضان)": {
+  "en": "Looking for an imam for Tarawih only (Ramadan)",
+  "fr": "Recherche un imam pour le Tarawih uniquement (Ramadan)",
+  "de": "Suchen einen Imam nur für Tarawih (Ramadan)",
+  "tr": "Yalnızca Teravih için imam aranıyor (Ramazan)"
+ },
+ "نبحث عن إمام لصلاة التراويح وشهر رمضان": {
+  "en": "Looking for an imam for Tarawih and the month of Ramadan",
+  "fr": "Recherche un imam pour le Tarawih et le mois de Ramadan",
+  "de": "Suchen einen Imam für Tarawih und den Ramadan",
+  "tr": "Teravih ve Ramazan ayı için imam aranıyor"
+ },
+ "نبحث عن إمام يبدأ معنا رسمياً بعد رمضان": {
+  "en": "Looking for an imam to start officially after Ramadan",
+  "fr": "Recherche un imam qui commence officiellement après le Ramadan",
+  "de": "Suchen einen Imam, der nach Ramadan fest anfängt",
+  "tr": "Ramazan sonrası resmen başlayacak imam aranıyor"
+ },
+ "نبحث عن خطيب جمعة مؤقت": {
+  "en": "Looking for a temporary Friday preacher",
+  "fr": "Recherche un prédicateur du vendredi temporaire",
+  "de": "Suchen einen Vertretungs-Freitagsprediger",
+  "tr": "Geçici Cuma hatibi aranıyor"
+ },
+ "نبحث عن خطيب جمعة دائم": {
+  "en": "Looking for a permanent Friday preacher",
+  "fr": "Recherche un prédicateur du vendredi permanent",
+  "de": "Suchen einen festen Freitagsprediger",
+  "tr": "Daimi Cuma hatibi aranıyor"
+ },
+ "ورش عن نافع": {
+  "en": "Warsh from Nafi'",
+  "fr": "Warsh d'après Nâfi'",
+  "de": "Warsch nach Nafi'",
+  "tr": "Verş (Nâfi')"
+ },
+ "حفص عن عاصم": {
+  "en": "Hafs from 'Asim",
+  "fr": "Hafs d'après 'Âsim",
+  "de": "Hafs nach 'Asim",
+  "tr": "Hafs (Âsım)"
+ },
+ "ورش أو حفص": {
+  "en": "Warsh or Hafs",
+  "fr": "Warsh ou Hafs",
+  "de": "Warsch oder Hafs",
+  "tr": "Verş veya Hafs"
+ },
+ "العربية": {
+  "en": "Arabic",
+  "fr": "Arabe",
+  "de": "Arabisch",
+  "tr": "Arapça"
+ },
+ "الفرنسية": {
+  "en": "French",
+  "fr": "Français",
+  "de": "Französisch",
+  "tr": "Fransızca"
+ },
+ "الألمانية": {
+  "en": "German",
+  "fr": "Allemand",
+  "de": "Deutsch",
+  "tr": "Almanca"
+ },
+ "الإنجليزية": {
+  "en": "English",
+  "fr": "Anglais",
+  "de": "Englisch",
+  "tr": "İngilizce"
+ },
+ "الهولندية": {
+  "en": "Dutch",
+  "fr": "Néerlandais",
+  "de": "Niederländisch",
+  "tr": "Felemenkçe"
+ },
+ "الإسبانية": {
+  "en": "Spanish",
+  "fr": "Espagnol",
+  "de": "Spanisch",
+  "tr": "İspanyolca"
+ },
+ "الإيطالية": {
+  "en": "Italian",
+  "fr": "Italien",
+  "de": "Italienisch",
+  "tr": "İtalyanca"
+ },
+ "التركية": {
+  "en": "Turkish",
+  "fr": "Turc",
+  "de": "Türkisch",
+  "tr": "Türkçe"
+ },
+ "الأمازيغية": {
+  "en": "Amazigh (Berber)",
+  "fr": "Amazighe (berbère)",
+  "de": "Amazigh (Berberisch)",
+  "tr": "Amazigçe (Berberice)"
+ },
+ "ألمانيا": {
+  "en": "Germany",
+  "fr": "Allemagne",
+  "de": "Deutschland",
+  "tr": "Almanya"
+ },
+ "فرنسا": {
+  "en": "France",
+  "fr": "France",
+  "de": "Frankreich",
+  "tr": "Fransa"
+ },
+ "بلجيكا": {
+  "en": "Belgium",
+  "fr": "Belgique",
+  "de": "Belgien",
+  "tr": "Belçika"
+ },
+ "هولندا": {
+  "en": "Netherlands",
+  "fr": "Pays-Bas",
+  "de": "Niederlande",
+  "tr": "Hollanda"
+ },
+ "إسبانيا": {
+  "en": "Spain",
+  "fr": "Espagne",
+  "de": "Spanien",
+  "tr": "İspanya"
+ },
+ "إيطاليا": {
+  "en": "Italy",
+  "fr": "Italie",
+  "de": "Italien",
+  "tr": "İtalya"
+ },
+ "المملكة المتحدة": {
+  "en": "United Kingdom",
+  "fr": "Royaume-Uni",
+  "de": "Vereinigtes Königreich",
+  "tr": "Birleşik Krallık"
+ },
+ "سويسرا": {
+  "en": "Switzerland",
+  "fr": "Suisse",
+  "de": "Schweiz",
+  "tr": "İsviçre"
+ },
+ "النمسا": {
+  "en": "Austria",
+  "fr": "Autriche",
+  "de": "Österreich",
+  "tr": "Avusturya"
+ },
+ "السويد": {
+  "en": "Sweden",
+  "fr": "Suède",
+  "de": "Schweden",
+  "tr": "İsveç"
+ },
+ "النرويج": {
+  "en": "Norway",
+  "fr": "Norvège",
+  "de": "Norwegen",
+  "tr": "Norveç"
+ },
+ "الدنمارك": {
+  "en": "Denmark",
+  "fr": "Danemark",
+  "de": "Dänemark",
+  "tr": "Danimarka"
+ },
+ "فنلندا": {
+  "en": "Finland",
+  "fr": "Finlande",
+  "de": "Finnland",
+  "tr": "Finlandiya"
+ },
+ "أيرلندا": {
+  "en": "Ireland",
+  "fr": "Irlande",
+  "de": "Irland",
+  "tr": "İrlanda"
+ },
+ "البرتغال": {
+  "en": "Portugal",
+  "fr": "Portugal",
+  "de": "Portugal",
+  "tr": "Portekiz"
+ },
+ "لوكسمبورغ": {
+  "en": "Luxembourg",
+  "fr": "Luxembourg",
+  "de": "Luxemburg",
+  "tr": "Lüksemburg"
+ },
+ "بولندا": {
+  "en": "Poland",
+  "fr": "Pologne",
+  "de": "Polen",
+  "tr": "Polonya"
+ },
+ "اليونان": {
+  "en": "Greece",
+  "fr": "Grèce",
+  "de": "Griechenland",
+  "tr": "Yunanistan"
+ },
+ "إمام وخطيب": {
+  "en": "Imam and preacher",
+  "fr": "Imam et prédicateur",
+  "de": "Imam und Prediger",
+  "tr": "İmam ve hatip"
+ },
+ "خطيب فقط": {
+  "en": "Preacher only",
+  "fr": "Prédicateur uniquement",
+  "de": "Nur Prediger",
+  "tr": "Yalnızca hatip"
+ },
+ "محفظ": {
+  "en": "Quran teacher",
+  "fr": "Enseignant de Coran",
+  "de": "Koranlehrer",
+  "tr": "Kur'an hocası"
+ },
+ "خطيب": {
+  "en": "Preacher",
+  "fr": "Prédicateur",
+  "de": "Prediger",
+  "tr": "Hatip"
+ },
+ "قالون عن نافع": {
+  "en": "Qalun from Nafi'",
+  "fr": "Qâloun d'après Nâfi'",
+  "de": "Qalun nach Nafi'",
+  "tr": "Kālûn (Nâfi')"
+ },
+ "حسابك غير موثق بعد. ستظهر لك أرقام تواصل الأئمة بعد أن توافق الإدارة على أول إعلان لمسجدك. يمكنك في الأثناء مراسلة الأئمة عبر علبة الرسائل بعد اعتماد إعلانك.": {
+  "en": "Your account is not verified yet. You will see imams' contact numbers once the team approves your mosque's first ad. Meanwhile, you can message imams through the inbox after your ad is approved.",
+  "fr": "Votre compte n'est pas encore vérifié. Les numéros des imams s'afficheront dès que l'équipe validera la première annonce de votre mosquée. En attendant, vous pourrez écrire aux imams via la messagerie une fois votre annonce validée.",
+  "de": "Ihr Konto ist noch nicht geprüft. Die Kontaktnummern der Imame sehen Sie, sobald das Team die erste Anzeige Ihrer Moschee freigibt. Bis dahin können Sie Imamen nach Freigabe Ihrer Anzeige über das Postfach schreiben.",
+  "tr": "Hesabınız henüz doğrulanmadı. Caminizin ilk ilanı yönetimce onaylandığında imamların iletişim numaralarını göreceksiniz. Bu arada ilanınız onaylandıktan sonra imamlara mesaj kutusundan yazabilirsiniz."
  }
 };

@@ -1,4 +1,5 @@
 import React from 'react';
+import { t } from '../i18n';
 
 /**
  * Header of the imams / mosques list pages. Deliberately different from the profile cards below it

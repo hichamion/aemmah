@@ -4,6 +4,7 @@ import { ClipboardList, HandCoins, Home, Mail, MapPin, MessageCircle, Phone, Use
 import { MosqueContact, MosqueJob } from '../types';
 import { getSafeMosquePhoto } from '../utils/helpers';
 import { ContactLine, CvFooter, Ribbon, Row, SideTitle, SITE_URL, useQrCode } from './ImamCvSheet';
+import { isRtl, t } from '../i18n';
 
 /*
  * Mosque profile / job ad in the same CV style as the imam sheet, in royal green:
@@ -32,13 +33,13 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
 
     const offers = [
       mosque.salaryAndBenefits,
-      mosque.housingProvided ? 'يتوفر سكن للإمام' : '',
+      mosque.housingProvided ? t('يتوفر سكن للإمام') : '',
     ].filter((x) => x && x.trim());
 
     return (
       <div
         ref={ref}
-        dir="rtl"
+        dir={isRtl() ? 'rtl' : 'ltr'}
         className={`keep-light relative bg-[#f6faf7] text-slate-900 overflow-hidden flex ${
           print ? 'w-[794px] min-h-[1123px] flex-row' : 'w-full flex-col md:flex-row rounded-3xl'
         }`}
@@ -47,7 +48,7 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
         {/* ---------------- Side column ---------------- */}
         <aside
           className={`relative z-10 bg-gradient-to-b from-[#16935a] via-[#0b5e37] to-[#063d24] text-white px-6 py-8 space-y-7 shrink-0 ${
-            print ? 'w-[290px] rounded-bl-[2.5rem]' : 'w-full md:w-[290px] md:rounded-bl-[2.5rem]'
+            print ? 'w-[290px] rounded-ee-[2.5rem]' : 'w-full md:w-[290px] md:rounded-ee-[2.5rem]'
           }`}
         >
           <div className="flex justify-center">
@@ -58,8 +59,8 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
                 className="w-44 h-36 rounded-[1.6rem] object-cover border-4 border-[#0b5e37] bg-white"
               />
               {mosque.approvalStatus === 'approved' && (
-                <span className="absolute -bottom-2 right-3 bg-amber-400 text-slate-950 text-xs font-black px-2 py-0.5 rounded-full ring-2 ring-[#0b5e37]">
-                  ✓ معتمد
+                <span className="absolute -bottom-2 start-3 bg-amber-400 text-slate-950 text-xs font-black px-2 py-0.5 rounded-full ring-2 ring-[#0b5e37]">
+                  {t('✓ معتمد')}
                 </span>
               )}
             </div>
@@ -68,21 +69,21 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
           {/* Phones: name and the wanted imam right under the photo (the main column header is hidden there). */}
           {!print && (
             <div className="md:hidden text-center space-y-1">
-              {closed && <span className="inline-block bg-white/15 text-white text-xs font-black px-3 py-1 rounded-full">الإعلان مغلق حالياً</span>}
+              {closed && <span className="inline-block bg-white/15 text-white text-xs font-black px-3 py-1 rounded-full">{t('الإعلان مغلق حالياً')}</span>}
               <h1 className="text-3xl font-black leading-tight font-amiri">{mosque.mosqueName}</h1>
               {mosque.legalName && <p className="text-sm text-white/75">{mosque.legalName}</p>}
-              <p className="text-lg font-black text-amber-300">{mosque.lookingType}</p>
+              <p className="text-lg font-black text-amber-300">{t(mosque.lookingType)}</p>
             </div>
           )}
 
           <section className="space-y-3">
-            <SideTitle icon={<MapPin className="w-5 h-5" />}>الموقع</SideTitle>
-            <ContactLine icon={<MapPin className="w-4 h-4" />} value={`${mosque.city}، ${mosque.country}`} />
+            <SideTitle icon={<MapPin className="w-5 h-5" />}>{t('الموقع')}</SideTitle>
+            <ContactLine icon={<MapPin className="w-4 h-4" />} value={`${mosque.city}${t('، ')}${mosque.country}`} />
             {contact && <ContactLine icon={<Home className="w-4 h-4" />} value={mosque.fullAddress} />}
           </section>
 
           <section className="space-y-3">
-            <SideTitle icon={<User className="w-5 h-5" />}>التواصل</SideTitle>
+            <SideTitle icon={<User className="w-5 h-5" />}>{t('التواصل')}</SideTitle>
             {contactSlot ?? (
               <>
                 <ContactLine icon={<User className="w-4 h-4" />} value={contact?.contactPerson ?? ''} />
@@ -91,7 +92,7 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
                 <ContactLine icon={<Mail className="w-4 h-4" />} value={contact?.email ?? ''} ltr />
                 {!contact && (
                   <p className="text-xs text-white/75 leading-relaxed">
-                    بيانات التواصل متاحة للأئمة المعتمدين على منصة أئمة.
+                    {t('بيانات التواصل متاحة للأئمة المعتمدين على منصة أئمة.')}
                   </p>
                 )}
               </>
@@ -100,7 +101,7 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
 
           {offers.length > 0 && (
             <section className="space-y-3">
-              <SideTitle icon={<HandCoins className="w-5 h-5" />}>ما يقدمه المسجد</SideTitle>
+              <SideTitle icon={<HandCoins className="w-5 h-5" />}>{t('ما يقدمه المسجد')}</SideTitle>
               <ul className="space-y-2 text-sm">
                 {offers.map((o) => (
                   <li key={o} className="flex gap-2.5 leading-relaxed">
@@ -114,8 +115,8 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
 
           {qr && (
             <section className="pt-2 flex flex-col items-center gap-2 text-center">
-              <img data-qr src={qr} alt="رمز QR لإعلان المسجد على منصة أئمة" className="w-28 h-28 rounded-xl bg-white p-1.5" />
-              <p className="text-xs text-white/80 leading-relaxed">امسح الرمز للتقديم على الإعلان عبر منصة أئمة</p>
+              <img data-qr src={qr} alt={t('رمز QR لإعلان المسجد على منصة أئمة')} className="w-28 h-28 rounded-xl bg-white p-1.5" />
+              <p className="text-xs text-white/80 leading-relaxed">{t('امسح الرمز للتقديم على الإعلان عبر منصة أئمة')}</p>
             </section>
           )}
         </aside>
@@ -125,14 +126,14 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
           <header className={`text-center space-y-2 ${print ? '' : 'hidden md:block'}`}>
             {closed && (
               <span className="inline-block bg-slate-200 text-slate-700 text-xs font-black px-3 py-1 rounded-full">
-                الإعلان مغلق حالياً
+                {t('الإعلان مغلق حالياً')}
               </span>
             )}
             <h1 className="text-4xl font-black leading-tight font-amiri" style={{ color: TONE }}>
               {mosque.mosqueName}
             </h1>
             {mosque.legalName && <p className="text-sm text-slate-500">{mosque.legalName}</p>}
-            <p className="text-xl font-black text-amber-600">{mosque.lookingType}</p>
+            <p className="text-xl font-black text-amber-600">{t(mosque.lookingType)}</p>
             <div className="flex items-center justify-center gap-2" aria-hidden>
               <span className="h-0.5 w-16 bg-amber-400 rounded" />
               <span className="w-8 h-2 rounded-b-full bg-amber-500" />
@@ -142,11 +143,11 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
 
           {mosque.details.trim() && (
             <blockquote className="relative px-8 text-slate-700 text-sm leading-loose whitespace-pre-line">
-              <span className="absolute -top-3 right-0 text-5xl leading-none text-amber-500 font-serif" aria-hidden>
+              <span className="absolute -top-3 start-0 text-5xl leading-none text-amber-500 font-serif" aria-hidden>
                 “
               </span>
               {mosque.details}
-              <span className="absolute -bottom-6 left-0 text-5xl leading-none text-amber-500 font-serif" aria-hidden>
+              <span className="absolute -bottom-6 end-0 text-5xl leading-none text-amber-500 font-serif" aria-hidden>
                 ”
               </span>
             </blockquote>
@@ -154,26 +155,26 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
 
           <section className="space-y-3">
             <Ribbon icon={<MosqueIcon className="w-5 h-5" />} tone={TONE}>
-              تفاصيل الإعلان
+              {t('تفاصيل الإعلان')}
             </Ribbon>
-            <div className="space-y-2 pr-2">
-              <Row label="المطلوب" value={mosque.lookingType} />
-              <Row label="الرواية المطلوبة" value={mosque.riwayaRequired} />
-              <Row label="المدينة" value={`${mosque.city}، ${mosque.country}`} />
-              <Row label="السكن" value={mosque.housingProvided ? 'متوفر' : 'غير متوفر (أو بدل سكن)'} />
+            <div className="space-y-2 ps-2">
+              <Row label={t('المطلوب')} value={t(mosque.lookingType)} />
+              <Row label={t('الرواية المطلوبة')} value={t(mosque.riwayaRequired)} />
+              <Row label={t('المدينة')} value={`${mosque.city}${t('، ')}${mosque.country}`} />
+              <Row label={t('السكن')} value={mosque.housingProvided ? t('متوفر') : t('غير متوفر (أو بدل سكن)')} />
             </div>
           </section>
 
           {mosque.requirements?.length > 0 && (
             <section className="space-y-3">
               <Ribbon icon={<ClipboardList className="w-5 h-5" />} tone={TONE}>
-                الشروط والمؤهلات المطلوبة
+                {t('الشروط والمؤهلات المطلوبة')}
               </Ribbon>
-              <ul className="space-y-2 pr-2 text-sm text-slate-700">
+              <ul className="space-y-2 ps-2 text-sm text-slate-700">
                 {mosque.requirements.map((r) => (
                   <li key={r} className="flex gap-3 leading-relaxed">
                     <span className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0" />
-                    <span>{r}</span>
+                    <span>{t(r)}</span>
                   </li>
                 ))}
               </ul>
@@ -183,9 +184,9 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
           {mosque.salaryAndBenefits.trim() && (
             <section className="space-y-3">
               <Ribbon icon={<HandCoins className="w-5 h-5" />} tone={TONE}>
-                الراتب والمزايا
+                {t('الراتب والمزايا')}
               </Ribbon>
-              <p className="pr-2 text-sm text-slate-700 leading-relaxed whitespace-pre-line">{mosque.salaryAndBenefits}</p>
+              <p className="ps-2 text-sm text-slate-700 leading-relaxed whitespace-pre-line">{mosque.salaryAndBenefits}</p>
             </section>
           )}
 

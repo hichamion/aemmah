@@ -1,4 +1,5 @@
 import type { ImamProfile, KhateebInfo } from '../types';
+import { locale, t as tr } from '../i18n';
 // Default picture for imams without a photo (public/default-imam.jpg).
 export const DEFAULT_IMAM_SILHOUETTE_AVATAR = `${import.meta.env.BASE_URL}default-imam.jpg`;
 
@@ -77,7 +78,7 @@ export function formatDate(dateString?: string, withTime = false): string {
   if (!dateString) return '';
   const d = new Date(dateString);
   if (Number.isNaN(d.getTime())) return dateString;
-  return d.toLocaleDateString('ar', {
+  return d.toLocaleDateString(locale(), {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -134,7 +135,7 @@ export const splitList = (v: string) =>
 /** The imam's titles for display, e.g. «إمام • خطيب • محفظ» (older profiles: «إمام وقارئ»). */
 export function imamTitle(titles?: string[]): string {
   const t = normalizeTitles(titles);
-  return t.length ? t.join(' • ') : 'إمام وقارئ';
+  return t.length ? t.map((x) => tr(x)).join(' • ') : tr('إمام وقارئ');
 }
 
 /** Country part of a residence written as «المدينة، البلد» (or the whole text when there is no comma). */
@@ -160,8 +161,8 @@ export const KHATEEB_TERM_LABELS: Record<KhateebInfo['term'], string> = {
 
 /** Where the khateeb can preach, in one line. */
 export function khateebArea(k: KhateebInfo, residence?: string): string {
-  if (k.mode === 'radius') return `في حدود ${k.radiusKm || 0} كم من مكان سكنه${residence ? ` (${residence})` : ''}`;
-  return k.regions.trim() || 'لم تُحدَّد المناطق';
+  if (k.mode === 'radius') return tr('في حدود {n} كم من مكان سكنه', { n: k.radiusKm || 0 }) + (residence ? ` (${residence})` : '');
+  return k.regions.trim() || tr('لم تُحدَّد المناطق');
 }
 
 export type ImamTone = 'imam' | 'khateeb' | 'imam_khateeb' | 'tarawih' | 'khateeb_tarawih';
@@ -234,11 +235,11 @@ export const IMAM_TONES: Record<ImamTone, { band: string; side: string; ring: st
 export function imamRoleArt(imam: Pick<ImamProfile, 'khateeb' | 'titles' | 'availabilityState' | 'livesInEurope'>): { src: string; label: string } {
   const base = import.meta.env.BASE_URL;
   const t = imamTone(imam);
-  if (t === 'khateeb_tarawih') return { src: `${base}art-mosque.webp`, label: 'خطيب جمعة وإمام تراويح' };
-  if (t === 'imam_khateeb') return { src: `${base}art-mihrab.webp`, label: 'إمام وخطيب جمعة' };
-  if (t === 'khateeb') return { src: `${base}art-minbar.webp`, label: 'خطيب جمعة' };
-  if (t === 'tarawih') return { src: `${base}art-lantern.webp`, label: 'إمام تراويح لرمضان' };
-  return { src: `${base}art-mihrab.webp`, label: 'إمام' };
+  if (t === 'khateeb_tarawih') return { src: `${base}art-mosque.webp`, label: tr('خطيب جمعة وإمام تراويح') };
+  if (t === 'imam_khateeb') return { src: `${base}art-mihrab.webp`, label: tr('إمام وخطيب جمعة') };
+  if (t === 'khateeb') return { src: `${base}art-minbar.webp`, label: tr('خطيب جمعة') };
+  if (t === 'tarawih') return { src: `${base}art-lantern.webp`, label: tr('إمام تراويح لرمضان') };
+  return { src: `${base}art-mihrab.webp`, label: tr('إمام') };
 }
 
 /** European countries offered as "preferred countries" (the imam can also type another one). */
@@ -263,9 +264,9 @@ export const MARITAL_LABELS: Record<string, string> = {
 
 /** Visa / immigration line shown on cards and the CV. */
 export function visaStatusText(imam: { hasVisa: 'yes' | 'no'; livesInEurope?: boolean }): string {
-  if (imam.livesInEurope) return 'مقيم في أوروبا (لا يحتاج إجراءات استقدام)';
-  if (imam.hasVisa === 'yes') return 'لديه تأشيرة شنغن / إقامة أوروبية';
-  return 'يحتاج إجراءات استقدام إلى أوروبا';
+  if (imam.livesInEurope) return tr('مقيم في أوروبا (لا يحتاج إجراءات استقدام)');
+  if (imam.hasVisa === 'yes') return tr('لديه تأشيرة شنغن / إقامة أوروبية');
+  return tr('يحتاج إجراءات استقدام إلى أوروبا');
 }
 
 /** Languages with levels; older profiles only have the free-text list (and maybe a German level). */
@@ -285,7 +286,7 @@ export function imamLanguages(imam: {
 
 /** "ألمانيا (كولونيا)، فرنسا" */
 export const formatPreferredLocations = (locs?: import('../types').PreferredLocation[]) =>
-  (locs || []).map((l) => (l.area.trim() ? `${l.country} (${l.area.trim()})` : l.country)).join('، ');
+  (locs || []).map((l) => (l.area.trim() ? `${tr(l.country)} (${l.area.trim()})` : tr(l.country))).join(tr('، '));
 
 /** First name for greetings: drops a leading title and keeps compound names whole (عبد الله، أبو بكر…). */
 export function firstNameOf(fullName: string | undefined): string {

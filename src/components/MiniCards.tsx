@@ -2,6 +2,7 @@ import React from 'react';
 import { BookOpen, Briefcase, Car, Flag, FileText, Globe2, Home, Languages, MapPin, Mic, Plane, Send, Check, Star, Users } from 'lucide-react';
 import { ImamProfile, MosqueJob } from '../types';
 import { formatPreferredLocations, getSafeImamAvatar, getSafeMosquePhoto, imamLanguages, imamTitle, imamRoleArt, imamTone, IMAM_TONES, isKhateeb, khateebArea, KHATEEB_TERM_LABELS, visaStatusText } from '../utils/helpers';
+import { t } from '../i18n';
 
 /*
  * Short, CV-looking cards for the imam and mosque lists. Clicking the card opens the full CV / ad
@@ -47,21 +48,21 @@ interface ImamMiniCardProps {
 
 export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, onOpen, onReport }) => {
   const busy = imam.availabilityState === 'busy_ramadan' || imam.availabilityState === 'ramadan_only';
-  const languages = imamLanguages(imam).map((l) => l.name).join('، ');
+  const languages = imamLanguages(imam).map((l) => t(l.name)).join(t('، '));
   const kh = isKhateeb(imam) ? imam.khateeb! : null;
   const tone = IMAM_TONES[imamTone(imam)];
 
   return (
     <article
       {...openOnCard(onOpen)}
-      aria-label={`السيرة الذاتية: ${imam.name}`}
+      aria-label={t('السيرة الذاتية: {name}', { name: imam.name })}
       data-khateeb={kh ? '' : undefined}
       data-tone={imamTone(imam)}
       className={`${cardCls} ${tone.card}`}
     >
       {/* Header band in the CV colours (wine red for Friday preachers), photo in a gold ring */}
       <div
-        className={`relative bg-gradient-to-l pr-5 pl-[31%] pt-5 pb-4 flex items-center gap-4 ${
+        className={`relative bg-gradient-to-l ps-5 pe-[31%] pt-5 pb-4 flex items-center gap-4 ${
           tone.band
         }`}
       >
@@ -86,30 +87,30 @@ export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, 
           <p className={`${tone.title} text-sm font-black`}>{imamTitle(imam.titles)}</p>
           {kh && (
             <span className="inline-flex items-center gap-1 mt-1 me-1 text-[11px] font-black bg-amber-300 text-[#4f1029] px-2 py-0.5 rounded-full">
-              <Mic className="w-3 h-3" /> خطيب جمعة
+              <Mic className="w-3 h-3" /> {t('خطيب جمعة')}
             </span>
           )}
-          {imam.isVerified && <span className="inline-block mt-1 text-[11px] font-black bg-emerald-500/90 px-2 py-0.5 rounded-full">✓ موثق</span>}
-          {imam.recitationMeta && <span className="inline-block mt-1 ms-1 text-[11px] font-black bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full">🎧 عيّنة تلاوة</span>}
+          {imam.isVerified && <span className="inline-block mt-1 text-[11px] font-black bg-emerald-500/90 px-2 py-0.5 rounded-full">{t('✓ موثق')}</span>}
+          {imam.recitationMeta && <span className="inline-block mt-1 ms-1 text-[11px] font-black bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full">{t('🎧 عيّنة تلاوة')}</span>}
         </div>
       </div>
 
       <div className="p-5 space-y-3 flex-1">
         <div className="grid gap-1.5">
-          <Info icon={<Globe2 className="w-3.5 h-3.5" />} label="الجنسية" value={imam.nationality} />
-          <Info icon={<MapPin className="w-3.5 h-3.5" />} label="الإقامة" value={imam.country} />
-          <Info icon={<BookOpen className="w-3.5 h-3.5" />} label="الرواية" value={imam.riwaya} />
-          <Info icon={<Languages className="w-3.5 h-3.5" />} label="اللغات" value={languages} />
-          <Info icon={<Briefcase className="w-3.5 h-3.5" />} label="الوظيفة الحالية" value={imam.currentJob} />
-          <Info icon={<Star className="w-3.5 h-3.5" />} label="يفضّل" value={formatPreferredLocations(imam.preferredLocations)} />
-          <Info icon={<Plane className="w-3.5 h-3.5" />} label="الإقامة في أوروبا" value={visaStatusText(imam)} />
+          <Info icon={<Globe2 className="w-3.5 h-3.5" />} label={t('الجنسية')} value={imam.nationality} />
+          <Info icon={<MapPin className="w-3.5 h-3.5" />} label={t('الإقامة')} value={imam.country} />
+          <Info icon={<BookOpen className="w-3.5 h-3.5" />} label={t('الرواية')} value={t(imam.riwaya)} />
+          <Info icon={<Languages className="w-3.5 h-3.5" />} label={t('اللغات')} value={languages} />
+          <Info icon={<Briefcase className="w-3.5 h-3.5" />} label={t('الوظيفة الحالية')} value={imam.currentJob} />
+          <Info icon={<Star className="w-3.5 h-3.5" />} label={t('يفضّل')} value={formatPreferredLocations(imam.preferredLocations)} />
+          <Info icon={<Plane className="w-3.5 h-3.5" />} label={t('الإقامة في أوروبا')} value={visaStatusText(imam)} />
         </div>
 
         {kh && (
           <div className="khateeb-box rounded-xl border border-[#8a2a4c]/25 bg-[#fbf1f4] px-3 py-2.5 space-y-1 text-xs">
-            <p className="font-black text-[#6e1d3b] flex items-center gap-1.5"><Mic className="w-3.5 h-3.5" /> {KHATEEB_TERM_LABELS[kh.term]}</p>
+            <p className="font-black text-[#6e1d3b] flex items-center gap-1.5"><Mic className="w-3.5 h-3.5" /> {t(KHATEEB_TERM_LABELS[kh.term])}</p>
             <p className="text-slate-700 flex items-start gap-1.5"><MapPin className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#8a2a4c]" /> <span className="line-clamp-2">{khateebArea(kh, imam.country)}</span></p>
-            <p className="text-slate-700 flex items-center gap-1.5"><Car className="w-3.5 h-3.5 text-[#8a2a4c]" /> {kh.hasCar ? 'عنده سيارة' : 'ليس عنده سيارة'}</p>
+            <p className="text-slate-700 flex items-center gap-1.5"><Car className="w-3.5 h-3.5 text-[#8a2a4c]" /> {kh.hasCar ? t('عنده سيارة') : t('ليس عنده سيارة')}</p>
           </div>
         )}
 
@@ -119,12 +120,12 @@ export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, 
           }`}
         >
           {imam.availabilityState === 'ramadan_only'
-            ? 'متاح لرمضان فقط (صلاة التراويح)'
+            ? t('متاح لرمضان فقط (صلاة التراويح)')
             : imam.availabilityState === 'busy_ramadan'
-            ? `ملتزم في رمضان — متاح للتعاقد: ${imam.availableAfterDate || 'بعد العيد'}`
+            ? t('ملتزم في رمضان — متاح للتعاقد: {date}', { date: imam.availableAfterDate || t('بعد العيد') })
             : imam.availabilityState === 'paused'
-            ? 'غير متاح حالياً'
-            : 'متاح حالياً لصلاة التراويح أو التعاقد الدائم'}
+            ? t('غير متاح حالياً')
+            : t('متاح حالياً لصلاة التراويح أو التعاقد الدائم')}
         </p>
 
         {contactBlock}
@@ -136,15 +137,15 @@ export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, 
           className={`flex-1 text-white font-black py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs cursor-pointer ${tone.button}`}
         >
           <FileText className="w-4 h-4" />
-          السيرة الكاملة والتلاوة
+          {t('السيرة الكاملة والتلاوة')}
         </button>
         <button
           onClick={onReport}
-          title="إبلاغ الإدارة"
+          title={t('إبلاغ الإدارة')}
           className="px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-xl border border-red-200 cursor-pointer flex items-center gap-1 text-xs font-bold"
         >
           <Flag className="w-3.5 h-3.5" />
-          إبلاغ
+          {t('إبلاغ')}
         </button>
       </div>
     </article>
@@ -163,7 +164,7 @@ interface MosqueMiniCardProps {
 }
 
 export const MosqueMiniCard: React.FC<MosqueMiniCardProps> = ({ mosque, contactBlock, onOpen, onReport, apply }) => (
-  <article {...openOnCard(onOpen)} aria-label={`إعلان ${mosque.mosqueName}`} className={cardCls}>
+  <article {...openOnCard(onOpen)} aria-label={t('إعلان {name}', { name: mosque.mosqueName })} className={cardCls}>
     <div className="relative bg-gradient-to-l from-[#2fbf7a] via-[#0b5e37] to-[#063d24] px-5 pt-5 pb-4 flex items-center gap-4">
       <div className="p-1 rounded-[1.4rem] bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 shrink-0 shadow-lg">
         <img
@@ -175,19 +176,19 @@ export const MosqueMiniCard: React.FC<MosqueMiniCardProps> = ({ mosque, contactB
       </div>
       <div className="min-w-0 text-white">
         <h3 className="font-black text-2xl sm:text-[1.7rem] font-amiri leading-snug line-clamp-2">{mosque.mosqueName}</h3>
-        <p className="text-amber-300 text-xs font-black line-clamp-1">{mosque.lookingType}</p>
+        <p className="text-amber-300 text-xs font-black line-clamp-1">{t(mosque.lookingType)}</p>
         <p className="text-white/80 text-xs mt-0.5 flex items-center gap-1">
           <MapPin className="w-3 h-3" />
-          {mosque.city}، {mosque.country}
+          {mosque.city}{t('، ')}{mosque.country}
         </p>
       </div>
     </div>
 
     <div className="p-5 space-y-3 flex-1">
       <div className="grid gap-1.5">
-        <Info icon={<BookOpen className="w-3.5 h-3.5" />} label="الرواية المطلوبة" value={mosque.riwayaRequired} />
-        <Info icon={<Home className="w-3.5 h-3.5" />} label="السكن" value={mosque.housingProvided ? 'متوفر' : 'غير متوفر'} />
-        <Info icon={<Users className="w-3.5 h-3.5" />} label="الراتب والمزايا" value={mosque.salaryAndBenefits} />
+        <Info icon={<BookOpen className="w-3.5 h-3.5" />} label={t('الرواية المطلوبة')} value={t(mosque.riwayaRequired)} />
+        <Info icon={<Home className="w-3.5 h-3.5" />} label={t('السكن')} value={mosque.housingProvided ? t('متوفر') : t('غير متوفر')} />
+        <Info icon={<Users className="w-3.5 h-3.5" />} label={t('الراتب والمزايا')} value={mosque.salaryAndBenefits} />
       </div>
       {mosque.details.trim() && <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">{mosque.details}</p>}
       {contactBlock}
@@ -199,7 +200,7 @@ export const MosqueMiniCard: React.FC<MosqueMiniCardProps> = ({ mosque, contactB
         className="flex-1 bg-[#e8f6ee] hover:bg-[#d3eedf] text-[#0b5e37] font-black py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 text-xs cursor-pointer"
       >
         <FileText className="w-4 h-4" />
-        الإعلان الكامل
+        {t('الإعلان الكامل')}
       </button>
       {apply && (
         <button
@@ -215,11 +216,11 @@ export const MosqueMiniCard: React.FC<MosqueMiniCardProps> = ({ mosque, contactB
       )}
       <button
         onClick={onReport}
-        title="إبلاغ الإدارة"
+        title={t('إبلاغ الإدارة')}
         className="px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-xl border border-red-200 cursor-pointer flex items-center gap-1 text-xs font-bold"
       >
         <Flag className="w-3.5 h-3.5" />
-        إبلاغ
+        {t('إبلاغ')}
       </button>
     </div>
   </article>

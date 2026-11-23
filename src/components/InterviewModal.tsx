@@ -3,6 +3,7 @@ import { Application, ImamProfile, MosqueJob, MosqueContact } from '../types';
 import { useContact } from '../lib/db';
 import { X, Phone, Mail, MessageSquare, Send, Loader2 } from 'lucide-react';
 import { useDialog } from '../lib/useDialog';
+import { t } from '../i18n';
 
 export interface InterviewDetails {
   mosque: MosqueJob;
@@ -111,7 +112,7 @@ export const InterviewModal: React.FC<InterviewModalProps> = ({ target, myMosque
       }`}
     >
       {icon}
-      <span>{METHOD_LABEL[m].split(' (')[0]}</span>
+      <span>{t(METHOD_LABEL[m].split(' (')[0])}</span>
     </button>
   );
 
@@ -122,24 +123,24 @@ export const InterviewModal: React.FC<InterviewModalProps> = ({ target, myMosque
           <div className="flex items-center gap-2.5">
             <span className="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center text-xl font-bold">📞</span>
             <div>
-              <h4 className="text-base font-black text-slate-900 font-amiri">طلب تواصل رسمي مع الشيخ</h4>
-              <p className="text-xs text-slate-500">المرشح: {imamName}</p>
+              <h4 className="text-base font-black text-slate-900 font-amiri">{t('طلب تواصل رسمي مع الشيخ')}</h4>
+              <p className="text-xs text-slate-500">{t('المرشح:')} {imamName}</p>
             </div>
           </div>
-          <button onClick={onClose} aria-label="إغلاق" className="text-slate-400 hover:text-slate-700 cursor-pointer">
+          <button onClick={onClose} aria-label={t('إغلاق')} className="text-slate-400 hover:text-slate-700 cursor-pointer">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {myMosques.length === 0 ? (
           <p className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-amber-900 font-bold">
-            يجب أن يكون لديك إعلان مسجد معتمد من الإدارة لإرسال طلبات التواصل.
+            {t('يجب أن يكون لديك إعلان مسجد معتمد من الإدارة لإرسال طلبات التواصل.')}
           </p>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             {!fixedMosqueId && myMosques.length > 1 && (
               <div>
-                <label htmlFor="iv-mosque" className="block font-bold text-slate-700 mb-1">باسم أي مسجد؟ *</label>
+                <label htmlFor="iv-mosque" className="block font-bold text-slate-700 mb-1">{t('باسم أي مسجد؟ *')}</label>
                 <select
                   id="iv-mosque"
                   value={mosqueId}
@@ -157,19 +158,19 @@ export const InterviewModal: React.FC<InterviewModalProps> = ({ target, myMosque
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label htmlFor="iv-date" className="block font-bold text-slate-700 mb-1">التاريخ المقترح *</label>
+                <label htmlFor="iv-date" className="block font-bold text-slate-700 mb-1">{t('التاريخ المقترح *')}</label>
                 <input id="iv-date" type="date" required min={new Date().toISOString().split('T')[0]} value={interviewDate}
                   onChange={(e) => setInterviewDate(e.target.value)} className="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white" />
               </div>
               <div>
-                <label htmlFor="iv-time" className="block font-bold text-slate-700 mb-1">التوقيت المقترح *</label>
+                <label htmlFor="iv-time" className="block font-bold text-slate-700 mb-1">{t('التوقيت المقترح *')}</label>
                 <input id="iv-time" type="time" required value={interviewTime}
                   onChange={(e) => setInterviewTime(e.target.value)} className="w-full border border-slate-300 rounded-xl px-3 py-2 bg-white" />
               </div>
             </div>
 
             <div>
-              <p className="block font-bold text-slate-700 mb-1">وسيلة التواصل المفضلة *</p>
+              <p className="block font-bold text-slate-700 mb-1">{t('وسيلة التواصل المفضلة *')}</p>
               <div className="grid grid-cols-3 gap-2">
                 {methodBtn('whatsapp', <MessageSquare className="w-4 h-4 text-emerald-600" />, 'border-emerald-600 bg-emerald-50 text-emerald-950 shadow-sm')}
                 {methodBtn('phone', <Phone className="w-4 h-4 text-sky-600" />, 'border-sky-600 bg-sky-50 text-sky-950 shadow-sm')}
@@ -179,7 +180,7 @@ export const InterviewModal: React.FC<InterviewModalProps> = ({ target, myMosque
 
             <div>
               <label htmlFor="iv-contact" className="block font-bold text-slate-700 mb-1">
-                {contactMethod === 'email' ? 'بريد المسجد الذي سيتواصل عليه الشيخ *' : 'رقم المسجد الذي سيتواصل عليه الشيخ *'}
+                {contactMethod === 'email' ? t('بريد المسجد الذي سيتواصل عليه الشيخ *') : t('رقم المسجد الذي سيتواصل عليه الشيخ *')}
               </label>
               <input id="iv-contact" type="text" required maxLength={200} value={contactDetail}
                 onChange={(e) => setContactDetail(e.target.value)}
@@ -188,18 +189,18 @@ export const InterviewModal: React.FC<InterviewModalProps> = ({ target, myMosque
             </div>
 
             <div>
-              <label htmlFor="iv-notes" className="block font-bold text-slate-700 mb-1">رسالة للإمام</label>
+              <label htmlFor="iv-notes" className="block font-bold text-slate-700 mb-1">{t('رسالة للإمام')}</label>
               <textarea id="iv-notes" rows={3} maxLength={2000} value={notes} onChange={(e) => setNotes(e.target.value)}
                 className="w-full border border-slate-300 rounded-xl p-3 bg-white leading-relaxed text-xs" />
             </div>
 
             <div className="bg-emerald-50 p-3 rounded-xl border border-emerald-200 text-xs text-emerald-900">
-              سيتم إرسال الموعد ووسيلة التواصل إلى علبة رسائل الإمام داخل المنصة.
+              {t('سيتم إرسال الموعد ووسيلة التواصل إلى علبة رسائل الإمام داخل المنصة.')}
             </div>
 
             <div className="flex justify-end items-center gap-2 pt-2 border-t border-slate-100">
               <button type="button" onClick={onClose} className="px-4 py-2 border border-slate-300 rounded-xl font-bold text-slate-600 cursor-pointer">
-                إلغاء
+                {t('إلغاء')}
               </button>
               <button
                 type="submit"
@@ -207,7 +208,7 @@ export const InterviewModal: React.FC<InterviewModalProps> = ({ target, myMosque
                 className="bg-emerald-700 hover:bg-emerald-600 text-white font-black px-6 py-2 rounded-xl shadow cursor-pointer flex items-center gap-1.5 disabled:opacity-60"
               >
                 {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-                <span>إرسال طلب التواصل</span>
+                <span>{t('إرسال طلب التواصل')}</span>
               </button>
             </div>
           </form>

@@ -3,7 +3,7 @@ import { MosqueIcon } from './MosqueIcon';
 import { ShieldCheck, Mic, Info, Scale } from 'lucide-react';
 import { LogoMark } from './Logo';
 import { CONTACT_EMAIL } from '../config';
-import { t } from '../i18n';
+import { isRtl, t } from '../i18n';
 
 interface FooterProps {
   /** List of imams (for mosques). */
@@ -47,7 +47,7 @@ export const Footer: React.FC<FooterProps> = ({
             <div className="flex items-center gap-2.5">
               <LogoMark className="w-10 h-10" />
               <span className="text-white text-lg font-black font-amiri tracking-wide">
-                {t('منصة أئمة')} <span className="text-amber-400 font-sans text-sm font-bold">Aemmah</span>
+                {t('منصة أئمة')} {isRtl() && <span className="text-amber-400 font-sans text-sm font-bold">Aemmah</span>}
               </span>
             </div>
             <p className="leading-relaxed">

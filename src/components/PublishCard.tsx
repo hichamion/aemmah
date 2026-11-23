@@ -1,5 +1,6 @@
 import React from 'react';
 import { CheckCircle2, Clock, EyeOff, Megaphone, XCircle } from 'lucide-react';
+import { t } from '../i18n';
 
 export type PublishState = 'none' | 'unpublished' | 'pending' | 'published' | 'rejected';
 
@@ -30,7 +31,7 @@ export const PublishCard: React.FC<{
     }`}>
       <span className={`w-14 h-14 shrink-0 rounded-2xl bg-gradient-to-br ${look.ring} flex items-center justify-center shadow-md`}>{look.icon}</span>
       <div className="flex-1 min-w-0">
-        <h3 className="text-lg font-black text-slate-900">{title || look.title}</h3>
+        <h3 className="text-lg font-black text-slate-900">{title || t(look.title)}</h3>
         <p className="text-sm text-slate-600 leading-relaxed">{text}</p>
       </div>
       <div className="flex flex-wrap gap-2 shrink-0">

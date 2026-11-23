@@ -11,6 +11,7 @@ import {
 } from '../lib/audio';
 import { deleteRecitation, saveRecitation, setRecitationVisibility } from '../lib/db';
 import { formatDate } from '../utils/helpers';
+import { t } from '../i18n';
 
 export const RECITATION_KINDS: { value: RecitationKind; label: string }[] = [
   { value: 'fatiha', label: 'سورة الفاتحة' },
@@ -25,7 +26,7 @@ export const VISIBILITY_OPTIONS: { value: RecitationVisibility; label: string; h
 ];
 
 export const recitationLabel = (m: Pick<RecitationMeta, 'kind' | 'title'>) =>
-  m.title.trim() || RECITATION_KINDS.find((k) => k.value === m.kind)?.label || 'عيّنة التلاوة';
+  t(m.title.trim()) || t(RECITATION_KINDS.find((k) => k.value === m.kind)?.label || 'عيّنة التلاوة');
 
 // ---------------------------------------------------------------------------
 // Player
@@ -91,7 +92,7 @@ export const RecitationPlayer: React.FC<{
       <button
         type="button"
         onClick={toggle}
-        aria-label={playing ? 'إيقاف مؤقت' : 'تشغيل التلاوة'}
+        aria-label={playing ? t('إيقاف مؤقت') : t('تشغيل التلاوة')}
         className="w-12 h-12 shrink-0 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 flex items-center justify-center shadow cursor-pointer"
       >
         {playing ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 fill-current" />}
@@ -105,7 +106,7 @@ export const RecitationPlayer: React.FC<{
         </div>
         <div
           role="slider"
-          aria-label="موضع التلاوة"
+          aria-label={t('موضع التلاوة')}
           aria-valuemin={0}
           aria-valuemax={Math.round(duration)}
           aria-valuenow={Math.round(time)}
@@ -115,7 +116,7 @@ export const RecitationPlayer: React.FC<{
         >
           <div className="h-full bg-amber-400 rounded-full" style={{ width: `${pct}%` }} />
         </div>
-        {date && <p className={`text-[11px] ${dark ? 'text-white/60' : 'text-slate-500'}`}>أُضيفت في {formatDate(date)}</p>}
+        {date && <p className={`text-[11px] ${dark ? 'text-white/60' : 'text-slate-500'}`}>{t('أُضيفت في {date}', { date: formatDate(date) })}</p>}
       </div>
     </div>
   );
@@ -169,7 +170,7 @@ export const RecitationManager: React.FC<{
     try {
       setDraft(await encodeRecitation(blob));
     } catch (err) {
-      setProblem(err instanceof AudioError ? err.message : 'تعذر معالجة التسجيل.');
+      setProblem(err instanceof AudioError ? err.message : t('تعذر معالجة التسجيل.'));
     } finally {
       setRecState('idle');
     }
@@ -178,7 +179,7 @@ export const RecitationManager: React.FC<{
   const startRecording = async () => {
     setProblem('');
     if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') {
-      setProblem('التسجيل المباشر غير مدعوم في هذا المتصفح. يمكنك رفع ملف صوتي بدلاً منه.');
+      setProblem(t('التسجيل المباشر غير مدعوم في هذا المتصفح. يمكنك رفع ملف صوتي بدلاً منه.'));
       return;
     }
     try {
@@ -210,10 +211,10 @@ export const RecitationManager: React.FC<{
       const name = (err as DOMException)?.name;
       setProblem(
         name === 'NotAllowedError'
-          ? 'لم يُسمح باستعمال الميكروفون. اسمح به من إعدادات المتصفح ثم أعد المحاولة.'
+          ? t('لم يُسمح باستعمال الميكروفون. اسمح به من إعدادات المتصفح ثم أعد المحاولة.')
           : name === 'NotFoundError'
-          ? 'لم يُعثر على ميكروفون في هذا الجهاز. يمكنك رفع ملف صوتي بدلاً منه.'
-          : 'تعذر بدء التسجيل. أعد المحاولة أو ارفع ملفاً صوتياً.'
+          ? t('لم يُعثر على ميكروفون في هذا الجهاز. يمكنك رفع ملف صوتي بدلاً منه.')
+          : t('تعذر بدء التسجيل. أعد المحاولة أو ارفع ملفاً صوتياً.')
       );
     }
   };
@@ -242,28 +243,28 @@ export const RecitationManager: React.FC<{
 
   const save = async () => {
     if (!draft) return;
-    if (kind !== 'fatiha' && !title.trim()) return setProblem('اكتب اسم السورة أو المقطع.');
+    if (kind !== 'fatiha' && !title.trim()) return setProblem(t('اكتب اسم السورة أو المقطع.'));
     setBusy(true);
     try {
-      await saveRecitation(imam, { kind, title: kind === 'fatiha' && !title.trim() ? 'سورة الفاتحة' : title, durationSec: draft.durationSec, visibility }, draft.dataUrl);
+      await saveRecitation(imam, { kind, title: kind === 'fatiha' && !title.trim() ? t('سورة الفاتحة') : title, durationSec: draft.durationSec, visibility }, draft.dataUrl);
       setDraft(null);
-      onSaved('تم حفظ عيّنة التلاوة.');
+      onSaved(t('تم حفظ عيّنة التلاوة.'));
     } catch (err) {
       console.error(err);
-      onError('تعذر حفظ التسجيل. تأكد من الاتصال وحاول مجدداً.');
+      onError(t('تعذر حفظ التسجيل. تأكد من الاتصال وحاول مجدداً.'));
     } finally {
       setBusy(false);
     }
   };
 
   const remove = async () => {
-    if (!window.confirm('حذف عيّنة التلاوة الحالية؟')) return;
+    if (!window.confirm(t('حذف عيّنة التلاوة الحالية؟'))) return;
     setBusy(true);
     try {
       await deleteRecitation(imam.id);
-      onSaved('تم حذف عيّنة التلاوة.');
+      onSaved(t('تم حذف عيّنة التلاوة.'));
     } catch {
-      onError('تعذر حذف التسجيل.');
+      onError(t('تعذر حذف التسجيل.'));
     } finally {
       setBusy(false);
     }
@@ -274,9 +275,9 @@ export const RecitationManager: React.FC<{
     if (!meta || draft) return;
     try {
       await setRecitationVisibility(imam, v);
-      onSaved('تم تحديث من يستطيع سماع التلاوة.');
+      onSaved(t('تم تحديث من يستطيع سماع التلاوة.'));
     } catch {
-      onError('تعذر تحديث الخصوصية.');
+      onError(t('تعذر تحديث الخصوصية.'));
     }
   };
 
@@ -287,11 +288,11 @@ export const RecitationManager: React.FC<{
     <section className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-7 space-y-5">
       <header className="space-y-1">
         <h3 className="text-lg font-black text-slate-900 flex items-center gap-2">
-          <Mic className="w-5 h-5 text-[#0e4d64]" /> عيّنة التلاوة
-          <span className="text-xs font-bold text-slate-400">(اختيارية)</span>
+          <Mic className="w-5 h-5 text-[#0e4d64]" /> {t('عيّنة التلاوة')}
+          <span className="text-xs font-bold text-slate-400">{t('(اختيارية)')}</span>
         </h3>
         <p className="text-xs text-slate-500">
-          سجّل أو ارفع مقطعاً قصيراً من تلاوتك ({MAX_RECITATION_SECONDS} ثانية كحد أقصى) لتستمع إليه المساجد عند فتح ملفك.
+          {t('سجّل أو ارفع مقطعاً قصيراً من تلاوتك ({n} ثانية كحد أقصى) لتستمع إليه المساجد عند فتح ملفك.', { n: MAX_RECITATION_SECONDS })}
         </p>
       </header>
 
@@ -301,30 +302,30 @@ export const RecitationManager: React.FC<{
           {currentAudio ? (
             <RecitationPlayer src={currentAudio} title={recitationLabel(meta)} durationSec={meta.durationSec} date={meta.createdAt} />
           ) : (
-            <p className="text-sm text-slate-600">العيّنة الحالية: {recitationLabel(meta)} ({formatSeconds(meta.durationSec)})</p>
+            <p className="text-sm text-slate-600">{t('العيّنة الحالية:')} {recitationLabel(meta)} ({formatSeconds(meta.durationSec)})</p>
           )}
           <button type="button" onClick={remove} disabled={busy} className="text-red-600 text-xs font-bold inline-flex items-center gap-1 cursor-pointer">
-            <Trash2 className="w-3.5 h-3.5" /> حذف العيّنة الحالية
+            <Trash2 className="w-3.5 h-3.5" /> {t('حذف العيّنة الحالية')}
           </button>
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <label className="space-y-1">
-          <span className="text-xs font-bold text-slate-700">ما الذي تتلوه؟</span>
+          <span className="text-xs font-bold text-slate-700">{t('ما الذي تتلوه؟')}</span>
           <select className={field} value={kind} onChange={(e) => setKind(e.target.value as RecitationKind)}>
-            {RECITATION_KINDS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
+            {RECITATION_KINDS.map((k) => <option key={k.value} value={k.value}>{t(k.label)}</option>)}
           </select>
         </label>
         <label className="space-y-1">
-          <span className="text-xs font-bold text-slate-700">{kind === 'fatiha' ? 'العنوان (اختياري)' : 'اسم السورة أو المقطع'}</span>
+          <span className="text-xs font-bold text-slate-700">{kind === 'fatiha' ? t('العنوان (اختياري)') : t('اسم السورة أو المقطع')}</span>
           <input className={field} maxLength={120} value={title} onChange={(e) => setTitle(e.target.value)}
-            placeholder={kind === 'fatiha' ? 'سورة الفاتحة' : kind === 'short_surah' ? 'مثال: سورة الإخلاص' : 'مثال: البقرة 1–5'} />
+            placeholder={kind === 'fatiha' ? t('سورة الفاتحة') : kind === 'short_surah' ? t('مثال: سورة الإخلاص') : t('مثال: البقرة 1–5')} />
         </label>
         <label className="space-y-1">
-          <span className="text-xs font-bold text-slate-700 flex items-center gap-1"><Lock className="w-3.5 h-3.5" /> من يستطيع السماع؟</span>
+          <span className="text-xs font-bold text-slate-700 flex items-center gap-1"><Lock className="w-3.5 h-3.5" /> {t('من يستطيع السماع؟')}</span>
           <select className={field} value={visibility} onChange={(e) => changeVisibility(e.target.value as RecitationVisibility)}>
-            {VISIBILITY_OPTIONS.map((v) => <option key={v.value} value={v.value}>{v.label} — {v.hint}</option>)}
+            {VISIBILITY_OPTIONS.map((v) => <option key={v.value} value={v.value}>{t(v.label)} — {t(v.hint)}</option>)}
           </select>
         </label>
       </div>
@@ -335,7 +336,7 @@ export const RecitationManager: React.FC<{
           {!recording ? (
             <button type="button" onClick={startRecording} disabled={recState === 'processing'}
               className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-black px-5 py-3 rounded-full text-sm cursor-pointer disabled:opacity-60">
-              <Mic className="w-4 h-4" /> {meta ? 'تسجيل جديد' : 'ابدأ التسجيل'}
+              <Mic className="w-4 h-4" /> {meta ? t('تسجيل جديد') : t('ابدأ التسجيل')}
             </button>
           ) : (
             <>
@@ -344,17 +345,17 @@ export const RecitationManager: React.FC<{
                 {formatSeconds(elapsed)} / {formatSeconds(MAX_RECITATION_SECONDS)}
               </span>
               <button type="button" onClick={pauseResume} className="inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 font-bold px-4 py-2.5 rounded-full text-sm cursor-pointer">
-                {recState === 'recording' ? <><Pause className="w-4 h-4" /> إيقاف مؤقت</> : <><Play className="w-4 h-4" /> متابعة</>}
+                {recState === 'recording' ? <><Pause className="w-4 h-4" /> {t('إيقاف مؤقت')}</> : <><Play className="w-4 h-4" /> {t('متابعة')}</>}
               </button>
               <button type="button" onClick={stopRecording} className="inline-flex items-center gap-1.5 bg-slate-900 text-white font-bold px-4 py-2.5 rounded-full text-sm cursor-pointer">
-                <Square className="w-4 h-4" /> إنهاء ومراجعة
+                <Square className="w-4 h-4" /> {t('إنهاء ومراجعة')}
               </button>
             </>
           )}
           {!recording && (
             <label className="inline-flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold px-5 py-3 rounded-full text-sm cursor-pointer">
               {recState === 'processing' ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-              {recState === 'processing' ? 'جاري التجهيز…' : 'رفع ملف (MP3 / M4A / WAV)'}
+              {recState === 'processing' ? t('جاري التجهيز…') : t('رفع ملف (MP3 / M4A / WAV)')}
               <input type="file" accept=".mp3,.m4a,.wav,audio/mpeg,audio/mp4,audio/x-m4a,audio/wav" onChange={onPickFile} className="hidden" disabled={recState === 'processing'} />
             </label>
           )}
@@ -364,16 +365,16 @@ export const RecitationManager: React.FC<{
       {/* Review before saving */}
       {draft && (
         <div className="space-y-3 bg-amber-50/60 border border-amber-200 rounded-2xl p-4">
-          <p className="text-sm font-black text-amber-950">استمع إلى التسجيل قبل حفظه:</p>
-          <RecitationPlayer src={draft.dataUrl} title={title.trim() || RECITATION_KINDS.find((k) => k.value === kind)!.label} durationSec={draft.durationSec} />
+          <p className="text-sm font-black text-amber-950">{t('استمع إلى التسجيل قبل حفظه:')}</p>
+          <RecitationPlayer src={draft.dataUrl} title={title.trim() || t(RECITATION_KINDS.find((k) => k.value === kind)!.label)} durationSec={draft.durationSec} />
           <div className="flex flex-wrap gap-2">
             <button type="button" onClick={save} disabled={busy}
               className="inline-flex items-center gap-2 bg-[#0b3a4f] hover:bg-[#0e4d64] text-white font-black px-5 py-2.5 rounded-full text-sm cursor-pointer disabled:opacity-60">
-              {busy && <Loader2 className="w-4 h-4 animate-spin" />} {meta ? 'استبدال العيّنة الحالية' : 'حفظ ونشر في ملفي'}
+              {busy && <Loader2 className="w-4 h-4 animate-spin" />} {meta ? t('استبدال العيّنة الحالية') : t('حفظ ونشر في ملفي')}
             </button>
             <button type="button" onClick={() => setDraft(null)} disabled={busy}
               className="inline-flex items-center gap-1.5 bg-white border border-slate-300 font-bold px-4 py-2.5 rounded-full text-sm cursor-pointer">
-              <RotateCcw className="w-4 h-4" /> إعادة التسجيل
+              <RotateCcw className="w-4 h-4" /> {t('إعادة التسجيل')}
             </button>
           </div>
         </div>
