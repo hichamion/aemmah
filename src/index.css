@@ -527,3 +527,12 @@ html[dir='ltr'] .lucide-chevron-left,
 html[dir='ltr'] .lucide-chevron-right {
   scale: -1 1;
 }
+
+/* Left-to-right languages: users mostly type in Arabic, so each line of a text field takes the
+   direction of what is typed (Arabic right to left, Latin left to right). Arabic pages keep RTL. */
+html[dir='ltr'] textarea,
+html[dir='ltr'] input:not([type]),
+html[dir='ltr'] input[type='text'],
+html[dir='ltr'] input[type='search'] {
+  unicode-bidi: plaintext;
+}

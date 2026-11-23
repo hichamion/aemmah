@@ -381,11 +381,11 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                       </span>
                     </div>
 
-                    <h5 className={`font-bold text-slate-900 line-clamp-1 ${isUnread ? 'font-black' : ''}`}>
+                    <h5 dir="auto" className={`font-bold text-slate-900 line-clamp-1 ${isUnread ? 'font-black' : ''}`}>
                       {msg.subject}
                     </h5>
 
-                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
+                    <p dir="auto" className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
                       {msg.content}
                     </p>
                   </div>
@@ -417,7 +417,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
                         ? t('🗓️ دعوة لمقابلة رسمية')
                         : t('💬 استفسار ومراسلة مباشرة')}
                     </span>
-                    <h4 className="text-base font-black text-slate-900 font-amiri pt-1">
+                    <h4 dir="auto" className="text-base font-black text-slate-900 font-amiri pt-1">
                       {selectedMessage.subject}
                     </h4>
                   </div>
@@ -446,7 +446,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
               </div>
 
               {/* Message Body */}
-              <div className="flex-1 py-2 text-slate-800 text-xs sm:text-sm leading-relaxed space-y-3 whitespace-pre-line">
+              <div dir="auto" className="flex-1 py-2 text-slate-800 text-xs sm:text-sm leading-relaxed space-y-3 whitespace-pre-line">
                 {selectedMessage.content}
               </div>
 

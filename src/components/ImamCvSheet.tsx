@@ -225,7 +225,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
           {/* Phones: name and title right under the photo (the main column header is hidden there). */}
           {!print && (
             <div className="md:hidden text-center -mt-3 space-y-1">
-              <h1 className="text-3xl font-black leading-tight font-amiri">{imam.name}</h1>
+              <h1 dir="auto" className="text-3xl font-black leading-tight font-amiri">{imam.name}</h1>
               <p className="text-lg font-black text-amber-300">{imamTitle(imam.titles)}</p>
             </div>
           )}
@@ -314,7 +314,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
         {/* ---------------- Main column ---------------- */}
         <main className={`relative flex-1 flex flex-col gap-7 px-7 pt-9 ${print ? 'pb-36' : 'pb-32'}`}>
           <header className={`text-center space-y-2 ${print ? '' : 'hidden md:block'}`}>
-            <h1 className="text-4xl font-black text-[#0b3a4f] leading-tight font-amiri">{imam.name}</h1>
+            <h1 dir="auto" className="text-4xl font-black text-[#0b3a4f] leading-tight font-amiri">{imam.name}</h1>
             <p className="text-xl font-black text-amber-600">{imamTitle(imam.titles)}</p>
             <div className="flex items-center justify-center gap-2" aria-hidden>
               <span className="h-0.5 w-16 bg-amber-400 rounded" />
@@ -324,7 +324,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
           </header>
 
           {(imam.cvText || '').trim() && (
-            <blockquote className="relative px-8 text-slate-700 text-sm leading-loose whitespace-pre-line">
+            <blockquote dir="auto" className="relative px-8 text-slate-700 text-sm leading-loose whitespace-pre-line">
               <span className="absolute -top-3 start-0 text-5xl leading-none text-amber-500 font-serif" aria-hidden>
                 “
               </span>

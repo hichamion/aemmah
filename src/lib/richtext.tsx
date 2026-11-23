@@ -72,7 +72,7 @@ export const RichText: React.FC<{ text: string; className?: string }> = ({ text,
       );
     }
   }
-  return <div className={`space-y-3 leading-loose text-slate-800 break-words ${className}`}>{out}</div>;
+  return <div dir="auto" className={`space-y-3 leading-loose text-slate-800 break-words ${className}`}>{out}</div>;
 };
 
 /** Plain-text excerpt for the wall (markup removed). */

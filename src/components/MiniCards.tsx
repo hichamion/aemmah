@@ -83,7 +83,7 @@ export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, 
           />
         </div>
         <div className="relative z-10 min-w-0 text-white">
-          <h3 className="font-black text-2xl sm:text-[1.7rem] font-amiri leading-snug line-clamp-2">{imam.name}</h3>
+          <h3 dir="auto" className="font-black text-2xl sm:text-[1.7rem] font-amiri leading-snug line-clamp-2">{imam.name}</h3>
           <p className={`${tone.title} text-sm font-black`}>{imamTitle(imam.titles)}</p>
           {kh && (
             <span className="inline-flex items-center gap-1 mt-1 me-1 text-[11px] font-black bg-amber-300 text-[#4f1029] px-2 py-0.5 rounded-full">
@@ -175,7 +175,7 @@ export const MosqueMiniCard: React.FC<MosqueMiniCardProps> = ({ mosque, contactB
         />
       </div>
       <div className="min-w-0 text-white">
-        <h3 className="font-black text-2xl sm:text-[1.7rem] font-amiri leading-snug line-clamp-2">{mosque.mosqueName}</h3>
+        <h3 dir="auto" className="font-black text-2xl sm:text-[1.7rem] font-amiri leading-snug line-clamp-2">{mosque.mosqueName}</h3>
         <p className="text-amber-300 text-xs font-black line-clamp-1">{t(mosque.lookingType)}</p>
         <p className="text-white/80 text-xs mt-0.5 flex items-center gap-1">
           <MapPin className="w-3 h-3" />

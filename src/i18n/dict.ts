@@ -5559,5 +5559,827 @@ export const DICT: Record<string, Entry> = {
   "fr": "Forum des imams | Aemmah",
   "de": "Imam-Forum | Aemmah",
   "tr": "İmamlar Forumu | Aemmah"
+ },
+ "مساحة تواصل مهنية وعلمية خاصة بالأئمة المسجلين في منصة أئمة: خطب ودروس، ومقالات، ونقاشات، وتجارب دعوية.": {
+  "en": "A professional and scholarly space for imams registered on Aemmah: sermons and lessons, articles, discussions and da'wah experiences.",
+  "fr": "Un espace professionnel et scientifique réservé aux imams inscrits sur Aemmah : sermons et cours, articles, discussions et expériences de da'wa.",
+  "de": "Ein fachlicher und wissenschaftlicher Raum für auf Aemmah registrierte Imame: Predigten und Unterricht, Artikel, Diskussionen und Da'wa-Erfahrungen.",
+  "tr": "Aemmah'ya kayıtlı imamlara özel mesleki ve ilmî alan: hutbe ve dersler, makaleler, tartışmalar ve tebliğ tecrübeleri."
+ },
+ "تسجيل الدخول كإمام": {
+  "en": "Sign in as an imam",
+  "fr": "Se connecter en tant qu'imam",
+  "de": "Als Imam anmelden",
+  "tr": "İmam olarak giriş yap"
+ },
+ "الملتقى متاح لحسابات الأئمة فقط.": {
+  "en": "The forum is for imam accounts only.",
+  "fr": "Le forum est réservé aux comptes d'imams.",
+  "de": "Das Forum ist nur für Imam-Konten.",
+  "tr": "Forum yalnızca imam hesaplarına açıktır."
+ },
+ "حذف هذا المنشور نهائياً؟": {
+  "en": "Delete this post permanently?",
+  "fr": "Supprimer définitivement cette publication ?",
+  "de": "Diesen Beitrag endgültig löschen?",
+  "tr": "Bu gönderi kalıcı olarak silinsin mi?"
+ },
+ "أُلغي التثبيت.": {
+  "en": "Unpinned.",
+  "fr": "Publication désépinglée.",
+  "de": "Nicht mehr angeheftet.",
+  "tr": "Sabitleme kaldırıldı."
+ },
+ "تم تثبيت المنشور.": {
+  "en": "Post pinned.",
+  "fr": "Publication épinglée.",
+  "de": "Beitrag angeheftet.",
+  "tr": "Gönderi sabitlendi."
+ },
+ "سبب الإبلاغ عن التعليق:": {
+  "en": "Reason for reporting the comment:",
+  "fr": "Motif du signalement du commentaire :",
+  "de": "Grund für die Meldung des Kommentars:",
+  "tr": "Yorumu bildirme sebebi:"
+ },
+ "سبب الإبلاغ عن المنشور:": {
+  "en": "Reason for reporting the post:",
+  "fr": "Motif du signalement de la publication :",
+  "de": "Grund für die Meldung des Beitrags:",
+  "tr": "Gönderiyi bildirme sebebi:"
+ },
+ "الحائط": {
+  "en": "Wall",
+  "fr": "Mur",
+  "de": "Pinnwand",
+  "tr": "Duvar"
+ },
+ "أحدث الخطب والمقالات والنقاشات": {
+  "en": "Latest sermons, articles and discussions",
+  "fr": "Derniers sermons, articles et discussions",
+  "de": "Neueste Predigten, Artikel und Diskussionen",
+  "tr": "En yeni hutbeler, makaleler ve tartışmalar"
+ },
+ "محفوظاتي": {
+  "en": "Saved",
+  "fr": "Enregistrés",
+  "de": "Gespeichert",
+  "tr": "Kaydedilenler"
+ },
+ "ما حفظته للرجوع إليه": {
+  "en": "What you saved to come back to",
+  "fr": "Ce que vous avez gardé pour plus tard",
+  "de": "Was Sie für später gespeichert haben",
+  "tr": "Sonra dönmek için kaydettikleriniz"
+ },
+ "مسوداتي": {
+  "en": "My drafts",
+  "fr": "Mes brouillons",
+  "de": "Meine Entwürfe",
+  "tr": "Taslaklarım"
+ },
+ "منشورات لم تُنشر بعد": {
+  "en": "Posts not published yet",
+  "fr": "Publications pas encore publiées",
+  "de": "Noch nicht veröffentlichte Beiträge",
+  "tr": "Henüz yayınlanmamış gönderiler"
+ },
+ "الإشراف": {
+  "en": "Moderation",
+  "fr": "Modération",
+  "de": "Moderation",
+  "tr": "Moderasyon"
+ },
+ "إعدادات الملتقى والنماذج": {
+  "en": "Forum settings and templates",
+  "fr": "Paramètres du forum et modèles",
+  "de": "Forum-Einstellungen und Vorlagen",
+  "tr": "Forum ayarları ve şablonlar"
+ },
+ "مساحة تواصل مهنية وعلمية خاصة بالأئمة المسجلين": {
+  "en": "A professional and scholarly space for registered imams",
+  "fr": "Un espace professionnel et scientifique pour les imams inscrits",
+  "de": "Ein fachlicher und wissenschaftlicher Raum für registrierte Imame",
+  "tr": "Kayıtlı imamlar için mesleki ve ilmî alan"
+ },
+ "منشور جديد": {
+  "en": "New post",
+  "fr": "Nouvelle publication",
+  "de": "Neuer Beitrag",
+  "tr": "Yeni gönderi"
+ },
+ "الإشعارات": {
+  "en": "Notifications",
+  "fr": "Notifications",
+  "de": "Benachrichtigungen",
+  "tr": "Bildirimler"
+ },
+ " ({n} جديد)": {
+  "en": " ({n} new)",
+  "fr": " ({n} nouvelles)",
+  "de": " ({n} neu)",
+  "tr": " ({n} yeni)"
+ },
+ "مسح الكل": {
+  "en": "Clear all",
+  "fr": "Tout effacer",
+  "de": "Alle löschen",
+  "tr": "Tümünü temizle"
+ },
+ "لا توجد إشعارات بعد.": {
+  "en": "No notifications yet.",
+  "fr": "Aucune notification pour l'instant.",
+  "de": "Noch keine Benachrichtigungen.",
+  "tr": "Henüz bildirim yok."
+ },
+ "أقسام الملتقى": {
+  "en": "Forum sections",
+  "fr": "Rubriques du forum",
+  "de": "Forum-Bereiche",
+  "tr": "Forum bölümleri"
+ },
+ "تعذر تحميل الملتقى ({e}).": {
+  "en": "Could not load the forum ({e}).",
+  "fr": "Impossible de charger le forum ({e}).",
+  "de": "Das Forum konnte nicht geladen werden ({e}).",
+  "tr": "Forum yüklenemedi ({e})."
+ },
+ "هذا المنشور غير موجود أو حُذف.": {
+  "en": "This post doesn't exist or was deleted.",
+  "fr": "Cette publication n'existe pas ou a été supprimée.",
+  "de": "Dieser Beitrag existiert nicht oder wurde gelöscht.",
+  "tr": "Bu gönderi yok veya silinmiş."
+ },
+ "لم تحفظ أي منشور بعد. اضغط «⋯» على منشور ثم «حفظ المنشور».": {
+  "en": "You haven't saved any post yet. Press «⋯» on a post, then «Save post».",
+  "fr": "Vous n'avez encore rien enregistré. Appuyez sur « ⋯ » sur une publication puis « Enregistrer la publication ».",
+  "de": "Sie haben noch keinen Beitrag gespeichert. Tippen Sie bei einem Beitrag auf „⋯“ und dann auf „Beitrag speichern“.",
+  "tr": "Henüz gönderi kaydetmediniz. Bir gönderide «⋯» ve ardından «Gönderiyi kaydet»e basın."
+ },
+ "لا توجد مسودات.": {
+  "en": "No drafts.",
+  "fr": "Aucun brouillon.",
+  "de": "Keine Entwürfe.",
+  "tr": "Taslak yok."
+ },
+ "آخر تعديل": {
+  "en": "last edited",
+  "fr": "dernière modification",
+  "de": "zuletzt bearbeitet",
+  "tr": "son düzenleme"
+ },
+ "متابعة التحرير": {
+  "en": "Continue editing",
+  "fr": "Reprendre la rédaction",
+  "de": "Weiter bearbeiten",
+  "tr": "Düzenlemeye devam et"
+ },
+ "حذف": {
+  "en": "Delete",
+  "fr": "Supprimer",
+  "de": "Löschen",
+  "tr": "Sil"
+ },
+ "بمَ تفكّر يا {name}؟": {
+  "en": "What's on your mind, {name}?",
+  "fr": "À quoi pensez-vous, {name} ?",
+  "de": "Was möchten Sie teilen, {name}?",
+  "tr": "Ne düşünüyorsunuz, {name}?"
+ },
+ "بمَ تفكّر؟": {
+  "en": "What's on your mind?",
+  "fr": "À quoi pensez-vous ?",
+  "de": "Was möchten Sie teilen?",
+  "tr": "Ne düşünüyorsunuz?"
+ },
+ "النشر موقوف مؤقتاً من الإدارة. يمكنك الاطلاع والقراءة.": {
+  "en": "Posting is temporarily paused by the team. You can still browse and read.",
+  "fr": "La publication est temporairement suspendue par l'équipe. Vous pouvez toujours consulter.",
+  "de": "Das Posten ist vom Team vorübergehend pausiert. Lesen ist weiterhin möglich.",
+  "tr": "Paylaşım yönetim tarafından geçici olarak durduruldu. Okumaya devam edebilirsiniz."
+ },
+ "يمكنك الاطلاع على الملتقى. النشر والتفاعل متاحان بعد أن تعتمد الإدارة ملفك كإمام.": {
+  "en": "You can browse the forum. Posting and interacting are available once the team approves your imam profile.",
+  "fr": "Vous pouvez consulter le forum. Publier et réagir seront possibles après la validation de votre profil d'imam.",
+  "de": "Sie können das Forum lesen. Posten und Reagieren sind möglich, sobald das Team Ihr Imam-Profil freigibt.",
+  "tr": "Forumu görüntüleyebilirsiniz. Paylaşım ve etkileşim, imam profiliniz onaylandıktan sonra açılır."
+ },
+ "لا توجد منشورات بعد. كن أول من ينشر.": {
+  "en": "No posts yet. Be the first to post.",
+  "fr": "Aucune publication pour l'instant. Soyez le premier à publier.",
+  "de": "Noch keine Beiträge. Schreiben Sie den ersten.",
+  "tr": "Henüz gönderi yok. İlk paylaşan siz olun."
+ },
+ "أحدث المواضيع": {
+  "en": "Latest topics",
+  "fr": "Derniers sujets",
+  "de": "Neueste Themen",
+  "tr": "Son konular"
+ },
+ "{n} إماماً على المنصة": {
+  "en": "{n} imams on the platform",
+  "fr": "{n} imams sur la plateforme",
+  "de": "{n} Imame auf der Plattform",
+  "tr": "Platformda {n} imam"
+ },
+ "مثبّت": {
+  "en": "Pinned",
+  "fr": "Épinglé",
+  "de": "Angeheftet",
+  "tr": "Sabit"
+ },
+ "عرض المزيد": {
+  "en": "See more",
+  "fr": "Voir plus",
+  "de": "Mehr anzeigen",
+  "tr": "Devamını gör"
+ },
+ "{n} ملف PDF مرفق": {
+  "en": "{n} PDF file(s) attached",
+  "fr": "{n} fichier(s) PDF joint(s)",
+  "de": "{n} PDF-Datei(en) angehängt",
+  "tr": "{n} PDF dosyası ekli"
+ },
+ "تم نسخ رابط المنشور.": {
+  "en": "Post link copied.",
+  "fr": "Lien de la publication copié.",
+  "de": "Link zum Beitrag kopiert.",
+  "tr": "Gönderi bağlantısı kopyalandı."
+ },
+ "لا توجد مواضيع بعد.": {
+  "en": "No topics yet.",
+  "fr": "Aucun sujet pour l'instant.",
+  "de": "Noch keine Themen.",
+  "tr": "Henüz konu yok."
+ },
+ "{n} تعليق": {
+  "en": "{n} comments",
+  "fr": "{n} commentaires",
+  "de": "{n} Kommentare",
+  "tr": "{n} yorum"
+ },
+ "سيُستبدل العنوان والنص الحاليان بالنموذج. متابعة؟": {
+  "en": "The current title and text will be replaced by the template. Continue?",
+  "fr": "Le titre et le texte actuels seront remplacés par le modèle. Continuer ?",
+  "de": "Titel und Text werden durch die Vorlage ersetzt. Fortfahren?",
+  "tr": "Mevcut başlık ve metin şablonla değiştirilecek. Devam edilsin mi?"
+ },
+ "اكتب عنواناً للمنشور.": {
+  "en": "Write a title for the post.",
+  "fr": "Écrivez un titre pour la publication.",
+  "de": "Geben Sie dem Beitrag einen Titel.",
+  "tr": "Gönderi için bir başlık yazın."
+ },
+ "اكتب نص المنشور أو أرفق صورة.": {
+  "en": "Write the post text or attach an image.",
+  "fr": "Écrivez le texte ou joignez une image.",
+  "de": "Schreiben Sie einen Text oder hängen Sie ein Bild an.",
+  "tr": "Gönderi metnini yazın veya görsel ekleyin."
+ },
+ "الاستطلاع يحتاج خيارين على الأقل.": {
+  "en": "A poll needs at least two options.",
+  "fr": "Un sondage nécessite au moins deux options.",
+  "de": "Eine Umfrage braucht mindestens zwei Optionen.",
+  "tr": "Anket en az iki seçenek gerektirir."
+ },
+ "حُفظت المسودة.": {
+  "en": "Draft saved.",
+  "fr": "Brouillon enregistré.",
+  "de": "Entwurf gespeichert.",
+  "tr": "Taslak kaydedildi."
+ },
+ "تم تحديث المنشور.": {
+  "en": "Post updated.",
+  "fr": "Publication mise à jour.",
+  "de": "Beitrag aktualisiert.",
+  "tr": "Gönderi güncellendi."
+ },
+ "تم نشر المنشور.": {
+  "en": "Post published.",
+  "fr": "Publication publiée.",
+  "de": "Beitrag veröffentlicht.",
+  "tr": "Gönderi yayınlandı."
+ },
+ "لا يمكنك النشر الآن (قد يكون النشر موقوفاً مؤقتاً، أو ملفك غير معتمد بعد).": {
+  "en": "You can't post right now (posting may be paused, or your profile isn't approved yet).",
+  "fr": "Vous ne pouvez pas publier pour l'instant (publication suspendue ou profil pas encore validé).",
+  "de": "Sie können gerade nicht posten (Posten pausiert oder Profil noch nicht freigegeben).",
+  "tr": "Şu an paylaşım yapamazsınız (paylaşım durdurulmuş veya profiliniz henüz onaylanmamış olabilir)."
+ },
+ "تعذر حفظ المنشور. حاول مجدداً.": {
+  "en": "Could not save the post. Please try again.",
+  "fr": "Impossible d'enregistrer la publication. Réessayez.",
+  "de": "Beitrag konnte nicht gespeichert werden. Bitte erneut versuchen.",
+  "tr": "Gönderi kaydedilemedi. Tekrar deneyin."
+ },
+ "تعديل المنشور": {
+  "en": "Edit post",
+  "fr": "Modifier la publication",
+  "de": "Beitrag bearbeiten",
+  "tr": "Gönderiyi düzenle"
+ },
+ "منشور جديد في ملتقى الأئمة": {
+  "en": "New post in the Imams' Forum",
+  "fr": "Nouvelle publication dans le Forum des imams",
+  "de": "Neuer Beitrag im Imam-Forum",
+  "tr": "İmamlar Forumu'nda yeni gönderi"
+ },
+ "استخدم النموذج الجاهز لهذا النوع": {
+  "en": "Use the ready-made template for this type",
+  "fr": "Utiliser le modèle prêt pour ce type",
+  "de": "Fertige Vorlage für diese Art verwenden",
+  "tr": "Bu tür için hazır şablonu kullan"
+ },
+ "عنوان المنشور": {
+  "en": "Post title",
+  "fr": "Titre de la publication",
+  "de": "Titel des Beitrags",
+  "tr": "Gönderi başlığı"
+ },
+ "عنوان": {
+  "en": "Heading",
+  "fr": "Titre",
+  "de": "Überschrift",
+  "tr": "Başlık"
+ },
+ "عنوان فرعي": {
+  "en": "Subheading",
+  "fr": "Sous-titre",
+  "de": "Zwischenüberschrift",
+  "tr": "Alt başlık"
+ },
+ "عريض": {
+  "en": "Bold",
+  "fr": "Gras",
+  "de": "Fett",
+  "tr": "Kalın"
+ },
+ "قائمة": {
+  "en": "List",
+  "fr": "Liste",
+  "de": "Liste",
+  "tr": "Liste"
+ },
+ "قائمة مرقمة": {
+  "en": "Numbered list",
+  "fr": "Liste numérotée",
+  "de": "Nummerierte Liste",
+  "tr": "Numaralı liste"
+ },
+ "اقتباس": {
+  "en": "Quote",
+  "fr": "Citation",
+  "de": "Zitat",
+  "tr": "Alıntı"
+ },
+ "تحرير": {
+  "en": "Edit",
+  "fr": "Modifier",
+  "de": "Bearbeiten",
+  "tr": "Düzenle"
+ },
+ "معاينة": {
+  "en": "Preview",
+  "fr": "Aperçu",
+  "de": "Vorschau",
+  "tr": "Önizleme"
+ },
+ "اكتب هنا… استعمل الأزرار أعلاه للعناوين والقوائم.": {
+  "en": "Write here… use the buttons above for headings and lists.",
+  "fr": "Écrivez ici… utilisez les boutons ci-dessus pour les titres et listes.",
+  "de": "Hier schreiben… Knöpfe oben für Überschriften und Listen nutzen.",
+  "tr": "Buraya yazın… başlık ve listeler için yukarıdaki düğmeleri kullanın."
+ },
+ "نص المنشور": {
+  "en": "Post text",
+  "fr": "Texte de la publication",
+  "de": "Beitragstext",
+  "tr": "Gönderi metni"
+ },
+ "خيارات الاستطلاع (2–6)": {
+  "en": "Poll options (2–6)",
+  "fr": "Options du sondage (2–6)",
+  "de": "Umfrageoptionen (2–6)",
+  "tr": "Anket seçenekleri (2–6)"
+ },
+ "الخيار {n}": {
+  "en": "Option {n}",
+  "fr": "Option {n}",
+  "de": "Option {n}",
+  "tr": "Seçenek {n}"
+ },
+ "حذف الخيار": {
+  "en": "Remove option",
+  "fr": "Supprimer l'option",
+  "de": "Option entfernen",
+  "tr": "Seçeneği kaldır"
+ },
+ "+ إضافة خيار": {
+  "en": "+ Add option",
+  "fr": "+ Ajouter une option",
+  "de": "+ Option hinzufügen",
+  "tr": "+ Seçenek ekle"
+ },
+ "صور ({n}/{max})": {
+  "en": "Images ({n}/{max})",
+  "fr": "Images ({n}/{max})",
+  "de": "Bilder ({n}/{max})",
+  "tr": "Görseller ({n}/{max})"
+ },
+ "ملفات PDF ({n}/{max}، حتى 2MB)": {
+  "en": "PDF files ({n}/{max}, up to 2MB)",
+  "fr": "Fichiers PDF ({n}/{max}, 2 Mo max.)",
+  "de": "PDF-Dateien ({n}/{max}, bis 2 MB)",
+  "tr": "PDF dosyaları ({n}/{max}, en fazla 2MB)"
+ },
+ "حذف الملف": {
+  "en": "Remove file",
+  "fr": "Supprimer le fichier",
+  "de": "Datei entfernen",
+  "tr": "Dosyayı kaldır"
+ },
+ "حفظ كمسودة": {
+  "en": "Save as draft",
+  "fr": "Enregistrer comme brouillon",
+  "de": "Als Entwurf speichern",
+  "tr": "Taslak olarak kaydet"
+ },
+ "حفظ التعديلات": {
+  "en": "Save changes",
+  "fr": "Enregistrer les modifications",
+  "de": "Änderungen speichern",
+  "tr": "Değişiklikleri kaydet"
+ },
+ "نشر": {
+  "en": "Publish",
+  "fr": "Publier",
+  "de": "Veröffentlichen",
+  "tr": "Yayınla"
+ },
+ "التعليق متاح للأئمة المعتمدين.": {
+  "en": "Commenting is for approved imams.",
+  "fr": "Les commentaires sont réservés aux imams validés.",
+  "de": "Kommentieren ist freigegebenen Imamen vorbehalten.",
+  "tr": "Yorum yapmak onaylı imamlara açıktır."
+ },
+ "تعذر إرسال التعليق.": {
+  "en": "Could not send the comment.",
+  "fr": "Impossible d'envoyer le commentaire.",
+  "de": "Kommentar konnte nicht gesendet werden.",
+  "tr": "Yorum gönderilemedi."
+ },
+ "حذف هذا التعليق؟": {
+  "en": "Delete this comment?",
+  "fr": "Supprimer ce commentaire ?",
+  "de": "Diesen Kommentar löschen?",
+  "tr": "Bu yorum silinsin mi?"
+ },
+ "تعذر حذف التعليق.": {
+  "en": "Could not delete the comment.",
+  "fr": "Impossible de supprimer le commentaire.",
+  "de": "Kommentar konnte nicht gelöscht werden.",
+  "tr": "Yorum silinemedi."
+ },
+ "ردّ": {
+  "en": "Reply",
+  "fr": "Répondre",
+  "de": "Antworten",
+  "tr": "Yanıtla"
+ },
+ "العودة إلى الملتقى": {
+  "en": "Back to the forum",
+  "fr": "Retour au forum",
+  "de": "Zurück zum Forum",
+  "tr": "Foruma dön"
+ },
+ "· مسودة": {
+  "en": "· Draft",
+  "fr": "· Brouillon",
+  "de": "· Entwurf",
+  "tr": "· Taslak"
+ },
+ "اضغط للتحميل": {
+  "en": "tap to download",
+  "fr": "appuyez pour télécharger",
+  "de": "zum Herunterladen tippen",
+  "tr": "indirmek için dokunun"
+ },
+ "التعليقات": {
+  "en": "Comments",
+  "fr": "Commentaires",
+  "de": "Kommentare",
+  "tr": "Yorumlar"
+ },
+ "التعليقات ({n})": {
+  "en": "Comments ({n})",
+  "fr": "Commentaires ({n})",
+  "de": "Kommentare ({n})",
+  "tr": "Yorumlar ({n})"
+ },
+ "لا توجد تعليقات بعد. كن أول من يعلّق.": {
+  "en": "No comments yet. Be the first to comment.",
+  "fr": "Aucun commentaire pour l'instant. Soyez le premier.",
+  "de": "Noch keine Kommentare. Schreiben Sie den ersten.",
+  "tr": "Henüz yorum yok. İlk yorumu siz yapın."
+ },
+ "ردّ على": {
+  "en": "Replying to",
+  "fr": "Réponse à",
+  "de": "Antwort an",
+  "tr": "Yanıtlanan:"
+ },
+ "اكتب ردّك…": {
+  "en": "Write your reply…",
+  "fr": "Écrivez votre réponse…",
+  "de": "Ihre Antwort…",
+  "tr": "Yanıtınızı yazın…"
+ },
+ "اكتب تعليقاً…": {
+  "en": "Write a comment…",
+  "fr": "Écrivez un commentaire…",
+  "de": "Kommentar schreiben…",
+  "tr": "Yorum yazın…"
+ },
+ "تعليق": {
+  "en": "Comment",
+  "fr": "Commenter",
+  "de": "Kommentieren",
+  "tr": "Yorum"
+ },
+ "إرسال": {
+  "en": "Send",
+  "fr": "Envoyer",
+  "de": "Senden",
+  "tr": "Gönder"
+ },
+ "التعليق متاح للأئمة الذين اعتمدت الإدارة ملفاتهم.": {
+  "en": "Commenting is for imams whose profiles the team has approved.",
+  "fr": "Les commentaires sont réservés aux imams dont le profil est validé.",
+  "de": "Kommentieren können Imame mit freigegebenem Profil.",
+  "tr": "Yorum yapmak, profili yönetimce onaylanan imamlara açıktır."
+ },
+ "الآن": {
+  "en": "just now",
+  "fr": "à l'instant",
+  "de": "gerade eben",
+  "tr": "az önce"
+ },
+ "منذ {n} دقيقة": {
+  "en": "{n} min ago",
+  "fr": "il y a {n} min",
+  "de": "vor {n} Min.",
+  "tr": "{n} dk önce"
+ },
+ "منذ {n} ساعة": {
+  "en": "{n} h ago",
+  "fr": "il y a {n} h",
+  "de": "vor {n} Std.",
+  "tr": "{n} sa önce"
+ },
+ "منذ {n} يوم": {
+  "en": "{n} days ago",
+  "fr": "il y a {n} j",
+  "de": "vor {n} Tagen",
+  "tr": "{n} gün önce"
+ },
+ "عرض الصورة": {
+  "en": "View image",
+  "fr": "Voir l'image",
+  "de": "Bild ansehen",
+  "tr": "Görseli gör"
+ },
+ "التصويت متاح للأئمة المعتمدين.": {
+  "en": "Voting is for approved imams.",
+  "fr": "Le vote est réservé aux imams validés.",
+  "de": "Abstimmen ist freigegebenen Imamen vorbehalten.",
+  "tr": "Oy vermek onaylı imamlara açıktır."
+ },
+ "تعذر تسجيل التصويت.": {
+  "en": "Could not record the vote.",
+  "fr": "Impossible d'enregistrer le vote.",
+  "de": "Stimme konnte nicht gespeichert werden.",
+  "tr": "Oy kaydedilemedi."
+ },
+ "{n} صوت — التصويت سرّي، ولا تظهر أسماء المصوّتين.": {
+  "en": "{n} votes — voting is secret; voters' names are never shown.",
+  "fr": "{n} votes — le vote est secret ; les noms ne sont jamais affichés.",
+  "de": "{n} Stimmen – die Abstimmung ist geheim; Namen werden nie angezeigt.",
+  "tr": "{n} oy — oylama gizlidir; oy verenlerin adları gösterilmez."
+ },
+ "التفاعل متاح للأئمة المعتمدين.": {
+  "en": "Interacting is for approved imams.",
+  "fr": "Les réactions sont réservées aux imams validés.",
+  "de": "Reagieren ist freigegebenen Imamen vorbehalten.",
+  "tr": "Etkileşim onaylı imamlara açıktır."
+ },
+ "تعذر تسجيل التفاعل.": {
+  "en": "Could not record the reaction.",
+  "fr": "Impossible d'enregistrer la réaction.",
+  "de": "Reaktion konnte nicht gespeichert werden.",
+  "tr": "Tepki kaydedilemedi."
+ },
+ "أعجبني": {
+  "en": "Like",
+  "fr": "J'aime",
+  "de": "Gefällt mir",
+  "tr": "Beğen"
+ },
+ "مشاركة الرابط": {
+  "en": "Share link",
+  "fr": "Partager le lien",
+  "de": "Link teilen",
+  "tr": "Bağlantıyı paylaş"
+ },
+ "خيارات المنشور": {
+  "en": "Post options",
+  "fr": "Options de la publication",
+  "de": "Beitragsoptionen",
+  "tr": "Gönderi seçenekleri"
+ },
+ "إزالة من المحفوظات": {
+  "en": "Remove from saved",
+  "fr": "Retirer des enregistrements",
+  "de": "Aus Gespeichertem entfernen",
+  "tr": "Kaydedilenlerden çıkar"
+ },
+ "حفظ المنشور": {
+  "en": "Save post",
+  "fr": "Enregistrer la publication",
+  "de": "Beitrag speichern",
+  "tr": "Gönderiyi kaydet"
+ },
+ "إلغاء «لا يعجبني»": {
+  "en": "Undo «Dislike»",
+  "fr": "Annuler « Je n'aime pas »",
+  "de": "„Gefällt mir nicht“ zurücknehmen",
+  "tr": "«Beğenmedim»i geri al"
+ },
+ "لا يعجبني": {
+  "en": "Dislike",
+  "fr": "Je n'aime pas",
+  "de": "Gefällt mir nicht",
+  "tr": "Beğenmedim"
+ },
+ "إلغاء التثبيت": {
+  "en": "Unpin",
+  "fr": "Désépingler",
+  "de": "Nicht mehr anheften",
+  "tr": "Sabitlemeyi kaldır"
+ },
+ "تثبيت في الأعلى": {
+  "en": "Pin to top",
+  "fr": "Épingler en haut",
+  "de": "Oben anheften",
+  "tr": "En üste sabitle"
+ },
+ "حذف المنشور": {
+  "en": "Delete post",
+  "fr": "Supprimer la publication",
+  "de": "Beitrag löschen",
+  "tr": "Gönderiyi sil"
+ },
+ "نوع المنشور": {
+  "en": "Post type",
+  "fr": "Type de publication",
+  "de": "Beitragsart",
+  "tr": "Gönderi türü"
+ },
+ "نوع الملف غير مدعوم. المسموح: MP3 أو M4A أو WAV.": {
+  "en": "Unsupported file type. Allowed: MP3, M4A or WAV.",
+  "fr": "Type de fichier non pris en charge. Autorisés : MP3, M4A ou WAV.",
+  "de": "Dateityp nicht unterstützt. Erlaubt: MP3, M4A oder WAV.",
+  "tr": "Desteklenmeyen dosya türü. İzin verilenler: MP3, M4A veya WAV."
+ },
+ "حجم الملف كبير جداً.": {
+  "en": "The file is too large.",
+  "fr": "Le fichier est trop volumineux.",
+  "de": "Die Datei ist zu groß.",
+  "tr": "Dosya çok büyük."
+ },
+ "متصفحك لا يدعم معالجة الصوت.": {
+  "en": "Your browser can't process audio.",
+  "fr": "Votre navigateur ne peut pas traiter l'audio.",
+  "de": "Ihr Browser kann keine Audiodateien verarbeiten.",
+  "tr": "Tarayıcınız ses işlemeyi desteklemiyor."
+ },
+ "تعذر قراءة الملف الصوتي. جرّب ملفاً آخر بصيغة MP3 أو M4A أو WAV.": {
+  "en": "Could not read the audio file. Try another MP3, M4A or WAV file.",
+  "fr": "Impossible de lire le fichier audio. Essayez un autre fichier MP3, M4A ou WAV.",
+  "de": "Audiodatei konnte nicht gelesen werden. Versuchen Sie eine andere MP3-, M4A- oder WAV-Datei.",
+  "tr": "Ses dosyası okunamadı. Başka bir MP3, M4A veya WAV dosyası deneyin."
+ },
+ "التسجيل قصير جداً.": {
+  "en": "The recording is too short.",
+  "fr": "L'enregistrement est trop court.",
+  "de": "Die Aufnahme ist zu kurz.",
+  "tr": "Kayıt çok kısa."
+ },
+ "مدة التسجيل {n} ثانية. الحد الأقصى {max} ثانية.": {
+  "en": "The recording is {n} seconds long. The maximum is {max} seconds.",
+  "fr": "L'enregistrement dure {n} secondes. Le maximum est de {max} secondes.",
+  "de": "Die Aufnahme dauert {n} Sekunden. Maximal {max} Sekunden.",
+  "tr": "Kayıt {n} saniye. En fazla {max} saniye olabilir."
+ },
+ "تعذر تجهيز الملف.": {
+  "en": "Could not prepare the file.",
+  "fr": "Impossible de préparer le fichier.",
+  "de": "Datei konnte nicht vorbereitet werden.",
+  "tr": "Dosya hazırlanamadı."
+ },
+ "لتأكيد حذف الحساب، أدخل كلمة المرور:": {
+  "en": "To confirm account deletion, enter your password:",
+  "fr": "Pour confirmer la suppression du compte, saisissez votre mot de passe :",
+  "de": "Geben Sie zur Bestätigung der Kontolöschung Ihr Passwort ein:",
+  "tr": "Hesap silmeyi onaylamak için şifrenizi girin:"
+ },
+ "الملف يجب أن يكون بصيغة PDF.": {
+  "en": "The file must be a PDF.",
+  "fr": "Le fichier doit être au format PDF.",
+  "de": "Die Datei muss eine PDF sein.",
+  "tr": "Dosya PDF formatında olmalı."
+ },
+ "حجم ملف PDF يتجاوز 2 ميغابايت.": {
+  "en": "The PDF is larger than 2 MB.",
+  "fr": "Le PDF dépasse 2 Mo.",
+  "de": "Die PDF ist größer als 2 MB.",
+  "tr": "PDF dosyası 2 MB'ı aşıyor."
+ },
+ "الملف المختار ليس صورة.": {
+  "en": "The selected file is not an image.",
+  "fr": "Le fichier choisi n'est pas une image.",
+  "de": "Die gewählte Datei ist kein Bild.",
+  "tr": "Seçilen dosya bir görsel değil."
+ },
+ "حجم الصورة كبير جداً (الحد الأقصى 15 ميغابايت).": {
+  "en": "The image is too large (max 15 MB).",
+  "fr": "L'image est trop volumineuse (15 Mo max.).",
+  "de": "Das Bild ist zu groß (max. 15 MB).",
+  "tr": "Görsel çok büyük (en fazla 15 MB)."
+ },
+ "تعذر معالجة الصورة في هذا المتصفح.": {
+  "en": "Could not process the image in this browser.",
+  "fr": "Impossible de traiter l'image dans ce navigateur.",
+  "de": "Das Bild kann in diesem Browser nicht verarbeitet werden.",
+  "tr": "Görsel bu tarayıcıda işlenemedi."
+ },
+ "تعذر ضغط الصورة إلى حجم مناسب. جرّب صورة أخرى.": {
+  "en": "Could not compress the image to a suitable size. Try another image.",
+  "fr": "Impossible de réduire l'image à une taille adaptée. Essayez une autre image.",
+  "de": "Bild konnte nicht ausreichend verkleinert werden. Versuchen Sie ein anderes Bild.",
+  "tr": "Görsel uygun boyuta sıkıştırılamadı. Başka bir görsel deneyin."
+ },
+ "تعذر قراءة الصورة.": {
+  "en": "Could not read the image.",
+  "fr": "Impossible de lire l'image.",
+  "de": "Bild konnte nicht gelesen werden.",
+  "tr": "Görsel okunamadı."
+ },
+ "خطبة أو درس": {
+  "en": "Sermon or lesson",
+  "fr": "Sermon ou cours",
+  "de": "Predigt oder Unterricht",
+  "tr": "Hutbe veya ders"
+ },
+ "مقال علمي أو دعوي": {
+  "en": "Scholarly or da'wah article",
+  "fr": "Article scientifique ou de da'wa",
+  "de": "Wissenschaftlicher oder Da'wa-Artikel",
+  "tr": "İlmî veya tebliğ makalesi"
+ },
+ "سؤال أو موضوع للنقاش": {
+  "en": "Question or discussion topic",
+  "fr": "Question ou sujet de discussion",
+  "de": "Frage oder Diskussionsthema",
+  "tr": "Soru veya tartışma konusu"
+ },
+ "صورة أو تجربة ميدانية": {
+  "en": "Photo or field experience",
+  "fr": "Photo ou expérience de terrain",
+  "de": "Foto oder Praxiserfahrung",
+  "tr": "Fotoğraf veya saha tecrübesi"
+ },
+ "استطلاع رأي": {
+  "en": "Poll",
+  "fr": "Sondage",
+  "de": "Umfrage",
+  "tr": "Anket"
+ },
+ "إعلان عن نشاط أو دورة": {
+  "en": "Event or course announcement",
+  "fr": "Annonce d'activité ou de formation",
+  "de": "Veranstaltung oder Kurs ankündigen",
+  "tr": "Etkinlik veya kurs duyurusu"
+ },
+ "خطبة": {
+  "en": "Sermon",
+  "fr": "Sermon",
+  "de": "Predigt",
+  "tr": "Hutbe"
+ },
+ "استطلاع": {
+  "en": "Poll",
+  "fr": "Sondage",
+  "de": "Umfrage",
+  "tr": "Anket"
  }
 };

@@ -20,6 +20,7 @@ import { auth, db, facebookProvider, googleProvider } from '../firebase';
 import { UserProfile, UserRole } from '../types';
 import { clearContactCache } from './db';
 import { ADMIN_EMAIL } from '../config';
+import { t } from '../i18n';
 
 export interface AuthState {
   /** Firebase Auth user (null = signed out). */
@@ -188,7 +189,7 @@ export async function reauthenticate() {
   const providers = user.providerData.map((p) => p.providerId);
 
   if (providers.includes('password') && user.email) {
-    const password = window.prompt('لتأكيد حذف الحساب، أدخل كلمة المرور:');
+    const password = window.prompt(t('لتأكيد حذف الحساب، أدخل كلمة المرور:'));
     if (!password) throw Object.assign(new Error('cancelled'), { code: 'auth/cancelled-popup-request' });
     await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, password));
     return;

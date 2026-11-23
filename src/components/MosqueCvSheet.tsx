@@ -70,7 +70,7 @@ export const MosqueCvSheet = React.forwardRef<HTMLDivElement, Props>(
           {!print && (
             <div className="md:hidden text-center space-y-1">
               {closed && <span className="inline-block bg-white/15 text-white text-xs font-black px-3 py-1 rounded-full">{t('الإعلان مغلق حالياً')}</span>}
-              <h1 className="text-3xl font-black leading-tight font-amiri">{mosque.mosqueName}</h1>
+              <h1 dir="auto" className="text-3xl font-black leading-tight font-amiri">{mosque.mosqueName}</h1>
               {mosque.legalName && <p className="text-sm text-white/75">{mosque.legalName}</p>}
               <p className="text-lg font-black text-amber-300">{t(mosque.lookingType)}</p>
             </div>

@@ -1,3 +1,4 @@
+import { t } from '../i18n';
 /**
  * Resizes an image in the browser and returns a small JPEG data URL.
  * Profile photos are stored this way directly in Firestore (well below the 1 MB document limit),
@@ -5,10 +6,10 @@
  */
 export async function compressImage(file: File, maxSize = 320, maxBytes = 150_000): Promise<string> {
   if (!file.type.startsWith('image/')) {
-    throw new Error('الملف المختار ليس صورة.');
+    throw new Error(t('الملف المختار ليس صورة.'));
   }
   if (file.size > 15 * 1024 * 1024) {
-    throw new Error('حجم الصورة كبير جداً (الحد الأقصى 15 ميغابايت).');
+    throw new Error(t('حجم الصورة كبير جداً (الحد الأقصى 15 ميغابايت).'));
   }
 
   const bitmap = await loadImage(file);
@@ -20,7 +21,7 @@ export async function compressImage(file: File, maxSize = 320, maxBytes = 150_00
   canvas.width = w;
   canvas.height = h;
   const ctx = canvas.getContext('2d');
-  if (!ctx) throw new Error('تعذر معالجة الصورة في هذا المتصفح.');
+  if (!ctx) throw new Error(t('تعذر معالجة الصورة في هذا المتصفح.'));
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, w, h);
   ctx.drawImage(bitmap, 0, 0, w, h);
@@ -30,7 +31,7 @@ export async function compressImage(file: File, maxSize = 320, maxBytes = 150_00
     const url = canvas.toDataURL('image/jpeg', quality);
     if (url.length <= maxBytes) return url;
   }
-  throw new Error('تعذر ضغط الصورة إلى حجم مناسب. جرّب صورة أخرى.');
+  throw new Error(t('تعذر ضغط الصورة إلى حجم مناسب. جرّب صورة أخرى.'));
 }
 
 function loadImage(file: File): Promise<HTMLImageElement> {
@@ -43,7 +44,7 @@ function loadImage(file: File): Promise<HTMLImageElement> {
     };
     img.onerror = () => {
       URL.revokeObjectURL(url);
-      reject(new Error('تعذر قراءة الصورة.'));
+      reject(new Error(t('تعذر قراءة الصورة.')));
     };
     img.src = url;
   });
