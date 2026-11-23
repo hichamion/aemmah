@@ -31,7 +31,7 @@ const ExistingThumb: React.FC<{ id: string; onRemove: () => void }> = ({ id, onR
   return (
     <div className="relative w-24 h-24 rounded-xl overflow-hidden bg-slate-100">
       {src && <img src={src} alt="" className="w-full h-full object-cover" />}
-      <button type="button" onClick={onRemove} aria-label="حذف الصورة" className="absolute top-1 left-1 bg-black/60 text-white rounded-full p-1 cursor-pointer">
+      <button type="button" onClick={onRemove} aria-label="حذف الصورة" className="absolute top-1 end-1 bg-black/60 text-white rounded-full p-1 cursor-pointer">
         <X className="w-3.5 h-3.5" />
       </button>
     </div>
@@ -234,7 +234,7 @@ export const PostComposer: React.FC<Props> = ({ open, initialType, existing, set
               {newImages.map((src, i) => (
                 <div key={i} className="relative w-24 h-24 rounded-xl overflow-hidden">
                   <img src={src} alt="" className="w-full h-full object-cover" />
-                  <button type="button" onClick={() => setNewImages((p) => p.filter((_, j) => j !== i))} aria-label="حذف الصورة" className="absolute top-1 left-1 bg-black/60 text-white rounded-full p-1 cursor-pointer">
+                  <button type="button" onClick={() => setNewImages((p) => p.filter((_, j) => j !== i))} aria-label="حذف الصورة" className="absolute top-1 end-1 bg-black/60 text-white rounded-full p-1 cursor-pointer">
                     <X className="w-3.5 h-3.5" />
                   </button>
                 </div>

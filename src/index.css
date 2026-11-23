@@ -519,3 +519,11 @@
 
 /* Tarawih / Ramadan-only imams: royal gold leaning to orange. */
 .tarawih-card { border-color: rgb(201 118 18 / 0.4); box-shadow: 0 0 0 2px rgb(217 130 31 / 0.22), 0 10px 25px -12px rgb(127 60 8 / 0.45); }
+
+/* Left-to-right languages: mirror the direction arrows (they are drawn for Arabic, right to left). */
+html[dir='ltr'] .lucide-arrow-left,
+html[dir='ltr'] .lucide-arrow-right,
+html[dir='ltr'] .lucide-chevron-left,
+html[dir='ltr'] .lucide-chevron-right {
+  scale: -1 1;
+}

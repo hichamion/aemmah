@@ -46,7 +46,7 @@ export const ContactBlock: React.FC<ContactBlockProps> = ({
         disabled={!onLockedClick}
         className="w-full bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl p-2.5 flex items-center justify-between transition text-xs cursor-pointer disabled:cursor-default"
       >
-        <span className="text-slate-600 font-semibold flex items-center gap-1.5 text-right">
+        <span className="text-slate-600 font-semibold flex items-center gap-1.5 text-start">
           <Lock className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
           <span>{lockedText}</span>
         </span>

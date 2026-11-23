@@ -4,7 +4,9 @@ import { UserRole } from '../types';
 import type { View } from '../App';
 import { DEFAULT_IMAM_SILHOUETTE_AVATAR, getSafeImamAvatar } from '../utils/helpers';
 import { LogoMark } from './Logo';
-import { MessagesSquare, Menu, X, ShieldCheck, LogIn, LogOut, User as UserIcon, Edit3, Mail, ChevronDown, Trash2, Settings as SettingsIcon, Smartphone } from 'lucide-react';
+import { MessagesSquare, Menu, X, ShieldCheck, LogIn, LogOut, User as UserIcon, Edit3, Mail, ChevronDown, Trash2, Settings as SettingsIcon, Smartphone, Globe } from 'lucide-react';
+import { t } from '../i18n';
+import { LanguageButtons, LanguageMenu } from './LanguagePicker';
 
 interface NavbarProps {
   currentView: View;
@@ -78,12 +80,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const roleBadgeText =
     currentRole === 'admin'
-      ? 'مدير المنصة'
+      ? t('مدير المنصة')
       : currentRole === 'imam'
-      ? 'حساب إمام'
+      ? t('حساب إمام')
       : currentRole === 'mosque'
-      ? 'حساب مسجد/جمعية'
-      : 'زائر';
+      ? t('حساب مسجد/جمعية')
+      : t('زائر');
 
   const avatarUrl =
     currentRole === 'imam'
@@ -101,11 +103,11 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Zone 1: Single Clean Brand Wordmark */}
           <button
             onClick={() => { setCurrentView('home'); setMobileMenuOpen(false); }}
-            className="flex items-center gap-2.5 text-right cursor-pointer whitespace-nowrap shrink-0 focus:outline-none"
+            className="flex items-center gap-2.5 text-start cursor-pointer whitespace-nowrap shrink-0 focus:outline-none"
           >
             <LogoMark className="w-10 h-10 shadow-xs rounded-xl" />
             <span className="text-xl sm:text-2xl font-black tracking-tight text-white font-amiri">
-              منصة أئمة
+              {t('منصة أئمة')}
             </span>
           </button>
 
@@ -119,7 +121,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   : 'border-transparent hover:text-white'
               }`}
             >
-              الرئيسية
+              {t('الرئيسية')}
             </button>
 
             <button
@@ -130,7 +132,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   : 'border-transparent hover:text-white'
               }`}
             >
-              الأئمة المتاحون
+              {t('الأئمة المتاحون')}
             </button>
 
             <button
@@ -141,7 +143,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   : 'border-transparent hover:text-white'
               }`}
             >
-              إعلانات المساجد
+              {t('إعلانات المساجد')}
             </button>
 
             <button
@@ -153,7 +155,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <MessagesSquare className="w-4 h-4 text-amber-300" />
-              المجتمع
+              {t('المجتمع')}
               {communityUnread > 0 && (
                 <span className="bg-red-600 text-white text-[10px] font-black min-w-4 h-4 px-1 rounded-full flex items-center justify-center">{communityUnread}</span>
               )}
@@ -168,7 +170,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   : 'border-transparent hover:text-white'
               }`}
             >
-              الإحصائيات
+              {t('الإحصائيات')}
             </button>
             )}
 
@@ -181,7 +183,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     : 'border-transparent text-amber-400 hover:text-amber-300'
                 }`}
               >
-                <span>لوحة الإدارة</span>
+                <span>{t('لوحة الإدارة')}</span>
                 {pendingCount > 0 && (
                   <span className="bg-amber-500 text-slate-950 text-xs font-black px-1.5 py-0.2 rounded-full tabular-nums">
                     {pendingCount}
@@ -199,7 +201,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 {/* Account Pill Button (Avatar + Name + Role like Google/Facebook) */}
                 <button
                   onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                  className="flex items-center gap-2.5 bg-white/5 hover:bg-white/10 border border-white/15 rounded-full py-1.5 pl-3 pr-1.5 transition cursor-pointer focus:outline-none"
+                  className="flex items-center gap-2.5 bg-white/5 hover:bg-white/10 border border-white/15 rounded-full py-1.5 pe-3 ps-1.5 transition cursor-pointer focus:outline-none"
                 >
                   <div className="relative">
                     {showMosqueIcon ? (
@@ -215,13 +217,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                       />
                     )}
                     {unreadCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-black w-4 h-4 rounded-full flex items-center justify-center">
+                      <span className="absolute -top-1 -start-1 bg-red-600 text-white text-xs font-black w-4 h-4 rounded-full flex items-center justify-center">
                         {unreadCount}
                       </span>
                     )}
                   </div>
 
-                  <div className="text-right hidden md:block max-w-[150px]">
+                  <div className="text-start hidden md:block max-w-[150px]">
                     <p className="text-xs font-black text-white truncate leading-tight">
                       {displayUserName}
                     </p>
@@ -235,7 +237,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
                 {/* Google / Gemini / Facebook Style Profile Popover Menu */}
                 {profileMenuOpen && (
-                  <div className="absolute left-0 mt-2.5 w-80 bg-white rounded-3xl shadow-2xl border border-slate-200 p-5 z-50 text-xs space-y-4">
+                  <div className="absolute end-0 mt-2.5 w-80 bg-white rounded-3xl shadow-2xl border border-slate-200 p-5 z-50 text-xs space-y-4">
                     
                     {/* Top Account Card Info */}
                     <div className="flex flex-col items-center text-center space-y-2 pb-4 border-b border-slate-100">
@@ -274,10 +276,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                           setProfileMenuOpen(false);
                           onOpenMyProfile();
                         }}
-                        className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-800 font-bold transition cursor-pointer text-right"
+                        className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-800 font-bold transition cursor-pointer text-start"
                       >
                         <UserIcon className="w-4 h-4 text-emerald-700 shrink-0" />
-                        <span>ملفي الشخصي وإدارة حسابي</span>
+                        <span>{t('ملفي الشخصي وإدارة حسابي')}</span>
                       </button>
 
                       {currentRole !== 'admin' && (
@@ -286,10 +288,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                             setProfileMenuOpen(false);
                             onEditMyProfile();
                           }}
-                          className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-800 font-bold transition cursor-pointer text-right"
+                          className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-800 font-bold transition cursor-pointer text-start"
                         >
                           <Edit3 className="w-4 h-4 text-sky-700 shrink-0" />
-                          <span>تعديل بيانات ملفي ومعلوماتي</span>
+                          <span>{t('تعديل بيانات ملفي ومعلوماتي')}</span>
                         </button>
                       )}
 
@@ -299,15 +301,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                             setProfileMenuOpen(false);
                             onOpenInbox();
                           }}
-                          className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-800 font-bold transition cursor-pointer text-right"
+                          className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl hover:bg-slate-100 text-slate-800 font-bold transition cursor-pointer text-start"
                         >
                           <div className="flex items-center gap-3">
                             <Mail className="w-4 h-4 text-amber-600 shrink-0" />
-                            <span>علبة الرسائل والمراسلات</span>
+                            <span>{t('علبة الرسائل والمراسلات')}</span>
                           </div>
                           {unreadCount > 0 && (
                             <span className="bg-red-600 text-white text-xs font-black px-2 py-0.5 rounded-full">
-                              {unreadCount} جديد
+                              {t('{n} جديد', { n: unreadCount })}
                             </span>
                           )}
                         </button>
@@ -319,11 +321,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                             setProfileMenuOpen(false);
                             setCurrentView('admin');
                           }}
-                          className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 font-black transition cursor-pointer text-right"
+                          className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-950 font-black transition cursor-pointer text-start"
                         >
                           <div className="flex items-center gap-3">
                             <ShieldCheck className="w-4 h-4 text-amber-600 shrink-0" />
-                            <span>لوحة الإدارة والطلبات المعلقة</span>
+                            <span>{t('لوحة الإدارة والطلبات المعلقة')}</span>
                           </div>
                           {pendingCount > 0 && (
                             <span className="bg-amber-500 text-slate-950 text-xs font-black px-2 py-0.5 rounded-full">
@@ -344,7 +346,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 font-black transition cursor-pointer"
                       >
                         <LogOut className="w-4 h-4" />
-                        <span>تسجيل الخروج من الحساب</span>
+                        <span>{t('تسجيل الخروج من الحساب')}</span>
                       </button>
                       {currentRole !== 'admin' && (
                         <button
@@ -355,7 +357,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           className="w-full flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl text-slate-500 hover:text-red-700 hover:bg-red-50 font-bold transition cursor-pointer text-xs"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
-                          <span>حذف حسابي وبياناتي</span>
+                          <span>{t('حذف حسابي وبياناتي')}</span>
                         </button>
                       )}
                     </div>
@@ -370,16 +372,17 @@ export const Navbar: React.FC<NavbarProps> = ({
                 className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-4 py-2.5 rounded-full shadow-xs transition flex items-center gap-2 cursor-pointer whitespace-nowrap shrink-0"
               >
                 <LogIn className="w-4 h-4" />
-                <span>تسجيل الدخول</span>
+                <span>{t('تسجيل الدخول')}</span>
               </button>
             )}
 
-            {/* Settings (on phones it is inside the menu) */}
+            {/* Language and settings (on phones they are inside the menu) */}
+            <LanguageMenu />
             <button
               onClick={onOpenSettings}
               className="hidden lg:flex w-10 h-10 items-center justify-center rounded-full text-slate-300 hover:text-white hover:bg-white/10 transition cursor-pointer"
-              aria-label="الإعدادات"
-              title="الإعدادات"
+              aria-label={t('الإعدادات')}
+              title={t('الإعدادات')}
             >
               <SettingsIcon className="w-5 h-5" />
             </button>
@@ -388,7 +391,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden p-2 rounded-xl text-white hover:bg-white/10 focus:outline-none cursor-pointer"
-              aria-label="القائمة"
+              aria-label={t('القائمة')}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -408,7 +411,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 currentView === 'home' ? 'bg-emerald-50 text-emerald-900 font-black' : 'text-slate-700'
               }`}
             >
-              الصفحة الرئيسية
+              {t('الصفحة الرئيسية')}
             </button>
 
             <button
@@ -417,7 +420,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 currentView === 'mosque' ? 'bg-emerald-50 text-emerald-900 font-black' : 'text-slate-700'
               }`}
             >
-              <span>قائمة الأئمة المتوفرين</span>
+              <span>{t('قائمة الأئمة المتوفرين')}</span>
               {imamsCount > 0 && <span className="text-xs text-emerald-700 font-bold">{imamsCount}</span>}
             </button>
 
@@ -427,7 +430,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 currentView === 'imam' ? 'bg-sky-50 text-sky-900 font-black' : 'text-slate-700'
               }`}
             >
-              <span>قائمة المساجد والجمعيات المتوفرة</span>
+              <span>{t('قائمة المساجد والجمعيات المتوفرة')}</span>
               {mosquesCount > 0 && <span className="text-xs text-sky-700 font-bold">{mosquesCount}</span>}
             </button>
 
@@ -438,7 +441,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <MessagesSquare className="w-4 h-4" />
-              <span>المجتمع — ملتقى الأئمة</span>
+              <span>{t('المجتمع — ملتقى الأئمة')}</span>
             </button>
 
             {showStats && (
@@ -448,16 +451,16 @@ export const Navbar: React.FC<NavbarProps> = ({
                 currentView === 'dashboard' ? 'bg-slate-100 text-slate-900 font-black' : 'text-slate-700'
               }`}
             >
-              لوحة الإحصائيات
+              {t('لوحة الإحصائيات')}
             </button>
             )}
 
             {currentRole === 'admin' && (
               <button
                 onClick={() => { setCurrentView('admin'); setMobileMenuOpen(false); }}
-                className="w-full text-right px-4 py-3 rounded-xl bg-amber-50 text-amber-950 font-black flex justify-between items-center"
+                className="w-full text-start px-4 py-3 rounded-xl bg-amber-50 text-amber-950 font-black flex justify-between items-center"
               >
-                <span>لوحة الإدارة (المدير)</span>
+                <span>{t('لوحة الإدارة (المدير)')}</span>
                 {pendingCount > 0 && (
                   <span className="bg-amber-500 text-slate-950 text-xs px-2 py-0.5 rounded-full">
                     {pendingCount}
@@ -469,21 +472,25 @@ export const Navbar: React.FC<NavbarProps> = ({
             {onOpenInstall && (
               <button
                 onClick={() => { onOpenInstall(); setMobileMenuOpen(false); }}
-                className="w-full text-right px-4 py-3 rounded-xl flex items-center gap-2 bg-brass-100 text-ink font-black mt-2"
+                className="w-full text-start px-4 py-3 rounded-xl flex items-center gap-2 bg-brass-100 text-ink font-black mt-2"
               >
                 <Smartphone className="w-4 h-4" />
-                <span>ثبّت التطبيق على هاتفك</span>
+                <span>{t('ثبّت التطبيق على هاتفك')}</span>
               </button>
             )}
 
             <button
               onClick={() => { onOpenSettings(); setMobileMenuOpen(false); }}
-              className="w-full text-right px-4 py-3 rounded-xl flex items-center gap-2 text-slate-700 border-t border-slate-100 mt-2 pt-4"
+              className="w-full text-start px-4 py-3 rounded-xl flex items-center gap-2 text-slate-700 border-t border-slate-100 mt-2 pt-4"
             >
               <SettingsIcon className="w-4 h-4" />
-              <span>الإعدادات</span>
-              <span className="mr-auto text-xs font-bold text-slate-400">المظهر، حجم الخط…</span>
+              <span>{t('الإعدادات')}</span>
+              <span className="ms-auto text-xs font-bold text-slate-400">{t('المظهر، حجم الخط…')}</span>
             </button>
+            <div className="px-4 pt-2 pb-1 space-y-2">
+              <p className="text-xs font-black text-slate-500 flex items-center gap-1.5"><Globe className="w-3.5 h-3.5" /> {t('اللغة')}</p>
+              <LanguageButtons onPicked={() => setMobileMenuOpen(false)} />
+            </div>
           </div>
         </div>
       )}

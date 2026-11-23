@@ -107,8 +107,8 @@ export const PollBox: React.FC<{ post: CommunityPost; viewer: CommunityViewer; o
         const chosen = mine === i;
         return (
           <button key={i} type="button" disabled={busy} onClick={() => pick(i)}
-            className={`relative w-full text-right rounded-xl border-2 px-4 py-2.5 overflow-hidden cursor-pointer transition ${chosen ? 'border-emerald-600' : 'border-slate-200 hover:border-emerald-300'}`}>
-            <span className="absolute inset-y-0 right-0 bg-emerald-100" style={{ width: `${pct}%` }} aria-hidden />
+            className={`relative w-full text-start rounded-xl border-2 px-4 py-2.5 overflow-hidden cursor-pointer transition ${chosen ? 'border-emerald-600' : 'border-slate-200 hover:border-emerald-300'}`}>
+            <span className="absolute inset-y-0 start-0 bg-emerald-100" style={{ width: `${pct}%` }} aria-hidden />
             <span className="relative flex justify-between gap-2 text-sm font-bold">
               <span>{chosen ? '✓ ' : ''}{o}</span>
               <span className="text-slate-500 tabular-nums">{pct}%</span>
@@ -231,7 +231,7 @@ export const PostMenu: React.FC<{
       {open && (
         <>
           <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} aria-hidden />
-          <div className="absolute left-0 top-full mt-1 w-60 bg-white rounded-2xl shadow-2xl ring-1 ring-black/5 p-1.5 z-40 text-sm text-slate-700">
+          <div className="absolute end-0 top-full mt-1 w-60 bg-white rounded-2xl shadow-2xl ring-1 ring-black/5 p-1.5 z-40 text-sm text-slate-700">
             <button className={item} onClick={run(onToggleSave)}>
               {saved ? <BookmarkCheck className="w-4 h-4 text-amber-600" /> : <Bookmark className="w-4 h-4" />} {saved ? 'إزالة من المحفوظات' : 'حفظ المنشور'}
             </button>

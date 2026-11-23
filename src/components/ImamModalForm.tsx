@@ -385,7 +385,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
                     <CheckCircle2 className="w-3.5 h-3.5 text-sky-600" />
                     <span>{visaFile ? `سيتم رفع: ${visaFile.name}` : `الملف الحالي: ${initialData?.visaFileName}`}</span>
                     {!visaFile && initialData?.visaFilePath?.startsWith('privateDocs/') && (
-                      <button type="button" className="underline text-sky-800 mr-1 cursor-pointer"
+                      <button type="button" className="underline text-sky-800 ms-1 cursor-pointer"
                         onClick={() => openPrivateDocument(initialData.visaFilePath!).catch((e) => onError(e instanceof Error ? e.message : 'تعذر فتح الملف.'))}>
                         عرض
                       </button>
@@ -632,7 +632,7 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>{certsFile ? `سيتم رفع: ${certsFile.name}` : `الملف الحالي: ${initialData?.certsFileName}`}</span>
                     {!certsFile && initialData?.certsFilePath?.startsWith('privateDocs/') && (
-                      <button type="button" className="underline text-sky-800 mr-1 cursor-pointer"
+                      <button type="button" className="underline text-sky-800 ms-1 cursor-pointer"
                         onClick={() => openPrivateDocument(initialData.certsFilePath!).catch((e) => onError(e instanceof Error ? e.message : 'تعذر فتح الملف.'))}>
                         عرض
                       </button>

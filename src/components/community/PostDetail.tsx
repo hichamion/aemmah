@@ -65,7 +65,7 @@ export const PostDetail: React.FC<{
   };
 
   const CommentItem: React.FC<{ c: PostComment; isReply?: boolean }> = ({ c, isReply }) => (
-    <div className={`flex gap-2.5 ${isReply ? 'mr-12' : ''}`}>
+    <div className={`flex gap-2.5 ${isReply ? 'ms-12' : ''}`}>
       <AuthorAvatar imamId={c.authorImamId} imams={imams} size="w-9 h-9" />
       <div className="flex-1 min-w-0">
         <div className="bg-slate-100 rounded-2xl px-3.5 py-2">
@@ -98,12 +98,12 @@ export const PostDetail: React.FC<{
             <p className="font-black text-slate-900">{post.authorName}</p>
             <p className="text-xs text-slate-500">
               {timeAgo(post.publishedAt || post.createdAt)} · {postTypeIcon(post.type)} {postTypeLabel(post.type)}
-              {post.status === 'draft' && <span className="mr-1 text-amber-700 font-black">· مسودة</span>}
+              {post.status === 'draft' && <span className="ms-1 text-amber-700 font-black">· مسودة</span>}
             </p>
           </div>
-          {post.pinned && <span className="mr-auto inline-flex items-center gap-1 text-xs font-black text-amber-800 bg-amber-50 px-2 py-1 rounded-full"><Pin className="w-3 h-3" /> مثبّت</span>}
+          {post.pinned && <span className="ms-auto inline-flex items-center gap-1 text-xs font-black text-amber-800 bg-amber-50 px-2 py-1 rounded-full"><Pin className="w-3 h-3" /> مثبّت</span>}
           {post.status === 'published' && (
-            <span className={post.pinned ? '' : 'mr-auto'}>
+            <span className={post.pinned ? '' : 'ms-auto'}>
               <PostMenu
                 post={post}
                 viewer={viewer}
@@ -130,7 +130,7 @@ export const PostDetail: React.FC<{
             {post.files.map((f) => (
               <li key={f.id}>
                 <button onClick={() => openPdf(f).catch(() => actions.onError('تعذر فتح الملف.'))}
-                  className="w-full flex items-center gap-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl px-4 py-3 text-right cursor-pointer">
+                  className="w-full flex items-center gap-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl px-4 py-3 text-start cursor-pointer">
                   <FileText className="w-6 h-6 text-red-700 shrink-0" />
                   <span className="flex-1 min-w-0">
                     <span className="block font-bold text-sm truncate">{f.name}</span>
@@ -171,7 +171,7 @@ export const PostDetail: React.FC<{
               {replyTo && (
                 <p className="text-xs font-bold text-emerald-800 flex items-center gap-1">
                   <CornerDownLeft className="w-3.5 h-3.5" /> ردّ على {replyTo.authorName}
-                  <button type="button" onClick={() => setReplyTo(null)} className="text-slate-500 underline mr-2 cursor-pointer">إلغاء</button>
+                  <button type="button" onClick={() => setReplyTo(null)} className="text-slate-500 underline ms-2 cursor-pointer">إلغاء</button>
                 </p>
               )}
               <div className="flex items-end gap-2">

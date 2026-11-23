@@ -71,7 +71,7 @@ export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, 
           alt=""
           aria-hidden
           loading="lazy"
-          className="role-art absolute left-2 bottom-1 h-[90%] w-auto max-w-[30%] object-contain object-bottom pointer-events-none select-none"
+          className="role-art absolute end-2 bottom-1 h-[90%] w-auto max-w-[30%] object-contain object-bottom pointer-events-none select-none"
         />
         <div className="relative z-10 p-1 rounded-full bg-gradient-to-br from-amber-300 via-amber-500 to-amber-700 shrink-0 shadow-lg">
           <img
@@ -85,12 +85,12 @@ export const ImamMiniCard: React.FC<ImamMiniCardProps> = ({ imam, contactBlock, 
           <h3 className="font-black text-2xl sm:text-[1.7rem] font-amiri leading-snug line-clamp-2">{imam.name}</h3>
           <p className={`${tone.title} text-sm font-black`}>{imamTitle(imam.titles)}</p>
           {kh && (
-            <span className="inline-flex items-center gap-1 mt-1 ml-1 text-[11px] font-black bg-amber-300 text-[#4f1029] px-2 py-0.5 rounded-full">
+            <span className="inline-flex items-center gap-1 mt-1 me-1 text-[11px] font-black bg-amber-300 text-[#4f1029] px-2 py-0.5 rounded-full">
               <Mic className="w-3 h-3" /> خطيب جمعة
             </span>
           )}
           {imam.isVerified && <span className="inline-block mt-1 text-[11px] font-black bg-emerald-500/90 px-2 py-0.5 rounded-full">✓ موثق</span>}
-          {imam.recitationMeta && <span className="inline-block mt-1 mr-1 text-[11px] font-black bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full">🎧 عيّنة تلاوة</span>}
+          {imam.recitationMeta && <span className="inline-block mt-1 ms-1 text-[11px] font-black bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full">🎧 عيّنة تلاوة</span>}
         </div>
       </div>
 

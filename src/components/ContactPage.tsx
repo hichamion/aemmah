@@ -100,7 +100,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ defaultName, defaultEm
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   maxLength={200}
-                  className={`${field} text-left`}
+                  className={`${field} text-end`}
                 />
               </label>
             </div>
@@ -115,7 +115,7 @@ export const ContactPage: React.FC<ContactPageProps> = ({ defaultName, defaultEm
                 maxLength={3000}
                 className={field}
               />
-              <span className="block text-xs text-slate-400 text-left">{message.length} / 3000</span>
+              <span className="block text-xs text-slate-400 text-end">{message.length} / 3000</span>
             </label>
 
             {/* Honeypot: invisible to people, bots fill it in. */}

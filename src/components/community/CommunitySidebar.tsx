@@ -41,7 +41,7 @@ export const CommunitySidebar: React.FC<{
               <button
                 onClick={() => onTab(t.key)}
                 aria-current={on ? 'page' : undefined}
-                className="cm-tile w-full h-full text-right rounded-2xl px-3 py-3 lg:py-3.5 flex items-center gap-2.5 cursor-pointer text-[#0b3a2a] ring-1 ring-emerald-900/5"
+                className="cm-tile w-full h-full text-start rounded-2xl px-3 py-3 lg:py-3.5 flex items-center gap-2.5 cursor-pointer text-[#0b3a2a] ring-1 ring-emerald-900/5"
               >
                 <span className={`w-9 h-9 shrink-0 rounded-xl flex items-center justify-center transition ${on ? 'bg-white/20 text-white' : 'bg-white/80 text-emerald-800 shadow-xs'}`}>
                   {t.icon}
@@ -80,7 +80,7 @@ export const TopicsPanel: React.FC<{ title: string; posts: CommunityPost[]; onOp
       <ul className="divide-y divide-slate-100">
         {posts.map((p) => (
           <li key={p.id}>
-            <button onClick={() => onOpen(p.id)} className="w-full text-right px-4 py-3 flex gap-2.5 hover:bg-emerald-50/60 transition cursor-pointer group">
+            <button onClick={() => onOpen(p.id)} className="w-full text-start px-4 py-3 flex gap-2.5 hover:bg-emerald-50/60 transition cursor-pointer group">
               <span className="mt-1.5 w-2 h-2 rotate-45 shrink-0 bg-emerald-600/70 group-hover:bg-amber-500 transition" aria-hidden />
               <span className="min-w-0">
                 <span className="block text-[13px] font-bold text-slate-800 leading-snug line-clamp-2 group-hover:text-emerald-800">{p.title}</span>

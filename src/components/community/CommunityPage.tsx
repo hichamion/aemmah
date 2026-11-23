@@ -211,13 +211,13 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
                 className={`relative w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center cursor-pointer transition ${showBell ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
               >
                 <Bell className={`w-5 h-5 ${unread ? 'animate-[bell_1s_ease-in-out_2]' : ''}`} />
-                {unread > 0 && <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[11px] font-black min-w-5 h-5 px-1 rounded-full flex items-center justify-center ring-2 ring-white">{unread}</span>}
+                {unread > 0 && <span className="absolute -top-1 -start-1 bg-red-600 text-white text-[11px] font-black min-w-5 h-5 px-1 rounded-full flex items-center justify-center ring-2 ring-white">{unread}</span>}
               </button>
               {showBell && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setShowBell(false)} aria-hidden />
                   <div role="dialog" aria-label="الإشعارات"
-                    className="fixed sm:absolute inset-x-2 sm:inset-x-auto top-[4.5rem] sm:top-full sm:left-0 sm:mt-2 sm:w-96 z-50 bg-white text-slate-800 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.45)] ring-1 ring-black/10 overflow-hidden">
+                    className="fixed sm:absolute inset-x-2 sm:inset-x-auto top-[4.5rem] sm:top-full sm:end-0 sm:mt-2 sm:w-96 z-50 bg-white text-slate-800 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.45)] ring-1 ring-black/10 overflow-hidden">
                     <div className="flex justify-between items-center px-4 py-3 border-b border-slate-100">
                       <p className="font-black text-lg">الإشعارات</p>
                       {notifications.length > 0 && <button onClick={() => clearNotifications(viewer.uid)} className="text-xs font-bold text-emerald-800 hover:underline cursor-pointer">مسح الكل</button>}
@@ -227,7 +227,7 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
                       {notifications.map((n) => (
                         <li key={n.id}>
                           <button onClick={() => { setShowBell(false); go(`/post/${n.postId}`); }}
-                            className={`w-full text-right flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-sm cursor-pointer ${n.read ? '' : 'bg-emerald-50'}`}>
+                            className={`w-full text-start flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-100 text-sm cursor-pointer ${n.read ? '' : 'bg-emerald-50'}`}>
                             <span className="w-10 h-10 shrink-0 rounded-full bg-emerald-700 text-white flex items-center justify-center"><MessageCircle className="w-5 h-5" /></span>
                             <span className="flex-1 min-w-0">
                               <span className="block leading-snug"><b>{n.fromName}</b> {n.type === 'reply' ? 'ردّ على تعليقك في' : 'علّق على منشورك'} «{n.postTitle}»</span>
@@ -254,7 +254,7 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
                 className={`relative flex-1 flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-bold cursor-pointer transition ${on ? 'text-emerald-800' : 'text-slate-500 hover:bg-slate-50'}`}>
                 <span className="relative [&>svg]:w-[22px] [&>svg]:h-[22px]">
                   {t.icon}
-                  {!!t.count && <span className="absolute -top-1.5 -left-2.5 bg-slate-200 text-slate-700 text-[10px] font-black min-w-4 h-4 px-1 rounded-full flex items-center justify-center">{t.count}</span>}
+                  {!!t.count && <span className="absolute -top-1.5 -end-2.5 bg-slate-200 text-slate-700 text-[10px] font-black min-w-4 h-4 px-1 rounded-full flex items-center justify-center">{t.count}</span>}
                 </span>
                 {t.label}
                 {on && <span className="absolute bottom-0 inset-x-4 h-[3px] rounded-t-full bg-emerald-700" aria-hidden />}
@@ -313,7 +313,7 @@ export const CommunityPage: React.FC<Props> = ({ uid, role, viewerName, myImam, 
                     <div className="flex items-center gap-2.5">
                       <AuthorAvatar imamId={viewer.imamId} imams={imamsById} size="w-10 h-10" />
                       <button onClick={() => setComposer({ open: true, existing: null })}
-                        className="flex-1 text-right bg-slate-100 hover:bg-slate-200 rounded-full px-4 py-2.5 text-slate-500 text-[15px] cursor-pointer transition">
+                        className="flex-1 text-start bg-slate-100 hover:bg-slate-200 rounded-full px-4 py-2.5 text-slate-500 text-[15px] cursor-pointer transition">
                         بمَ تفكّر{firstName ? ` يا ${firstName}` : ''}؟
                       </button>
                     </div>
@@ -421,7 +421,7 @@ const PostCard: React.FC<{ post: CommunityPost; viewer: CommunityViewer; imams: 
           onError={actions.onError}
         />
       </header>
-      <button onClick={open} className="block text-right w-full cursor-pointer px-4 pt-2 pb-2">
+      <button onClick={open} className="block text-start w-full cursor-pointer px-4 pt-2 pb-2">
         {post.title && <h2 className="font-black text-[17px] text-slate-900 leading-snug">{post.title}</h2>}
         {post.body.trim() && <p className="text-[15px] text-slate-800 leading-relaxed mt-1 whitespace-pre-line">{excerpt(post.body)}</p>}
         {long && <span className="text-sm font-bold text-slate-500 hover:underline">عرض المزيد</span>}

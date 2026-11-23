@@ -43,7 +43,7 @@ export const PrivacyPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
         <section className="space-y-2">
           <h2 className="font-black text-slate-900">2. البيانات التي نجمعها</h2>
-          <ul className="list-disc pr-5 space-y-1">
+          <ul className="list-disc ps-5 space-y-1">
             <li>بيانات الحساب: الاسم، والبريد الإلكتروني أو رقم الهاتف المستعمل للدخول، والصورة الرمزية التي يرسلها جوجل عند الدخول به. كلمات المرور تحفظها خدمة Firebase Authentication مشفّرة، ولا نطّلع عليها.</li>
             <li>ملف الإمام: الاسم، العمر، البلد، المؤهلات، الرواية، اللغات، حالة التأشيرة، السيرة الذاتية، رابط التلاوة، وصورة اختيارية.</li>
             <li>بيانات التواصل: رقم الهاتف، الواتساب، البريد الإلكتروني.</li>
@@ -68,7 +68,7 @@ export const PrivacyPage: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
         <section className="space-y-2">
           <h2 className="font-black text-slate-900">4. من يرى بياناتك</h2>
-          <ul className="list-disc pr-5 space-y-1">
+          <ul className="list-disc ps-5 space-y-1">
             <li>الملف العام للإمام (بدون أرقام التواصل) يظهر للجميع بعد موافقة الإدارة.</li>
             <li>أرقام هاتف الإمام وبريده تظهر فقط لحسابات المساجد التي وثقتها الإدارة، وللإدارة.</li>
             <li>بيانات تواصل المساجد تظهر للمستخدمين المسجلين فقط.</li>

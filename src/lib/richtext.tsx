@@ -37,7 +37,7 @@ export const RichText: React.FC<{ text: string; className?: string }> = ({ text,
       const items: string[] = [];
       while (i < lines.length && /^- /.test(lines[i])) items.push(lines[i++].slice(2));
       out.push(
-        <ul key={key} className="list-disc pr-6 space-y-1">
+        <ul key={key} className="list-disc ps-6 space-y-1">
           {items.map((it, j) => <li key={j}>{inline(it, `${key}-${j}`)}</li>)}
         </ul>
       );
@@ -45,7 +45,7 @@ export const RichText: React.FC<{ text: string; className?: string }> = ({ text,
       const items: string[] = [];
       while (i < lines.length && /^\d+[.)] /.test(lines[i])) items.push(lines[i++].replace(/^\d+[.)] /, ''));
       out.push(
-        <ol key={key} className="list-decimal pr-6 space-y-1">
+        <ol key={key} className="list-decimal ps-6 space-y-1">
           {items.map((it, j) => <li key={j}>{inline(it, `${key}-${j}`)}</li>)}
         </ol>
       );
@@ -53,7 +53,7 @@ export const RichText: React.FC<{ text: string; className?: string }> = ({ text,
       const items: string[] = [];
       while (i < lines.length && lines[i].startsWith('> ')) items.push(lines[i++].slice(2));
       out.push(
-        <blockquote key={key} className="border-r-4 border-amber-400 bg-amber-50/60 pr-4 py-2 rounded-l-xl text-slate-700">
+        <blockquote key={key} className="border-s-4 border-amber-400 bg-amber-50/60 ps-4 py-2 rounded-l-xl text-slate-700">
           {items.map((it, j) => <p key={j}>{inline(it, `${key}-${j}`)}</p>)}
         </blockquote>
       );

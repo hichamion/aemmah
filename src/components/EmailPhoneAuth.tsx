@@ -137,7 +137,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
             placeholder="name@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className={`${field} text-left`}
+            className={`${field} text-end`}
             aria-label="البريد الإلكتروني"
           />
           {emailStep !== 'reset' && (
@@ -148,7 +148,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
               placeholder={emailStep === 'signup' ? 'كلمة مرور (8 أحرف على الأقل)' : 'كلمة المرور'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className={`${field} text-left`}
+              className={`${field} text-end`}
               aria-label="كلمة المرور"
             />
           )}
@@ -187,7 +187,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
               placeholder="+49 151 2345678"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className={`${field} text-left`}
+              className={`${field} text-end`}
               aria-label="رقم الهاتف بالصيغة الدولية"
             />
           ) : (
@@ -198,7 +198,7 @@ export const EmailPhoneAuth: React.FC<Props> = ({ showEmail, showPhone, onSigned
               placeholder="123456"
               value={code}
               onChange={(e) => setCode(e.target.value)}
-              className={`${field} text-left tracking-widest`}
+              className={`${field} text-end tracking-widest`}
               aria-label="رمز التحقق"
             />
           )}
