@@ -73,7 +73,7 @@ export interface Recitation extends RecitationMeta {
   audio: string;
 }
 
-/** Friday preacher (خطيب جمعة) details. Only set when the imam ticked «خطيب»; null otherwise. */
+/** Friday preacher (خطيب جمعة) details. Only set for «خطيب فقط» living in Europe; null otherwise. */
 export interface KhateebInfo {
   /** What kind of Friday-preacher post the imam accepts. */
   term: 'temporary' | 'permanent' | 'both';
@@ -98,7 +98,7 @@ export interface ImamProfile {
   country: string;
   /** Nationality, e.g. «مغربي». Optional for profiles created before it existed. */
   nationality?: string;
-  /** What the imam does: «إمام», «خطيب», «محفظ» and/or titles they typed. */
+  /** What the imam does: «إمام وخطيب», «خطيب فقط», «محفظ» (older profiles: «إمام», «خطيب») and/or titles they typed. */
   titles?: string[];
   /** Current job or occupation (free text). */
   currentJob?: string;
@@ -111,7 +111,7 @@ export interface ImamProfile {
   /** Languages with a level. The older free-text `languages` field is kept in sync for search. */
   languageList?: ImamLanguage[];
   maritalStatus?: MaritalStatus;
-  /** Friday-preacher details, present only for imams registered as «خطيب». */
+  /** Friday-preacher details, present only for «خطيب فقط» living in Europe. */
   khateeb?: KhateebInfo | null;
   /** Already lives in a European country (so no immigration procedure is needed). */
   livesInEurope?: boolean;

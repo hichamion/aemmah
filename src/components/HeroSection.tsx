@@ -136,7 +136,7 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
           أيها الخطباء: <span className="brass-text">سجّلوا للخطابة</span>
         </>
       ),
-      text: 'مساجد تبحث عن خطيب جمعة مؤقت أو دائم. اختر صفة «خطيب» في ملفك، وحدّد مناطقك أو المسافة، وهل عندك سيارة.',
+      text: 'مساجد تبحث عن خطيب جمعة مؤقت أو دائم. إن كنت مقيماً في أوروبا فاختر صفة «خطيب فقط» في ملفك، وحدّد مناطقك أو المسافة، وهل عندك سيارة.',
       cta: currentRole === 'imam' ? 'رشّح نفسك كخطيب' : 'سجّل كخطيب',
       onClick: currentRole === 'imam' ? onOpenMyProfile : onOpenImamAddModal,
       photo: HERO_PHOTOS.khateeb,

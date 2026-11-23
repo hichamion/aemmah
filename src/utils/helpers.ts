@@ -99,7 +99,27 @@ export function getRiwayaBadgeStyle(riwaya: string): { bg: string; text: string;
 }
 
 /** Roles an imam can tick when creating the profile (they can also type their own). */
-export const IMAM_TITLE_OPTIONS = ['إمام', 'خطيب', 'محفظ'];
+/** «إمام وخطيب» = leads the prayer and preaches in the same mosque; «خطيب فقط» = Friday preacher only (lives in Europe). */
+export const TITLE_IMAM = 'إمام وخطيب';
+export const TITLE_KHATEEB = 'خطيب فقط';
+export const IMAM_TITLE_OPTIONS = [TITLE_IMAM, TITLE_KHATEEB, 'محفظ'];
+
+/** The imam's role, also for profiles saved before the titles changed («إمام», «خطيب»). */
+export function imamRole(titles?: string[]): 'imam' | 'khateeb' | null {
+  const t = (titles || []).map((x) => x.trim());
+  if (t.includes(TITLE_KHATEEB)) return 'khateeb';
+  if (t.includes(TITLE_IMAM) || t.includes('إمام')) return 'imam';
+  if (t.includes('خطيب')) return 'khateeb';
+  return null;
+}
+
+/** Turns the old titles into the current ones: «إمام» → «إمام وخطيب», «خطيب» alone → «خطيب فقط». */
+export function normalizeTitles(titles?: string[]): string[] {
+  const t = (titles || []).map((x) => x.trim()).filter(Boolean);
+  const role = imamRole(t);
+  const rest = t.filter((x) => ![TITLE_IMAM, TITLE_KHATEEB, 'إمام', 'خطيب'].includes(x));
+  return [...(role === 'imam' ? [TITLE_IMAM] : role === 'khateeb' ? [TITLE_KHATEEB] : []), ...rest];
+}
 
 /** Languages offered as quick choices in the imam form ("other" languages can be typed). */
 export const LANGUAGE_OPTIONS = ['العربية', 'الفرنسية', 'الألمانية', 'الإنجليزية', 'الهولندية', 'الإسبانية', 'الإيطالية', 'التركية', 'الأمازيغية'];
@@ -113,7 +133,7 @@ export const splitList = (v: string) =>
 
 /** The imam's titles for display, e.g. «إمام • خطيب • محفظ» (older profiles: «إمام وقارئ»). */
 export function imamTitle(titles?: string[]): string {
-  const t = (titles || []).map((x) => x.trim()).filter(Boolean);
+  const t = normalizeTitles(titles);
   return t.length ? t.join(' • ') : 'إمام وقارئ';
 }
 
@@ -123,9 +143,13 @@ export function residenceCountry(place: string): string {
   return parts.length ? parts[parts.length - 1] : '';
 }
 
-/** True when the imam registered as a Friday preacher (ticked «خطيب» and filled the khateeb section). */
-export function isKhateeb(imam: Pick<ImamProfile, 'khateeb' | 'titles'>): boolean {
-  return !!imam.khateeb && (imam.titles || []).includes('خطيب');
+
+/**
+ * A Friday preacher only («خطيب فقط») who lives in Europe and filled the preacher section.
+ * An «إمام وخطيب» preaches in his own mosque, so he has no separate preacher details.
+ */
+export function isKhateeb(imam: Pick<ImamProfile, 'khateeb' | 'titles' | 'livesInEurope'>): boolean {
+  return !!imam.khateeb && !!imam.livesInEurope && imamRole(imam.titles) === 'khateeb';
 }
 
 export const KHATEEB_TERM_LABELS: Record<KhateebInfo['term'], string> = {
@@ -146,12 +170,11 @@ export type ImamTone = 'imam' | 'khateeb' | 'imam_khateeb' | 'tarawih' | 'khatee
  * Profile kind used for its colours and picture: Friday preacher, imam who is also a Friday preacher,
  * Ramadan / tarawih only, preacher and tarawih, or a regular imam.
  */
-export function imamTone(imam: Pick<ImamProfile, 'khateeb' | 'titles' | 'availabilityState'>): ImamTone {
+export function imamTone(imam: Pick<ImamProfile, 'khateeb' | 'titles' | 'availabilityState' | 'livesInEurope'>): ImamTone {
   const kh = isKhateeb(imam);
   const tar = imam.availabilityState === 'ramadan_only';
   if (kh && tar) return 'khateeb_tarawih';
-  // Ticked both «إمام» and «خطيب»: an imam who also preaches, not a preacher only.
-  if (kh) return (imam.titles || []).map((x) => x.trim()).includes('إمام') ? 'imam_khateeb' : 'khateeb';
+  if (kh) return 'khateeb';
   return tar ? 'tarawih' : 'imam';
 }
 
@@ -208,7 +231,7 @@ export const IMAM_TONES: Record<ImamTone, { band: string; side: string; ring: st
  * crescent (tarawih), mosque with crescent (preacher and tarawih), mihrab (every other imam, including
  * imams who also preach).
  */
-export function imamRoleArt(imam: Pick<ImamProfile, 'khateeb' | 'titles' | 'availabilityState'>): { src: string; label: string } {
+export function imamRoleArt(imam: Pick<ImamProfile, 'khateeb' | 'titles' | 'availabilityState' | 'livesInEurope'>): { src: string; label: string } {
   const base = import.meta.env.BASE_URL;
   const t = imamTone(imam);
   if (t === 'khateeb_tarawih') return { src: `${base}art-mosque.webp`, label: 'خطيب جمعة وإمام تراويح' };
