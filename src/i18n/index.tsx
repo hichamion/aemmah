@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useContext, useState } from 'react';
 import { DICT } from './dict';
 
 /*
@@ -87,8 +87,5 @@ export const I18nProvider: React.FC<{ children: (lang: Lang) => React.ReactNode 
     applyLang(l);
     setLangState(l);
   }, []);
-  useEffect(() => {
-    document.title = t('منصة أئمة | جسر تواصل بين الأئمة والمساجد');
-  }, [lang]);
   return <Ctx.Provider value={{ lang, setLang }}>{children(lang)}</Ctx.Provider>;
 };

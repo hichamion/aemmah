@@ -6381,5 +6381,455 @@ export const DICT: Record<string, Entry> = {
   "fr": "Sondage",
   "de": "Umfrage",
   "tr": "Anket"
+ },
+ "اكتب رسالتك في 10 أحرف على الأقل.": {
+  "en": "Write at least 10 characters.",
+  "fr": "Écrivez au moins 10 caractères.",
+  "de": "Schreiben Sie mindestens 10 Zeichen.",
+  "tr": "En az 10 karakter yazın."
+ },
+ "العودة للرئيسية": {
+  "en": "Back to home",
+  "fr": "Retour à l'accueil",
+  "de": "Zurück zur Startseite",
+  "tr": "Ana sayfaya dön"
+ },
+ "رسالتك تصل إلى إدارة منصة أئمة فقط. اترك بريدك إن أردت أن نرد عليك.": {
+  "en": "Your message goes to the Aemmah team only. Leave your e-mail if you'd like a reply.",
+  "fr": "Votre message n'est lu que par l'équipe Aemmah. Laissez votre e-mail si vous souhaitez une réponse.",
+  "de": "Ihre Nachricht erreicht nur das Aemmah-Team. Hinterlassen Sie Ihre E-Mail, wenn Sie eine Antwort möchten.",
+  "tr": "Mesajınız yalnızca Aemmah yönetimine ulaşır. Yanıt almak isterseniz e-postanızı bırakın."
+ },
+ "أو راسلنا عبر البريد الإلكتروني:": {
+  "en": "Or e-mail us:",
+  "fr": "Ou écrivez-nous :",
+  "de": "Oder schreiben Sie uns:",
+  "tr": "Ya da bize e-posta gönderin:"
+ },
+ "شكراً لك، وصلت رسالتك إلى الإدارة.": {
+  "en": "Thank you, your message has reached the team.",
+  "fr": "Merci, votre message a bien été transmis à l'équipe.",
+  "de": "Danke, Ihre Nachricht ist beim Team angekommen.",
+  "tr": "Teşekkürler, mesajınız yönetime ulaştı."
+ },
+ "إرسال رسالة أخرى": {
+  "en": "Send another message",
+  "fr": "Envoyer un autre message",
+  "de": "Weitere Nachricht senden",
+  "tr": "Başka bir mesaj gönder"
+ },
+ "نوع الرسالة": {
+  "en": "Message type",
+  "fr": "Type de message",
+  "de": "Art der Nachricht",
+  "tr": "Mesaj türü"
+ },
+ "الاسم (اختياري)": {
+  "en": "Name (optional)",
+  "fr": "Nom (facultatif)",
+  "de": "Name (optional)",
+  "tr": "Ad (isteğe bağlı)"
+ },
+ "البريد الإلكتروني (اختياري، للرد)": {
+  "en": "E-mail (optional, for a reply)",
+  "fr": "E-mail (facultatif, pour la réponse)",
+  "de": "E-Mail (optional, für eine Antwort)",
+  "tr": "E-posta (isteğe bağlı, yanıt için)"
+ },
+ "رسالتك": {
+  "en": "Your message",
+  "fr": "Votre message",
+  "de": "Ihre Nachricht",
+  "tr": "Mesajınız"
+ },
+ "سياسة الخصوصية وحماية البيانات": {
+  "en": "Privacy policy and data protection",
+  "fr": "Politique de confidentialité et protection des données",
+  "de": "Datenschutzerklärung",
+  "tr": "Gizlilik politikası ve veri koruma"
+ },
+ "آخر تحديث: {d}": {
+  "en": "Last updated: {d}",
+  "fr": "Dernière mise à jour : {d}",
+  "de": "Stand: {d}",
+  "tr": "Son güncelleme: {d}"
+ },
+ "1. الجهة المسؤولة": {
+  "en": "1. Controller",
+  "fr": "1. Responsable du traitement",
+  "de": "1. Verantwortlicher",
+  "tr": "1. Veri sorumlusu"
+ },
+ "المسؤول عن معالجة البيانات في منصة «أئمة» هو: {name}، {address}. للتواصل بخصوص بياناتك:": {
+  "en": "The controller responsible for data processing on the Aemmah platform is: {name}, {address}. For questions about your data:",
+  "fr": "Le responsable du traitement des données sur la plateforme Aemmah est : {name}, {address}. Pour toute question sur vos données :",
+  "de": "Verantwortlich für die Datenverarbeitung auf der Plattform Aemmah ist: {name}, {address}. Bei Fragen zu Ihren Daten:",
+  "tr": "Aemmah platformunda veri işlemeden sorumlu kişi/kurum: {name}, {address}. Verilerinizle ilgili sorular için:"
+ },
+ "2. البيانات التي نجمعها": {
+  "en": "2. Data we collect",
+  "fr": "2. Données collectées",
+  "de": "2. Welche Daten wir erheben",
+  "tr": "2. Topladığımız veriler"
+ },
+ "بيانات الحساب: الاسم، والبريد الإلكتروني أو رقم الهاتف المستعمل للدخول، والصورة الرمزية التي يرسلها جوجل عند الدخول به. كلمات المرور تحفظها خدمة Firebase Authentication مشفّرة، ولا نطّلع عليها.": {
+  "en": "Account data: name, the e-mail address or phone number used to sign in, and the avatar Google sends when you sign in with it. Passwords are stored encrypted by Firebase Authentication; we never see them.",
+  "fr": "Données du compte : nom, e-mail ou numéro de téléphone utilisé pour se connecter, et avatar transmis par Google lors d'une connexion avec Google. Les mots de passe sont stockés chiffrés par Firebase Authentication ; nous n'y avons pas accès.",
+  "de": "Kontodaten: Name, die zur Anmeldung verwendete E-Mail-Adresse oder Telefonnummer und das Profilbild, das Google bei der Anmeldung über Google übermittelt. Passwörter speichert Firebase Authentication verschlüsselt; wir sehen sie nicht.",
+  "tr": "Hesap verileri: ad, giriş için kullanılan e-posta veya telefon numarası ve Google ile girişte Google'ın gönderdiği profil resmi. Şifreler Firebase Authentication tarafından şifreli saklanır; onları göremeyiz."
+ },
+ "ملف الإمام: الاسم، العمر، البلد، المؤهلات، الرواية، اللغات، حالة التأشيرة، السيرة الذاتية، رابط التلاوة، وصورة اختيارية.": {
+  "en": "Imam profile: name, age, country, qualifications, riwaya, languages, visa status, CV, recitation link and an optional photo.",
+  "fr": "Profil d'imam : nom, âge, pays, qualifications, lecture, langues, situation de visa, CV, lien de récitation et photo facultative.",
+  "de": "Imam-Profil: Name, Alter, Land, Qualifikationen, Lesart, Sprachen, Visumstatus, Lebenslauf, Rezitationslink und ein optionales Foto.",
+  "tr": "İmam profili: ad, yaş, ülke, nitelikler, kıraat, diller, vize durumu, özgeçmiş, kıraat bağlantısı ve isteğe bağlı fotoğraf."
+ },
+ "بيانات التواصل: رقم الهاتف، الواتساب، البريد الإلكتروني.": {
+  "en": "Contact details: phone number, WhatsApp, e-mail.",
+  "fr": "Coordonnées : téléphone, WhatsApp, e-mail.",
+  "de": "Kontaktdaten: Telefonnummer, WhatsApp, E-Mail.",
+  "tr": "İletişim bilgileri: telefon numarası, WhatsApp, e-posta."
+ },
+ "وثائق اختيارية: نسخة التأشيرة/الإقامة والشواهد العلمية.": {
+  "en": "Optional documents: a copy of the visa/residence permit and certificates.",
+  "fr": "Documents facultatifs : copie du visa/titre de séjour et diplômes.",
+  "de": "Optionale Dokumente: Kopie von Visum/Aufenthaltstitel und Zeugnisse.",
+  "tr": "İsteğe bağlı belgeler: vize/oturum kopyası ve ilmî belgeler."
+ },
+ "إعلانات المساجد، طلبات الترشح، الرسائل داخل المنصة، والبلاغات.": {
+  "en": "Mosque ads, applications, messages within the platform, and reports.",
+  "fr": "Annonces des mosquées, candidatures, messages sur la plateforme et signalements.",
+  "de": "Moschee-Anzeigen, Bewerbungen, Nachrichten innerhalb der Plattform und Meldungen.",
+  "tr": "Cami ilanları, başvurular, platform içi mesajlar ve bildirimler."
+ },
+ "رسائل نموذج «راسل الإدارة» والاقتراحات: الاسم والبريد (اختياريان) ونص الرسالة، ولا تطّلع عليها إلا الإدارة.": {
+  "en": "Messages sent through the «Contact the team» form and suggestions: name and e-mail (both optional) and the message text, seen only by the team.",
+  "fr": "Messages du formulaire « Contacter l'équipe » et suggestions : nom et e-mail (facultatifs) et texte du message, consultés uniquement par l'équipe.",
+  "de": "Nachrichten über das Formular „Team kontaktieren“ und Vorschläge: Name und E-Mail (beide optional) sowie der Nachrichtentext; nur das Team sieht sie.",
+  "tr": "«Yönetime yazın» formu mesajları ve öneriler: ad ve e-posta (isteğe bağlı) ve mesaj metni; yalnızca yönetim görür."
+ },
+ "3. الغرض والأساس القانوني": {
+  "en": "3. Purpose and legal basis",
+  "fr": "3. Finalité et base juridique",
+  "de": "3. Zweck und Rechtsgrundlage",
+  "tr": "3. Amaç ve hukuki dayanak"
+ },
+ "نعالج البيانات فقط لغرض الربط بين الأئمة والمساجد وتشغيل المنصة، على أساس موافقتك (المادة 6(1)(أ) من اللائحة العامة لحماية البيانات GDPR) وتنفيذ خدمة المنصة التي طلبتها (المادة 6(1)(ب)). لا نبيع البيانات ولا نستخدمها للإعلانات.": {
+  "en": "We process data only to connect imams and mosques and to run the platform, on the basis of your consent (Art. 6(1)(a) GDPR) and to provide the platform service you requested (Art. 6(1)(b) GDPR). We do not sell data or use it for advertising.",
+  "fr": "Nous traitons les données uniquement pour mettre en relation imams et mosquées et faire fonctionner la plateforme, sur la base de votre consentement (art. 6, par. 1, point a du RGPD) et pour fournir le service que vous avez demandé (art. 6, par. 1, point b). Nous ne vendons pas les données et ne les utilisons pas à des fins publicitaires.",
+  "de": "Wir verarbeiten Daten nur, um Imame und Moscheen zu vermitteln und die Plattform zu betreiben, auf Grundlage Ihrer Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) und zur Erbringung des von Ihnen gewünschten Dienstes (Art. 6 Abs. 1 lit. b DSGVO). Wir verkaufen keine Daten und nutzen sie nicht für Werbung.",
+  "tr": "Verileri yalnızca imamlarla camileri buluşturmak ve platformu işletmek amacıyla, açık rızanıza (GDPR md. 6/1-a) ve talep ettiğiniz hizmetin sunulmasına (md. 6/1-b) dayanarak işleriz. Verileri satmayız ve reklam için kullanmayız."
+ },
+ "قد تراسلك إدارة المنصة على رقمك (عبر واتساب أو الهاتف) في ما يخص حسابك وملفك فقط: شكر، أو تذكير بتحديث الملف، أو تنبيه مهم. إن لم ترغب في ذلك فأخبرنا، فنتوقف عن مراسلتك.": {
+  "en": "The team may contact you on your number (via WhatsApp or phone) only about your account and profile: a thank-you, a reminder to update your profile, or an important notice. If you don't want this, tell us and we will stop.",
+  "fr": "L'équipe peut vous contacter sur votre numéro (WhatsApp ou téléphone) uniquement au sujet de votre compte et de votre profil : remerciement, rappel de mise à jour ou information importante. Si vous ne le souhaitez pas, dites-le-nous et nous arrêterons.",
+  "de": "Das Team kann Sie über Ihre Nummer (per WhatsApp oder Telefon) ausschließlich zu Ihrem Konto und Profil kontaktieren: ein Dank, eine Erinnerung zur Aktualisierung oder ein wichtiger Hinweis. Wenn Sie das nicht möchten, teilen Sie es uns mit, dann hören wir damit auf.",
+  "tr": "Yönetim size numaranız üzerinden (WhatsApp veya telefon) yalnızca hesabınız ve profilinizle ilgili ulaşabilir: teşekkür, profil güncelleme hatırlatması veya önemli bir duyuru. İstemiyorsanız bize bildirin, size yazmayı bırakırız."
+ },
+ "4. من يرى بياناتك": {
+  "en": "4. Who can see your data",
+  "fr": "4. Qui peut voir vos données",
+  "de": "4. Wer Ihre Daten sieht",
+  "tr": "4. Verilerinizi kimler görür"
+ },
+ "الملف العام للإمام (بدون أرقام التواصل) يظهر للجميع بعد موافقة الإدارة.": {
+  "en": "The imam's public profile (without contact numbers) is visible to everyone after approval by the team.",
+  "fr": "Le profil public de l'imam (sans coordonnées) est visible par tous après validation par l'équipe.",
+  "de": "Das öffentliche Imam-Profil (ohne Kontaktnummern) ist nach Freigabe durch das Team für alle sichtbar.",
+  "tr": "İmamın herkese açık profili (iletişim numaraları olmadan) yönetim onayından sonra herkese görünür."
+ },
+ "أرقام هاتف الإمام وبريده تظهر فقط لحسابات المساجد التي وثقتها الإدارة، وللإدارة.": {
+  "en": "The imam's phone numbers and e-mail are visible only to mosque accounts verified by the team, and to the team.",
+  "fr": "Les numéros et l'e-mail de l'imam ne sont visibles que par les comptes de mosquée vérifiés par l'équipe, et par l'équipe.",
+  "de": "Telefonnummern und E-Mail des Imams sehen nur vom Team geprüfte Moschee-Konten und das Team.",
+  "tr": "İmamın telefon numaraları ve e-postası yalnızca yönetimce doğrulanmış cami hesaplarına ve yönetime görünür."
+ },
+ "بيانات تواصل المساجد تظهر للمستخدمين المسجلين فقط.": {
+  "en": "Mosques' contact details are visible to registered users only.",
+  "fr": "Les coordonnées des mosquées ne sont visibles que par les utilisateurs inscrits.",
+  "de": "Kontaktdaten der Moscheen sind nur für registrierte Nutzer sichtbar.",
+  "tr": "Camilerin iletişim bilgileri yalnızca kayıtlı kullanıcılara görünür."
+ },
+ "الوثائق المرفوعة (التأشيرة والشواهد) لا يراها إلا صاحبها والإدارة.": {
+  "en": "Uploaded documents (visa and certificates) are seen only by their owner and the team.",
+  "fr": "Les documents envoyés (visa et diplômes) ne sont visibles que par leur propriétaire et l'équipe.",
+  "de": "Hochgeladene Dokumente (Visum und Zeugnisse) sehen nur der Inhaber und das Team.",
+  "tr": "Yüklenen belgeleri (vize ve belgeler) yalnızca sahibi ve yönetim görür."
+ },
+ "الرسائل لا يراها إلا المرسل والمستقبل.": {
+  "en": "Messages are seen only by the sender and the recipient.",
+  "fr": "Les messages ne sont visibles que par l'expéditeur et le destinataire.",
+  "de": "Nachrichten sehen nur Absender und Empfänger.",
+  "tr": "Mesajları yalnızca gönderen ve alıcı görür."
+ },
+ "5. مزودو الخدمة": {
+  "en": "5. Service providers",
+  "fr": "5. Prestataires",
+  "de": "5. Dienstleister",
+  "tr": "5. Hizmet sağlayıcılar"
+ },
+ "تُستضاف صفحات الموقع على GitHub Pages (شركة GitHub التابعة لـ Microsoft)، وقد يسجّل خادمها عنوان IP لأغراض الأمان والتشغيل. وتُحفظ بيانات المنصة لدى Google Firebase (شركة Google) كمعالج بيانات نيابة عنا. قد تُعالَج بعض البيانات خارج الاتحاد الأوروبي وفق البنود التعاقدية القياسية المعتمدة. تُعرض مقاطع التلاوة عبر YouTube عند فتح ملف الإمام.": {
+  "en": "The website is hosted on GitHub Pages (GitHub, a Microsoft company), whose server may log IP addresses for security and operation. Platform data is stored with Google Firebase (Google) as a data processor on our behalf. Some data may be processed outside the European Union under approved Standard Contractual Clauses. Recitation videos are shown via YouTube when an imam's profile is opened.",
+  "fr": "Le site est hébergé sur GitHub Pages (GitHub, filiale de Microsoft), dont le serveur peut enregistrer les adresses IP à des fins de sécurité et de fonctionnement. Les données de la plateforme sont stockées chez Google Firebase (Google) en tant que sous-traitant agissant pour notre compte. Certaines données peuvent être traitées hors de l'Union européenne sur la base des clauses contractuelles types approuvées. Les vidéos de récitation sont affichées via YouTube à l'ouverture du profil d'un imam.",
+  "de": "Die Website wird auf GitHub Pages (GitHub, ein Unternehmen von Microsoft) gehostet; deren Server kann IP-Adressen zu Sicherheits- und Betriebszwecken protokollieren. Die Plattformdaten werden bei Google Firebase (Google) als Auftragsverarbeiter in unserem Auftrag gespeichert. Einige Daten können auf Grundlage genehmigter Standardvertragsklauseln außerhalb der Europäischen Union verarbeitet werden. Rezitationsvideos werden beim Öffnen eines Imam-Profils über YouTube angezeigt.",
+  "tr": "Web sitesi GitHub Pages'te (Microsoft'a bağlı GitHub) barındırılır; sunucusu güvenlik ve işletim amacıyla IP adreslerini kaydedebilir. Platform verileri, adımıza veri işleyen olarak Google Firebase'de (Google) saklanır. Bazı veriler onaylı standart sözleşme maddelerine göre Avrupa Birliği dışında işlenebilir. Kıraat videoları, imam profili açıldığında YouTube üzerinden gösterilir."
+ },
+ "6. مدة الاحتفاظ": {
+  "en": "6. Retention period",
+  "fr": "6. Durée de conservation",
+  "de": "6. Speicherdauer",
+  "tr": "6. Saklama süresi"
+ },
+ "نحتفظ ببياناتك ما دام حسابك قائماً. عند طلب حذف حسابك يُخفى ملفك وإعلاناتك فوراً، ويبقى الحساب سبعة أيام يمكنك خلالها استرجاعه بتسجيل الدخول؛ ثم تُحذف نهائياً من قاعدة البيانات ملفاتك وإعلاناتك وطلبات الترشح (المرسلة والمستلمة) ورسائلك، وتُحذف الرسالة كذلك من صندوق الطرف الآخر. ويمكنك اختيار «احذفه الآن نهائياً» خلال هذه المدة فيتم الحذف فوراً. أما البلاغات التي أرسلتها فتحتفظ بها الإدارة للمدة اللازمة لمعالجتها فقط.": {
+  "en": "We keep your data as long as your account exists. When you ask to delete your account, your profile and ads are hidden at once and the account remains for seven days, during which you can restore it by signing in; then your profiles, ads, applications (sent and received) and messages are deleted permanently from the database, and the message is also removed from the other party's inbox. You can choose «Delete it permanently now» during this period to delete immediately. Reports you sent are kept by the team only as long as needed to handle them.",
+  "fr": "Nous conservons vos données tant que votre compte existe. Lorsque vous demandez la suppression de votre compte, votre profil et vos annonces sont masqués immédiatement et le compte est conservé sept jours, pendant lesquels vous pouvez le restaurer en vous connectant ; ensuite, vos profils, annonces, candidatures (envoyées et reçues) et messages sont définitivement supprimés de la base de données, y compris dans la messagerie de l'autre partie. Vous pouvez choisir « Le supprimer définitivement maintenant » pendant cette période pour une suppression immédiate. Les signalements que vous avez envoyés sont conservés par l'équipe uniquement le temps nécessaire à leur traitement.",
+  "de": "Wir speichern Ihre Daten, solange Ihr Konto besteht. Wenn Sie die Löschung Ihres Kontos beantragen, werden Profil und Anzeigen sofort ausgeblendet und das Konto bleibt sieben Tage bestehen; in dieser Zeit können Sie es durch Anmelden wiederherstellen. Danach werden Ihre Profile, Anzeigen, Bewerbungen (gesendet und empfangen) und Nachrichten endgültig aus der Datenbank gelöscht, auch aus dem Postfach der Gegenseite. Mit „Jetzt endgültig löschen“ können Sie die Löschung in dieser Zeit sofort durchführen. Von Ihnen gesendete Meldungen bewahrt das Team nur so lange auf, wie es für ihre Bearbeitung nötig ist.",
+  "tr": "Hesabınız var olduğu sürece verilerinizi saklarız. Hesabınızı silmeyi istediğinizde profiliniz ve ilanlarınız hemen gizlenir ve hesap yedi gün kalır; bu sürede giriş yaparak geri yükleyebilirsiniz. Ardından profilleriniz, ilanlarınız, başvurularınız (gönderilen ve alınan) ve mesajlarınız veritabanından kalıcı olarak silinir; mesaj karşı tarafın kutusundan da silinir. Bu süre içinde «Şimdi kalıcı olarak sil»i seçerek hemen silebilirsiniz. Gönderdiğiniz bildirimler yönetim tarafından yalnızca işlenmeleri için gereken süre boyunca saklanır."
+ },
+ "7. حقوقك": {
+  "en": "7. Your rights",
+  "fr": "7. Vos droits",
+  "de": "7. Ihre Rechte",
+  "tr": "7. Haklarınız"
+ },
+ "لك الحق في الاطلاع على بياناتك وتصحيحها وحذفها ونقلها، والاعتراض على معالجتها، وسحب موافقتك في أي وقت. يمكنك حذف حسابك بنفسك من قائمة الحساب ← «حذف حسابي وبياناتي» (نهائياً بعد سبعة أيام، أو فوراً إن اخترت ذلك)، أو مراسلتنا على البريد أعلاه. ولك الحق في تقديم شكوى لدى سلطة حماية البيانات في بلدك.": {
+  "en": "You have the right to access, rectify, erase and port your data, to object to its processing, and to withdraw your consent at any time. You can delete your account yourself from the account menu → «Delete my account and data» (permanently after seven days, or immediately if you choose), or by writing to the e-mail above. You also have the right to lodge a complaint with the data protection authority in your country.",
+  "fr": "Vous disposez d'un droit d'accès, de rectification, d'effacement et de portabilité de vos données, d'un droit d'opposition à leur traitement et du droit de retirer votre consentement à tout moment. Vous pouvez supprimer vous-même votre compte depuis le menu du compte → « Supprimer mon compte et mes données » (définitivement après sept jours, ou immédiatement si vous le choisissez), ou nous écrire à l'adresse ci-dessus. Vous pouvez également introduire une réclamation auprès de l'autorité de protection des données de votre pays.",
+  "de": "Sie haben das Recht auf Auskunft, Berichtigung, Löschung und Übertragbarkeit Ihrer Daten, auf Widerspruch gegen die Verarbeitung sowie auf jederzeitigen Widerruf Ihrer Einwilligung. Sie können Ihr Konto selbst über das Kontomenü → „Konto und Daten löschen“ löschen (endgültig nach sieben Tagen oder auf Wunsch sofort) oder uns an die obige E-Mail-Adresse schreiben. Außerdem haben Sie das Recht, sich bei der Datenschutzaufsichtsbehörde Ihres Landes zu beschweren.",
+  "tr": "Verilerinize erişme, düzeltme, silme ve taşıma, işlenmesine itiraz etme ve rızanızı istediğiniz zaman geri çekme hakkınız vardır. Hesabınızı hesap menüsünden → «Hesabımı ve verilerimi sil» ile kendiniz silebilirsiniz (yedi gün sonra kalıcı olarak ya da isterseniz hemen) veya yukarıdaki e-postaya yazabilirsiniz. Ayrıca ülkenizdeki veri koruma otoritesine şikâyette bulunma hakkınız vardır."
+ },
+ "8. ملفات تعريف الارتباط والتخزين المحلي": {
+  "en": "8. Cookies and local storage",
+  "fr": "8. Cookies et stockage local",
+  "de": "8. Cookies und lokale Speicherung",
+  "tr": "8. Çerezler ve yerel depolama"
+ },
+ "تستخدم المنصة التخزين الضروري لتسجيل الدخول (Firebase Authentication) ولحفظ اختيارك بخصوص الإحصاء. لا نستخدم ملفات تعريف ارتباط إعلانية ولا أدوات تتبع من أطراف ثالثة ولا «بصمة المتصفح».": {
+  "en": "The platform uses only the storage needed for sign-in (Firebase Authentication) and to remember your choice about statistics. We use no advertising cookies, no third-party trackers and no browser fingerprinting.",
+  "fr": "La plateforme n'utilise que le stockage nécessaire à la connexion (Firebase Authentication) et à la mémorisation de votre choix concernant les statistiques. Nous n'utilisons ni cookies publicitaires, ni traceurs tiers, ni empreinte du navigateur.",
+  "de": "Die Plattform nutzt nur die für die Anmeldung (Firebase Authentication) und für Ihre Statistik-Entscheidung notwendige Speicherung. Wir verwenden keine Werbe-Cookies, keine Tracker Dritter und kein Browser-Fingerprinting.",
+  "tr": "Platform yalnızca giriş (Firebase Authentication) ve istatistik tercihinizi hatırlamak için gerekli depolamayı kullanır. Reklam çerezi, üçüncü taraf izleyici veya tarayıcı parmak izi kullanmayız."
+ },
+ "9. إحصاء الزيارات": {
+  "en": "9. Visit statistics",
+  "fr": "9. Statistiques de visites",
+  "de": "9. Besuchsstatistik",
+  "tr": "9. Ziyaret istatistikleri"
+ },
+ "لمعرفة عدد زوار المنصة نسجّل عند كل فتحة جديدة للموقع سجلاً مجهولاً لا يحتوي إلا على وقت الزيارة (لا عنوان IP، ولا اسم، ولا معرّف للجهاز). لا يُحتسب تحديث الصفحة. لا يطّلع على هذه الأرقام إلا مدير المنصة (المادة 6/1/و من اللائحة العامة لحماية البيانات: مصلحة مشروعة في معرفة مدى استعمال المنصة).": {
+  "en": "To know how many people visit the platform, each new opening of the site creates an anonymous record containing only the time of the visit (no IP address, no name, no device identifier). Page reloads are not counted. Only the platform administrator sees these figures (Art. 6(1)(f) GDPR: legitimate interest in knowing how much the platform is used).",
+  "fr": "Pour connaître la fréquentation, chaque nouvelle ouverture du site crée un enregistrement anonyme contenant uniquement l'heure de la visite (ni adresse IP, ni nom, ni identifiant d'appareil). Les actualisations de page ne sont pas comptées. Seul l'administrateur de la plateforme voit ces chiffres (art. 6, par. 1, point f du RGPD : intérêt légitime à connaître l'utilisation de la plateforme).",
+  "de": "Um die Nutzung zu kennen, wird bei jedem neuen Öffnen der Website ein anonymer Eintrag erstellt, der nur die Uhrzeit des Besuchs enthält (keine IP-Adresse, kein Name, keine Gerätekennung). Neuladen der Seite wird nicht gezählt. Nur der Plattformbetreiber sieht diese Zahlen (Art. 6 Abs. 1 lit. f DSGVO: berechtigtes Interesse an der Kenntnis der Nutzung der Plattform).",
+  "tr": "Platformu kaç kişinin ziyaret ettiğini bilmek için sitenin her yeni açılışında yalnızca ziyaret zamanını içeren anonim bir kayıt oluşturulur (IP adresi, ad veya cihaz kimliği yok). Sayfa yenilemeleri sayılmaz. Bu rakamları yalnızca platform yöneticisi görür (GDPR md. 6/1-f: platformun ne kadar kullanıldığını bilmeye yönelik meşru menfaat)."
+ },
+ "بموافقتك فقط (المادة 25 من قانون TDDDG الألماني) نحفظ في متصفحك رقماً عشوائياً لا يدل عليك، لنعرف عدد الزوار المميزين تقريبياً. يمكنك سحب الموافقة في أي وقت بالزر أدناه، فيُحذف الرقم من متصفحك.": {
+  "en": "Only with your consent (§ 25 of the German TDDDG) do we store a random number in your browser that does not identify you, to estimate the number of unique visitors. You can withdraw your consent at any time with the button below, and the number will be deleted from your browser.",
+  "fr": "Uniquement avec votre consentement (§ 25 de la loi allemande TDDDG), nous enregistrons dans votre navigateur un nombre aléatoire qui ne vous identifie pas, afin d'estimer le nombre de visiteurs uniques. Vous pouvez retirer votre consentement à tout moment avec le bouton ci-dessous ; le nombre sera alors supprimé de votre navigateur.",
+  "de": "Nur mit Ihrer Einwilligung (§ 25 TDDDG) speichern wir in Ihrem Browser eine Zufallszahl, die Sie nicht identifiziert, um die Zahl der einzelnen Besucher ungefähr zu ermitteln. Sie können die Einwilligung jederzeit mit dem Knopf unten widerrufen; die Zahl wird dann aus Ihrem Browser gelöscht.",
+  "tr": "Yalnızca rızanızla (Alman TDDDG § 25) tekil ziyaretçi sayısını tahmin etmek için tarayıcınızda sizi tanımlamayan rastgele bir sayı saklarız. Rızanızı istediğiniz zaman aşağıdaki düğmeyle geri çekebilirsiniz; sayı tarayıcınızdan silinir."
+ },
+ "سحب الموافقة على إحصاء الزوار المميزين": {
+  "en": "Withdraw consent to counting unique visitors",
+  "fr": "Retirer le consentement au comptage des visiteurs uniques",
+  "de": "Einwilligung zur Zählung einzelner Besucher widerrufen",
+  "tr": "Tekil ziyaretçi sayımına rızayı geri çek"
+ },
+ "الموافقة على إحصاء الزوار المميزين": {
+  "en": "Consent to counting unique visitors",
+  "fr": "Consentir au comptage des visiteurs uniques",
+  "de": "In die Zählung einzelner Besucher einwilligen",
+  "tr": "Tekil ziyaretçi sayımına rıza ver"
+ },
+ "صاحب الحساب": {
+  "en": "Account holder",
+  "fr": "Titulaire du compte",
+  "de": "Kontoinhaber",
+  "tr": "Hesap sahibi"
+ },
+ "البنك": {
+  "en": "Bank",
+  "fr": "Banque",
+  "de": "Bank",
+  "tr": "Banka"
+ },
+ "سبب التحويل": {
+  "en": "Payment reference",
+  "fr": "Motif du virement",
+  "de": "Verwendungszweck",
+  "tr": "Ödeme açıklaması"
+ },
+ "ادعم منصة أئمة": {
+  "en": "Support Aemmah",
+  "fr": "Soutenir Aemmah",
+  "de": "Aemmah unterstützen",
+  "tr": "Aemmah'yı destekleyin"
+ },
+ "المنصة مجانية للأئمة والمساجد. الدعم اختياري تماماً، ويساعد على تغطية تكاليف التشغيل والتطوير. جزاكم الله خيراً.": {
+  "en": "The platform is free for imams and mosques. Support is entirely optional and helps cover running and development costs. May Allah reward you.",
+  "fr": "La plateforme est gratuite pour les imams et les mosquées. Le soutien est entièrement facultatif et aide à couvrir les frais de fonctionnement et de développement. Qu'Allah vous récompense.",
+  "de": "Die Plattform ist für Imame und Moscheen kostenlos. Unterstützung ist völlig freiwillig und hilft, Betriebs- und Entwicklungskosten zu decken. Möge Allah Sie belohnen.",
+  "tr": "Platform imamlar ve camiler için ücretsizdir. Destek tamamen isteğe bağlıdır ve işletme ile geliştirme masraflarını karşılamaya yardımcı olur. Allah razı olsun."
+ },
+ "التحويل البنكي": {
+  "en": "Bank transfer",
+  "fr": "Virement bancaire",
+  "de": "Banküberweisung",
+  "tr": "Banka havalesi"
+ },
+ "نسخ {x}": {
+  "en": "Copy {x}",
+  "fr": "Copier {x}",
+  "de": "{x} kopieren",
+  "tr": "{x} kopyala"
+ },
+ "الدعم عبر PayPal": {
+  "en": "Support via PayPal",
+  "fr": "Soutenir via PayPal",
+  "de": "Über PayPal unterstützen",
+  "tr": "PayPal ile destekle"
+ },
+ "1. عن المنصة": {
+  "en": "1. About the platform",
+  "fr": "1. À propos de la plateforme",
+  "de": "1. Über die Plattform",
+  "tr": "1. Platform hakkında"
+ },
+ "منصة أئمة بوابة للتواصل والربط بين الأئمة والقرّاء والمساجد والجمعيات. توضّح هذه الشروط قواعد استخدام المنصة وخدماتها.": {
+  "en": "Aemmah is a gateway for contact between imams, reciters, mosques and associations. These terms set out the rules for using the platform and its services.",
+  "fr": "Aemmah est un espace de mise en relation entre imams, récitants, mosquées et associations. Les présentes conditions fixent les règles d'utilisation de la plateforme et de ses services.",
+  "de": "Aemmah ist ein Portal zur Vermittlung zwischen Imamen, Rezitatoren, Moscheen und Vereinen. Diese Bedingungen regeln die Nutzung der Plattform und ihrer Dienste.",
+  "tr": "Aemmah; imamlar, kurralar, camiler ve dernekler arasında iletişim ve buluşma kapısıdır. Bu koşullar platformun ve hizmetlerinin kullanım kurallarını belirler."
+ },
+ "2. الحساب والبيانات": {
+  "en": "2. Account and data",
+  "fr": "2. Compte et données",
+  "de": "2. Konto und Daten",
+  "tr": "2. Hesap ve veriler"
+ },
+ "يرجى تقديم معلومات صحيحة وتحديثها عند الحاجة، واستخدام الحساب المناسب لصفتك، والمحافظة على أمان وسيلة الدخول. لا يجوز انتحال شخصية شخص أو جهة أخرى.": {
+  "en": "Please provide accurate information and keep it up to date, use the account type that matches your role, and keep your sign-in method secure. Impersonating another person or organisation is not allowed.",
+  "fr": "Veuillez fournir des informations exactes et les tenir à jour, utiliser le type de compte correspondant à votre rôle et protéger votre moyen de connexion. Il est interdit de se faire passer pour une autre personne ou organisation.",
+  "de": "Bitte machen Sie zutreffende Angaben und halten Sie sie aktuell, nutzen Sie die zu Ihrer Rolle passende Kontoart und schützen Sie Ihre Anmeldedaten. Es ist nicht erlaubt, sich als eine andere Person oder Organisation auszugeben.",
+  "tr": "Lütfen doğru bilgi verin ve güncel tutun, rolünüze uygun hesap türünü kullanın ve giriş yönteminizin güvenliğini koruyun. Başka bir kişi veya kurum adına hareket etmek yasaktır."
+ },
+ "3. الاستخدام المقبول": {
+  "en": "3. Acceptable use",
+  "fr": "3. Utilisation acceptable",
+  "de": "3. Zulässige Nutzung",
+  "tr": "3. Kabul edilebilir kullanım"
+ },
+ "يجب احترام المستخدمين والقوانين المعمول بها. لا يجوز نشر محتوى مخالف للقانون أو مضلل أو مسيء، أو إرسال رسائل مزعجة، أو محاولة الوصول غير المصرّح به إلى حسابات الآخرين أو بياناتهم.": {
+  "en": "Users and applicable laws must be respected. It is not allowed to publish unlawful, misleading or offensive content, to send spam, or to attempt unauthorised access to other people's accounts or data.",
+  "fr": "Les utilisateurs et les lois applicables doivent être respectés. Il est interdit de publier des contenus illégaux, trompeurs ou offensants, d'envoyer des messages indésirables ou de tenter d'accéder sans autorisation aux comptes ou données d'autrui.",
+  "de": "Nutzer und geltende Gesetze sind zu respektieren. Untersagt sind rechtswidrige, irreführende oder beleidigende Inhalte, Spam sowie Versuche, unbefugt auf Konten oder Daten anderer zuzugreifen.",
+  "tr": "Kullanıcılara ve yürürlükteki yasalara saygı gösterilmelidir. Hukuka aykırı, yanıltıcı veya saldırgan içerik paylaşmak, istenmeyen mesaj göndermek ya da başkalarının hesaplarına veya verilerine yetkisiz erişmeye çalışmak yasaktır."
+ },
+ "لا تستخدم بيانات التواصل التي تصل إليها إلا للغرض الذي أتيحت من أجله، ولا تنشر معلومات أو وثائق تخص آخرين دون إذن مناسب.": {
+  "en": "Use the contact details you obtain only for the purpose for which they were made available, and do not publish information or documents concerning others without appropriate permission.",
+  "fr": "N'utilisez les coordonnées obtenues que dans le but pour lequel elles ont été mises à disposition, et ne publiez pas d'informations ou de documents concernant autrui sans autorisation appropriée.",
+  "de": "Nutzen Sie erhaltene Kontaktdaten nur für den Zweck, für den sie bereitgestellt wurden, und veröffentlichen Sie keine Informationen oder Dokumente über andere ohne entsprechende Erlaubnis.",
+  "tr": "Eriştiğiniz iletişim bilgilerini yalnızca sağlandıkları amaç için kullanın ve başkalarına ait bilgi veya belgeleri uygun izin olmadan yayınlamayın."
+ },
+ "4. المحتوى والمراجعة": {
+  "en": "4. Content and review",
+  "fr": "4. Contenu et vérification",
+  "de": "4. Inhalte und Prüfung",
+  "tr": "4. İçerik ve inceleme"
+ },
+ "أنت مسؤول عن المعلومات والملفات والرسائل التي ترسلها، وعن امتلاك الحق في مشاركتها. قد تراجع الإدارة الملفات والإعلانات والبلاغات، وقد ترفض المحتوى المخالف أو تزيله أو تتخذ إجراءً مناسباً لحماية المنصة ومستخدميها.": {
+  "en": "You are responsible for the information, files and messages you send, and for having the right to share them. The team may review profiles, ads and reports, and may refuse or remove infringing content or take appropriate action to protect the platform and its users.",
+  "fr": "Vous êtes responsable des informations, fichiers et messages que vous envoyez et de disposer du droit de les partager. L'équipe peut vérifier les profils, annonces et signalements, refuser ou retirer un contenu contraire aux règles, ou prendre toute mesure appropriée pour protéger la plateforme et ses utilisateurs.",
+  "de": "Sie sind für die von Ihnen gesendeten Informationen, Dateien und Nachrichten verantwortlich und dafür, sie teilen zu dürfen. Das Team kann Profile, Anzeigen und Meldungen prüfen, unzulässige Inhalte ablehnen oder entfernen oder geeignete Maßnahmen zum Schutz der Plattform und ihrer Nutzer ergreifen.",
+  "tr": "Gönderdiğiniz bilgi, dosya ve mesajlardan ve bunları paylaşma hakkına sahip olmaktan siz sorumlusunuz. Yönetim profilleri, ilanları ve bildirimleri inceleyebilir; kurallara aykırı içeriği reddedebilir, kaldırabilir veya platformu ve kullanıcılarını korumak için uygun önlemi alabilir."
+ },
+ "5. التواصل والاتفاقات": {
+  "en": "5. Contact and agreements",
+  "fr": "5. Mises en relation et accords",
+  "de": "5. Kontakte und Vereinbarungen",
+  "tr": "5. İletişim ve anlaşmalar"
+ },
+ "المنصة ليست وكالة توظيف أو جهة للهجرة، ولا تصدر التأشيرات أو تتولى إجراءاتها، ولا تضمن الحصول على فرصة أو عقد أو تأشيرة. تقع مسؤولية التحقق من المعلومات والاتفاقات والمتطلبات والإجراءات الرسمية على الأطراف المعنية.": {
+  "en": "The platform is not a recruitment agency or an immigration service; it does not issue visas or handle their procedures, and does not guarantee any opportunity, contract or visa. Verifying information, agreements, requirements and official procedures is the responsibility of the parties involved.",
+  "fr": "La plateforme n'est ni une agence de recrutement ni un service d'immigration ; elle ne délivre pas de visas, ne s'occupe pas des démarches et ne garantit aucune opportunité, aucun contrat ni aucun visa. La vérification des informations, accords, exigences et démarches officielles incombe aux parties concernées.",
+  "de": "Die Plattform ist weder eine Arbeitsvermittlung noch eine Einwanderungsbehörde; sie stellt keine Visa aus, übernimmt keine Verfahren und garantiert weder eine Stelle noch einen Vertrag oder ein Visum. Die Prüfung von Informationen, Vereinbarungen, Anforderungen und behördlichen Verfahren liegt bei den Beteiligten.",
+  "tr": "Platform bir iş bulma ajansı veya göç kurumu değildir; vize vermez, işlemlerini yürütmez ve bir fırsat, sözleşme veya vize garantisi vermez. Bilgilerin, anlaşmaların, şartların ve resmî işlemlerin kontrolü ilgili tarafların sorumluluğundadır."
+ },
+ "6. الخصوصية وحذف الحساب": {
+  "en": "6. Privacy and account deletion",
+  "fr": "6. Confidentialité et suppression du compte",
+  "de": "6. Datenschutz und Kontolöschung",
+  "tr": "6. Gizlilik ve hesap silme"
+ },
+ "توضّح كيفية التعامل مع البيانات وخياراتك بشأنها.": {
+  "en": "explains how data is handled and your choices about it.",
+  "fr": "explique comment les données sont traitées et vos choix à leur sujet.",
+  "de": "erläutert, wie mit Daten umgegangen wird und welche Wahlmöglichkeiten Sie haben.",
+  "tr": "verilerin nasıl işlendiğini ve bu konudaki seçeneklerinizi açıklar."
+ },
+ "يمكنك طلب حذف حسابك وبياناتك من قائمة الحساب أو التواصل مع الإدارة. يُخفى الحساب فوراً ويُحذف نهائياً بعد سبعة أيام، ويمكنك استرجاعه قبل ذلك بتسجيل الدخول.": {
+  "en": "You can ask to delete your account and data from the account menu or by contacting the team. The account is hidden at once and deleted permanently after seven days; you can restore it before then by signing in.",
+  "fr": "Vous pouvez demander la suppression de votre compte et de vos données depuis le menu du compte ou en contactant l'équipe. Le compte est masqué immédiatement et définitivement supprimé après sept jours ; vous pouvez le restaurer d'ici là en vous connectant.",
+  "de": "Sie können die Löschung Ihres Kontos und Ihrer Daten über das Kontomenü oder beim Team beantragen. Das Konto wird sofort ausgeblendet und nach sieben Tagen endgültig gelöscht; bis dahin können Sie es durch Anmelden wiederherstellen.",
+  "tr": "Hesabınızın ve verilerinizin silinmesini hesap menüsünden veya yönetimle iletişime geçerek isteyebilirsiniz. Hesap hemen gizlenir ve yedi gün sonra kalıcı olarak silinir; o zamana kadar giriş yaparak geri yükleyebilirsiniz."
+ },
+ "7. توفر الخدمة والتغييرات": {
+  "en": "7. Service availability and changes",
+  "fr": "7. Disponibilité du service et modifications",
+  "de": "7. Verfügbarkeit und Änderungen",
+  "tr": "7. Hizmetin sürekliliği ve değişiklikler"
+ },
+ "قد تتغير المنصة أو تتوقف بعض خدماتها مؤقتاً للصيانة أو لأسباب خارجة عن السيطرة. قد تُحدّث هذه الشروط عند الحاجة، ويُعرض تاريخ آخر تحديث في أعلى الصفحة، مع مراعاة أي إشعار تقتضيه القوانين المعمول بها.": {
+  "en": "The platform may change, or some services may be temporarily unavailable for maintenance or reasons beyond our control. These terms may be updated when needed; the date of the last update is shown at the top of the page, subject to any notice required by applicable law.",
+  "fr": "La plateforme peut évoluer ou certains services peuvent être temporairement indisponibles pour maintenance ou pour des raisons indépendantes de notre volonté. Ces conditions peuvent être mises à jour au besoin ; la date de dernière mise à jour figure en haut de la page, sous réserve de toute notification exigée par la loi.",
+  "de": "Die Plattform kann sich ändern oder einzelne Dienste können wegen Wartung oder aus Gründen außerhalb unseres Einflusses vorübergehend nicht verfügbar sein. Diese Bedingungen können bei Bedarf aktualisiert werden; das Datum der letzten Änderung steht oben auf der Seite, vorbehaltlich gesetzlich vorgeschriebener Mitteilungen.",
+  "tr": "Platform değişebilir veya bazı hizmetler bakım ya da kontrolümüz dışındaki nedenlerle geçici olarak durabilir. Bu koşullar gerektiğinde güncellenebilir; son güncelleme tarihi sayfanın üstünde gösterilir ve yürürlükteki yasaların gerektirdiği bildirimler saklıdır."
+ },
+ "8. التواصل": {
+  "en": "8. Contact",
+  "fr": "8. Contact",
+  "de": "8. Kontakt",
+  "tr": "8. İletişim"
+ },
+ "للاستفسارات أو الإبلاغ عن مشكلة، استخدم صفحة": {
+  "en": "For questions or to report a problem, use the page",
+  "fr": "Pour toute question ou pour signaler un problème, utilisez la page",
+  "de": "Für Fragen oder um ein Problem zu melden, nutzen Sie die Seite",
+  "tr": "Sorular veya bir sorunu bildirmek için şu sayfayı kullanın:"
+ },
+ "أو البريد الإلكتروني:": {
+  "en": "or e-mail:",
+  "fr": "ou l'e-mail :",
+  "de": "oder die E-Mail-Adresse:",
+  "tr": "ya da e-posta:"
+ },
+ "رسالة إلى الإدارة": {
+  "en": "Message to the team",
+  "fr": "Message à l'équipe",
+  "de": "Nachricht an das Team",
+  "tr": "Yönetime mesaj"
+ },
+ "اقتراح لتحسين المنصة": {
+  "en": "Suggestion to improve the platform",
+  "fr": "Suggestion d'amélioration",
+  "de": "Verbesserungsvorschlag",
+  "tr": "Platformu geliştirme önerisi"
+ },
+ "الإبلاغ عن مشكلة تقنية": {
+  "en": "Report a technical problem",
+  "fr": "Signaler un problème technique",
+  "de": "Technisches Problem melden",
+  "tr": "Teknik sorun bildir"
+ },
+ "[اسم المسؤول عن المنصة أو الجمعية]": {
+  "en": "[Name of the person or association responsible for the platform]",
+  "fr": "[Nom du responsable de la plateforme ou de l'association]",
+  "de": "[Name der verantwortlichen Person oder des Vereins]",
+  "tr": "[Platformdan sorumlu kişi veya derneğin adı]"
+ },
+ "[العنوان البريدي الكامل]": {
+  "en": "[Full postal address]",
+  "fr": "[Adresse postale complète]",
+  "de": "[Vollständige Postanschrift]",
+  "tr": "[Tam posta adresi]"
  }
 };
