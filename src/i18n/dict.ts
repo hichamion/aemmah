@@ -6831,5 +6831,47 @@ export const DICT: Record<string, Entry> = {
   "fr": "[Adresse postale complète]",
   "de": "[Vollständige Postanschrift]",
   "tr": "[Tam posta adresi]"
+ },
+ "أرسلنا رسالة التأكيد من جديد إلى {email}.": {
+  "en": "We sent the confirmation e-mail again to {email}.",
+  "fr": "Nous avons renvoyé l'e-mail de confirmation à {email}.",
+  "de": "Wir haben die Bestätigungs-E-Mail erneut an {email} gesendet.",
+  "tr": "Doğrulama e-postasını {email} adresine yeniden gönderdik."
+ },
+ "لم يُؤكَّد البريد بعد. افتح رابط التأكيد في الرسالة ثم أعد المحاولة.": {
+  "en": "The e-mail is not confirmed yet. Open the confirmation link in the message, then try again.",
+  "fr": "L'e-mail n'est pas encore confirmé. Ouvrez le lien de confirmation dans le message, puis réessayez.",
+  "de": "Die E-Mail ist noch nicht bestätigt. Öffnen Sie den Bestätigungslink in der Nachricht und versuchen Sie es erneut.",
+  "tr": "E-posta henüz doğrulanmadı. Mesajdaki doğrulama bağlantısını açıp tekrar deneyin."
+ },
+ "أكِّد بريد الإدارة": {
+  "en": "Confirm the admin e-mail",
+  "fr": "Confirmez l'e-mail d'administration",
+  "de": "Admin-E-Mail bestätigen",
+  "tr": "Yönetim e-postasını doğrulayın"
+ },
+ "هذا حساب الإدارة ({email}). يصبح حساب مدير بعد تأكيد البريد: افتح الرسالة التي أرسلناها إلى هذا البريد واضغط رابط التأكيد (تفقّد أيضاً البريد غير المرغوب فيه)، ثم اضغط «أكّدتُ بريدي».": {
+  "en": "This is the admin account ({email}). It becomes an administrator once the e-mail is confirmed: open the message we sent to this address and click the confirmation link (also check the spam folder), then press «I confirmed my e-mail».",
+  "fr": "Ceci est le compte d'administration ({email}). Il devient administrateur une fois l'e-mail confirmé : ouvrez le message envoyé à cette adresse et cliquez sur le lien de confirmation (vérifiez aussi les spams), puis appuyez sur « J'ai confirmé mon e-mail ».",
+  "de": "Dies ist das Admin-Konto ({email}). Es wird zum Administrator, sobald die E-Mail bestätigt ist: Öffnen Sie die an diese Adresse gesendete Nachricht und klicken Sie auf den Bestätigungslink (auch im Spam-Ordner nachsehen), dann tippen Sie auf „Ich habe meine E-Mail bestätigt“.",
+  "tr": "Bu yönetim hesabıdır ({email}). E-posta doğrulandığında yönetici olur: bu adrese gönderdiğimiz mesajı açıp doğrulama bağlantısına tıklayın (gereksiz klasörüne de bakın), ardından «E-postamı doğruladım»a basın."
+ },
+ "أكّدتُ بريدي": {
+  "en": "I confirmed my e-mail",
+  "fr": "J'ai confirmé mon e-mail",
+  "de": "Ich habe meine E-Mail bestätigt",
+  "tr": "E-postamı doğruladım"
+ },
+ "إرسال رسالة التأكيد من جديد": {
+  "en": "Send the confirmation e-mail again",
+  "fr": "Renvoyer l'e-mail de confirmation",
+  "de": "Bestätigungs-E-Mail erneut senden",
+  "tr": "Doğrulama e-postasını yeniden gönder"
+ },
+ "تسجيل الخروج": {
+  "en": "Sign out",
+  "fr": "Se déconnecter",
+  "de": "Abmelden",
+  "tr": "Çıkış yap"
  }
 };

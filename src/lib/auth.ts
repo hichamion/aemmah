@@ -20,6 +20,7 @@ import { auth, db, facebookProvider, googleProvider } from '../firebase';
 import { UserProfile, UserRole } from '../types';
 import { clearContactCache } from './db';
 import { ADMIN_EMAIL } from '../config';
+import { currentLang } from '../i18n';
 import { t } from '../i18n';
 
 export interface AuthState {
@@ -144,7 +145,7 @@ export async function signInWithEmail(email: string, password: string) {
 /** Creates the account and sends a verification e-mail (the account works right away). */
 export async function signUpWithEmail(email: string, password: string) {
   const cred = await createUserWithEmailAndPassword(auth, email.trim(), password);
-  auth.languageCode = 'ar';
+  auth.languageCode = currentLang();
   await sendEmailVerification(cred.user).catch(() => {});
   return cred;
 }
@@ -204,4 +205,20 @@ export async function reauthenticate() {
   }
   const isFacebook = providers.some((p) => p.includes('facebook'));
   await reauthenticateWithPopup(user, isFacebook ? facebookProvider : googleProvider);
+}
+
+/** Sends the confirmation e-mail again to the signed-in user. */
+export async function resendVerificationEmail() {
+  const u = auth.currentUser;
+  if (!u) return;
+  auth.languageCode = currentLang();
+  await sendEmailVerification(u);
+}
+
+/** Reloads the signed-in user and tells whether the e-mail address is confirmed now. */
+export async function isEmailConfirmedNow(): Promise<boolean> {
+  const u = auth.currentUser;
+  if (!u) return false;
+  await u.reload();
+  return !!auth.currentUser?.emailVerified;
 }

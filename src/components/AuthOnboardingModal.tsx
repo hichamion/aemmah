@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { MosqueIcon } from './MosqueIcon';
 import type { User } from 'firebase/auth';
-import { X, CheckCircle2, Lock, ArrowLeft, Loader2 } from 'lucide-react';
+import { X, CheckCircle2, Lock, ArrowLeft, Loader2, MailCheck, ShieldCheck } from 'lucide-react';
 import { createUserProfile, nowIso } from '../lib/db';
-import { signInWith, signOutUser } from '../lib/auth';
+import { isEmailConfirmedNow, resendVerificationEmail, signInWith, signOutUser } from '../lib/auth';
 import { DEFAULT_IMAM_SILHOUETTE_AVATAR } from '../utils/helpers';
 import { LogoMark } from './Logo';
 import { useDialog } from '../lib/useDialog';
 import { EmailPhoneAuth } from './EmailPhoneAuth';
-import { AUTH_METHODS } from '../config';
+import { ADMIN_EMAIL, AUTH_METHODS } from '../config';
 import { t } from '../i18n';
 
 interface AuthOnboardingModalProps {
@@ -53,6 +53,19 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
   if (!isOpen) return null;
 
   const step: 'login' | 'choose_role' = needsOnboarding && firebaseUser ? 'choose_role' : 'login';
+
+  // The admin mailbox becomes admin once its address is confirmed: never offer it «imam / mosque».
+  if (step === 'choose_role' && (firebaseUser?.email || '').trim().toLowerCase() === ADMIN_EMAIL) {
+    return (
+      <AdminConfirmEmail
+        email={firebaseUser?.email || ''}
+        dialogRef={dialogRef}
+        onError={onError}
+        onInfo={onInfo}
+        onSignOut={handleCancelOnboardingStatic(onClose)}
+      />
+    );
+  }
 
   const handleSocialLogin = async (providerType: 'google' | 'facebook') => {
     setLoading(true);
@@ -321,6 +334,64 @@ export const AuthOnboardingModal: React.FC<AuthOnboardingModalProps> = ({
               </div>
             </form>
           )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const handleCancelOnboardingStatic = (onClose: () => void) => async () => {
+  await signOutUser().catch(() => {});
+  onClose();
+};
+
+/** Shown to admin@… while its e-mail address is not confirmed yet. */
+const AdminConfirmEmail: React.FC<{
+  email: string;
+  dialogRef: React.Ref<HTMLDivElement>;
+  onError: (err: unknown) => void;
+  onInfo: (msg: string) => void;
+  onSignOut: () => void;
+}> = ({ email, dialogRef, onError, onInfo, onSignOut }) => {
+  const [busy, setBusy] = useState<'' | 'send' | 'check'>('');
+  const run = async (kind: 'send' | 'check') => {
+    setBusy(kind);
+    try {
+      if (kind === 'send') {
+        await resendVerificationEmail();
+        onInfo(t('أرسلنا رسالة التأكيد من جديد إلى {email}.', { email }));
+      } else if (await isEmailConfirmedNow()) {
+        window.location.reload();
+      } else {
+        onInfo(t('لم يُؤكَّد البريد بعد. افتح رابط التأكيد في الرسالة ثم أعد المحاولة.'));
+      }
+    } catch (err) {
+      onError(err);
+    } finally {
+      setBusy('');
+    }
+  };
+  return (
+    <div className="fixed inset-0 bg-black/75 backdrop-blur-xs flex items-start sm:items-center justify-center z-50 p-3 sm:p-4 pt-[max(1rem,env(safe-area-inset-top))] overflow-y-auto"
+      role="dialog" ref={dialogRef} tabIndex={-1} aria-modal="true" aria-labelledby="admin-confirm-title">
+      <div className="keep-light bg-white text-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-7 shadow-2xl space-y-4 my-6">
+        <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto">
+          <ShieldCheck className="w-7 h-7" />
+        </div>
+        <h2 id="admin-confirm-title" className="text-xl font-black text-center text-slate-900">{t('أكِّد بريد الإدارة')}</h2>
+        <p className="text-sm leading-relaxed text-center text-slate-600">
+          {t('هذا حساب الإدارة ({email}). يصبح حساب مدير بعد تأكيد البريد: افتح الرسالة التي أرسلناها إلى هذا البريد واضغط رابط التأكيد (تفقّد أيضاً البريد غير المرغوب فيه)، ثم اضغط «أكّدتُ بريدي».', { email })}
+        </p>
+        <div className="space-y-2 pt-1">
+          <button type="button" onClick={() => run('check')} disabled={!!busy}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-black cursor-pointer disabled:opacity-60">
+            {busy === 'check' ? <Loader2 className="w-5 h-5 animate-spin" /> : <CheckCircle2 className="w-5 h-5" />} {t('أكّدتُ بريدي')}
+          </button>
+          <button type="button" onClick={() => run('send')} disabled={!!busy}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl border border-emerald-700 text-emerald-800 font-black cursor-pointer disabled:opacity-60">
+            {busy === 'send' ? <Loader2 className="w-5 h-5 animate-spin" /> : <MailCheck className="w-5 h-5" />} {t('إرسال رسالة التأكيد من جديد')}
+          </button>
+          <button type="button" onClick={onSignOut} className="w-full py-2.5 text-sm font-bold text-slate-500 cursor-pointer">{t('تسجيل الخروج')}</button>
         </div>
       </div>
     </div>
