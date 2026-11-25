@@ -6873,5 +6873,77 @@ export const DICT: Record<string, Entry> = {
   "fr": "Se déconnecter",
   "de": "Abmelden",
   "tr": "Çıkış yap"
+ },
+ "الدولة (المفتاح الدولي)": {
+  "en": "Country (dialling code)",
+  "fr": "Pays (indicatif)",
+  "de": "Land (Vorwahl)",
+  "tr": "Ülke (alan kodu)"
+ },
+ "اختر دولة رقم الهاتف (المفتاح الدولي) ثم اكتب رقمك دون الصفر في أوله.": {
+  "en": "Choose the country of your phone number (dialling code), then type your number without the leading zero.",
+  "fr": "Choisissez le pays de votre numéro (indicatif), puis saisissez votre numéro sans le zéro initial.",
+  "de": "Wählen Sie das Land Ihrer Telefonnummer (Vorwahl) und geben Sie dann Ihre Nummer ohne die führende Null ein.",
+  "tr": "Telefon numaranızın ülkesini (alan kodu) seçin, ardından numaranızı baştaki sıfır olmadan yazın."
+ },
+ "رقم الواتساب غير صحيح: اختر دولته ثم اكتب الرقم.": {
+  "en": "Invalid WhatsApp number: choose its country, then type the number.",
+  "fr": "Numéro WhatsApp invalide : choisissez son pays puis saisissez le numéro.",
+  "de": "Ungültige WhatsApp-Nummer: Land wählen und dann die Nummer eingeben.",
+  "tr": "WhatsApp numarası geçersiz: ülkesini seçip numarayı yazın."
+ },
+ "مراسلة الإدارة": {
+  "en": "Contact the team",
+  "fr": "Contacter l'équipe",
+  "de": "Team kontaktieren",
+  "tr": "Yönetime yaz"
+ },
+ "إدارة المنصة في خدمتك": {
+  "en": "The Aemmah team is here for you",
+  "fr": "L'équipe Aemmah est à votre écoute",
+  "de": "Das Aemmah-Team ist für Sie da",
+  "tr": "Aemmah yönetimi hizmetinizde"
+ },
+ "لديك اقتراح أو استفسار أو واجهتك مشكلة؟ راسل إدارة منصة أئمة مباشرة من هنا، ويصلك الرد في علبة رسائلك.": {
+  "en": "Have a suggestion or a question, or ran into a problem? Write to the Aemmah team directly from here; the reply arrives in your inbox.",
+  "fr": "Une suggestion, une question ou un problème ? Écrivez directement à l'équipe Aemmah d'ici ; la réponse arrive dans votre messagerie.",
+  "de": "Haben Sie einen Vorschlag, eine Frage oder ein Problem? Schreiben Sie dem Aemmah-Team direkt von hier; die Antwort kommt in Ihr Postfach.",
+  "tr": "Bir öneriniz, sorunuz ya da yaşadığınız bir sorun mu var? Buradan doğrudan Aemmah yönetimine yazın; yanıt mesaj kutunuza gelir."
+ },
+ "إخفاء هذا التنبيه": {
+  "en": "Hide this notice",
+  "fr": "Masquer ce message",
+  "de": "Hinweis ausblenden",
+  "tr": "Bu uyarıyı gizle"
+ },
+ "عيّنة تلاوة": {
+  "en": "Recitation sample",
+  "fr": "Extrait de récitation",
+  "de": "Rezitationsprobe",
+  "tr": "Kıraat örneği"
+ },
+ "{n} إمام": {
+  "en": "{n} imams",
+  "fr": "{n} imams",
+  "de": "{n} Imame",
+  "tr": "{n} imam"
+ },
+ "بطاقات صغيرة": {
+  "en": "Small cards",
+  "fr": "Petites cartes",
+  "de": "Kleine Karten",
+  "tr": "Küçük kartlar"
+ },
+ "بطاقات كبيرة": {
+  "en": "Large cards",
+  "fr": "Grandes cartes",
+  "de": "Große Karten",
+  "tr": "Büyük kartlar"
+ },
+ "طريقة العرض": {
+  "en": "View",
+  "fr": "Affichage",
+  "de": "Ansicht",
+  "tr": "Görünüm"
  }
 };

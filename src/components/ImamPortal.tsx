@@ -11,6 +11,8 @@ import { RecitationManager } from './Recitation';
 import { useRecitationAudio } from '../lib/db';
 import { Edit3, Eye, Trash2, Plus, UserRound } from 'lucide-react';
 import { t } from '../i18n';
+import { AdminContactNotice } from './AdminContactNotice';
+import { MessageSquarePlus } from 'lucide-react';
 
 type Tab = 'manage' | 'mosque_ads' | 'applications' | 'inbox';
 
@@ -104,6 +106,11 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
 
   const myApplications = applications; // already limited to this imam by the query
   const unreadForMe = inbox.messages.filter((m) => !m.isRead && m.receiverUid === inbox.currentUid).length;
+  const [composeRequest, setComposeRequest] = useState<{ type: 'admin'; id: string; seq: number } | null>(null);
+  const writeToAdmin = () => {
+    setActiveTab('inbox');
+    setComposeRequest({ type: 'admin', id: 'admin', seq: Date.now() });
+  };
 
   const tabClass = (tab: Tab) => bannerTab(activeTab === 'mosque_ads' ? 'mosques' : 'account', activeTab === tab);
 
@@ -141,9 +148,15 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
                   <span className="bg-red-500 text-white text-xs px-1.5 rounded-full font-black">{unreadForMe}</span>
                 )}
               </button>
+              <button onClick={writeToAdmin} className={`${tabClass('none' as Tab)} flex items-center gap-1.5`}>
+                <MessageSquarePlus className="w-4 h-4" />
+                <span>{t('مراسلة الإدارة')}</span>
+              </button>
             </>
           )}
       </PageBanner>
+
+      {isImam && <AdminContactNotice onWrite={writeToAdmin} />}
 
       {/* TAB: MY IMAM PROFILE */}
       {activeTab === 'manage' && isImam && !myImam && (
@@ -380,7 +393,7 @@ export const ImamPortal: React.FC<ImamPortalProps> = ({
       )}
 
       {/* TAB: INBOX */}
-      {activeTab === 'inbox' && isImam && <InboxCenter currentRole="imam" {...inbox} />}
+      {activeTab === 'inbox' && isImam && <InboxCenter currentRole="imam" {...inbox} composeRequest={composeRequest} onComposeOpened={() => setComposeRequest(null)} />}
     </section>
   );
 };

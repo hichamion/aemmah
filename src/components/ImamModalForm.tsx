@@ -9,7 +9,6 @@ import {
   DEFAULT_IMAM_SILHOUETTE_AVATAR,
   getSafeImamAvatar,
   isValidEmail,
-  isValidPhone,
   safeHttpUrl,
   IMAM_TITLE_OPTIONS,
   normalizeTitles,
@@ -24,6 +23,8 @@ import { CertificateEditor, ExperienceEditor, LanguagesEditor, PreferredLocation
 import { X, Upload, Video, CheckCircle2, RotateCcw, Loader2, Mic } from 'lucide-react';
 import { useDialog } from '../lib/useDialog';
 import { t } from '../i18n';
+import { PhoneField } from './PhoneField';
+import { countryFromText, isInternationalPhone, toInternational } from '../utils/phone';
 
 interface ImamModalFormProps {
   isOpen: boolean;
@@ -145,9 +146,12 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
 
   useEffect(() => {
     if (isOpen && initialData && existingContact) {
+      // Old numbers typed without the country code get the code of the imam's country of residence.
+      const iso = countryFromText(initialData.country);
+      const fix = (n: string) => toInternational(n || '', iso) || n || '';
       setContact({
-        phone: existingContact.phone || '',
-        whatsapp: existingContact.whatsapp || '',
+        phone: fix(existingContact.phone),
+        whatsapp: fix(existingContact.whatsapp),
         email: existingContact.email || '',
       });
     }
@@ -191,8 +195,8 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
     // Everything else is optional; the age is checked only when given.
     const age = Number(fields.age || 0);
     if (age !== 0 && (!Number.isFinite(age) || age < 18 || age > 90)) return t('العمر يجب أن يكون بين 18 و 90 سنة (أو اتركه فارغاً).');
-    if (!isValidPhone(contact.phone)) return t('رقم الهاتف غير صحيح. اكتبه بالصيغة الدولية مثل +212600000000');
-    if (contact.whatsapp && !isValidPhone(contact.whatsapp)) return t('رقم الواتساب غير صحيح.');
+    if (!isInternationalPhone(contact.phone)) return t('اختر دولة رقم الهاتف (المفتاح الدولي) ثم اكتب رقمك دون الصفر في أوله.');
+    if (contact.whatsapp && !isInternationalPhone(contact.whatsapp)) return t('رقم الواتساب غير صحيح: اختر دولته ثم اكتب الرقم.');
     if (!isValidEmail(contact.email)) return t('البريد الإلكتروني غير صحيح.');
     if (fields.youtubeUrl && !safeHttpUrl(fields.youtubeUrl)) return t('رابط اليوتيوب غير صحيح.');
     // Checked only once the imam filled the khateeb section (older profiles can still be saved as before).
@@ -558,20 +562,18 @@ export const ImamModalForm: React.FC<ImamModalFormProps> = ({ isOpen, onClose, o
               <p className="text-xs font-bold text-emerald-900">
                 {t('بيانات التواصل (محمية: تظهر فقط للمساجد التي وثقتها الإدارة، ولا تظهر للزوار):')}
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label htmlFor="im-phone" className="block font-bold text-slate-700 mb-1">{t('رقم الهاتف *')}</label>
-                  <input id="im-phone" type="tel" required maxLength={40} value={contact.phone}
-                    onChange={(e) => setContact((c) => ({ ...c, phone: e.target.value }))}
-                    placeholder="+212 600 000000" className={inputCls} dir="ltr" />
+                  <PhoneField id="im-phone" required value={contact.phone} defaultIso={countryFromText(fields.country)}
+                    onChange={(v) => setContact((c) => ({ ...c, phone: v, whatsapp: c.whatsapp === c.phone ? v : c.whatsapp }))} className={inputCls} />
                 </div>
                 <div>
                   <label htmlFor="im-wa" className="block font-bold text-slate-700 mb-1">{t('رقم الواتساب (إن اختلف)')}</label>
-                  <input id="im-wa" type="tel" maxLength={40} value={contact.whatsapp}
-                    onChange={(e) => setContact((c) => ({ ...c, whatsapp: e.target.value }))}
-                    placeholder="+212600000000" className={inputCls} dir="ltr" />
+                  <PhoneField id="im-wa" value={contact.whatsapp} defaultIso={countryFromText(fields.country)}
+                    onChange={(v) => setContact((c) => ({ ...c, whatsapp: v }))} className={inputCls} />
                 </div>
-                <div>
+                <div className="md:col-span-2">
                   <label htmlFor="im-email" className="block font-bold text-slate-700 mb-1">{t('البريد الإلكتروني *')}</label>
                   <input id="im-email" type="email" required maxLength={200} value={contact.email}
                     onChange={(e) => setContact((c) => ({ ...c, email: e.target.value }))}

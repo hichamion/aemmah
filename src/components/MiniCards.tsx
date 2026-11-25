@@ -1,5 +1,5 @@
 import React from 'react';
-import { BookOpen, Briefcase, Car, Flag, FileText, Globe2, Home, Languages, MapPin, Mic, Plane, Send, Check, Star, Users } from 'lucide-react';
+import { Award, BookOpen, Briefcase, Car, ChevronLeft, Flag, FileText, Globe2, Headphones, Home, Languages, MapPin, Mic, Plane, Send, Check, Star, Users } from 'lucide-react';
 import { ImamProfile, MosqueJob } from '../types';
 import { formatPreferredLocations, getSafeImamAvatar, getSafeMosquePhoto, imamLanguages, imamTitle, imamRoleArt, imamTone, IMAM_TONES, isKhateeb, khateebArea, KHATEEB_TERM_LABELS, visaStatusText } from '../utils/helpers';
 import { t } from '../i18n';
@@ -225,3 +225,93 @@ export const MosqueMiniCard: React.FC<MosqueMiniCardProps> = ({ mosque, contactB
     </div>
   </article>
 );
+
+// ---------------------------------------------------------------------------
+// Smaller ways to show the imams list (medium cards and a list), with the key facts only:
+// name, title / job, country, riwaya, certificates, recitation sample, availability.
+// ---------------------------------------------------------------------------
+
+const availabilityShort = (imam: ImamProfile) =>
+  imam.availabilityState === 'ramadan_only'
+    ? { label: t('متاح لرمضان فقط'), cls: 'bg-amber-50 text-amber-900 border-amber-200' }
+    : imam.availabilityState === 'busy_ramadan'
+    ? { label: t('ملتزم في رمضان ومتاح بعده'), cls: 'bg-amber-50 text-amber-900 border-amber-200' }
+    : imam.availabilityState === 'paused'
+    ? { label: t('غير متاح حالياً'), cls: 'bg-slate-100 text-slate-600 border-slate-200' }
+    : { label: t('متاح حالياً'), cls: 'bg-emerald-50 text-emerald-900 border-emerald-200' };
+
+/** Small pills: certificates, recitation sample, Friday preacher. */
+const ImamFacts: React.FC<{ imam: ImamProfile }> = ({ imam }) => (
+  <>
+    {imam.hasCerts === 'yes' && (
+      <span className="inline-flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded-full bg-sky-50 text-sky-900 border border-sky-200">
+        <Award className="w-3 h-3" /> {t('شواهد وإجازات')}
+      </span>
+    )}
+    {imam.recitationMeta && (
+      <span className="inline-flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200">
+        <Headphones className="w-3 h-3" /> {t('عيّنة تلاوة')}
+      </span>
+    )}
+    {isKhateeb(imam) && (
+      <span className="inline-flex items-center gap-1 text-[11px] font-black px-2 py-0.5 rounded-full bg-[#fbf1f4] text-[#6e1d3b] border border-[#8a2a4c]/25">
+        <Mic className="w-3 h-3" /> {t('خطيب جمعة')}
+      </span>
+    )}
+  </>
+);
+
+/** Medium card: photo, name, title, job, country · riwaya, facts and availability. */
+export const ImamCompactCard: React.FC<{ imam: ImamProfile; onOpen: () => void }> = ({ imam, onOpen }) => {
+  const tone = IMAM_TONES[imamTone(imam)];
+  const av = availabilityShort(imam);
+  return (
+    <article {...openOnCard(onOpen)} aria-label={t('السيرة الذاتية: {name}', { name: imam.name })}
+      className="group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition cursor-pointer focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-300 overflow-hidden flex flex-col">
+      <div className={`h-1.5 bg-gradient-to-l ${tone.band}`} />
+      <div className="p-4 flex gap-3 flex-1">
+        <img src={getSafeImamAvatar(imam.photo)} alt="" loading="lazy" className={`w-16 h-16 rounded-2xl object-cover border-2 bg-white shrink-0 ${tone.ring}`} />
+        <div className="min-w-0 flex-1 space-y-1">
+          <h3 dir="auto" className="font-black text-lg font-amiri leading-snug text-slate-900 line-clamp-1">{imam.name}</h3>
+          <p className="text-xs font-black text-emerald-800 line-clamp-1">{imamTitle(imam.titles)}</p>
+          {imam.currentJob && <p dir="auto" className="text-xs text-slate-600 line-clamp-1 flex items-center gap-1"><Briefcase className="w-3 h-3 shrink-0 text-amber-500" /> {imam.currentJob}</p>}
+          <p className="text-xs text-slate-600 line-clamp-1 flex items-center gap-1">
+            <MapPin className="w-3 h-3 shrink-0 text-amber-500" /> <span dir="auto">{imam.country || '—'}</span>
+          </p>
+          <p className="text-xs text-slate-600 line-clamp-1 flex items-center gap-1"><BookOpen className="w-3 h-3 shrink-0 text-amber-500" /> {t(imam.riwaya)}</p>
+        </div>
+      </div>
+      <div className="px-4 pb-4 flex flex-wrap items-center gap-1.5">
+        <span className={`text-[11px] font-black px-2 py-0.5 rounded-full border ${av.cls}`}>{av.label}</span>
+        <ImamFacts imam={imam} />
+      </div>
+    </article>
+  );
+};
+
+/** One row of the list view. */
+export const ImamListRow: React.FC<{ imam: ImamProfile; onOpen: () => void }> = ({ imam, onOpen }) => {
+  const tone = IMAM_TONES[imamTone(imam)];
+  const av = availabilityShort(imam);
+  return (
+    <li>
+      <div {...openOnCard(onOpen)} aria-label={t('السيرة الذاتية: {name}', { name: imam.name })}
+        className="flex items-center gap-3 px-3 sm:px-4 py-3 hover:bg-slate-50 cursor-pointer focus:outline-none focus-visible:bg-amber-50">
+        <img src={getSafeImamAvatar(imam.photo)} alt="" loading="lazy" className={`w-11 h-11 rounded-xl object-cover border-2 bg-white shrink-0 ${tone.ring}`} />
+        <div className="min-w-0 flex-1 grid sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] gap-x-4 gap-y-0.5 items-center">
+          <div className="min-w-0">
+            <p dir="auto" className="font-black text-slate-900 line-clamp-1">{imam.name}</p>
+            <p className="text-xs text-emerald-800 font-bold line-clamp-1">{imamTitle(imam.titles)}{imam.currentJob ? ' · ' : ''}<span dir="auto" className="text-slate-500 font-normal">{imam.currentJob}</span></p>
+          </div>
+          <p className="text-xs text-slate-600 line-clamp-1 flex items-center gap-1"><MapPin className="w-3 h-3 shrink-0 text-amber-500" /> <span dir="auto">{imam.country || '—'}</span></p>
+          <p className="text-xs text-slate-600 line-clamp-1 flex items-center gap-1"><BookOpen className="w-3 h-3 shrink-0 text-amber-500" /> {t(imam.riwaya)}</p>
+          <div className="sm:col-span-3 flex flex-wrap gap-1.5 mt-1">
+            <span className={`text-[11px] font-black px-2 py-0.5 rounded-full border ${av.cls}`}>{av.label}</span>
+            <ImamFacts imam={imam} />
+          </div>
+        </div>
+        <ChevronLeft className="w-4 h-4 text-slate-400 shrink-0" />
+      </div>
+    </li>
+  );
+};
