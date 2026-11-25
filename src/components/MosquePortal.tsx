@@ -5,9 +5,11 @@ import { PageBanner, bannerTab } from './PageBanner';
 import { PublishCard } from './PublishCard';
 import { InboxCenter, InboxProps } from './InboxCenter';
 import { ContactBlock } from './ContactBlock';
-import { ImamMiniCard } from './MiniCards';
-import { Search, Trash2, Plus, UserCheck, Lock, Clock, ShieldAlert, Users, UserRound, SlidersHorizontal, X } from 'lucide-react';
+import { ImamCompactCard, ImamListRow, ImamMiniCard } from './MiniCards';
+import { Search, Trash2, Plus, UserCheck, Lock, Clock, ShieldAlert, Users, UserRound, SlidersHorizontal, X, List, LayoutGrid, Square } from 'lucide-react';
 import { t } from '../i18n';
+import { AdminContactNotice } from './AdminContactNotice';
+import { MessageSquarePlus } from 'lucide-react';
 
 type Tab = 'browse' | 'manage_mosques' | 'applications' | 'inbox';
 
@@ -91,6 +93,24 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
   const [countryFilter, setCountryFilter] = useState('all');
   const [areaFilter, setAreaFilter] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
+  // How the imams list is shown (remembered in this browser): list, medium cards or large cards.
+  const [view, setView] = useState<'list' | 'medium' | 'large'>(() => {
+    try {
+      const v = localStorage.getItem('aemmah-imams-view');
+      if (v === 'list' || v === 'medium' || v === 'large') return v;
+    } catch {
+      // ignore
+    }
+    return 'medium';
+  });
+  const changeView = (v: 'list' | 'medium' | 'large') => {
+    setView(v);
+    try {
+      localStorage.setItem('aemmah-imams-view', v);
+    } catch {
+      // ignore
+    }
+  };
   const activeFilters = [availFilter !== 'all', visaFilter !== 'all', riwayaFilter !== 'all', countryFilter !== 'all', !!areaFilter.trim()].filter(Boolean).length;
   const clearFilters = () => {
     setAvailFilter('all');
@@ -136,6 +156,11 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
   const selCls = 'w-full border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-bold bg-white';
 
   const unreadForMe = inbox.messages.filter((m) => !m.isRead && m.receiverUid === inbox.currentUid).length;
+  const [composeRequest, setComposeRequest] = useState<{ type: 'admin'; id: string; seq: number } | null>(null);
+  const writeToAdmin = () => {
+    setActiveTab('inbox');
+    setComposeRequest({ type: 'admin', id: 'admin', seq: Date.now() });
+  };
 
   const tabClass = (tab: Tab) => bannerTab(activeTab === 'browse' ? 'imams' : 'account', activeTab === tab);
 
@@ -173,9 +198,15 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
                   <span className="bg-red-500 text-white text-xs px-1.5 rounded-full font-black">{unreadForMe}</span>
                 )}
               </button>
+              <button onClick={writeToAdmin} className={`${tabClass('none' as Tab)} flex items-center gap-1.5`}>
+                <MessageSquarePlus className="w-4 h-4" />
+                <span>{t('مراسلة الإدارة')}</span>
+              </button>
             </>
           )}
       </PageBanner>
+
+      {isMosque && <AdminContactNotice onWrite={writeToAdmin} />}
 
       {/* Privacy notices */}
       {currentRole === 'visitor' && (
@@ -304,25 +335,53 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
             </div>
           )}
 
+          {visibleImams.length > 0 && (
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <p className="text-xs font-bold text-white/70">{t('{n} إمام', { n: visibleImams.length })}</p>
+              <div role="radiogroup" aria-label={t('طريقة العرض')} className="inline-flex bg-white/10 border border-white/15 rounded-xl p-1 gap-1">
+                {([
+                  ['list', t('قائمة'), <List key="l" className="w-4 h-4" />],
+                  ['medium', t('بطاقات صغيرة'), <LayoutGrid key="m" className="w-4 h-4" />],
+                  ['large', t('بطاقات كبيرة'), <Square key="g" className="w-4 h-4" />],
+                ] as const).map(([v, label, icon]) => (
+                  <button key={v} type="button" role="radio" aria-checked={view === v} title={label} onClick={() => changeView(v)}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-black cursor-pointer transition ${view === v ? 'bg-white text-emerald-900 shadow' : 'text-white/80 hover:bg-white/10'}`}>
+                    {icon}<span className="hidden sm:inline">{label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {view === 'list' ? (
+            <ul className="bg-white rounded-2xl border border-slate-200 divide-y divide-slate-100 overflow-hidden">
+              {visibleImams.map((imam) => <ImamListRow key={imam.id} imam={imam} onOpen={() => onViewImamFull(imam)} />)}
+            </ul>
+          ) : view === 'medium' ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {visibleImams.map((imam) => <ImamCompactCard key={imam.id} imam={imam} onOpen={() => onViewImamFull(imam)} />)}
+            </div>
+          ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {visibleImams.map((imam) => (
-              <ImamMiniCard
-                key={imam.id}
-                imam={imam}
-                onOpen={() => onViewImamFull(imam)}
-                onReport={() => onReportImam(imam)}
-                contactBlock={
-                  <ContactBlock
-                    kind="imam"
-                    id={imam.id}
-                    canView={canSeeImamContacts}
-                    lockedText={isMosque ? t('تظهر الأرقام بعد توثيق حسابك') : t('أرقام التواصل للمساجد الموثقة فقط')}
-                    onLockedClick={currentRole === 'visitor' ? onOpenAuthModal : undefined}
-                  />
-                }
-              />
-            ))}
-          </div>
+              {visibleImams.map((imam) => (
+                <ImamMiniCard
+                  key={imam.id}
+                  imam={imam}
+                  onOpen={() => onViewImamFull(imam)}
+                  onReport={() => onReportImam(imam)}
+                  contactBlock={
+                    <ContactBlock
+                      kind="imam"
+                      id={imam.id}
+                      canView={canSeeImamContacts}
+                      lockedText={isMosque ? t('تظهر الأرقام بعد توثيق حسابك') : t('أرقام التواصل للمساجد الموثقة فقط')}
+                      onLockedClick={currentRole === 'visitor' ? onOpenAuthModal : undefined}
+                    />
+                  }
+                />
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -512,7 +571,7 @@ export const MosquePortal: React.FC<MosquePortalProps> = ({
       )}
 
       {/* TAB: INBOX */}
-      {activeTab === 'inbox' && isMosque && <InboxCenter currentRole="mosque" {...inbox} />}
+      {activeTab === 'inbox' && isMosque && <InboxCenter currentRole="mosque" {...inbox} composeRequest={composeRequest} onComposeOpened={() => setComposeRequest(null)} />}
     </section>
   );
 };

@@ -30,7 +30,7 @@ export interface InboxProps {
 interface InboxCenterProps extends InboxProps {
   currentRole: 'imam' | 'mosque' | 'admin';
   /** Opens the compose window for this recipient; `seq` changes on every request. */
-  composeRequest?: { type: 'imam' | 'mosque'; id: string; seq: number } | null;
+  composeRequest?: { type: 'imam' | 'mosque' | 'admin'; id: string; seq: number } | null;
   onComposeOpened?: () => void;
 }
 
@@ -78,7 +78,7 @@ export const InboxCenter: React.FC<InboxCenterProps> = ({
     setNewRecipientType(composeRequest.type);
     setIsComposing(true);
     // After the type effect below has run, select the requested recipient.
-    window.setTimeout(() => setNewRecipientId(composeRequest.id), 0);
+    if (composeRequest.type !== 'admin') window.setTimeout(() => setNewRecipientId(composeRequest.id), 0);
     onComposeOpened?.();
   }, [composeRequest?.seq]);
 
