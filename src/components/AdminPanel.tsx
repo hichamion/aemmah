@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MosqueIcon } from './MosqueIcon';
-import { FeedbackItem, ImamProfile, MosqueJob, ReportItem } from '../types';
+import { AvailabilityState, FeedbackItem, ImamProfile, MosqueJob, ReportItem } from '../types';
 import { formatDate, getSafeImamAvatar } from '../utils/helpers';
 import { ContactBlock } from './ContactBlock';
 import { InboxCenter, InboxProps } from './InboxCenter';
@@ -15,6 +15,8 @@ interface AdminPanelProps {
   mosques: MosqueJob[];
   reports: ReportItem[];
   onSetImamApproval: (id: string, status: 'approved' | 'rejected') => void;
+  /** Publish again (available_now) or pause a profile, also one the imam paused himself. */
+  onSetImamAvailability: (id: string, state: AvailabilityState) => void;
   onEditImam: (imam: ImamProfile) => void;
   onDeleteImam: (imam: ImamProfile) => void;
   onViewImamFull: (imam: ImamProfile) => void;
@@ -38,6 +40,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   mosques,
   reports,
   onSetImamApproval,
+  onSetImamAvailability,
   onEditImam,
   onDeleteImam,
   onViewImamFull,
@@ -62,6 +65,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   };
   // Views of each profile and plays of each recitation (admins only, see lib/profileStats).
   const profileStats = useProfileStats(true);
+  const [imamFilter, setImamFilter] = useState<'all' | 'published' | 'paused' | 'pending' | 'rejected'>('all');
   const [activeTab, setActiveTab] = useState<'pending' | 'all_imams' | 'all_mosques' | 'reports' | 'feedback' | 'inbox' | 'visits' | 'ads' | 'whatsapp'>('pending');
   const unreadAdmin = inbox.messages.filter(
     (m) => !m.isRead && (m.receiverUid === 'admin' || m.receiverUid === inbox.currentUid)
@@ -474,8 +478,28 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             </button>
           </div>
 
+          <div className="flex flex-wrap gap-2">
+            {([
+              ['all', 'الكل', imams.length],
+              ['published', '✅ منشورة', imams.filter((i) => i.approvalStatus === 'approved' && i.availabilityState !== 'paused').length],
+              ['paused', '⏸️ موقوفة', imams.filter((i) => i.availabilityState === 'paused').length],
+              ['pending', '⏳ بانتظار الموافقة', imams.filter((i) => i.approvalStatus === 'pending').length],
+              ['rejected', '✖ مرفوضة', imams.filter((i) => i.approvalStatus === 'rejected').length],
+            ] as const).map(([f, label, n]) => (
+              <button key={f} type="button" onClick={() => setImamFilter(f)} aria-pressed={imamFilter === f}
+                className={`px-3 py-1.5 rounded-full border text-xs font-black cursor-pointer ${imamFilter === f ? 'bg-emerald-800 text-white border-emerald-800' : 'bg-white text-slate-700 border-slate-200'}`}>
+                {label} ({n})
+              </button>
+            ))}
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {imams.map((imam) => (
+            {imams.filter((i) =>
+              imamFilter === 'all' ? true
+              : imamFilter === 'published' ? i.approvalStatus === 'approved' && i.availabilityState !== 'paused'
+              : imamFilter === 'paused' ? i.availabilityState === 'paused'
+              : i.approvalStatus === imamFilter
+            ).map((imam) => (
               <div
                 key={imam.id}
                 className="p-4 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between gap-3 text-xs"
@@ -496,6 +520,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                             ? 'bg-amber-200 text-amber-950'
                             : imam.approvalStatus === 'rejected'
                             ? 'bg-red-100 text-red-900'
+                            : imam.availabilityState === 'paused'
+                            ? 'bg-slate-200 text-slate-800'
                             : 'bg-emerald-100 text-emerald-900'
                         }`}
                       >
@@ -503,6 +529,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                           ? '⏳ بانتظار الموافقة'
                           : imam.approvalStatus === 'rejected'
                           ? '✖ مرفوض'
+                          : imam.availabilityState === 'paused'
+                          ? '⏸️ موقوف — لا يراه الزوار'
                           : '✅ معتمد ومنشور'}
                       </span>
                     </div>
@@ -520,6 +548,21 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                       className="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-3 py-1.5 rounded-xl text-xs cursor-pointer"
                     >
                       ✅ موافقة واعتماد
+                    </button>
+                  )}
+                  {imam.availabilityState === 'paused' ? (
+                    <button
+                      onClick={() => onSetImamAvailability(imam.id, 'available_now')}
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white font-black px-3 py-1.5 rounded-xl text-xs cursor-pointer"
+                    >
+                      ▶️ تفعيل ونشر الملف
+                    </button>
+                  ) : imam.approvalStatus === 'approved' && (
+                    <button
+                      onClick={() => onSetImamAvailability(imam.id, 'paused')}
+                      className="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold px-3 py-1.5 rounded-xl text-xs cursor-pointer"
+                    >
+                      ⏸️ إيقاف النشر
                     </button>
                   )}
                   <button

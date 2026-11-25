@@ -964,6 +964,7 @@ export default function App() {
                 mosques={mosques}
                 reports={reports}
                 onSetImamApproval={handleSetImamApproval}
+                onSetImamAvailability={handleUpdateImamStatus}
                 onEditImam={handleOpenImamEdit}
                 onDeleteImam={handleDeleteImam}
                 onViewImamFull={setViewingImamFull}
