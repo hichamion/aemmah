@@ -6873,5 +6873,23 @@ export const DICT: Record<string, Entry> = {
   "fr": "Se déconnecter",
   "de": "Abmelden",
   "tr": "Çıkış yap"
+ },
+ "الدولة (المفتاح الدولي)": {
+  "en": "Country (dialling code)",
+  "fr": "Pays (indicatif)",
+  "de": "Land (Vorwahl)",
+  "tr": "Ülke (alan kodu)"
+ },
+ "اختر دولة رقم الهاتف (المفتاح الدولي) ثم اكتب رقمك دون الصفر في أوله.": {
+  "en": "Choose the country of your phone number (dialling code), then type your number without the leading zero.",
+  "fr": "Choisissez le pays de votre numéro (indicatif), puis saisissez votre numéro sans le zéro initial.",
+  "de": "Wählen Sie das Land Ihrer Telefonnummer (Vorwahl) und geben Sie dann Ihre Nummer ohne die führende Null ein.",
+  "tr": "Telefon numaranızın ülkesini (alan kodu) seçin, ardından numaranızı baştaki sıfır olmadan yazın."
+ },
+ "رقم الواتساب غير صحيح: اختر دولته ثم اكتب الرقم.": {
+  "en": "Invalid WhatsApp number: choose its country, then type the number.",
+  "fr": "Numéro WhatsApp invalide : choisissez son pays puis saisissez le numéro.",
+  "de": "Ungültige WhatsApp-Nummer: Land wählen und dann die Nummer eingeben.",
+  "tr": "WhatsApp numarası geçersiz: ülkesini seçip numarayı yazın."
  }
 };

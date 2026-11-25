@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
 import { CheckCircle2, ExternalLink, Loader2, MessageCircle, Search, Send } from 'lucide-react';
 import { db } from '../firebase';
 import { ImamContact, ImamProfile } from '../types';
 import { imamRole, isKhateeb } from '../utils/helpers';
+import { countryFromText, isInternationalPhone, toInternational } from '../utils/phone';
 
 /*
  * Admin: WhatsApp messages to imams (thanks, reminders, notices) using the numbers they entered.
@@ -54,10 +55,49 @@ export const WhatsAppPanel: React.FC<{ imams: ImamProfile[] }> = ({ imams }) => 
       .catch((e) => setError(e?.code || e?.message || 'تعذر تحميل الأرقام.'));
   }, []);
 
+  // Numbers typed without the country code get the code of the imam's country of residence.
+  const fixed = (imam: ImamProfile, raw: string) => toInternational(raw || '', countryFromText(imam.country)) || raw || '';
   const numberOf = (imam: ImamProfile) => {
     const c = contacts?.[imam.id];
-    return waNumber(c?.whatsapp || c?.phone || '');
+    return waNumber(fixed(imam, c?.whatsapp || c?.phone || ''));
   };
+
+  // Stored numbers without «+code»: what they become, and those whose country is unknown.
+  const toFix = useMemo(() => {
+    if (!contacts) return { ok: [] as { imam: ImamProfile; phone: string; whatsapp: string; before: string }[], unknown: [] as ImamProfile[] };
+    const ok: { imam: ImamProfile; phone: string; whatsapp: string; before: string }[] = [];
+    const unknown: ImamProfile[] = [];
+    for (const imam of imams) {
+      const c = contacts[imam.id];
+      if (!c) continue;
+      const bad = [c.phone, c.whatsapp].some((n) => n && !isInternationalPhone(n.replace(/[\s\-()]/g, '')));
+      if (!bad) continue;
+      const phone = fixed(imam, c.phone);
+      const whatsapp = fixed(imam, c.whatsapp);
+      if ([phone, whatsapp].every((n) => !n || isInternationalPhone(n))) ok.push({ imam, phone, whatsapp, before: [c.phone, c.whatsapp].filter(Boolean).join(' / ') });
+      else unknown.push(imam);
+    }
+    return { ok, unknown };
+  }, [contacts, imams]);
+  const [fixing, setFixing] = useState(false);
+  const fixAll = async () => {
+    setFixing(true);
+    const next = { ...(contacts || {}) };
+    let done = 0;
+    for (const f of toFix.ok) {
+      try {
+        await setDoc(doc(db, 'imamContacts', f.imam.id), { phone: f.phone, whatsapp: f.whatsapp }, { merge: true });
+        next[f.imam.id] = { ...next[f.imam.id], phone: f.phone, whatsapp: f.whatsapp };
+        done++;
+      } catch (e) {
+        setError((e as { code?: string })?.code || 'تعذر حفظ بعض الأرقام');
+      }
+    }
+    setContacts(next);
+    setFixing(false);
+    setFixedCount(done);
+  };
+  const [fixedCount, setFixedCount] = useState(0);
 
   const list = useMemo(() => {
     const s = q.trim().toLowerCase();
@@ -126,6 +166,39 @@ export const WhatsAppPanel: React.FC<{ imams: ImamProfile[] }> = ({ imams }) => 
       </div>
 
       {error && <p className="bg-red-50 border border-red-200 text-red-800 rounded-xl p-3 text-sm font-bold">تعذر تحميل الأرقام ({error}).</p>}
+
+      {(toFix.ok.length > 0 || toFix.unknown.length > 0 || fixedCount > 0) && (
+        <div className="bg-amber-50 rounded-2xl border border-amber-200 p-4 space-y-3 text-sm">
+          <span className="block font-black text-amber-950">أرقام بدون المفتاح الدولي</span>
+          {fixedCount > 0 && <p className="text-emerald-800 font-bold">✓ صُحّح {fixedCount} رقم.</p>}
+          {toFix.ok.length > 0 && (
+            <>
+              <p className="text-xs text-amber-900 leading-relaxed">
+                هذه الأرقام كُتبت دون المفتاح الدولي. التصحيح يضيف مفتاح دولة إقامة الإمام ويحذف الصفر في أول الرقم. الإرسال عبر واتساب يستعمل الرقم المصحّح حتى قبل الحفظ.
+              </p>
+              <ul className="divide-y divide-amber-100 bg-white rounded-xl border border-amber-100">
+                {toFix.ok.map((f) => (
+                  <li key={f.imam.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2 text-xs">
+                    <b className="text-slate-900">{f.imam.name}</b>
+                    <span className="text-slate-500">{f.imam.country}</span>
+                    <span dir="ltr" className="ms-auto text-slate-500 line-through">{f.before}</span>
+                    <span dir="ltr" className="font-black text-emerald-800">{[...new Set([f.phone, f.whatsapp].filter(Boolean))].join(' / ')}</span>
+                  </li>
+                ))}
+              </ul>
+              <button type="button" onClick={fixAll} disabled={fixing}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-700 text-white font-black text-xs cursor-pointer disabled:opacity-60">
+                {fixing && <Loader2 className="w-4 h-4 animate-spin" />} تصحيح الكل وحفظه ({toFix.ok.length})
+              </button>
+            </>
+          )}
+          {toFix.unknown.length > 0 && (
+            <p className="text-xs text-red-800 leading-relaxed">
+              لم أعرف دولة إقامة هؤلاء، فلم يُصحَّح رقمهم: {toFix.unknown.map((i) => `${i.name} (${i.country || '—'})`).join('، ')}. عدّل ملفهم وأضف المفتاح الدولي يدوياً.
+            </p>
+          )}
+        </div>
+      )}
 
       <div className="bg-white rounded-2xl border border-slate-200 p-4 space-y-3">
         <span className="block font-black text-slate-800 text-sm">نص الرسالة</span>
