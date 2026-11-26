@@ -7,8 +7,10 @@ import { InboxCenter, InboxProps } from './InboxCenter';
 import { VisitStatsPanel } from './VisitStatsPanel';
 import { AnnouncementsAdmin } from './AnnouncementsAdmin';
 import { WhatsAppPanel } from './WhatsAppPanel';
+import { TestimonialsAdmin } from './TestimonialsAdmin';
+import { useTestimonials } from '../lib/testimonials';
 import { ProfileStat, useProfileStats } from '../lib/profileStats';
-import { CheckCircle2, XCircle, Edit3, Trash2, Eye, Flag, Mic, Clock, Mail, Plus, MessageSquare, BarChart3, Headphones, Megaphone, MessageCircle } from 'lucide-react';
+import { CheckCircle2, XCircle, Edit3, Trash2, Eye, Flag, Mic, Clock, Mail, Plus, MessageSquare, BarChart3, Headphones, Megaphone, MessageCircle, Quote } from 'lucide-react';
 
 interface AdminPanelProps {
   imams: ImamProfile[];
@@ -66,7 +68,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   // Views of each profile and plays of each recitation (admins only, see lib/profileStats).
   const profileStats = useProfileStats(true);
   const [imamFilter, setImamFilter] = useState<'all' | 'published' | 'paused' | 'pending' | 'rejected'>('all');
-  const [activeTab, setActiveTab] = useState<'pending' | 'all_imams' | 'all_mosques' | 'reports' | 'feedback' | 'inbox' | 'visits' | 'ads' | 'whatsapp'>('pending');
+  const [activeTab, setActiveTab] = useState<'pending' | 'all_imams' | 'all_mosques' | 'reports' | 'feedback' | 'inbox' | 'visits' | 'ads' | 'whatsapp' | 'testimonials'>('pending');
   const unreadAdmin = inbox.messages.filter(
     (m) => !m.isRead && (m.receiverUid === 'admin' || m.receiverUid === inbox.currentUid)
   ).length;
@@ -74,6 +76,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const pendingImams = imams.filter((i) => i.approvalStatus === 'pending');
   const pendingMosques = mosques.filter((m) => m.approvalStatus === 'pending');
   const pendingReports = reports.filter((r) => r.status === 'pending');
+  const allTestimonials = useTestimonials(true);
+  const pendingTestimonials = allTestimonials.items.filter((x) => x.status === 'pending').length;
   const newFeedback = feedback.filter((f) => f.status === 'new');
   const totalPendingCount = pendingImams.length + pendingMosques.length;
 
@@ -264,6 +268,18 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
         >
           <Megaphone className="w-4 h-4" />
           <span>إعلانات الواجهة</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('testimonials')}
+          className={`px-4 py-2.5 rounded-xl font-black transition cursor-pointer flex items-center gap-2 ${
+            activeTab === 'testimonials'
+              ? 'bg-amber-600 text-white shadow-md'
+              : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+          }`}
+        >
+          <Quote className="w-4 h-4" />
+          <span>آراء الزوار{pendingTestimonials > 0 ? ` (${pendingTestimonials})` : ''}</span>
         </button>
 
         <button
@@ -802,6 +818,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
       {activeTab === 'visits' && <VisitStatsPanel />}
 
       {activeTab === 'whatsapp' && <WhatsAppPanel imams={imams} />}
+
+      {activeTab === 'testimonials' && <TestimonialsAdmin onToast={onToast} />}
 
       {/* TAB 7: HOME BANNER ANNOUNCEMENTS (admins only) */}
       {activeTab === 'ads' && <AnnouncementsAdmin onDone={(m) => onToast(m)} onError={(m) => onToast(m, 'error')} />}

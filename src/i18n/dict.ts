@@ -6945,5 +6945,227 @@ export const DICT: Record<string, Entry> = {
   "fr": "Affichage",
   "de": "Ansicht",
   "tr": "Görünüm"
+ },
+ "أرقام الأئمة لا تراها إلا المساجد الموثقة.": {
+  "en": "Imams' numbers are seen only by verified mosques.",
+  "fr": "Les numéros des imams ne sont visibles que par les mosquées vérifiées.",
+  "de": "Die Nummern der Imame sehen nur geprüfte Moscheen.",
+  "tr": "İmamların numaralarını yalnızca doğrulanmış camiler görür."
+ },
+ "أسّس منصة أئمة الشيخ هشام اجحيلل (Hicham Jhilal)، إمام وقارئ للقرآن الكريم، أمّ المصلين في صلاة التراويح في مساجد بأوروبا، منها مسجد عمر بن الخطاب في دوسلدورف بألمانيا.": {
+  "en": "Aemmah was founded by Sheikh Hicham Jhilal, an imam and Quran reciter who has led the Tarawih prayer in mosques in Europe, among them the Omar ibn al-Khattab Mosque in Düsseldorf, Germany.",
+  "fr": "Aemmah a été fondée par Cheikh Hicham Jhilal, imam et récitant du Coran, qui a dirigé la prière de Tarawih dans des mosquées en Europe, dont la mosquée Omar ibn al-Khattab à Düsseldorf, en Allemagne.",
+  "de": "Aemmah wurde von Scheich Hicham Jhilal gegründet, einem Imam und Koranrezitator, der in Moscheen in Europa das Tarawih-Gebet geleitet hat, darunter in der Omar-ibn-al-Khattab-Moschee in Düsseldorf.",
+  "tr": "Aemmah, Avrupa'daki camilerde — aralarında Almanya Düsseldorf'taki Ömer bin Hattab Camii de olmak üzere — Teravih namazı kıldırmış imam ve Kur'an kurrası Şeyh Hicham Jhilal tarafından kuruldu."
+ },
+ "التسجيل ونشر الملفات والإعلانات مجاني للأئمة والمساجد.": {
+  "en": "Registering and publishing profiles and ads is free for imams and mosques.",
+  "fr": "L'inscription et la publication des profils et annonces sont gratuites pour les imams et les mosquées.",
+  "de": "Registrierung und Veröffentlichung von Profilen und Anzeigen sind für Imame und Moscheen kostenlos.",
+  "tr": "Kayıt olmak, profil ve ilan yayınlamak imamlar ve camiler için ücretsizdir."
+ },
+ "المنصة ليست وكالة توظيف ولا جهة هجرة، وإنما بوابة تواصل بين الأئمة والمساجد.": {
+  "en": "The platform is neither a recruitment agency nor an immigration service, but a gateway for contact between imams and mosques.",
+  "fr": "La plateforme n'est ni une agence de recrutement ni un service d'immigration, mais un lieu de mise en relation entre imams et mosquées.",
+  "de": "Die Plattform ist weder Arbeitsvermittlung noch Einwanderungsbehörde, sondern ein Ort der Begegnung zwischen Imamen und Moscheen.",
+  "tr": "Platform bir iş bulma ajansı ya da göç kurumu değil, imamlar ile camiler arasında bir iletişim kapısıdır."
+ },
+ "خصوصية الأرقام": {
+  "en": "Private numbers",
+  "fr": "Numéros protégés",
+  "de": "Geschützte Nummern",
+  "tr": "Numaralar gizli"
+ },
+ "رأيتُ عن قرب كيف تبحث المساجد والجمعيات في أوروبا كل عام عن إمام مؤهل، خاصة لصلاة التراويح في رمضان، فلا تجد طريقاً واضحاً إليه إلا المعارف والرسائل المتفرقة. ورأيت في المقابل أئمة وقرّاء متقنين لا يعرفون أي المساجد تحتاج إليهم، ولا ما شروطها، ولا كيف يصلون إليها.": {
+  "en": "I saw up close how mosques and associations in Europe look every year for a qualified imam, especially for the Tarawih prayer in Ramadan, with no clear way to find one other than personal contacts and scattered messages. And I saw skilled imams and reciters who did not know which mosques needed them, what their requirements were, or how to reach them.",
+  "fr": "J'ai vu de près comment les mosquées et associations en Europe cherchent chaque année un imam qualifié, surtout pour la prière de Tarawih pendant le Ramadan, sans autre moyen que les connaissances et des messages épars. Et j'ai vu des imams et récitants compétents qui ne savaient pas quelles mosquées avaient besoin d'eux, quelles étaient leurs conditions, ni comment les joindre.",
+  "de": "Ich habe aus nächster Nähe erlebt, wie Moscheen und Vereine in Europa jedes Jahr einen qualifizierten Imam suchen, besonders für das Tarawih-Gebet im Ramadan – ohne klaren Weg außer Bekanntschaften und verstreuten Nachrichten. Und ich habe fähige Imame und Rezitatoren gesehen, die nicht wussten, welche Moscheen sie brauchen, welche Anforderungen diese haben und wie sie sie erreichen.",
+  "tr": "Avrupa'daki cami ve derneklerin her yıl, özellikle Ramazan'da Teravih için ehil bir imamı nasıl aradığını, tanıdıklar ve dağınık mesajlardan başka açık bir yol bulamadığını yakından gördüm. Öte yandan hangi camilerin kendilerine ihtiyaç duyduğunu, şartlarının ne olduğunu ve onlara nasıl ulaşacaklarını bilmeyen yetkin imam ve kurraları da gördüm."
+ },
+ "فأنشأت منصة أئمة لتجمع الطرفين في مكان واحد: يعرض الإمام سيرته وتلاوته ومؤهلاته بوضوح، وينشر المسجد احتياجه وشروطه، ويتواصلان مباشرة بثقة واحترام، ومجاناً.": {
+  "en": "So I created Aemmah to bring both sides together in one place: the imam presents his CV, recitation and qualifications clearly, the mosque publishes its needs and requirements, and they get in touch directly, with trust and respect, free of charge.",
+  "fr": "J'ai donc créé Aemmah pour réunir les deux en un seul lieu : l'imam présente clairement son CV, sa récitation et ses qualifications, la mosquée publie ses besoins et ses conditions, et ils se contactent directement, en confiance, avec respect et gratuitement.",
+  "de": "Deshalb habe ich Aemmah gegründet, um beide Seiten an einem Ort zusammenzubringen: Der Imam stellt Lebenslauf, Rezitation und Qualifikationen klar vor, die Moschee veröffentlicht Bedarf und Anforderungen, und beide kommen direkt in Kontakt – mit Vertrauen, Respekt und kostenlos.",
+  "tr": "Bu yüzden iki tarafı tek bir yerde buluşturmak için Aemmah'yı kurdum: İmam özgeçmişini, kıraatini ve niteliklerini açıkça sunar, cami ihtiyacını ve şartlarını yayınlar; güven ve saygıyla, ücretsiz olarak doğrudan iletişime geçerler."
+ },
+ "لا توجد آراء منشورة بعد. كن أول من يكتب رأيه.": {
+  "en": "No opinions published yet. Be the first to share yours.",
+  "fr": "Aucun avis publié pour l'instant. Soyez le premier à donner le vôtre.",
+  "de": "Noch keine Meinungen veröffentlicht. Schreiben Sie als Erster Ihre Meinung.",
+  "tr": "Henüz yayınlanmış görüş yok. Görüşünü ilk yazan siz olun."
+ },
+ "لا يظهر ملف ولا إعلان للعموم قبل أن تراجعه الإدارة.": {
+  "en": "No profile or ad is public before the team reviews it.",
+  "fr": "Aucun profil ni annonce n'est public avant vérification par l'équipe.",
+  "de": "Kein Profil und keine Anzeige wird vor der Prüfung durch das Team öffentlich.",
+  "tr": "Hiçbir profil veya ilan yönetim incelemeden yayınlanmaz."
+ },
+ "لديك فكرة أو ملاحظة تحسّن المنصة؟ يسعدنا أن نسمع منك.": {
+  "en": "Have an idea or a remark to improve the platform? We'd be glad to hear from you.",
+  "fr": "Une idée ou une remarque pour améliorer la plateforme ? Nous serons ravis de vous lire.",
+  "de": "Haben Sie eine Idee oder Anmerkung zur Verbesserung der Plattform? Wir freuen uns, von Ihnen zu hören.",
+  "tr": "Platformu geliştirecek bir fikriniz veya notunuz mu var? Sizden duymaktan memnuniyet duyarız."
+ },
+ "لماذا أنشأت هذه المنصة؟": {
+  "en": "Why I created this platform",
+  "fr": "Pourquoi j'ai créé cette plateforme",
+  "de": "Warum ich diese Plattform gegründet habe",
+  "tr": "Bu platformu neden kurdum?"
+ },
+ "مؤسس المنصة": {
+  "en": "The founder",
+  "fr": "Le fondateur",
+  "de": "Der Gründer",
+  "tr": "Kurucu"
+ },
+ "ماذا قالوا عن منصة أئمة": {
+  "en": "What people say about Aemmah",
+  "fr": "Ce que disent les utilisateurs d'Aemmah",
+  "de": "Was andere über Aemmah sagen",
+  "tr": "Aemmah hakkında ne dediler?"
+ },
+ "مبادئ المنصة": {
+  "en": "Our principles",
+  "fr": "Nos principes",
+  "de": "Unsere Grundsätze",
+  "tr": "İlkelerimiz"
+ },
+ "مجانية": {
+  "en": "Free",
+  "fr": "Gratuite",
+  "de": "Kostenlos",
+  "tr": "Ücretsiz"
+ },
+ "مراجعة قبل النشر": {
+  "en": "Reviewed before publishing",
+  "fr": "Vérifié avant publication",
+  "de": "Prüfung vor Veröffentlichung",
+  "tr": "Yayından önce inceleme"
+ },
+ "مساحة يتبادل فيها الأئمة الخطب والدروس والتجارب.": {
+  "en": "A space where imams share sermons, lessons and experience.",
+  "fr": "Un espace où les imams partagent sermons, cours et expériences.",
+  "de": "Ein Raum, in dem Imame Predigten, Unterricht und Erfahrungen teilen.",
+  "tr": "İmamların hutbe, ders ve tecrübe paylaştığı bir alan."
+ },
+ "ملتقى للأئمة": {
+  "en": "An imams' forum",
+  "fr": "Un forum des imams",
+  "de": "Ein Forum für Imame",
+  "tr": "İmamlar forumu"
+ },
+ "من نحن": {
+  "en": "About us",
+  "fr": "Qui sommes-nous",
+  "de": "Über uns",
+  "tr": "Hakkımızda"
+ },
+ "منصة أئمة: جسر بين الأئمة والمساجد": {
+  "en": "Aemmah: a bridge between imams and mosques",
+  "fr": "Aemmah : un pont entre imams et mosquées",
+  "de": "Aemmah: eine Brücke zwischen Imamen und Moscheen",
+  "tr": "Aemmah: imamlar ile camiler arasında bir köprü"
+ },
+ "أضف رأيك في المنصة": {
+  "en": "Share your opinion of the platform",
+  "fr": "Donnez votre avis sur la plateforme",
+  "de": "Ihre Meinung zur Plattform",
+  "tr": "Platform hakkındaki görüşünüzü yazın"
+ },
+ "إرسال الرأي": {
+  "en": "Send",
+  "fr": "Envoyer",
+  "de": "Senden",
+  "tr": "Gönder"
+ },
+ "إرسال رأي آخر": {
+  "en": "Send another opinion",
+  "fr": "Envoyer un autre avis",
+  "de": "Weitere Meinung senden",
+  "tr": "Başka bir görüş gönder"
+ },
+ "اكتب اسمك.": {
+  "en": "Enter your name.",
+  "fr": "Indiquez votre nom.",
+  "de": "Geben Sie Ihren Namen ein.",
+  "tr": "Adınızı yazın."
+ },
+ "اكتب رأيك في {n} حرفاً على الأقل.": {
+  "en": "Write at least {n} characters.",
+  "fr": "Écrivez au moins {n} caractères.",
+  "de": "Schreiben Sie mindestens {n} Zeichen.",
+  "tr": "En az {n} karakter yazın."
+ },
+ "الاسم *": {
+  "en": "Name *",
+  "fr": "Nom *",
+  "de": "Name *",
+  "tr": "Ad *"
+ },
+ "المدينة أو البلد (اختياري)": {
+  "en": "City or country (optional)",
+  "fr": "Ville ou pays (facultatif)",
+  "de": "Stadt oder Land (optional)",
+  "tr": "Şehir veya ülke (isteğe bağlı)"
+ },
+ "تعذر الإرسال. حاول مرة أخرى.": {
+  "en": "Could not send. Please try again.",
+  "fr": "Impossible d'envoyer. Réessayez.",
+  "de": "Senden fehlgeschlagen. Bitte erneut versuchen.",
+  "tr": "Gönderilemedi. Tekrar deneyin."
+ },
+ "جزاك الله خيراً، وصل رأيك.": {
+  "en": "Thank you, your opinion has been received.",
+  "fr": "Merci, votre avis a bien été reçu.",
+  "de": "Danke, Ihre Meinung ist angekommen.",
+  "tr": "Teşekkürler, görüşünüz bize ulaştı."
+ },
+ "رأيك *": {
+  "en": "Your opinion *",
+  "fr": "Votre avis *",
+  "de": "Ihre Meinung *",
+  "tr": "Görüşünüz *"
+ },
+ "سيظهر رأيك على المنصة بعد أن تراجعه الإدارة وتوافق عليه.": {
+  "en": "It will appear on the platform once the team has reviewed and approved it.",
+  "fr": "Il apparaîtra sur la plateforme après vérification et validation par l'équipe.",
+  "de": "Sie erscheint auf der Plattform, sobald das Team sie geprüft und freigegeben hat.",
+  "tr": "Yönetim inceleyip onayladıktan sonra platformda görünecek."
+ },
+ "كل الآراء — وأضف رأيك": {
+  "en": "All opinions — add yours",
+  "fr": "Tous les avis — ajoutez le vôtre",
+  "de": "Alle Meinungen – und Ihre eigene",
+  "tr": "Tüm görüşler — sizinkini ekleyin"
+ },
+ "لا يُنشر أي رأي إلا بعد موافقة الإدارة.": {
+  "en": "No opinion is published without the team's approval.",
+  "fr": "Aucun avis n'est publié sans l'accord de l'équipe.",
+  "de": "Keine Meinung wird ohne Freigabe des Teams veröffentlicht.",
+  "tr": "Hiçbir görüş yönetim onayı olmadan yayınlanmaz."
+ },
+ "ما الذي أعجبك في المنصة؟ وكيف أفادتك؟": {
+  "en": "What did you like about the platform? How did it help you?",
+  "fr": "Qu'avez-vous aimé sur la plateforme ? En quoi vous a-t-elle aidé ?",
+  "de": "Was hat Ihnen an der Plattform gefallen? Wie hat sie Ihnen geholfen?",
+  "tr": "Platformda neyi beğendiniz? Size nasıl faydası oldu?"
+ },
+ "إمام / قارئ": {
+  "en": "Imam / reciter",
+  "fr": "Imam / récitant",
+  "de": "Imam / Rezitator",
+  "tr": "İmam / kurra"
+ },
+ "مسجد / جمعية": {
+  "en": "Mosque / association",
+  "fr": "Mosquée / association",
+  "de": "Moschee / Verein",
+  "tr": "Cami / dernek"
+ },
+ "من نحن | منصة أئمة": {
+  "en": "About us | Aemmah",
+  "fr": "Qui sommes-nous | Aemmah",
+  "de": "Über uns | Aemmah",
+  "tr": "Hakkımızda | Aemmah"
  }
 };

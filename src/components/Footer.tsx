@@ -14,6 +14,7 @@ interface FooterProps {
   onOpenMosqueAdd: () => void;
   onOpenHowItWorks: () => void;
   onOpenContact: () => void;
+  onOpenAbout: () => void;
   /** Undefined while no support method is configured. */
   onOpenSupport?: () => void;
   onOpenPrivacy: () => void;
@@ -22,7 +23,7 @@ interface FooterProps {
   hasOwnImamProfile?: boolean;
 }
 
-const linkClass = 'hover:text-amber-300 transition cursor-pointer text-right';
+const linkClass = 'hover:text-amber-300 transition cursor-pointer text-start';
 
 export const Footer: React.FC<FooterProps> = ({
   onOpenImamsList,
@@ -31,6 +32,7 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenMosqueAdd,
   onOpenHowItWorks,
   onOpenContact,
+  onOpenAbout,
   onOpenSupport,
   onOpenPrivacy,
   onOpenTerms,
@@ -90,6 +92,7 @@ export const Footer: React.FC<FooterProps> = ({
               <span>{t('عن المنصة')}</span>
             </h2>
             <ul className="space-y-2">
+              <li><button onClick={onOpenAbout} className={linkClass}>{t('من نحن')}</button></li>
               <li><button onClick={onOpenHowItWorks} className={linkClass}>{t('كيف تعمل المنصة؟')}</button></li>
               <li><button onClick={onOpenContact} className={linkClass}>{t('راسل الإدارة / أرسل اقتراحاً')}</button></li>
               {onOpenSupport && (
