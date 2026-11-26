@@ -363,7 +363,7 @@ service cloud.firestore {
         && nonEmpty(incoming().name, 80)
         && incoming().role in ['imam', 'mosque', 'visitor']
         && str(incoming().get('bio', ''), 120)
-        && str(incoming().city, 80)
+        && str(incoming().get('city', ''), 80)
         && str(incoming().get('idea', ''), 600) && str(incoming().get('design', ''), 600) && str(incoming().get('suggestions', ''), 600)
         && (incoming().get('idea', '').size() >= 10 || incoming().get('design', '').size() >= 10 || incoming().get('suggestions', '').size() >= 10)
         && str(incoming().createdAt, 40)
@@ -374,6 +374,18 @@ service cloud.firestore {
         && incoming().status in ['pending', 'approved', 'rejected']
         && incoming().get('pinned', false) is bool;
       allow delete: if isAdmin();
+    }
+
+    // Private e-mail / phone left with an opinion (optional): written together with a new pending
+    // opinion of the same id, readable only by admins, never published.
+    match /testimonialContacts/{testimonialId} {
+      allow read, delete: if isAdmin();
+      allow create: if incoming().keys().hasOnly(['contact', 'createdAt'])
+        && nonEmpty(incoming().contact, 120)
+        && str(incoming().createdAt, 40)
+        && existsAfter(/databases/$(database)/documents/testimonials/$(testimonialId))
+        && !exists(/databases/$(database)/documents/testimonials/$(testimonialId))
+        && getAfter(/databases/$(database)/documents/testimonials/$(testimonialId)).data.status == 'pending';
     }
 
     match /feedback/{feedbackId} {
