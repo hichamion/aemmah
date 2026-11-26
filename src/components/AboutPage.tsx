@@ -1,20 +1,16 @@
 import React from 'react';
 import { ArrowRight, BadgeCheck, Gift, HeartHandshake, Lock, MessageSquareQuote, Users } from 'lucide-react';
-import { TestimonialForm, TestimonialsList } from './Testimonials';
-import { TestimonialRole } from '../lib/testimonials';
 import { t } from '../i18n';
 
 /*
- * «About us»: who founded Aemmah and why, the principles of the platform, and what users say about it.
+ * «About us»: who founded Aemmah and why, and the principles of the platform (opinions: TestimonialsPage).
  * The founder paragraphs are the founder's own words; keep them as he approves them.
  */
 export const AboutPage: React.FC<{
   onBack: () => void;
   onOpenContact: () => void;
-  uid?: string | null;
-  userName?: string;
-  userRole?: TestimonialRole;
-}> = ({ onBack, onOpenContact, uid, userName, userRole }) => (
+  onOpenTestimonials: () => void;
+}> = ({ onBack, onOpenContact, onOpenTestimonials }) => (
   <section className="flex-1 py-8 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full space-y-8">
     <button onClick={onBack} className="text-brass-300 hover:text-brass-200 font-bold text-xs flex items-center gap-1 cursor-pointer">
       <ArrowRight className="w-4 h-4" />
@@ -66,12 +62,14 @@ export const AboutPage: React.FC<{
       </div>
     </article>
 
-    <section id="testimonials" className="space-y-5">
-      <h2 className="text-2xl font-black text-white flex items-center gap-2">
-        <MessageSquareQuote className="w-6 h-6 text-amber-400" /> {t('ماذا قالوا عن منصة أئمة')}
-      </h2>
-      <TestimonialsList emptyText={t('لا توجد آراء منشورة بعد. كن أول من يكتب رأيه.')} />
-      <TestimonialForm uid={uid} defaultName={userName} defaultRole={userRole} />
-    </section>
+    <button type="button" onClick={onOpenTestimonials}
+      className="w-full flex flex-wrap items-center gap-3 bg-white/5 hover:bg-white/10 border border-white/15 rounded-3xl p-5 text-start cursor-pointer transition">
+      <MessageSquareQuote className="w-8 h-8 text-amber-400 shrink-0" />
+      <span className="flex-1 min-w-48">
+        <span className="block text-lg font-black text-white">{t('ماذا قالوا عن منصة أئمة')}</span>
+        <span className="block text-sm text-white/70">{t('اقرأ آراء الأئمة والمساجد والزوار، وأضف رأيك.')}</span>
+      </span>
+      <span className="px-4 py-2 rounded-full bg-amber-400 text-slate-950 font-black text-sm">{t('الآراء')}</span>
+    </button>
   </section>
 );

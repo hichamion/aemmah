@@ -358,15 +358,21 @@ service cloud.firestore {
     // «What they said about Aemmah»: anyone may send an opinion, always «pending»; only approved ones are public.
     match /testimonials/{testimonialId} {
       allow get, list: if resource.data.status == 'approved' || isAdmin();
-      allow create: if incoming().keys().hasOnly(['name', 'role', 'city', 'text', 'createdAt', 'status', 'uid'])
+      // Answers to three questions (at least one, 10+ characters), a short introduction and the city.
+      allow create: if incoming().keys().hasOnly(['name', 'role', 'bio', 'city', 'idea', 'design', 'suggestions', 'createdAt', 'status', 'uid'])
         && nonEmpty(incoming().name, 80)
         && incoming().role in ['imam', 'mosque', 'visitor']
+        && str(incoming().get('bio', ''), 120)
         && str(incoming().city, 80)
-        && nonEmpty(incoming().text, 800) && incoming().text.size() >= 15
+        && str(incoming().get('idea', ''), 600) && str(incoming().get('design', ''), 600) && str(incoming().get('suggestions', ''), 600)
+        && (incoming().get('idea', '').size() >= 10 || incoming().get('design', '').size() >= 10 || incoming().get('suggestions', '').size() >= 10)
         && str(incoming().createdAt, 40)
         && incoming().status == 'pending'
         && (!incoming().keys().hasAny(['uid']) || (signedIn() && incoming().uid == me()));
-      allow update: if isAdmin() && changedKeys().hasOnly(['status']) && incoming().status in ['pending', 'approved', 'rejected'];
+      // The admin approves / hides and pins (pinned ones are shown first).
+      allow update: if isAdmin() && changedKeys().hasOnly(['status', 'pinned'])
+        && incoming().status in ['pending', 'approved', 'rejected']
+        && incoming().get('pinned', false) is bool;
       allow delete: if isAdmin();
     }
 

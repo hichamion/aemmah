@@ -15,6 +15,7 @@ interface FooterProps {
   onOpenHowItWorks: () => void;
   onOpenContact: () => void;
   onOpenAbout: () => void;
+  onOpenTestimonials: () => void;
   /** Undefined while no support method is configured. */
   onOpenSupport?: () => void;
   onOpenPrivacy: () => void;
@@ -33,6 +34,7 @@ export const Footer: React.FC<FooterProps> = ({
   onOpenHowItWorks,
   onOpenContact,
   onOpenAbout,
+  onOpenTestimonials,
   onOpenSupport,
   onOpenPrivacy,
   onOpenTerms,
@@ -93,6 +95,7 @@ export const Footer: React.FC<FooterProps> = ({
             </h2>
             <ul className="space-y-2">
               <li><button onClick={onOpenAbout} className={linkClass}>{t('من نحن')}</button></li>
+              <li><button onClick={onOpenTestimonials} className={linkClass}>{t('ماذا قالوا عن المنصة')}</button></li>
               <li><button onClick={onOpenHowItWorks} className={linkClass}>{t('كيف تعمل المنصة؟')}</button></li>
               <li><button onClick={onOpenContact} className={linkClass}>{t('راسل الإدارة / أرسل اقتراحاً')}</button></li>
               {onOpenSupport && (

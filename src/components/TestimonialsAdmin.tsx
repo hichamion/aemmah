@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { CheckCircle2, Trash2, XCircle } from 'lucide-react';
-import { deleteTestimonial, setTestimonialStatus, TESTIMONIAL_ROLES, TestimonialStatus, useTestimonials } from '../lib/testimonials';
+import { CheckCircle2, Pin, PinOff, Trash2, XCircle } from 'lucide-react';
+import { deleteTestimonial, QUESTIONS, setTestimonialPinned, setTestimonialStatus, TESTIMONIAL_ROLES, TestimonialStatus, useTestimonials } from '../lib/testimonials';
 import { formatDate } from '../utils/helpers';
 
 /** Admin: opinions about the platform. Nothing is public until approved here. */
@@ -21,7 +21,7 @@ export const TestimonialsAdmin: React.FC<{ onToast: (msg: string, kind?: 'succes
     <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-sm space-y-4">
       <div className="border-b pb-3 space-y-1">
         <h3 className="font-black text-base text-slate-900">آراء الزوار والأئمة والمساجد في المنصة</h3>
-        <p className="text-xs text-slate-500">لا يظهر أي رأي في صفحة «من نحن» ولا في الرئيسية إلا بعد موافقتك.</p>
+        <p className="text-xs text-slate-500">لا يظهر أي رأي في صفحة «ماذا قالوا عن المنصة» ولا في الرئيسية إلا بعد موافقتك. الآراء المثبّتة ({items.filter((i) => i.pinned && i.status === 'approved').length}) تظهر أولاً بعلامة «رأي مختار».</p>
       </div>
       <div className="flex flex-wrap gap-2">
         {([['pending', '⏳ بانتظار الموافقة'], ['approved', '✅ منشورة'], ['rejected', '✖ مرفوضة']] as const).map(([s, label]) => (
@@ -38,15 +38,28 @@ export const TestimonialsAdmin: React.FC<{ onToast: (msg: string, kind?: 'succes
           {list.map((it) => (
             <li key={it.id} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 space-y-2 text-sm">
               <p className="text-xs text-slate-500">
-                <b className="text-slate-900">{it.name}</b> · {TESTIMONIAL_ROLES.find((r) => r.value === it.role)?.label}
+                {it.pinned && <span className="inline-flex items-center gap-0.5 text-amber-700 font-black me-1"><Pin className="w-3 h-3" /> مثبّت ·</span>}
+                <b className="text-slate-900">{it.name}</b>{it.bio && <span className="text-slate-600"> ({it.bio})</span>} · {TESTIMONIAL_ROLES.find((r) => r.value === it.role)?.label}
                 {it.city && ` · ${it.city}`} · {formatDate(it.createdAt)} {it.uid ? '· (مسجّل في المنصة)' : '· (زائر غير مسجّل)'}
               </p>
-              <p className="whitespace-pre-line text-slate-800 leading-relaxed [unicode-bidi:plaintext]">{it.text}</p>
+              {QUESTIONS.filter((q) => (it[q.key] || '').trim()).map((q) => (
+                <div key={q.key}>
+                  <p className="text-[11px] font-black text-emerald-800">{q.label}</p>
+                  <p className="whitespace-pre-line text-slate-800 leading-relaxed [unicode-bidi:plaintext]">{it[q.key]}</p>
+                </div>
+              ))}
+              {it.text && <p className="whitespace-pre-line text-slate-800 leading-relaxed [unicode-bidi:plaintext]">{it.text}</p>}
               <div className="flex flex-wrap gap-2 justify-end pt-1">
                 {it.status !== 'approved' && (
                   <button type="button" onClick={() => act(() => setTestimonialStatus(it.id, 'approved'), 'نُشر الرأي.')}
                     className="inline-flex items-center gap-1 bg-emerald-600 hover:bg-emerald-500 text-white font-black px-3 py-1.5 rounded-xl text-xs cursor-pointer">
                     <CheckCircle2 className="w-3.5 h-3.5" /> موافقة ونشر
+                  </button>
+                )}
+                {it.status === 'approved' && (
+                  <button type="button" onClick={() => act(() => setTestimonialPinned(it.id, !it.pinned), it.pinned ? 'أُلغي التثبيت.' : 'ثُبّت الرأي: يظهر أولاً.')}
+                    className="inline-flex items-center gap-1 bg-amber-100 hover:bg-amber-200 text-amber-900 font-black px-3 py-1.5 rounded-xl text-xs cursor-pointer">
+                    {it.pinned ? <PinOff className="w-3.5 h-3.5" /> : <Pin className="w-3.5 h-3.5" />} {it.pinned ? 'إلغاء التثبيت' : 'تثبيت'}
                   </button>
                 )}
                 {it.status !== 'rejected' && (
