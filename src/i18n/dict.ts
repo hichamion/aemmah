@@ -7167,5 +7167,125 @@ export const DICT: Record<string, Entry> = {
   "fr": "Qui sommes-nous | Aemmah",
   "de": "Über uns | Aemmah",
   "tr": "Hakkımızda | Aemmah"
+ },
+ "اقرأ آراء الأئمة والمساجد والزوار، وأضف رأيك.": {
+  "en": "Read what imams, mosques and visitors say, and add yours.",
+  "fr": "Lisez les avis des imams, des mosquées et des visiteurs, et ajoutez le vôtre.",
+  "de": "Lesen Sie die Meinungen von Imamen, Moscheen und Besuchern – und schreiben Sie Ihre eigene.",
+  "tr": "İmamların, camilerin ve ziyaretçilerin görüşlerini okuyun, sizinkini ekleyin."
+ },
+ "الآراء": {
+  "en": "Opinions",
+  "fr": "Avis",
+  "de": "Meinungen",
+  "tr": "Görüşler"
+ },
+ "ماذا قالوا عن المنصة": {
+  "en": "What people say",
+  "fr": "Ce qu'ils en disent",
+  "de": "Was andere sagen",
+  "tr": "Ne dediler?"
+ },
+ "آراء الأئمة والمساجد والزوار في المنصة.": {
+  "en": "What imams, mosques and visitors think of the platform.",
+  "fr": "Les avis des imams, des mosquées et des visiteurs sur la plateforme.",
+  "de": "Was Imame, Moscheen und Besucher über die Plattform denken.",
+  "tr": "İmamların, camilerin ve ziyaretçilerin platform hakkındaki görüşleri."
+ },
+ "آراء مختارة": {
+  "en": "Featured opinions",
+  "fr": "Avis sélectionnés",
+  "de": "Ausgewählte Meinungen",
+  "tr": "Seçilmiş görüşler"
+ },
+ "أجب عن سؤال واحد على الأقل ({n} أحرف أو أكثر).": {
+  "en": "Answer at least one question ({n} characters or more).",
+  "fr": "Répondez à au moins une question ({n} caractères ou plus).",
+  "de": "Beantworten Sie mindestens eine Frage ({n} Zeichen oder mehr).",
+  "tr": "En az bir soruyu yanıtlayın ({n} karakter veya daha fazla)."
+ },
+ "أجب عن سؤال واحد على الأقل:": {
+  "en": "Answer at least one question:",
+  "fr": "Répondez à au moins une question :",
+  "de": "Beantworten Sie mindestens eine Frage:",
+  "tr": "En az bir soruyu yanıtlayın:"
+ },
+ "أضف رأيك": {
+  "en": "Add your opinion",
+  "fr": "Donnez votre avis",
+  "de": "Ihre Meinung",
+  "tr": "Görüşünüzü ekleyin"
+ },
+ "المسمّى الوظيفي أو تعريف قصير بنفسك": {
+  "en": "Job title or a short introduction",
+  "fr": "Fonction ou courte présentation",
+  "de": "Berufsbezeichnung oder kurze Vorstellung",
+  "tr": "Unvan veya kısa tanıtım"
+ },
+ "رأي مختار": {
+  "en": "Featured",
+  "fr": "Sélectionné",
+  "de": "Ausgewählt",
+  "tr": "Seçilmiş"
+ },
+ "كل الآراء": {
+  "en": "All opinions",
+  "fr": "Tous les avis",
+  "de": "Alle Meinungen",
+  "tr": "Tüm görüşler"
+ },
+ "كل الآراء ({n}) — وأضف رأيك": {
+  "en": "All opinions ({n}) — add yours",
+  "fr": "Tous les avis ({n}) — ajoutez le vôtre",
+  "de": "Alle Meinungen ({n}) – und Ihre eigene",
+  "tr": "Tüm görüşler ({n}) — sizinkini ekleyin"
+ },
+ "مثال: إمام وخطيب مسجد النور بليون": {
+  "en": "e.g. Imam and preacher at An-Nur Mosque, Lyon",
+  "fr": "ex. Imam et prédicateur à la mosquée An-Nour, Lyon",
+  "de": "z. B. Imam und Prediger der An-Nur-Moschee, Lyon",
+  "tr": "ör. Lyon Nur Camii imam-hatibi"
+ },
+ "ما رأيك في فكرة المنصة؟": {
+  "en": "What do you think of the idea of the platform?",
+  "fr": "Que pensez-vous de l'idée de la plateforme ?",
+  "de": "Was halten Sie von der Idee der Plattform?",
+  "tr": "Platformun fikri hakkında ne düşünüyorsunuz?"
+ },
+ "هل تراها نافعة للأئمة والمساجد؟ ولماذا؟": {
+  "en": "Do you find it useful for imams and mosques? Why?",
+  "fr": "La trouvez-vous utile pour les imams et les mosquées ? Pourquoi ?",
+  "de": "Finden Sie sie nützlich für Imame und Moscheen? Warum?",
+  "tr": "İmamlar ve camiler için faydalı buluyor musunuz? Neden?"
+ },
+ "ما رأيك في تصميمها ومحتواها؟": {
+  "en": "What do you think of its design and content?",
+  "fr": "Que pensez-vous de son design et de son contenu ?",
+  "de": "Was halten Sie von Gestaltung und Inhalt?",
+  "tr": "Tasarımı ve içeriği hakkında ne düşünüyorsunuz?"
+ },
+ "الشكل، سهولة الاستعمال، المعلومات المعروضة…": {
+  "en": "Look, ease of use, the information shown…",
+  "fr": "Apparence, facilité d'utilisation, informations affichées…",
+  "de": "Aussehen, Bedienbarkeit, angezeigte Informationen…",
+  "tr": "Görünüm, kullanım kolaylığı, gösterilen bilgiler…"
+ },
+ "ما اقتراحاتك لتطويرها؟": {
+  "en": "What are your suggestions to improve it?",
+  "fr": "Quelles sont vos suggestions pour l'améliorer ?",
+  "de": "Welche Vorschläge haben Sie zur Weiterentwicklung?",
+  "tr": "Geliştirilmesi için önerileriniz neler?"
+ },
+ "ما الذي تتمنى أن نضيفه أو نحسّنه؟": {
+  "en": "What would you like us to add or improve?",
+  "fr": "Qu'aimeriez-vous que nous ajoutions ou améliorions ?",
+  "de": "Was sollen wir hinzufügen oder verbessern?",
+  "tr": "Neyi eklememizi veya iyileştirmemizi istersiniz?"
+ },
+ "ماذا قالوا عن منصة أئمة | منصة أئمة": {
+  "en": "What people say | Aemmah",
+  "fr": "Ce qu'ils en disent | Aemmah",
+  "de": "Was andere sagen | Aemmah",
+  "tr": "Ne dediler? | Aemmah"
  }
 };

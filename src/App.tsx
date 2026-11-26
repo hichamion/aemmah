@@ -69,7 +69,7 @@ import { Intro, shouldShowIntro } from './components/Intro';
 import { ACCOUNT_DELETION_GRACE_DAYS, MIN_ITEMS_FOR_STATS, SUPPORT_ENABLED } from './config';
 import { ContactPage } from './components/ContactPage';
 import { AboutPage } from './components/AboutPage';
-import { TestimonialsHome } from './components/Testimonials';
+import { TestimonialsHome, TestimonialsPage } from './components/Testimonials';
 import { SupportPage } from './components/SupportPage';
 import { t } from './i18n';
 
@@ -78,7 +78,7 @@ const Dashboard = lazy(() => import('./components/Dashboard').then((m) => ({ def
 const AdminPanel = lazy(() => import('./components/AdminPanel').then((m) => ({ default: m.AdminPanel })));
 const CommunityPage = lazy(() => import('./components/community/CommunityPage').then((m) => ({ default: m.CommunityPage })));
 
-export type View = 'home' | 'dashboard' | 'imam' | 'mosque' | 'admin' | 'privacy' | 'terms' | 'contact' | 'support' | 'community' | 'about';
+export type View = 'home' | 'dashboard' | 'imam' | 'mosque' | 'admin' | 'privacy' | 'terms' | 'contact' | 'support' | 'community' | 'about' | 'testimonials';
 type ImamTab = 'manage' | 'mosque_ads' | 'applications' | 'inbox';
 type MosqueTab = 'browse' | 'manage_mosques' | 'applications' | 'inbox';
 
@@ -96,6 +96,7 @@ const VIEW_TO_HASH: Record<View, string> = {
   support: '#/support',
   community: '#/community',
   about: '#/about',
+  testimonials: '#/testimonials',
 };
 
 const VIEW_TITLES: Record<View, string> = {
@@ -110,6 +111,7 @@ const VIEW_TITLES: Record<View, string> = {
   support: 'ادعم المنصة | منصة أئمة',
   community: 'ملتقى الأئمة | منصة أئمة',
   about: 'من نحن | منصة أئمة',
+  testimonials: 'ماذا قالوا عن منصة أئمة | منصة أئمة',
 };
 
 function parseHash(hash: string): { view: View; imamId?: string; mosqueId?: string } {
@@ -871,7 +873,7 @@ export default function App() {
             </div>
           }
         >
-        {data.loading && !['home', 'privacy', 'terms', 'contact', 'support', 'community', 'about'].includes(currentView) ? (
+        {data.loading && !['home', 'privacy', 'terms', 'contact', 'support', 'community', 'about', 'testimonials'].includes(currentView) ? (
           <div className="flex-1 flex items-center justify-center py-24 text-slate-500 text-sm gap-2">
             <Loader2 className="w-5 h-5 animate-spin" />
             <span>{t('جاري تحميل البيانات…')}</span>
@@ -899,12 +901,19 @@ export default function App() {
                 onOpenContact={() => setCurrentView('contact')}
               />
             )}
-            {currentView === 'home' && <TestimonialsHome onOpenAbout={() => setCurrentView('about')} />}
+            {currentView === 'home' && <TestimonialsHome onOpenTestimonials={() => setCurrentView('testimonials')} />}
 
             {currentView === 'about' && (
               <AboutPage
                 onBack={() => setCurrentView('home')}
                 onOpenContact={() => setCurrentView('contact')}
+                onOpenTestimonials={() => setCurrentView('testimonials')}
+              />
+            )}
+
+            {currentView === 'testimonials' && (
+              <TestimonialsPage
+                onBack={() => setCurrentView('home')}
                 uid={uid}
                 userName={role === 'visitor' ? '' : displayName}
                 userRole={role === 'imam' ? 'imam' : role === 'mosque' ? 'mosque' : 'visitor'}
@@ -1039,6 +1048,7 @@ export default function App() {
         onOpenHowItWorks={goHowItWorks}
         onOpenContact={() => setCurrentView('contact')}
         onOpenAbout={() => setCurrentView('about')}
+        onOpenTestimonials={() => setCurrentView('testimonials')}
         onOpenSupport={SUPPORT_ENABLED ? () => setCurrentView('support') : undefined}
         hasOwnImamProfile={!!myImam}
       />
