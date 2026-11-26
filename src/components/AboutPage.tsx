@@ -1,11 +1,62 @@
 import React from 'react';
-import { ArrowRight, BadgeCheck, Briefcase, Gift, GraduationCap, HeartHandshake, Lock, MessageSquareQuote, Users } from 'lucide-react';
+import { ArrowRight, Award, BadgeCheck, Briefcase, Gift, GraduationCap, HeartHandshake, Lock, MessageSquareQuote, Users } from 'lucide-react';
 import { t } from '../i18n';
 
 /*
  * «About us»: who founded Aemmah and why, and the principles of the platform (opinions: TestimonialsPage).
  * The founder paragraphs are the founder's own words; keep them as he approves them.
  */
+/** [years, what, where / detail] — from the founder's CV; texts are translated where shown. */
+type FounderItem = [string, string, string];
+
+const EDUCATION: FounderItem[] = [
+  ['1992–1998', 'مدرسة الحسن الداخل', 'صفرو'],
+  ['1998–2006', 'حفظ القرآن الكريم', 'مكناس، قرية با محمد'],
+  ['2006–2009', 'مدرسة الإمام الهبطي للتعليم العتيق', 'قرية با محمد'],
+  ['2009–2012', 'مؤسسة الفتح للتعليم العتيق', 'مكناس'],
+  ['2012–2013', 'سنة في كلية الشريعة والقانون', 'فاس'],
+  ['2018–2021', 'إجازة في الشريعة وأصول الدين', 'فرنسا'],
+];
+
+const CERTIFICATES: FounderItem[] = [
+  ['2010', 'شهادة حفظ القرآن الكريم برواية ورش عن نافع', 'المغرب'],
+  ['2010', 'شهادة الإمامة', 'المغرب'],
+  ['2010', 'شهادة الوعظ والإرشاد', 'المغرب'],
+  ['2010', 'شهادة الثانوية العامة في التعليم الإسلامي العتيق', 'المغرب'],
+  ['2011', 'شهادة الخطابة', 'المغرب'],
+  ['2017', 'إجازة برواية حفص عن عاصم بالسند المتصل إلى رسول الله صلى الله عليه وسلم', 'الإمارات'],
+  ['2017', 'إجازة وإسناد في متن الجزرية في تجويد القرآن الكريم', 'الإمارات'],
+  ['2021', 'الإجازة في الشريعة وأصول الدين بالعربية', 'فرنسا'],
+  ['', 'شهادة من جامعة مونستر', 'ألمانيا'],
+];
+
+const EXPERIENCE: FounderItem[] = [
+  ['2006–2009', 'تدريس التجويد والخط العربي للطلاب', 'مدرسة الإمام الهبطي للتعليم العتيق، قرية با محمد (تاونات، المغرب)'],
+  ['2013–2018', 'إمام وخطيب ومحفّظ ومدرّس بمسجد حمد سهيل الخييلي', 'الهيئة العامة للشؤون الإسلامية والأوقاف (العين، الإمارات)'],
+  ['2017–2018', 'تدريس مادة التجويد للأئمة', 'الهيئة العامة للشؤون الإسلامية والأوقاف (العين، الإمارات)'],
+  ['2018 – اليوم', 'إمام وخطيب ومحفّظ ومدرّس بمسجد عمر بن الخطاب', 'الجمعية المغربية الإسلامية، دوسلدورف (ألمانيا)'],
+];
+
+const FounderList: React.FC<{ icon: React.ReactNode; title: string; items: FounderItem[]; footer?: string }> = ({ icon, title, items, footer }) => (
+  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-3">
+    <h3 className="font-black text-slate-900 flex items-center gap-2">
+      <span className="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center">{icon}</span>
+      {title}
+    </h3>
+    <ol className="relative border-s-2 border-amber-300 ms-2 ps-4 space-y-3">
+      {items.map(([years, what, where]) => (
+        <li key={what} className="relative text-sm leading-relaxed">
+          <span className="absolute -start-[23px] top-1.5 w-3 h-3 rounded-full bg-amber-400 ring-4 ring-slate-50" />
+          {years && <span className="block text-xs font-black text-[#0e4d64]">{t(years)}</span>}
+          <span className="block font-bold text-slate-900">{t(what)}</span>
+          {where && <span className="block text-xs text-slate-500">{t(where)}</span>}
+        </li>
+      ))}
+    </ol>
+    {footer && <p className="text-xs font-bold text-emerald-800">{footer}</p>}
+  </div>
+);
+
 export const AboutPage: React.FC<{
   onBack: () => void;
   onOpenContact: () => void;
@@ -23,40 +74,17 @@ export const AboutPage: React.FC<{
         <h1 className="text-3xl sm:text-4xl font-black text-slate-900 font-amiri">{t('منصة أئمة: جسر بين الأئمة والمساجد')}</h1>
       </header>
 
-      <section className="space-y-3">
+      <section className="space-y-4">
         <h2 className="text-xl font-black text-slate-900">{t('مؤسس المنصة')}</h2>
-        <p>{t('أسّس منصة أئمة الشيخ هشام اجحيلل (Hicham Jhilal)، إمام وخطيب ومدرّس للقرآن الكريم، يعيش في ألمانيا ويؤمّ الناس في مساجدها منذ سنة 2018.')}</p>
-        <div className="grid md:grid-cols-2 gap-4">
-          {[
-            [<GraduationCap key="q" className="w-5 h-5" />, t('القرآن والعلم'), [
-              t('حافظ لكتاب الله برواية ورش عن نافع ورواية حفص عن عاصم، بالسند المتصل.'),
-              t('حاصل على إجازة في الشريعة وأصول الدين.'),
-              t('درس الفقه الإسلامي بالمعهد الأوروبي للعلوم الإنسانية بباريس (تخرّج سنة 2021)، وقبل ذلك بكلية الشريعة بفاس ومعهد الفتح بمكناس ومعهد الإمام الهبطي بتاونات.'),
-              t('حاصل على شهادة من جامعة مونستر الألمانية.'),
-              t('نال جائزة في تلاوة القرآن الكريم بالإمارات (2017)، وجائزة في الخطابة والوعظ بالمغرب (2011).'),
-            ]],
-            [<Briefcase key="e" className="w-5 h-5" />, t('التجربة'), [
-              t('في ألمانيا منذ 2018: إمام وخطيب ومدرّس في الجمعية الإسلامية المغربية بدوسلدورف، وأمّ الناس في عدة مساجد بولاية شمال الراين وستفاليا (NRW)، منها صلاة التراويح في مسجد عمر بن الخطاب بدوسلدورف.'),
-              t('في الإمارات (2013–2018): إمام وخطيب ومحاضر في مساجد مدينة العين، تابعاً للجهة الرسمية للشؤون الإسلامية، وأشرف على دورات في تلاوة القرآن للأئمة والخطباء.'),
-              t('في المغرب (2006–2009): أستاذ لتلاوة القرآن الكريم والخط العربي بمعهد الإمام الهبطي بتاونات.'),
-              t('خبرة في تحفيظ القرآن الكريم وتدريس التجويد للكبار والصغار.'),
-            ]],
-          ].map(([icon, title, items], i) => (
-            <div key={i} className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-2">
-              <h3 className="font-black text-slate-900 flex items-center gap-2">
-                <span className="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center">{icon as React.ReactNode}</span>
-                {title as string}
-              </h3>
-              <ul className="space-y-1.5 text-sm">
-                {(items as string[]).map((x) => (
-                  <li key={x} className="flex gap-2 leading-relaxed">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 shrink-0" />
-                    <span>{x}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+        <p>{t('أسّس منصة أئمة الشيخ هشام اجحيلل (Hichame Jhilal)، إمام وخطيب ومحفّظ للقرآن الكريم، من مدينة صفرو بالمغرب، ويقيم في دوسلدورف بألمانيا.')}</p>
+        <p className="font-bold text-emerald-900 bg-emerald-50 border border-emerald-100 rounded-2xl px-4 py-3">
+          {t('وما زال إلى اليوم إماماً ومحفّظاً للقرآن الكريم في خدمة بيوت الله.')}
+        </p>
+        <div className="grid lg:grid-cols-3 gap-4">
+          <FounderList icon={<GraduationCap className="w-5 h-5" />} title={t('التعليم')} items={EDUCATION} />
+          <FounderList icon={<Award className="w-5 h-5" />} title={t('الشواهد المحصّل عليها')} items={CERTIFICATES}
+            footer={t('وحاصل على عدة جوائز وشواهد في حفظ القرآن الكريم وتجويده وتدريسه.')} />
+          <FounderList icon={<Briefcase className="w-5 h-5" />} title={t('التجارب المهنية')} items={EXPERIENCE} />
         </div>
       </section>
 

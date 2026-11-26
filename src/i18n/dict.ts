@@ -7383,5 +7383,227 @@ export const DICT: Record<string, Entry> = {
   "fr": "Avis sur la plateforme : le nom, la courte présentation et les réponses sont publiés après validation par l'équipe ; l'e-mail ou le numéro de téléphone, s'il est indiqué, n'est vu que par l'équipe et n'est jamais publié.",
   "de": "Meinungen zur Plattform: Name, Kurzvorstellung und Antworten werden nach Freigabe durch das Team veröffentlicht; eine angegebene E-Mail-Adresse oder Telefonnummer sieht nur das Team, sie wird nie veröffentlicht.",
   "tr": "Platform hakkındaki görüşler: ad, kısa tanıtım ve yanıtlar yönetim onayından sonra yayınlanır; verilmişse e-posta veya telefon numarasını yalnızca yönetim görür ve asla yayınlanmaz."
+ },
+ "أسّس منصة أئمة الشيخ هشام اجحيلل (Hichame Jhilal)، إمام وخطيب ومحفّظ للقرآن الكريم، من مدينة صفرو بالمغرب، ويقيم في دوسلدورف بألمانيا.": {
+  "en": "Aemmah was founded by Sheikh Hichame Jhilal, an imam, preacher and Quran teacher from Sefrou, Morocco, who lives in Düsseldorf, Germany.",
+  "fr": "Aemmah a été fondée par Cheikh Hichame Jhilal, imam, prédicateur et enseignant du Coran, originaire de Sefrou (Maroc) et établi à Düsseldorf (Allemagne).",
+  "de": "Aemmah wurde von Scheich Hichame Jhilal gegründet, Imam, Prediger und Koranlehrer aus Sefrou (Marokko), der in Düsseldorf lebt.",
+  "tr": "Aemmah, Fas'ın Sefrou şehrinden olup Almanya'nın Düsseldorf şehrinde yaşayan imam, hatip ve Kur'an hocası Şeyh Hichame Jhilal tarafından kuruldu."
+ },
+ "التجارب المهنية": {
+  "en": "Work experience",
+  "fr": "Expérience professionnelle",
+  "de": "Berufserfahrung",
+  "tr": "İş tecrübesi"
+ },
+ "التعليم": {
+  "en": "Education",
+  "fr": "Formation",
+  "de": "Ausbildung",
+  "tr": "Eğitim"
+ },
+ "الشواهد المحصّل عليها": {
+  "en": "Certificates",
+  "fr": "Diplômes obtenus",
+  "de": "Abschlüsse und Zeugnisse",
+  "tr": "Alınan belgeler"
+ },
+ "وحاصل على عدة جوائز وشواهد في حفظ القرآن الكريم وتجويده وتدريسه.": {
+  "en": "He has also received several awards and certificates in memorising, reciting (tajwid) and teaching the Quran.",
+  "fr": "Il a également reçu plusieurs prix et diplômes en mémorisation, récitation (tajwid) et enseignement du Coran.",
+  "de": "Außerdem mehrere Auszeichnungen und Zeugnisse im Auswendiglernen, in der Rezitation (Tadschwid) und im Unterrichten des Korans.",
+  "tr": "Ayrıca Kur'an hıfzı, tecvidi ve öğretimi alanında birçok ödül ve belge sahibidir."
+ },
+ "وما زال إلى اليوم إماماً ومحفّظاً للقرآن الكريم في خدمة بيوت الله.": {
+  "en": "To this day he serves as an imam and Quran teacher in the service of the houses of Allah.",
+  "fr": "Il est aujourd'hui encore imam et enseignant du Coran au service des maisons d'Allah.",
+  "de": "Bis heute ist er als Imam und Koranlehrer im Dienst der Häuser Allahs tätig.",
+  "tr": "Bugün de Allah'ın evlerinin hizmetinde imam ve Kur'an hocası olarak görev yapmaktadır."
+ },
+ "مدرسة الحسن الداخل": {
+  "en": "Al-Hassan Ad-Dakhil school",
+  "fr": "École Al-Hassan Ad-Dakhil",
+  "de": "Schule Al-Hassan Ad-Dakhil",
+  "tr": "Hasan ed-Dâhil okulu"
+ },
+ "صفرو": {
+  "en": "Sefrou",
+  "fr": "Sefrou",
+  "de": "Sefrou",
+  "tr": "Sefrou"
+ },
+ "حفظ القرآن الكريم": {
+  "en": "Memorising the Quran",
+  "fr": "Mémorisation du Coran",
+  "de": "Auswendiglernen des Korans",
+  "tr": "Kur'an hıfzı"
+ },
+ "مكناس، قرية با محمد": {
+  "en": "Meknes, Karia Ba Mohamed",
+  "fr": "Meknès, Karia Ba Mohamed",
+  "de": "Meknès, Karia Ba Mohamed",
+  "tr": "Meknes, Karia Ba Mohamed"
+ },
+ "مدرسة الإمام الهبطي للتعليم العتيق": {
+  "en": "Imam Al-Habti school of traditional Islamic education",
+  "fr": "École Imam Al-Habti d'enseignement traditionnel",
+  "de": "Imam-Al-Habti-Schule für traditionelle islamische Bildung",
+  "tr": "İmam el-Habtî geleneksel İslami eğitim okulu"
+ },
+ "قرية با محمد": {
+  "en": "Karia Ba Mohamed",
+  "fr": "Karia Ba Mohamed",
+  "de": "Karia Ba Mohamed",
+  "tr": "Karia Ba Mohamed"
+ },
+ "مؤسسة الفتح للتعليم العتيق": {
+  "en": "Al-Fath institute of traditional Islamic education",
+  "fr": "Institut Al-Fath d'enseignement traditionnel",
+  "de": "Institut Al-Fath für traditionelle islamische Bildung",
+  "tr": "El-Feth geleneksel İslami eğitim kurumu"
+ },
+ "مكناس": {
+  "en": "Meknes",
+  "fr": "Meknès",
+  "de": "Meknès",
+  "tr": "Meknes"
+ },
+ "سنة في كلية الشريعة والقانون": {
+  "en": "One year at the Faculty of Sharia and Law",
+  "fr": "Une année à la Faculté de charia et de droit",
+  "de": "Ein Jahr an der Fakultät für Scharia und Recht",
+  "tr": "Şeriat ve Hukuk Fakültesi'nde bir yıl"
+ },
+ "فاس": {
+  "en": "Fes",
+  "fr": "Fès",
+  "de": "Fès",
+  "tr": "Fes"
+ },
+ "إجازة في الشريعة وأصول الدين": {
+  "en": "Degree in Sharia and Usul al-Din",
+  "fr": "Licence en charia et fondements de la religion",
+  "de": "Abschluss in Scharia und Usul ad-Din",
+  "tr": "Şeriat ve Usûlüddin lisansı"
+ },
+ "شهادة حفظ القرآن الكريم برواية ورش عن نافع": {
+  "en": "Certificate of Quran memorisation in the Warsh riwaya (from Nafi')",
+  "fr": "Certificat de mémorisation du Coran selon la lecture Warsh (d'après Nâfi')",
+  "de": "Zeugnis über das Auswendiglernen des Korans in der Lesart Warsch (nach Nafi')",
+  "tr": "Verş (Nâfi') rivayetiyle Kur'an hıfzı belgesi"
+ },
+ "المغرب": {
+  "en": "Morocco",
+  "fr": "Maroc",
+  "de": "Marokko",
+  "tr": "Fas"
+ },
+ "شهادة الإمامة": {
+  "en": "Imamate certificate",
+  "fr": "Certificat d'imamat",
+  "de": "Zeugnis als Vorbeter (Imam)",
+  "tr": "İmamlık belgesi"
+ },
+ "شهادة الوعظ والإرشاد": {
+  "en": "Certificate in preaching and religious guidance",
+  "fr": "Certificat de prédication et d'orientation religieuse",
+  "de": "Zeugnis in Predigt und religiöser Beratung",
+  "tr": "Vaaz ve irşat belgesi"
+ },
+ "شهادة الثانوية العامة في التعليم الإسلامي العتيق": {
+  "en": "Secondary school diploma in traditional Islamic education",
+  "fr": "Baccalauréat de l'enseignement islamique traditionnel",
+  "de": "Abitur im traditionellen islamischen Bildungssystem",
+  "tr": "Geleneksel İslami eğitimde lise diploması"
+ },
+ "شهادة الخطابة": {
+  "en": "Certificate in Friday preaching (khutba)",
+  "fr": "Certificat de prédication (khutba)",
+  "de": "Zeugnis in Predigt (Chutba)",
+  "tr": "Hitabet (hutbe) belgesi"
+ },
+ "إجازة برواية حفص عن عاصم بالسند المتصل إلى رسول الله ﷺ": {
+  "en": "Ijaza in the Hafs riwaya (from 'Asim) with an unbroken chain to the Prophet ﷺ",
+  "fr": "Ijaza dans la lecture Hafs (d'après 'Âsim) avec une chaîne ininterrompue jusqu'au Prophète ﷺ",
+  "de": "Idschaza in der Lesart Hafs (nach 'Asim) mit lückenloser Kette bis zum Propheten ﷺ",
+  "tr": "Hafs (Âsım) rivayetinde Hz. Peygamber'e ﷺ kadar kesintisiz senetli icazet"
+ },
+ "الإمارات": {
+  "en": "UAE",
+  "fr": "Émirats arabes unis",
+  "de": "VAE",
+  "tr": "BAE"
+ },
+ "إجازة وإسناد في متن الجزرية في تجويد القرآن الكريم": {
+  "en": "Ijaza with chain in the Jazariyya text on Quran recitation (tajwid)",
+  "fr": "Ijaza avec chaîne dans le texte de la Jazariyya (tajwid)",
+  "de": "Idschaza mit Überlieferungskette im Lehrgedicht al-Dschazariyya (Tadschwid)",
+  "tr": "Tecvitte Cezeriyye metni icazeti ve senedi"
+ },
+ "الإجازة في الشريعة وأصول الدين بالعربية": {
+  "en": "Degree in Sharia and Usul al-Din (in Arabic)",
+  "fr": "Licence en charia et fondements de la religion (en arabe)",
+  "de": "Abschluss in Scharia und Usul ad-Din (auf Arabisch)",
+  "tr": "Şeriat ve Usûlüddin lisansı (Arapça)"
+ },
+ "شهادة من جامعة مونستر": {
+  "en": "Certificate from the University of Münster",
+  "fr": "Certificat de l'Université de Münster",
+  "de": "Zertifikat der Universität Münster",
+  "tr": "Münster Üniversitesi belgesi"
+ },
+ "تدريس التجويد والخط العربي للطلاب": {
+  "en": "Teaching tajwid and Arabic calligraphy to students",
+  "fr": "Enseignement du tajwid et de la calligraphie arabe",
+  "de": "Unterricht in Tadschwid und arabischer Kalligrafie",
+  "tr": "Öğrencilere tecvit ve Arap hattı öğretimi"
+ },
+ "مدرسة الإمام الهبطي للتعليم العتيق، قرية با محمد (تاونات، المغرب)": {
+  "en": "Imam Al-Habti school, Karia Ba Mohamed (Taounate, Morocco)",
+  "fr": "École Imam Al-Habti, Karia Ba Mohamed (Taounate, Maroc)",
+  "de": "Imam-Al-Habti-Schule, Karia Ba Mohamed (Taounate, Marokko)",
+  "tr": "İmam el-Habtî okulu, Karia Ba Mohamed (Taounate, Fas)"
+ },
+ "إمام وخطيب ومحفّظ ومدرّس بمسجد حمد سهيل الخييلي": {
+  "en": "Imam, preacher, Quran and religion teacher at the Hamad Suhail Al Khaili Mosque",
+  "fr": "Imam, prédicateur et enseignant à la mosquée Hamad Suhail Al Khaili",
+  "de": "Imam, Prediger und Lehrer an der Hamad-Suhail-Al-Khaili-Moschee",
+  "tr": "Hamad Suhail el-Huyeylî Camii imamı, hatibi ve hocası"
+ },
+ "الهيئة العامة للشؤون الإسلامية والأوقاف (العين، الإمارات)": {
+  "en": "General Authority of Islamic Affairs and Endowments (Al Ain, UAE)",
+  "fr": "Autorité générale des affaires islamiques et des waqfs (Al-Aïn, Émirats)",
+  "de": "Generalbehörde für Islamische Angelegenheiten und Stiftungen (Al-Ain, VAE)",
+  "tr": "İslami İşler ve Vakıflar Genel Kurumu (El-Ayn, BAE)"
+ },
+ "تدريس مادة التجويد للأئمة": {
+  "en": "Teaching tajwid to imams",
+  "fr": "Enseignement du tajwid aux imams",
+  "de": "Tadschwid-Unterricht für Imame",
+  "tr": "İmamlara tecvit dersi"
+ },
+ "2018 – اليوم": {
+  "en": "2018 – today",
+  "fr": "2018 – aujourd'hui",
+  "de": "2018 – heute",
+  "tr": "2018 – bugün"
+ },
+ "إمام وخطيب ومحفّظ ومدرّس بمسجد عمر بن الخطاب": {
+  "en": "Imam, preacher, Quran and religion teacher at the Omar ibn al-Khattab Mosque",
+  "fr": "Imam, prédicateur et enseignant à la mosquée Omar ibn al-Khattab",
+  "de": "Imam, Prediger und Lehrer an der Omar-ibn-al-Khattab-Moschee",
+  "tr": "Ömer bin Hattab Camii imamı, hatibi ve hocası"
+ },
+ "الجمعية المغربية الإسلامية، دوسلدورف (ألمانيا)": {
+  "en": "Moroccan-Islamic association, Düsseldorf (Germany)",
+  "fr": "Association islamique marocaine, Düsseldorf (Allemagne)",
+  "de": "Marokkanisch-Islamische Gemeinde, Düsseldorf",
+  "tr": "Fas-İslam Derneği, Düsseldorf (Almanya)"
+ },
+ "إجازة برواية حفص عن عاصم بالسند المتصل إلى رسول الله صلى الله عليه وسلم": {
+  "en": "Ijaza in the Hafs riwaya (from 'Asim) with an unbroken chain to the Prophet (peace be upon him)",
+  "fr": "Ijaza dans la lecture Hafs (d'après 'Âsim) avec une chaîne ininterrompue jusqu'au Prophète (paix et bénédictions sur lui)",
+  "de": "Idschaza in der Lesart Hafs (nach 'Asim) mit lückenloser Kette bis zum Propheten (Friede sei mit ihm)",
+  "tr": "Hafs (Âsım) rivayetinde Hz. Peygamber'e (s.a.v.) kadar kesintisiz senetli icazet"
  }
 };
