@@ -899,6 +899,8 @@ export default function App() {
                 pendingCount={pendingApprovalsCount}
                 showStats={showStats}
                 onOpenContact={() => setCurrentView('contact')}
+                onOpenAbout={() => setCurrentView('about')}
+                onOpenTestimonials={() => setCurrentView('testimonials')}
               />
             )}
             {currentView === 'home' && <TestimonialsHome onOpenTestimonials={() => setCurrentView('testimonials')} />}

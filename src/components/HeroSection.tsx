@@ -5,7 +5,7 @@ import { HERO_PHOTOS } from '../config';
 import { firstNameOf } from '../utils/helpers';
 import { prefersStill, useSettings } from '../lib/settings';
 import { AnnouncementTarget, useAnnouncements } from '../lib/announcements';
-import { ArrowLeft, AudioLines, ChevronLeft, ChevronRight, FileSignature, HandHeart, LogIn, Mail, Mic, PieChart, Plus, HelpCircle, ShieldCheck, Sparkles, UserRound, Users, UsersRound } from 'lucide-react';
+import { ArrowLeft, AudioLines, ChevronLeft, ChevronRight, FileSignature, HandHeart, LogIn, Mail, Mic, PieChart, Plus, HelpCircle, ShieldCheck, Sparkles, UserRound, Users, UsersRound, Info, MessageSquareQuote } from 'lucide-react';
 import { isRtl, t } from '../i18n';
 
 interface HeroSectionProps {
@@ -30,6 +30,8 @@ interface HeroSectionProps {
   /** Hide the statistics button until there is enough data. */
   showStats: boolean;
   onOpenContact: () => void;
+  onOpenAbout: () => void;
+  onOpenTestimonials: () => void;
 }
 
 const asset = (f: string) => `${import.meta.env.BASE_URL}${f}`;
@@ -53,6 +55,8 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
     pendingCount,
     showStats,
     onOpenContact,
+    onOpenAbout,
+    onOpenTestimonials,
   } = props;
   const firstName = firstNameOf(userName);
   const scrollToHow = () => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
@@ -180,6 +184,8 @@ export const HeroSection: React.FC<HeroSectionProps> = (props) => {
     ...(showStats ? [{ key: 'stats', label: t('الإحصائيات'), icon: <PieChart />, onClick: onOpenDashboard }] : []),
     { key: 'how', label: t('كيف تعمل المنصة؟'), icon: <HelpCircle />, onClick: scrollToHow },
     { key: 'contact', label: t('راسل الإدارة'), icon: <Mail />, onClick: onOpenContact },
+    { key: 'about', label: t('من نحن'), icon: <Info />, onClick: onOpenAbout },
+    { key: 'testimonials', label: t('ماذا قالوا عنا'), icon: <MessageSquareQuote />, onClick: onOpenTestimonials },
     ...(onOpenSupport ? [{ key: 'support', label: t('ادعم المنصة'), icon: <HandHeart />, onClick: onOpenSupport }] : []),
   ];
 

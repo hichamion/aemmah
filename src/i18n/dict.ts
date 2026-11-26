@@ -7359,5 +7359,11 @@ export const DICT: Record<string, Entry> = {
   "fr": "Expérience de l'enseignement de la mémorisation du Coran et du tajwid aux adultes et aux enfants.",
   "de": "Erfahrung im Unterrichten von Koran-Auswendiglernen und Tadschwid für Erwachsene und Kinder.",
   "tr": "Yetişkinlere ve çocuklara hıfz ve tecvit öğretiminde tecrübe."
+ },
+ "ماذا قالوا عنا": {
+  "en": "What people say",
+  "fr": "Ce qu'ils disent",
+  "de": "Was andere sagen",
+  "tr": "Ne dediler?"
  }
 };
