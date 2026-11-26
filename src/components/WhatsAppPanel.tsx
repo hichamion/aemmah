@@ -4,7 +4,20 @@ import { CheckCircle2, ExternalLink, Loader2, MessageCircle, Search, Send } from
 import { db } from '../firebase';
 import { ImamContact, ImamProfile } from '../types';
 import { imamRole, isKhateeb } from '../utils/helpers';
-import { countryFromText, isInternationalPhone, toInternational } from '../utils/phone';
+import { countryFromText, DIAL_COUNTRIES, isInternationalPhone, toInternational } from '../utils/phone';
+
+/** Countries for the admin's choice, Morocco and Europe first, names in Arabic. */
+const countryOptions: [string, string, string][] = (() => {
+  let dn: Intl.DisplayNames | null = null;
+  try {
+    dn = new Intl.DisplayNames(['ar'], { type: 'region' });
+  } catch {
+    dn = null;
+  }
+  const first = ['MA', 'ES', 'IT', 'FR', 'DE', 'BE', 'NL', 'DZ', 'TN', 'EG', 'GB'];
+  const all = DIAL_COUNTRIES.map(([iso, code]) => [iso, code, (dn?.of(iso) as string) || iso] as [string, string, string]);
+  return [...first.map((f) => all.find((a) => a[0] === f)!), ...all.filter((a) => !first.includes(a[0]))];
+})();
 
 /*
  * Admin: WhatsApp messages to imams (thanks, reminders, notices) using the numbers they entered.
@@ -56,35 +69,44 @@ export const WhatsAppPanel: React.FC<{ imams: ImamProfile[] }> = ({ imams }) => 
   }, []);
 
   // Numbers typed without the country code get the code of the imam's country of residence.
-  const fixed = (imam: ImamProfile, raw: string) => toInternational(raw || '', countryFromText(imam.country)) || raw || '';
+  // For imams whose country cannot be read from their profile, the admin picks it (Morocco by default).
+  const [manualIso, setManualIso] = useState<Record<string, string>>({});
+  const isoOf = (imam: ImamProfile) => countryFromText(imam.country) || manualIso[imam.id] || 'MA';
+  const fixed = (imam: ImamProfile, raw: string) => toInternational(raw || '', isoOf(imam)) || raw || '';
   const numberOf = (imam: ImamProfile) => {
     const c = contacts?.[imam.id];
     return waNumber(fixed(imam, c?.whatsapp || c?.phone || ''));
   };
 
   // Stored numbers without «+code»: what they become, and those whose country is unknown.
+  type Fix = { imam: ImamProfile; phone: string; whatsapp: string; before: string };
   const toFix = useMemo(() => {
-    if (!contacts) return { ok: [] as { imam: ImamProfile; phone: string; whatsapp: string; before: string }[], unknown: [] as ImamProfile[] };
-    const ok: { imam: ImamProfile; phone: string; whatsapp: string; before: string }[] = [];
-    const unknown: ImamProfile[] = [];
+    if (!contacts) return { ok: [] as Fix[], unknown: [] as Fix[] };
+    const ok: Fix[] = [];
+    const unknown: Fix[] = [];
     for (const imam of imams) {
       const c = contacts[imam.id];
       if (!c) continue;
       const bad = [c.phone, c.whatsapp].some((n) => n && !isInternationalPhone(n.replace(/[\s\-()]/g, '')));
       if (!bad) continue;
-      const phone = fixed(imam, c.phone);
-      const whatsapp = fixed(imam, c.whatsapp);
-      if ([phone, whatsapp].every((n) => !n || isInternationalPhone(n))) ok.push({ imam, phone, whatsapp, before: [c.phone, c.whatsapp].filter(Boolean).join(' / ') });
-      else unknown.push(imam);
+      const before = [c.phone, c.whatsapp].filter(Boolean).join(' / ');
+      if (countryFromText(imam.country)) {
+        ok.push({ imam, phone: fixed(imam, c.phone), whatsapp: fixed(imam, c.whatsapp), before });
+      } else {
+        const iso = manualIso[imam.id] || 'MA';
+        const f = (n: string) => toInternational(n || '', iso) || n || '';
+        unknown.push({ imam, phone: f(c.phone), whatsapp: f(c.whatsapp), before });
+      }
     }
     return { ok, unknown };
-  }, [contacts, imams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contacts, imams, manualIso]);
   const [fixing, setFixing] = useState(false);
-  const fixAll = async () => {
+  const fixAll = async (items: Fix[]) => {
     setFixing(true);
     const next = { ...(contacts || {}) };
     let done = 0;
-    for (const f of toFix.ok) {
+    for (const f of items.filter((x) => [x.phone, x.whatsapp].every((n) => !n || isInternationalPhone(n)))) {
       try {
         await setDoc(doc(db, 'imamContacts', f.imam.id), { phone: f.phone, whatsapp: f.whatsapp }, { merge: true });
         next[f.imam.id] = { ...next[f.imam.id], phone: f.phone, whatsapp: f.whatsapp };
@@ -95,7 +117,7 @@ export const WhatsAppPanel: React.FC<{ imams: ImamProfile[] }> = ({ imams }) => 
     }
     setContacts(next);
     setFixing(false);
-    setFixedCount(done);
+    setFixedCount((n) => n + done);
   };
   const [fixedCount, setFixedCount] = useState(0);
 
@@ -186,16 +208,37 @@ export const WhatsAppPanel: React.FC<{ imams: ImamProfile[] }> = ({ imams }) => 
                   </li>
                 ))}
               </ul>
-              <button type="button" onClick={fixAll} disabled={fixing}
+              <button type="button" onClick={() => fixAll(toFix.ok)} disabled={fixing}
                 className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-700 text-white font-black text-xs cursor-pointer disabled:opacity-60">
                 {fixing && <Loader2 className="w-4 h-4 animate-spin" />} تصحيح الكل وحفظه ({toFix.ok.length})
               </button>
             </>
           )}
           {toFix.unknown.length > 0 && (
-            <p className="text-xs text-red-800 leading-relaxed">
-              لم أعرف دولة إقامة هؤلاء، فلم يُصحَّح رقمهم: {toFix.unknown.map((i) => `${i.name} (${i.country || '—'})`).join('، ')}. عدّل ملفهم وأضف المفتاح الدولي يدوياً.
-            </p>
+            <>
+              <p className="text-xs text-amber-900 leading-relaxed">
+                لم تُعرف دولة هؤلاء من خانة الإقامة، فاختر دولة كل واحد منهم (المغرب افتراضياً) ثم احفظ:
+              </p>
+              <ul className="divide-y divide-amber-100 bg-white rounded-xl border border-amber-100">
+                {toFix.unknown.map((f) => (
+                  <li key={f.imam.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2 text-xs">
+                    <b className="text-slate-900">{f.imam.name}</b>
+                    <span className="text-slate-500">{f.imam.country || '—'}</span>
+                    <select value={manualIso[f.imam.id] || 'MA'} aria-label={`دولة ${f.imam.name}`}
+                      onChange={(e) => setManualIso((m) => ({ ...m, [f.imam.id]: e.target.value }))}
+                      className="border border-slate-300 rounded-lg px-2 py-1 text-xs bg-white">
+                      {countryOptions.map(([iso, code, name]) => <option key={iso} value={iso}>{name} (+{code})</option>)}
+                    </select>
+                    <span dir="ltr" className="ms-auto text-slate-500 line-through">{f.before}</span>
+                    <span dir="ltr" className="font-black text-emerald-800">{[...new Set([f.phone, f.whatsapp].filter(Boolean))].join(' / ')}</span>
+                  </li>
+                ))}
+              </ul>
+              <button type="button" onClick={() => fixAll(toFix.unknown)} disabled={fixing}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-700 text-white font-black text-xs cursor-pointer disabled:opacity-60">
+                {fixing && <Loader2 className="w-4 h-4 animate-spin" />} تصحيح هؤلاء وحفظه ({toFix.unknown.length})
+              </button>
+            </>
           )}
         </div>
       )}

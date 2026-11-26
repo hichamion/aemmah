@@ -19,8 +19,8 @@ export const DIAL_COUNTRIES: [string, string, string[]][] = [
   ['FR', '33', ['فرنسا', 'france', 'frankreich', 'fransa']],
   ['BE', '32', ['بلجيكا', 'belgium', 'belgique', 'belgien', 'belçika']],
   ['NL', '31', ['هولندا', 'netherlands', 'pays-bas', 'niederlande', 'hollanda']],
-  ['ES', '34', ['إسبانيا', 'اسبانيا', 'spain', 'espagne', 'spanien', 'ispanya']],
-  ['IT', '39', ['إيطاليا', 'ايطاليا', 'italy', 'italie', 'italien', 'italya']],
+  ['ES', '34', ['إسبانيا', 'اسبانيا', 'spain', 'españa', 'espana', 'espagne', 'spanien', 'ispanya']],
+  ['IT', '39', ['إيطاليا', 'ايطاليا', 'italy', 'italia', 'italie', 'italien', 'italya']],
   ['GB', '44', ['المملكة المتحدة', 'بريطانيا', 'انجلترا', 'إنجلترا', 'united kingdom', 'uk', 'england', 'royaume-uni', 'großbritannien']],
   ['CH', '41', ['سويسرا', 'switzerland', 'suisse', 'schweiz', 'isviçre']],
   ['AT', '43', ['النمسا', 'austria', 'autriche', 'österreich', 'avusturya']],
@@ -59,6 +59,17 @@ export const DIAL_COUNTRIES: [string, string, string[]][] = [
   ['CA', '1', ['كندا', 'canada', 'kanada']],
 ];
 
+/** Cities often written alone in «place of residence» (without the country). */
+const CITIES: Record<string, string[]> = {
+  MA: ['الدار البيضاء', 'كازا', 'casablanca', 'casa', 'الرباط', 'rabat', 'فاس', 'fes', 'fès', 'مراكش', 'marrakech', 'marrakesh', 'طنجة', 'tanger', 'tangier', 'أكادير', 'اكادير', 'agadir', 'مكناس', 'meknes', 'meknès', 'وجدة', 'oujda', 'تطوان', 'tetouan', 'tétouan', 'القنيطرة', 'kenitra', 'سلا', 'salé', 'sale', 'الناظور', 'nador', 'الحسيمة', 'hoceima', 'العرائش', 'larache', 'خريبكة', 'khouribga', 'بني ملال', 'beni mellal', 'الجديدة', 'el jadida', 'آسفي', 'اسفي', 'safi', 'تازة', 'taza', 'سطات', 'settat', 'برشيد', 'berrechid', 'المحمدية', 'mohammedia', 'الصويرة', 'essaouira', 'ورزازات', 'ouarzazate', 'العيون', 'laayoune', 'الداخلة', 'dakhla', 'كلميم', 'guelmim', 'تارودانت', 'taroudant', 'تيزنيت', 'tiznit', 'الرشيدية', 'الراشيدية', 'errachidia', 'خنيفرة', 'khenifra', 'شفشاون', 'chefchaouen', 'القصر الكبير', 'ksar el kebir', 'سيدي قاسم', 'سيدي سليمان', 'سيدي بنور', 'تمارة', 'temara', 'الفقيه بن صالح', 'إنزكان', 'انزكان', 'inezgane', 'بركان', 'berkane', 'الخميسات', 'khemisset', 'ابن جرير', 'بن جرير', 'الصخيرات', 'وزان', 'ouazzane', 'تاونات', 'taounate', 'ميدلت', 'midelt', 'أزرو', 'ازرو', 'إفران', 'ifrane', 'زاكورة', 'زاگورة', 'zagora', 'الفنيدق', 'المضيق', 'مرتيل', 'martil', 'أصيلة', 'اصيلة', 'asilah', 'قلعة السراغنة', 'اليوسفية', 'وادي زم', 'أبي الجعد', 'بوجدور', 'طانطان', 'tan-tan', 'السمارة', 'الحاجب', 'صفرو', 'sefrou', 'جرسيف', 'guercif', 'تاوريرت', 'taourirt', 'زايو', 'الدريوش', 'سوق الأربعاء', 'مشرع بلقصيري', 'بوزنيقة', 'bouznika', 'بنسليمان', 'المنصورية'],
+  ES: ['مدريد', 'madrid', 'برشلونة', 'barcelona', 'فالنسيا', 'بلنسية', 'valencia', 'إشبيلية', 'اشبيلية', 'sevilla', 'seville', 'مالقة', 'ملقة', 'malaga', 'málaga', 'مورسيا', 'مرسية', 'murcia', 'ألميريا', 'الميريا', 'almeria', 'almería', 'بلباو', 'bilbao', 'سرقسطة', 'zaragoza', 'غرناطة', 'granada', 'جيرونا', 'girona', 'تاراغونا', 'tarragona', 'ليريدا', 'lleida', 'lérida', 'الجزيرة الخضراء', 'algeciras', 'سبتة', 'ceuta', 'مليلية', 'melilla', 'أليكانتي', 'اليكانتي', 'alicante', 'قرطبة', 'córdoba', 'cordoba', 'بالما', 'palma', 'مايوركا', 'mallorca', 'بنبلونة', 'pamplona', 'فيتوريا', 'vitoria', 'تيراسا', 'terrassa', 'ماتارو', 'mataró', 'mataro'],
+  IT: ['روما', 'roma', 'rome', 'ميلانو', 'ميلان', 'milano', 'milan', 'تورينو', 'torino', 'turin', 'نابولي', 'napoli', 'naples', 'بولونيا', 'bologna', 'فلورنسا', 'firenze', 'florence', 'جنوة', 'genova', 'genoa', 'البندقية', 'venezia', 'venice', 'باليرمو', 'palermo', 'فيرونا', 'verona', 'بيرغامو', 'bergamo', 'بريشيا', 'brescia', 'مودينا', 'modena', 'بادوفا', 'padova', 'padua', 'ريجيو إميليا', 'reggio emilia', 'بارما', 'parma', 'بيزا', 'pisa', 'كاتانيا', 'catania', 'باري', 'bari', 'تريستي', 'trieste', 'فيتشنزا', 'vicenza', 'تريفيزو', 'treviso', 'كومو', 'como', 'مونزا', 'monza', 'بياتشينزا', 'piacenza', 'ريميني', 'rimini', 'أنكونا', 'ancona', 'كريمونا', 'cremona', 'مانتوفا', 'mantova', 'فاريزي', 'varese', 'نوفارا', 'novara', 'أريتسو', 'arezzo', 'بيروجيا', 'perugia'],
+  FR: ['باريس', 'paris', 'ليون', 'lyon', 'مرسيليا', 'marseille', 'تولوز', 'toulouse', 'ستراسبورغ', 'strasbourg', 'ليل', 'lille', 'نيس', 'nice', 'نانت', 'nantes', 'بوردو', 'bordeaux', 'مونبلييه', 'montpellier', 'رين', 'rennes', 'غرونوبل', 'grenoble', 'سانت إتيان', 'saint-étienne', 'saint-etienne', 'ميلوز', 'mulhouse', 'روبيه', 'roubaix', 'أفينيون', 'avignon', 'فيلوربان', 'villeurbanne', 'تور', 'tours', 'ديجون', 'dijon', 'ريمس', 'reims', 'لو هافر', 'le havre', 'نيم', 'nîmes', 'nimes', 'متز', 'metz', 'نانسي', 'nancy', 'أورليان', 'orléans', 'orleans', 'روان', 'rouen'],
+  DE: ['برلين', 'berlin', 'كولونيا', 'كولن', 'köln', 'koln', 'cologne', 'ميونخ', 'münchen', 'munchen', 'munich', 'فرانكفورت', 'frankfurt', 'هامبورغ', 'hamburg', 'دوسلدورف', 'düsseldorf', 'dusseldorf', 'شتوتغارت', 'stuttgart', 'دورتموند', 'dortmund', 'إيسن', 'essen', 'بون', 'bonn', 'دويسبورغ', 'duisburg', 'بوخوم', 'bochum', 'فوبرتال', 'wuppertal', 'هانوفر', 'hannover', 'بريمن', 'bremen', 'لايبزيغ', 'leipzig', 'دريسدن', 'dresden', 'نورنبيرغ', 'nürnberg', 'nuremberg', 'مانهايم', 'mannheim', 'كارلسروه', 'karlsruhe', 'آخن', 'aachen', 'أوفنباخ', 'offenbach', 'فيسبادن', 'wiesbaden', 'ماينتس', 'mainz', 'غيلزنكيرشن', 'gelsenkirchen', 'مونستر', 'münster', 'بيليفيلد', 'bielefeld', 'دارمشتات', 'darmstadt'],
+  BE: ['بروكسل', 'bruxelles', 'brussels', 'brussel', 'أنتويرب', 'انتويرب', 'antwerpen', 'anvers', 'antwerp', 'لييج', 'liège', 'liege', 'شارلروا', 'charleroi', 'غنت', 'gent', 'gand', 'ghent', 'مولنبيك', 'molenbeek', 'سكاربيك', 'schaerbeek', 'أندرلخت', 'anderlecht', 'مونس', 'mons', 'نامور', 'namur', 'ميكلين', 'mechelen', 'فيلفورد', 'vilvoorde'],
+  NL: ['أمستردام', 'امستردام', 'amsterdam', 'روتردام', 'rotterdam', 'لاهاي', 'den haag', 'the hague', 'أوتريخت', 'اوتريخت', 'utrecht', 'آيندهوفن', 'eindhoven', 'تيلبورغ', 'tilburg', 'ألمير', 'almere', 'أرنهيم', 'arnhem', 'نايميخن', 'nijmegen', 'لايدن', 'leiden', 'خاودا', 'gouda'],
+};
+
 const byIso = new Map(DIAL_COUNTRIES.map(([iso, code]) => [iso, code]));
 export const dialCode = (iso: string) => byIso.get(iso) || '';
 
@@ -67,10 +78,13 @@ const norm = (s: string) => s.toLowerCase().replace(/[ـ]/g, '').trim();
 /** Country (ISO) named in a free text such as «فاس، المغرب» or «Köln, Deutschland»; the last part wins. */
 export function countryFromText(text: string | undefined): string {
   const parts = (text || '').split(/[،,\-–/|]+/).map(norm).filter(Boolean).reverse();
+  const hit = (part: string, names: string[]) => names.some((n) => part === norm(n) || (norm(n).length > 3 && part.includes(norm(n))));
   for (const part of parts) {
-    for (const [iso, , names] of DIAL_COUNTRIES) {
-      if (names.some((n) => part === norm(n) || (norm(n).length > 3 && part.includes(norm(n))))) return iso;
-    }
+    for (const [iso, , names] of DIAL_COUNTRIES) if (hit(part, names)) return iso;
+  }
+  // No country named: try the city (e.g. «طنجة», «Köln»).
+  for (const part of parts) {
+    for (const [iso, cities] of Object.entries(CITIES)) if (hit(part, cities)) return iso;
   }
   return '';
 }
