@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { addDoc, collection, deleteDoc, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where, writeBatch } from 'firebase/firestore';
 import { db } from '../firebase';
 import { nowIso } from './db';
 
@@ -17,7 +17,8 @@ export interface Testimonial {
   role: TestimonialRole;
   /** Job title or a short introduction, shown under the name. */
   bio?: string;
-  city: string;
+  /** City of opinions sent before the private contact field replaced it. */
+  city?: string;
   /** Answers to the three questions (QUESTIONS). */
   idea?: string;
   design?: string;
@@ -51,18 +52,20 @@ export async function submitTestimonial(input: {
   name: string;
   role: TestimonialRole;
   bio: string;
-  city: string;
+  /** E-mail or phone, optional: stored apart (testimonialContacts), seen only by the admin. */
+  contact: string;
   idea: string;
   design: string;
   suggestions: string;
   uid?: string | null;
 }) {
   const cut = (v: string, n: number) => v.trim().slice(0, n);
-  await addDoc(collection(db, 'testimonials'), {
+  const ref = doc(collection(db, 'testimonials'));
+  const batch = writeBatch(db);
+  batch.set(ref, {
     name: cut(input.name, 80),
     role: input.role,
     bio: cut(input.bio, 120),
-    city: cut(input.city, 80),
     idea: cut(input.idea, TESTIMONIAL_MAX),
     design: cut(input.design, TESTIMONIAL_MAX),
     suggestions: cut(input.suggestions, TESTIMONIAL_MAX),
@@ -70,6 +73,17 @@ export async function submitTestimonial(input: {
     status: 'pending',
     ...(input.uid ? { uid: input.uid } : {}),
   });
+  // The contact is never in the public document: approved opinions are readable by everyone.
+  if (input.contact.trim()) batch.set(doc(db, 'testimonialContacts', ref.id), { contact: cut(input.contact, 120), createdAt: nowIso() });
+  await batch.commit();
+}
+
+/** Admin: private contacts of the opinions, by opinion id. */
+export async function loadTestimonialContacts(): Promise<Record<string, string>> {
+  const snap = await getDocs(collection(db, 'testimonialContacts'));
+  const out: Record<string, string> = {};
+  snap.docs.forEach((d) => (out[d.id] = String(d.data().contact || '')));
+  return out;
 }
 
 /** Pinned first, then newest first. */
@@ -93,4 +107,7 @@ export function useTestimonials(all = false): { items: Testimonial[]; loaded: bo
 
 export const setTestimonialStatus = (id: string, status: TestimonialStatus) => updateDoc(doc(db, 'testimonials', id), { status });
 export const setTestimonialPinned = (id: string, pinned: boolean) => updateDoc(doc(db, 'testimonials', id), { pinned });
-export const deleteTestimonial = (id: string) => deleteDoc(doc(db, 'testimonials', id));
+export const deleteTestimonial = async (id: string) => {
+  await deleteDoc(doc(db, 'testimonialContacts', id)).catch(() => {});
+  await deleteDoc(doc(db, 'testimonials', id));
+};

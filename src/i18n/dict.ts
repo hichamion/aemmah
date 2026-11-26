@@ -7365,5 +7365,23 @@ export const DICT: Record<string, Entry> = {
   "fr": "Ce qu'ils disent",
   "de": "Was andere sagen",
   "tr": "Ne dediler?"
+ },
+ "(اختياري، خاص بالإدارة ولا يُنشر)": {
+  "en": "(optional, for the team only, never published)",
+  "fr": "(facultatif, réservé à l'équipe, jamais publié)",
+  "de": "(optional, nur für das Team, wird nicht veröffentlicht)",
+  "tr": "(isteğe bağlı, yalnızca yönetim için, yayınlanmaz)"
+ },
+ "البريد الإلكتروني أو رقم الهاتف": {
+  "en": "E-mail or phone number",
+  "fr": "E-mail ou numéro de téléphone",
+  "de": "E-Mail oder Telefonnummer",
+  "tr": "E-posta veya telefon numarası"
+ },
+ "آراء الزوار في المنصة: الاسم والتعريف القصير والأجوبة تُنشر بعد موافقة الإدارة؛ أما البريد أو رقم الهاتف، إن تُرك، فلا تراه إلا الإدارة ولا يُنشر.": {
+  "en": "Opinions about the platform: the name, short introduction and answers are published after the team approves them; an e-mail or phone number, if given, is seen only by the team and never published.",
+  "fr": "Avis sur la plateforme : le nom, la courte présentation et les réponses sont publiés après validation par l'équipe ; l'e-mail ou le numéro de téléphone, s'il est indiqué, n'est vu que par l'équipe et n'est jamais publié.",
+  "de": "Meinungen zur Plattform: Name, Kurzvorstellung und Antworten werden nach Freigabe durch das Team veröffentlicht; eine angegebene E-Mail-Adresse oder Telefonnummer sieht nur das Team, sie wird nie veröffentlicht.",
+  "tr": "Platform hakkındaki görüşler: ad, kısa tanıtım ve yanıtlar yönetim onayından sonra yayınlanır; verilmişse e-posta veya telefon numarasını yalnızca yönetim görür ve asla yayınlanmaz."
  }
 };

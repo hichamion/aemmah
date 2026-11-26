@@ -71,7 +71,7 @@ export const TestimonialForm: React.FC<{ uid?: string | null; defaultName?: stri
   const [name, setName] = useState(defaultName);
   const [bio, setBio] = useState('');
   const [role, setRole] = useState<TestimonialRole>(defaultRole);
-  const [city, setCity] = useState('');
+  const [contact, setContact] = useState('');
   const [answers, setAnswers] = useState({ idea: '', design: '', suggestions: '' });
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
@@ -86,7 +86,7 @@ export const TestimonialForm: React.FC<{ uid?: string | null; defaultName?: stri
     setBusy(true);
     setError('');
     try {
-      await submitTestimonial({ name, bio, role, city, ...answers, uid });
+      await submitTestimonial({ name, bio, role, contact, ...answers, uid });
       setSent(true);
     } catch {
       setError(t('تعذر الإرسال. حاول مرة أخرى.'));
@@ -131,8 +131,12 @@ export const TestimonialForm: React.FC<{ uid?: string | null; defaultName?: stri
           </select>
         </label>
         <label className="block text-sm">
-          <span className="block font-bold mb-1">{t('المدينة أو البلد (اختياري)')}</span>
-          <input className={field} value={city} maxLength={80} onChange={(e) => setCity(e.target.value)} />
+          <span className="block font-bold mb-1">
+            {t('البريد الإلكتروني أو رقم الهاتف')}{' '}
+            <span className="font-normal text-slate-500">{t('(اختياري، خاص بالإدارة ولا يُنشر)')}</span>
+          </span>
+          <input className={field} value={contact} maxLength={120} dir="ltr" autoComplete="email" onChange={(e) => setContact(e.target.value)}
+            placeholder="name@example.com / +49 …" />
         </label>
       </div>
       <p className="text-xs text-slate-500">{t('أجب عن سؤال واحد على الأقل:')}</p>

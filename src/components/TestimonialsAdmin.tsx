@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CheckCircle2, Pin, PinOff, Trash2, XCircle } from 'lucide-react';
-import { deleteTestimonial, QUESTIONS, setTestimonialPinned, setTestimonialStatus, TESTIMONIAL_ROLES, TestimonialStatus, useTestimonials } from '../lib/testimonials';
+import { deleteTestimonial, loadTestimonialContacts, QUESTIONS, setTestimonialPinned, setTestimonialStatus, TESTIMONIAL_ROLES, TestimonialStatus, useTestimonials } from '../lib/testimonials';
 import { formatDate } from '../utils/helpers';
 
 /** Admin: opinions about the platform. Nothing is public until approved here. */
 export const TestimonialsAdmin: React.FC<{ onToast: (msg: string, kind?: 'success' | 'error') => void }> = ({ onToast }) => {
   const { items, loaded } = useTestimonials(true);
   const [filter, setFilter] = useState<TestimonialStatus>('pending');
+  // Private e-mail / phone left by the authors (not part of the public opinion).
+  const [contacts, setContacts] = useState<Record<string, string>>({});
+  useEffect(() => {
+    loadTestimonialContacts().then(setContacts).catch(() => setContacts({}));
+  }, [items.length]);
   const list = items.filter((i) => i.status === filter);
   const count = (s: TestimonialStatus) => items.filter((i) => i.status === s).length;
   const act = async (fn: () => Promise<void>, msg: string) => {
@@ -42,6 +47,11 @@ export const TestimonialsAdmin: React.FC<{ onToast: (msg: string, kind?: 'succes
                 <b className="text-slate-900">{it.name}</b>{it.bio && <span className="text-slate-600"> ({it.bio})</span>} · {TESTIMONIAL_ROLES.find((r) => r.value === it.role)?.label}
                 {it.city && ` · ${it.city}`} · {formatDate(it.createdAt)} {it.uid ? '· (مسجّل في المنصة)' : '· (زائر غير مسجّل)'}
               </p>
+              {contacts[it.id] && (
+                <p className="text-xs bg-sky-50 border border-sky-200 text-sky-900 rounded-lg px-2.5 py-1.5">
+                  للتواصل (خاص بالإدارة): <b dir="ltr" className="select-all">{contacts[it.id]}</b>
+                </p>
+              )}
               {QUESTIONS.filter((q) => (it[q.key] || '').trim()).map((q) => (
                 <div key={q.key}>
                   <p className="text-[11px] font-black text-emerald-800">{q.label}</p>
