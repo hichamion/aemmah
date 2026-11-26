@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, BadgeCheck, Gift, HeartHandshake, Lock, MessageSquareQuote, Users } from 'lucide-react';
+import { ArrowRight, BadgeCheck, Briefcase, Gift, GraduationCap, HeartHandshake, Lock, MessageSquareQuote, Users } from 'lucide-react';
 import { t } from '../i18n';
 
 /*
@@ -25,7 +25,39 @@ export const AboutPage: React.FC<{
 
       <section className="space-y-3">
         <h2 className="text-xl font-black text-slate-900">{t('مؤسس المنصة')}</h2>
-        <p>{t('أسّس منصة أئمة الشيخ هشام اجحيلل (Hicham Jhilal)، إمام وقارئ للقرآن الكريم، أمّ المصلين في صلاة التراويح في مساجد بأوروبا، منها مسجد عمر بن الخطاب في دوسلدورف بألمانيا.')}</p>
+        <p>{t('أسّس منصة أئمة الشيخ هشام اجحيلل (Hicham Jhilal)، إمام وخطيب ومدرّس للقرآن الكريم، يعيش في ألمانيا ويؤمّ الناس في مساجدها منذ سنة 2018.')}</p>
+        <div className="grid md:grid-cols-2 gap-4">
+          {[
+            [<GraduationCap key="q" className="w-5 h-5" />, t('القرآن والعلم'), [
+              t('حافظ لكتاب الله برواية ورش عن نافع ورواية حفص عن عاصم، بالسند المتصل.'),
+              t('حاصل على إجازة في الشريعة وأصول الدين.'),
+              t('درس الفقه الإسلامي بالمعهد الأوروبي للعلوم الإنسانية بباريس (تخرّج سنة 2021)، وقبل ذلك بكلية الشريعة بفاس ومعهد الفتح بمكناس ومعهد الإمام الهبطي بتاونات.'),
+              t('حاصل على شهادة من جامعة مونستر الألمانية.'),
+              t('نال جائزة في تلاوة القرآن الكريم بالإمارات (2017)، وجائزة في الخطابة والوعظ بالمغرب (2011).'),
+            ]],
+            [<Briefcase key="e" className="w-5 h-5" />, t('التجربة'), [
+              t('في ألمانيا منذ 2018: إمام وخطيب ومدرّس في الجمعية الإسلامية المغربية بدوسلدورف، وأمّ الناس في عدة مساجد بولاية شمال الراين وستفاليا (NRW)، منها صلاة التراويح في مسجد عمر بن الخطاب بدوسلدورف.'),
+              t('في الإمارات (2013–2018): إمام وخطيب ومحاضر في مساجد مدينة العين، تابعاً للجهة الرسمية للشؤون الإسلامية، وأشرف على دورات في تلاوة القرآن للأئمة والخطباء.'),
+              t('في المغرب (2006–2009): أستاذ لتلاوة القرآن الكريم والخط العربي بمعهد الإمام الهبطي بتاونات.'),
+              t('خبرة في تحفيظ القرآن الكريم وتدريس التجويد للكبار والصغار.'),
+            ]],
+          ].map(([icon, title, items], i) => (
+            <div key={i} className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-2">
+              <h3 className="font-black text-slate-900 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-emerald-700 text-white flex items-center justify-center">{icon as React.ReactNode}</span>
+                {title as string}
+              </h3>
+              <ul className="space-y-1.5 text-sm">
+                {(items as string[]).map((x) => (
+                  <li key={x} className="flex gap-2 leading-relaxed">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-2 shrink-0" />
+                    <span>{x}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="space-y-3">

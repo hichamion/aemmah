@@ -7287,5 +7287,77 @@ export const DICT: Record<string, Entry> = {
   "fr": "Ce qu'ils en disent | Aemmah",
   "de": "Was andere sagen | Aemmah",
   "tr": "Ne dediler? | Aemmah"
+ },
+ "أسّس منصة أئمة الشيخ هشام اجحيلل (Hicham Jhilal)، إمام وخطيب ومدرّس للقرآن الكريم، يعيش في ألمانيا ويؤمّ الناس في مساجدها منذ سنة 2018.": {
+  "en": "Aemmah was founded by Sheikh Hicham Jhilal, an imam, preacher and Quran teacher who lives in Germany and has led prayers in its mosques since 2018.",
+  "fr": "Aemmah a été fondée par Cheikh Hicham Jhilal, imam, prédicateur et enseignant du Coran, qui vit en Allemagne et y dirige la prière dans des mosquées depuis 2018.",
+  "de": "Aemmah wurde von Scheich Hicham Jhilal gegründet, Imam, Prediger und Koranlehrer, der in Deutschland lebt und seit 2018 in deutschen Moscheen als Vorbeter tätig ist.",
+  "tr": "Aemmah, Almanya'da yaşayan ve 2018'den beri oradaki camilerde imamlık yapan imam, hatip ve Kur'an hocası Şeyh Hicham Jhilal tarafından kuruldu."
+ },
+ "القرآن والعلم": {
+  "en": "Quran and learning",
+  "fr": "Coran et études",
+  "de": "Koran und Ausbildung",
+  "tr": "Kur'an ve ilim"
+ },
+ "التجربة": {
+  "en": "Experience",
+  "fr": "Expérience",
+  "de": "Erfahrung",
+  "tr": "Tecrübe"
+ },
+ "حافظ لكتاب الله برواية ورش عن نافع ورواية حفص عن عاصم، بالسند المتصل.": {
+  "en": "Has memorised the Quran in the Warsh (from Nafi') and Hafs (from 'Asim) riwayas, with an unbroken chain of transmission (sanad).",
+  "fr": "A mémorisé le Coran selon les lectures Warsh (d'après Nâfi') et Hafs (d'après 'Âsim), avec une chaîne de transmission ininterrompue (sanad).",
+  "de": "Hat den Koran in den Lesarten Warsch (nach Nafi') und Hafs (nach 'Asim) mit lückenloser Überlieferungskette (Sanad) auswendig gelernt.",
+  "tr": "Kur'an'ı Verş (Nâfi') ve Hafs (Âsım) rivayetleriyle, kesintisiz senetle hıfzetti."
+ },
+ "حاصل على إجازة في الشريعة وأصول الدين.": {
+  "en": "Holds a degree in Sharia and the fundamentals of religion (Usul al-Din).",
+  "fr": "Titulaire d'une licence en charia et fondements de la religion (Usul al-Din).",
+  "de": "Abschluss in Scharia und Grundlagen der Religion (Usul ad-Din).",
+  "tr": "Şeriat ve Usûlüddin alanında lisans sahibi."
+ },
+ "درس الفقه الإسلامي بالمعهد الأوروبي للعلوم الإنسانية بباريس (تخرّج سنة 2021)، وقبل ذلك بكلية الشريعة بفاس ومعهد الفتح بمكناس ومعهد الإمام الهبطي بتاونات.": {
+  "en": "Studied Islamic law at the European Institute of Human Sciences in Paris (graduated 2021), and before that at the Faculty of Sharia in Fes, the Al-Fath Institute in Meknes and the Imam Habti Institute in Taounat.",
+  "fr": "A étudié le droit musulman à l'Institut européen des sciences humaines de Paris (diplômé en 2021), et auparavant à la Faculté de charia de Fès, à l'Institut Al-Fath de Meknès et à l'Institut Imam Habti de Taounate.",
+  "de": "Studierte islamisches Recht am Europäischen Institut für Humanwissenschaften in Paris (Abschluss 2021), zuvor an der Scharia-Fakultät in Fès, am Institut Al-Fath in Meknès und am Institut Imam Habti in Taounat.",
+  "tr": "İslam hukukunu Paris'teki Avrupa İnsan Bilimleri Enstitüsü'nde okudu (2021'de mezun oldu); daha önce Fes Şeriat Fakültesi'nde, Meknes'teki el-Feth Enstitüsü'nde ve Taounat'taki İmam Habtî Enstitüsü'nde öğrenim gördü."
+ },
+ "حاصل على شهادة من جامعة مونستر الألمانية.": {
+  "en": "Holds a certificate from the University of Münster, Germany.",
+  "fr": "Titulaire d'un certificat de l'Université de Münster (Allemagne).",
+  "de": "Hat ein Zertifikat der Universität Münster.",
+  "tr": "Almanya'daki Münster Üniversitesi'nden sertifika sahibi."
+ },
+ "نال جائزة في تلاوة القرآن الكريم بالإمارات (2017)، وجائزة في الخطابة والوعظ بالمغرب (2011).": {
+  "en": "Received an award for Quran recitation in the UAE (2017) and an award for preaching and lecturing in Morocco (2011).",
+  "fr": "A reçu un prix de récitation du Coran aux Émirats (2017) et un prix de prédication au Maroc (2011).",
+  "de": "Auszeichnung für Koranrezitation in den VAE (2017) und für Predigt und Vortrag in Marokko (2011).",
+  "tr": "BAE'de Kur'an tilaveti ödülü (2017) ve Fas'ta hitabet ve vaaz ödülü (2011) aldı."
+ },
+ "في ألمانيا منذ 2018: إمام وخطيب ومدرّس في الجمعية الإسلامية المغربية بدوسلدورف، وأمّ الناس في عدة مساجد بولاية شمال الراين وستفاليا (NRW)، منها صلاة التراويح في مسجد عمر بن الخطاب بدوسلدورف.": {
+  "en": "In Germany since 2018: imam, preacher and teacher at the Moroccan-Islamic mosque community in Düsseldorf, and has led prayers in several mosques in North Rhine-Westphalia (NRW), including the Tarawih prayer at the Omar ibn al-Khattab Mosque in Düsseldorf.",
+  "fr": "En Allemagne depuis 2018 : imam, prédicateur et enseignant à la communauté de la mosquée marocaine-islamique de Düsseldorf ; il a dirigé la prière dans plusieurs mosquées de Rhénanie-du-Nord-Westphalie (NRW), dont la prière de Tarawih à la mosquée Omar ibn al-Khattab de Düsseldorf.",
+  "de": "In Deutschland seit 2018: Imam, Prediger und Lehrkraft in der Marokkanisch-Islamischen Moscheegemeinde in Düsseldorf; Vorbeter in mehreren Moscheen in Nordrhein-Westfalen, darunter beim Tarawih-Gebet in der Omar-ibn-al-Khattab-Moschee in Düsseldorf.",
+  "tr": "2018'den beri Almanya'da: Düsseldorf'taki Fas-İslam cami cemaatinde imam, hatip ve öğretmen; Kuzey Ren-Vestfalya'da (NRW) birçok camide, aralarında Düsseldorf Ömer bin Hattab Camii'nde Teravih olmak üzere imamlık yaptı."
+ },
+ "في الإمارات (2013–2018): إمام وخطيب ومحاضر في مساجد مدينة العين، تابعاً للجهة الرسمية للشؤون الإسلامية، وأشرف على دورات في تلاوة القرآن للأئمة والخطباء.": {
+  "en": "In the UAE (2013–2018): imam, preacher and lecturer in mosques of Al Ain for the official authority for Islamic affairs, where he also ran Quran-recitation workshops for imams and preachers.",
+  "fr": "Aux Émirats (2013–2018) : imam, prédicateur et conférencier dans des mosquées d'Al-Aïn pour l'autorité officielle des affaires islamiques, où il a aussi animé des ateliers de récitation du Coran pour imams et prédicateurs.",
+  "de": "In den VAE (2013–2018): Imam, Prediger und Dozent in Moscheen in Al-Ain für die staatliche Einrichtung für religiöse Angelegenheiten; leitete dort auch Workshops zur Koranrezitation für Imame und Prediger.",
+  "tr": "BAE'de (2013–2018): resmî din işleri kurumu bünyesinde El-Ayn camilerinde imam, hatip ve vaiz; imam ve hatiplere yönelik kıraat atölyeleri de yürüttü."
+ },
+ "في المغرب (2006–2009): أستاذ لتلاوة القرآن الكريم والخط العربي بمعهد الإمام الهبطي بتاونات.": {
+  "en": "In Morocco (2006–2009): teacher of Quran recitation and Arabic calligraphy at the Imam Habti Institute in Taounat.",
+  "fr": "Au Maroc (2006–2009) : enseignant de récitation du Coran et de calligraphie arabe à l'Institut Imam Habti de Taounate.",
+  "de": "In Marokko (2006–2009): Lehrer für Koranrezitation und arabische Kalligrafie am Institut Imam Habti in Taounat.",
+  "tr": "Fas'ta (2006–2009): Taounat'taki İmam Habtî Enstitüsü'nde Kur'an tilaveti ve Arap hattı öğretmeni."
+ },
+ "خبرة في تحفيظ القرآن الكريم وتدريس التجويد للكبار والصغار.": {
+  "en": "Experienced in teaching Quran memorisation and tajwid to adults and children.",
+  "fr": "Expérience de l'enseignement de la mémorisation du Coran et du tajwid aux adultes et aux enfants.",
+  "de": "Erfahrung im Unterrichten von Koran-Auswendiglernen und Tadschwid für Erwachsene und Kinder.",
+  "tr": "Yetişkinlere ve çocuklara hıfz ve tecvit öğretiminde tecrübe."
  }
 };
