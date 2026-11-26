@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { ImamContact, ImamProfile } from '../types';
 import {
+  cleanCvText,
   formatPreferredLocations,
   getSafeImamAvatar,
   imamLanguages,
@@ -170,6 +171,10 @@ export const ContactLine: React.FC<{ icon: React.ReactNode; value: string; ltr?:
 export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
   ({ imam, contact, layout, profileUrl, contactSlot, recitationSlot, audioSlot }, ref) => {
     const print = layout === 'print';
+    // A long free-text CV fills the main column: then experience and certificates go to the side
+    // column (under the languages), which is otherwise empty, instead of making the CV much longer.
+    const cvLen = (imam.cvText || '').trim();
+    const sideHeavy = cvLen.length > 900 || cvLen.split('\n').length > 18;
     const qrTarget = profileUrl || `https://${SITE_URL}/`;
     const qr = useQrCode(qrTarget);
 
@@ -303,6 +308,51 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
             </section>
           )}
 
+          {sideHeavy && (imam.currentJob?.trim() || (imam.experiences?.length ?? 0) > 0) && (
+            <section className="space-y-3">
+              <SideTitle icon={<Briefcase className="w-5 h-5" />}>{t('الخبرات العملية')}</SideTitle>
+              <ul className="space-y-2.5 text-sm">
+                {imam.currentJob?.trim() && (
+                  <li className="flex gap-2.5 leading-relaxed">
+                    <span className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0" />
+                    <span>
+                      <span className="text-amber-300 font-black">{t('الوظيفة الحالية')}: </span>
+                      {imam.currentJob}
+                    </span>
+                  </li>
+                )}
+                {(imam.experiences || []).map((e, i) => (
+                  <li key={i} className="flex gap-2.5 leading-relaxed">
+                    <span className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0" />
+                    <span>
+                      <span className="font-black">{e.title}</span>
+                      {e.place && <span className="text-white/80"> — {e.place}</span>}
+                      {yearRange(e.from, e.to) && <span className="block text-xs font-bold text-amber-300">{yearRange(e.from, e.to)}</span>}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {sideHeavy && (imam.certificates?.length ?? 0) > 0 && (
+            <section className="space-y-3">
+              <SideTitle icon={<Award className="w-5 h-5" />}>{t('الشهادات والإجازات')}</SideTitle>
+              <ul className="space-y-2.5 text-sm">
+                {imam.certificates!.map((c, i) => (
+                  <li key={i} className="flex gap-2.5 leading-relaxed">
+                    <span className="w-2 h-2 rounded-full bg-amber-400 mt-2 shrink-0" />
+                    <span>
+                      <span className="font-black">{c.name}</span>
+                      {c.issuer && <span className="text-white/80"> — {c.issuer}</span>}
+                      {c.year && <span className="text-xs font-bold text-amber-300"> ({c.year})</span>}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           {qr && (
             <section className="pt-2 flex flex-col items-center gap-2 text-center">
               <img data-qr src={qr} alt={t('رمز QR لملف الإمام على منصة أئمة')} className="w-28 h-28 rounded-xl bg-white p-1.5" />
@@ -324,18 +374,18 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
           </header>
 
           {(imam.cvText || '').trim() && (
-            <blockquote dir="auto" className="relative px-8 text-slate-700 text-sm leading-loose whitespace-pre-line">
+            <blockquote dir="auto" className="relative px-8 text-slate-700 text-sm leading-loose whitespace-pre-line [unicode-bidi:plaintext]">
               <span className="absolute -top-3 start-0 text-5xl leading-none text-amber-500 font-serif" aria-hidden>
                 “
               </span>
-              {imam.cvText}
+              {cleanCvText(imam.cvText || '')}
               <span className="absolute -bottom-6 end-0 text-5xl leading-none text-amber-500 font-serif" aria-hidden>
                 ”
               </span>
             </blockquote>
           )}
 
-          {(imam.currentJob?.trim() || (imam.experiences?.length ?? 0) > 0) && (
+          {!sideHeavy && (imam.currentJob?.trim() || (imam.experiences?.length ?? 0) > 0) && (
             <section className="space-y-3">
               <Ribbon icon={<Briefcase className="w-5 h-5" />}>{t('الخبرات العملية')}</Ribbon>
               <div className="space-y-2 ps-2">
@@ -367,7 +417,7 @@ export const ImamCvSheet = React.forwardRef<HTMLDivElement, Props>(
             </div>
           </section>
 
-          {(imam.certificates?.length ?? 0) > 0 && (
+          {!sideHeavy && (imam.certificates?.length ?? 0) > 0 && (
             <section className="space-y-3">
               <Ribbon icon={<Award className="w-5 h-5" />}>{t('الشهادات والإجازات')}</Ribbon>
               <ul className="space-y-2 ps-2 text-sm">

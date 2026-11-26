@@ -294,3 +294,15 @@ export function firstNameOf(fullName: string | undefined): string {
   if (!w.length) return '';
   return /^(عبد|عبدال|أبو|ابو|أبي|بن)$/.test(w[0]) && w[1] ? `${w[0]} ${w[1]}` : w[0];
 }
+
+/**
+ * Text pasted from Word often carries list bullets from symbol fonts (private-use characters) that
+ * show as empty boxes, and stray control characters: bullets become «•», the rest is removed.
+ */
+export function cleanCvText(text: string): string {
+  return text
+    .replace(/[\uE000-\uF8FF]/g, '•')
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\uFFFD]/g, '')
+    .replace(/\t+/g, ' ')
+    .replace(/•\s*•/g, '•');
+}
